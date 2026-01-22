@@ -47,12 +47,27 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-[#092A31] text-white">
+    <footer className="text-white relative overflow-hidden">
+      {/* Background Color */}
+      <div className="absolute inset-0 bg-[#092A31] z-0" />
+      {/* Ellipse Overlay */}
+      <div 
+        className="absolute inset-0 z-[1]"
+        style={{
+          backgroundImage: 'url(/images/svgs/ellipse.svg)',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+        }}
+      />
+      
       {/* CTA Banner */}
-      <CTAbanner />
+      <div className="relative z-10">
+        <CTAbanner />
+      </div>
 
       {/* Main Footer Content */}
-      <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+      <div className="relative z-10 max-w-325 mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         {/* Upper Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-12">
           {/* Company Information & Newsletter */}

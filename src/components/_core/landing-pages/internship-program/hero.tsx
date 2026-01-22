@@ -7,9 +7,22 @@ import Image from "next/image";
 
 const InternshipHero = () => {
   return (
-    <div className="bg-[#156374] text-white">
+    <div className="text-white relative overflow-hidden">
+      {/* Primary Color Background */}
+      <div className="absolute inset-0 bg-primary z-0" />
+      {/* Ellipse Overlay */}
+      <div 
+        className="absolute inset-0 z-[1]"
+        style={{
+          backgroundImage: 'url(/images/svgs/ellipse.svg)',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+        }}
+      />
+      
       {/* Hero Section */}
-      <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-20 lg:py-24">
+      <div className="relative z-10 max-w-325 mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-20 lg:py-24">
         <div className="text-center max-w-202.5 mx-auto">
           {/* Main Headline */}
           <h1 className="text-4xl sm:text-5xl lg:text-[48px] font-bold mb-6 leading-12 md:leading-16">
@@ -68,7 +81,7 @@ const InternshipHero = () => {
       </div>
 
       {/* Service Cards Section */}
-      <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <div className="relative z-10 max-w-325 mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <ServiceCard
             title="Real-world Projects"
