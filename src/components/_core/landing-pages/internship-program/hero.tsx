@@ -1,4 +1,3 @@
-import React from 'react'
 import { ArrowRight, Circle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -59,7 +58,7 @@ const InternshipHero = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Card 1: Real-world Projects */}
           <div className="bg-[#0f4d5a] rounded-lg p-6 lg:p-8">
-            <h3 className="text-xl lg:text-2xl font-bold mb-4">
+            <h3 className="text-xl lg:text-[22px] font-bold mb-4">
               Real-world Projects
             </h3>
             <p className="text-white/80 mb-6 text-sm lg:text-base">
@@ -69,7 +68,7 @@ const InternshipHero = () => {
             <Button
               className={cn(
                 "bg-transparent text-white hover:bg-white/10 rounded-full",
-                "border-2 border-white/20 flex items-center gap-2 w-full justify-start"
+                "flex items-center gap-2 w-full justify-start"
               )}
             >
               Get me started
@@ -79,7 +78,7 @@ const InternshipHero = () => {
 
           {/* Card 2: Work Experience Internship */}
           <div className="bg-[#0f4d5a] rounded-lg p-6 lg:p-8">
-            <h3 className="text-xl lg:text-2xl font-bold mb-4">
+            <h3 className="text-xl lg:text-[22px] font-bold mb-4">
               Work Experience Internship
             </h3>
             <p className="text-white/80 mb-6 text-sm lg:text-base">
@@ -89,7 +88,7 @@ const InternshipHero = () => {
             <Button
               className={cn(
                 "bg-transparent text-white hover:bg-white/10 rounded-full",
-                "border-2 border-white/20 flex items-center gap-2 w-full justify-start"
+                "flex items-center gap-2 w-full justify-start"
               )}
             >
               Apply now
@@ -99,7 +98,7 @@ const InternshipHero = () => {
 
           {/* Card 3: Interview Prep */}
           <div className="bg-[#0f4d5a] rounded-lg p-6 lg:p-8">
-            <h3 className="text-xl lg:text-2xl font-bold mb-4">
+            <h3 className="text-xl lg:text-[22px] font-bold mb-4">
               Interview Prep
             </h3>
             <p className="text-white/80 mb-6 text-sm lg:text-base">
@@ -109,7 +108,7 @@ const InternshipHero = () => {
             <Button
               className={cn(
                 "bg-transparent text-white hover:bg-white/10 rounded-full",
-                "border-2 border-white/20 flex items-center gap-2 w-full justify-start"
+                "flex items-center gap-2 w-full justify-start"
               )}
             >
               I need this
