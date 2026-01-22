@@ -12,7 +12,7 @@ const InternshipHero = () => {
       <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-20 lg:py-24">
         <div className="text-center max-w-202.5 mx-auto">
           {/* Main Headline */}
-          <h1 className="text-4xl sm:text-5xl lg:text-[48px] font-bold mb-6 leading-16">
+          <h1 className="text-4xl sm:text-5xl lg:text-[48px] font-bold mb-6 leading-12 md:leading-16">
             Gain Work Experience Through <br />
             {/* Carousel */}
             <span className="inline-block overflow-hidden h-[1.2em] relative align-middle">

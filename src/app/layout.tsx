@@ -8,11 +8,6 @@ const sora = Sora({
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
   title: {
     default: siteConfig.name,
@@ -37,9 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${sora.variable} ${geistMono.variable} antialiased`}>
-        {children}
-      </body>
+      <body className={`${sora.variable}! antialiased`}>{children}</body>
     </html>
   );
 }
