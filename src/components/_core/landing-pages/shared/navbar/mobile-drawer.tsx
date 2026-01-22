@@ -1,5 +1,8 @@
+"use client"
+
 import React from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -11,6 +14,8 @@ interface MobileDrawerProps {
 }
 
 const MobileDrawer = ({ isDrawerOpen, onClose, navLinks }: MobileDrawerProps) => {
+  const pathname = usePathname()
+  const isInternshipPage = pathname.startsWith("/internship-program")
   return (
     <>
       {/* Drawer Overlay */}
@@ -45,16 +50,23 @@ const MobileDrawer = ({ isDrawerOpen, onClose, navLinks }: MobileDrawerProps) =>
           {/* Drawer Content */}
           <div className="flex-1 overflow-y-auto p-4">
             <nav className="flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  onClick={onClose}
-                  className="text-base font-medium text-[#156374] hover:text-[#0f4d5a] transition-colors py-2"
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = link.href !== "#" && pathname.startsWith(link.href);
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    onClick={onClose}
+                    className={cn(
+                      "text-base font-medium transition-colors py-2 relative",
+                      isActive && "underline underline-offset-4",
+                      "text-[#156374] hover:text-[#0f4d5a]",
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
             </nav>
 
             {/* Drawer Buttons */}

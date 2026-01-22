@@ -56,20 +56,24 @@ const Navbr = () => {
 
             {/* Navigation Links - Desktop */}
             <div className="hidden lg:flex items-center gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  className={cn(
-                    "text-sm font-medium transition-colors",
-                    isInternshipPage
-                      ? "text-white hover:text-white/80"
-                      : "text-[#156374] hover:text-[#0f4d5a]",
-                  )}
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = link.href !== "#" && pathname.startsWith(link.href);
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className={cn(
+                      "text-sm font-medium transition-colors relative",
+                      isActive && "underline underline-offset-10",
+                      isInternshipPage
+                        ? "text-white hover:text-white/80"
+                        : "text-[#156374] hover:text-[#0f4d5a]",
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
             </div>
 
             {/* Action Buttons - Desktop */}
