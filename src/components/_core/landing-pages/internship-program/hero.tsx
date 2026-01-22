@@ -12,7 +12,7 @@ const InternshipHero = () => {
       <div className="absolute inset-0 bg-primary z-0" />
       {/* Ellipse Overlay */}
       <div 
-        className="absolute inset-0 z-[1]"
+        className="absolute inset-0 z-1"
         style={{
           backgroundImage: 'url(/images/svgs/ellipse.svg)',
           backgroundPosition: 'center',
