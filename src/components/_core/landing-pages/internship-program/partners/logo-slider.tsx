@@ -1,21 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
 import Image from "next/image";
-import Autoplay from "embla-carousel-autoplay";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  type CarouselApi,
-} from "@/components/ui/carousel";
 
 const LogoSlider = () => {
-  const [api, setApi] = useState<CarouselApi>();
-  const plugin = React.useRef(
-    Autoplay({ delay: 2000, stopOnInteraction: false }),
-  );
-
   const partners = [
     {
       name: "AssetGuard",
@@ -35,23 +22,24 @@ const LogoSlider = () => {
     },
   ];
 
+  // Duplicate partners for seamless infinite scroll
+  const duplicatedPartners = [...partners, ...partners];
+
   return (
     <div className="max-w-225 mx-auto overflow-hidden">
-      <Carousel
-        setApi={setApi}
-        plugins={[plugin.current]}
-        opts={{
-          align: "start",
-          loop: true,
-          slidesToScroll: 1,
-        }}
-        className="w-full"
-      >
-        <CarouselContent className="-ml-2 md:-ml-4">
-          {partners.map((partner, index) => (
-            <CarouselItem
+      <div className="relative">
+        {/* Continuous scrolling animation */}
+        <div 
+          className="flex"
+          style={{
+            animation: 'scroll 12s linear infinite',
+            width: 'fit-content',
+          }}
+        >
+          {duplicatedPartners.map((partner, index) => (
+            <div
               key={`${partner.name}-${index}`}
-              className="basis-1/2 md:basis-1/4"
+              className="flex-shrink-0 w-1/2 md:w-1/4 px-2 md:px-4"
             >
               <div className="relative w-full h-20 flex items-center justify-center">
                 <Image
@@ -62,10 +50,22 @@ const LogoSlider = () => {
                   className="object-contain"
                 />
               </div>
-            </CarouselItem>
+            </div>
           ))}
-        </CarouselContent>
-      </Carousel>
+        </div>
+      </div>
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          @keyframes scroll {
+            0% {
+              transform: translateX(0);
+            }
+            100% {
+              transform: translateX(-50%);
+            }
+          }
+        `
+      }} />
     </div>
   );
 };
