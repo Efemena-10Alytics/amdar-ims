@@ -36,7 +36,7 @@ const Portfolio = () => {
 
         {/* Right Section - Laptop Display */}
         <div className="relative flex-1">
-          <div className="relative w-full h-[400px] lg:h-[600px]">
+          <div className="relative w-full h-100 lg:h-150">
             {!imageError ? (
               <Image
                 src="/images/pngs/laptop.png"

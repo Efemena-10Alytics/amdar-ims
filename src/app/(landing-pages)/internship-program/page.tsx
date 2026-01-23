@@ -3,6 +3,7 @@ import Partners from '@/components/_core/landing-pages/internship-program/partne
 import WhatWeOffer from '@/components/_core/landing-pages/internship-program/what-we-offer/index'
 import Testimonial from '@/components/_core/landing-pages/internship-program/testimonial'
 import Portfolio from '@/components/_core/landing-pages/internship-program/portfolio'
+import WhatOurInternsSays from '@/components/_core/landing-pages/internship-program/what-our-interns-says'
 
 const InternShipProgram = () => {
   return (
@@ -12,6 +13,7 @@ const InternShipProgram = () => {
       <Partners/>
       <Testimonial/>
       <Portfolio/>
+      <WhatOurInternsSays/>
     </div>
   )
 }
