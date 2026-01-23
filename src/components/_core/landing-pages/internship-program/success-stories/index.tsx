@@ -58,6 +58,14 @@ const SuccessStories = () => {
         "The portfolio projects were exactly what employers were looking for. Got multiple offers!",
       avatar: "/images/pngs/Fintech.png",
     },
+    {
+      id: 7,
+      name: "David Brown",
+      role: "Data Scientist",
+      quote:
+        "The portfolio projects were exactly what employers were looking for. Got multiple offers!",
+      avatar: "/images/pngs/Fintech.png",
+    },
   ];
 
   useEffect(() => {

@@ -127,28 +127,28 @@ const SuccessStoriesSlider = ({
   }, [api, onApiChange]);
 
   return (
-    <div className="relative mb-8">
+    <div className="relative mb-8 px-12">
       <Carousel
         setApi={setApi}
         opts={{
           align: "center",
           loop: false,
         }}
-        className="w-full"
+        className="w-full max-w-2xl mx-auto"
       >
-        <CarouselContent className="-ml-2 md:-ml-4 w-[80%] mx-auto">
+        <CarouselContent className="-ml-2 md:-ml-4">
           {testimonials.map((testimonial, index) => (
             <CarouselItem
               key={testimonial.id}
               className="pl-2 md:pl-4 basis-1/3 md:basis-1/4 lg:basis-1/6"
             >
-              <div className="relative flex items-center justify-center">
+              <div className="relative flex py-10 items-center justify-center">
                 <div
                   className={cn(
                     "relative w-16 h-16 rounded-full overflow-hidden transition-all duration-300",
                     current === index
                       ? "ring-2 ring-pink-200 scale-110"
-                      : "blur-sm opacity-60"
+                      : "blur-xs opacity-60"
                   )}
                 >
                   <Image
@@ -164,7 +164,7 @@ const SuccessStoriesSlider = ({
         </CarouselContent>
 
         {/* Navigation Buttons */}
-        <div className="flex justify-between items-center absolute left-0 right-0 top-1/2 -translate-y-1/2 px-4 pointer-events-none">
+        <div className="flex justify-between items-center absolute -left-12 -right-12 top-1/2 -translate-y-1/2 pointer-events-none">
           <div className="pointer-events-auto">
             <CustomCarouselPrevious api={api} />
           </div>
