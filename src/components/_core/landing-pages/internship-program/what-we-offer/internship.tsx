@@ -32,7 +32,7 @@ const Internship = () => {
           </div>
           <Button
             className={cn(
-              "bg-primary text-white hover:bg-[#0f4d5a] rounded-full",
+              "bg-primary text-white hover:bg-[#0f4d5a] rounded-full px-5 py-5",
               "inline-flex items-center gap-2 w-fit justify-center",
             )}
           >

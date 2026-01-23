@@ -5,7 +5,7 @@ import Internship from "./internship";
 import RealWorldProject from "./real-world-project";
 import TalentLoop from "./talent-loop";
 
-const Experience = () => {
+const WhatWeOffer = () => {
   const [activeTab, setActiveTab] = React.useState<
     "Internship" | "Real-world Projects" | "Talent loop"
   >("Internship");
@@ -44,4 +44,4 @@ const Experience = () => {
   );
 };
 
-export default Experience;
+export default WhatWeOffer;
