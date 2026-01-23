@@ -54,9 +54,9 @@ const Faq = () => {
   return (
     <div className="bg-[#F8FAFB] py-12 lg:py-20">
       <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-20 lg:gap-12">
+        <div className="flex flex-col lg:flex-row gap-20 lg:gap-12">
           {/* Left Section - FAQ */}
-          <div className="lg:col-span-2">
+          <div className="lg:w-[60%] gap-4">
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-[#092A31] mb-8">
               Frequently Asked Questions
             </h2>
@@ -101,7 +101,7 @@ const Faq = () => {
           </div>
 
           {/* Right Section - Chat CTA */}
-          <div className="lg:col-span-1">
+          <div className="flex-1">
             <h2 className="text-2xl lg:text-3xl font-bold text-[#092A31] mb-6">
               Need To Talk To Us?
             </h2>
