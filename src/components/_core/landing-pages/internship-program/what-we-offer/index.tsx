@@ -1,19 +1,52 @@
 "use client";
 import { cn } from "@/lib/utils";
-import React from "react";
+import React, { useEffect } from "react";
 import Internship from "./internship";
 import RealWorldProject from "./real-world-project";
 import TalentLoop from "./talent-loop";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 
 const WhatWeOffer = () => {
   const [activeTab, setActiveTab] = React.useState<
     "Internship" | "Real-world Projects" | "Talent loop"
   >("Internship");
+  const [api, setApi] = React.useState<CarouselApi>();
+
   const tabs = [
-    { id: "Internship", label: "Internship" },
-    { id: "Real-world Projects", label: "Real-world Projects" },
-    { id: "Talent loop", label: "Talent loop" },
+    { id: "Internship", label: "Internship", index: 0 },
+    { id: "Real-world Projects", label: "Real-world Projects", index: 1 },
+    { id: "Talent loop", label: "Talent loop", index: 2 },
   ];
+
+  // Update active tab when carousel slide changes
+  useEffect(() => {
+    if (!api) return;
+
+    const onSelect = () => {
+      const selectedIndex = api.selectedScrollSnap();
+      const selectedTab = tabs.find((tab) => tab.index === selectedIndex);
+      if (selectedTab) {
+        setActiveTab(selectedTab.id as any);
+      }
+    };
+
+    api.on("select", onSelect);
+    return () => {
+      api.off("select", onSelect);
+    };
+  }, [api]);
+
+  // Handle tab click - scroll to corresponding slide
+  const handleTabClick = (tabId: string, index: number) => {
+    setActiveTab(tabId as any);
+    api?.scrollTo(index);
+  };
+
   return (
     <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8 mt-10 py-10">
       <div className="flex items-end justify-between">
@@ -23,7 +56,7 @@ const WhatWeOffer = () => {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => handleTabClick(tab.id, tab.index)}
                 className={cn(
                   "py-2 rounded-full text-sm font-medium transition-colors",
                   activeTab === tab.id
@@ -37,9 +70,26 @@ const WhatWeOffer = () => {
           </div>
         </div>
       </div>
-      {activeTab === "Internship" && <Internship />}
-      {activeTab === "Real-world Projects" && <RealWorldProject />}
-      {activeTab === "Talent loop" && <TalentLoop />}
+      <Carousel
+        setApi={setApi}
+        opts={{
+          align: "start",
+          loop: false,
+        }}
+        className="w-full"
+      >
+        <CarouselContent>
+          <CarouselItem>
+            <Internship />
+          </CarouselItem>
+          <CarouselItem>
+            <RealWorldProject />
+          </CarouselItem>
+          <CarouselItem>
+            <TalentLoop />
+          </CarouselItem>
+        </CarouselContent>
+      </Carousel>
     </div>
   );
 };
