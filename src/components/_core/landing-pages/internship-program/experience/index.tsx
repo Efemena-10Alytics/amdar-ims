@@ -3,9 +3,12 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import Internship from "./internship";
 import RealWorldProject from "./real-world-project";
+import TalentLoop from "./talent-loop";
 
 const Experience = () => {
-  const [activeTab, setActiveTab] = React.useState<"Internship" | "Real-world Projects">("Internship");
+  const [activeTab, setActiveTab] = React.useState<
+    "Internship" | "Real-world Projects" | "Talent loop"
+  >("Internship");
   const tabs = [
     { id: "Internship", label: "Internship" },
     { id: "Real-world Projects", label: "Real-world Projects" },
@@ -34,8 +37,9 @@ const Experience = () => {
           </div>
         </div>
       </div>
-      {/* {activeTab === "Internship" && <Internship />} */}
-      {/* {activeTab === "Real-world Projects" && <RealWorldProject />} */}
+      {activeTab === "Internship" && <Internship />}
+      {activeTab === "Real-world Projects" && <RealWorldProject />}
+      {activeTab === "Talent loop" && <TalentLoop />}
     </div>
   );
 };

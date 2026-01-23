@@ -14,7 +14,7 @@ const InternshipHero = () => {
       <div 
         className="absolute inset-0 z-1"
         style={{
-          backgroundImage: 'url(/images/svgs/ellipse.svg)',
+          backgroundImage: 'url(/images/svgs/hero-ellipse.svg)',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
