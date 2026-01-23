@@ -52,9 +52,9 @@ const Footer = () => {
       <div className="absolute inset-0 bg-[#092A31] z-0" />
       {/* Ellipse Overlay */}
       <div 
-        className="absolute inset-0 z-[1]"
+        className="absolute inset-0 z-1"
         style={{
-          backgroundImage: 'url(/images/svgs/ellipse.svg)',
+          backgroundImage: 'url(/images/svgs/footer-ellipse.svg)',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
@@ -203,7 +203,7 @@ const Footer = () => {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                  className="w-10 h-10 rounded-full border border-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
                   aria-label={social.label}
                 >
                   <Icon className="w-5 h-5" />
@@ -214,7 +214,7 @@ const Footer = () => {
 
           {/* Copyright */}
           <p className="text-sm text-white/80">
-            © 2026 - AMDARI. All rights reserved.
+            © {new Date().getFullYear()} - AMDARI. All rights reserved.
           </p>
         </div>
       </div>
