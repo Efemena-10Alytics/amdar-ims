@@ -46,7 +46,7 @@ const Internship = () => {
         {/* Right Section - Career Cards */}
         <div className="flex-1 lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
           {careerItems.map((item, index) => (
-            <div className="bg-white p-5 rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+            <div key={index} className="bg-white p-5 rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
               {/* Card Image */}
               <div className="relative w-full h-48 bg-gray-200 rounded-md">
                 <Image
