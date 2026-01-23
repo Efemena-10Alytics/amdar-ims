@@ -163,6 +163,6 @@
   h4,
   h5,
   h6 {
-    @apply font-clash-display;
+    @apply font-clash-display!;
   }
 }

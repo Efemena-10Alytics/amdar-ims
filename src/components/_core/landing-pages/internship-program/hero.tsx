@@ -28,9 +28,9 @@ const InternshipHero = () => {
           <h1 className="text-4xl sm:text-5xl lg:text-[48px] font-bold mb-6 leading-12 md:leading-16">
             Gain Work Experience Through <br />
             {/* Carousel */}
-            <span className="inline-block overflow-hidden h-[1.2em] relative align-middle">
+            <h1 className="inline-block overflow-hidden h-[1.2em] relative align-middle">
               <Slider />
-            </span>
+            </h1>
           </h1>
 
           {/* Description */}
@@ -44,8 +44,8 @@ const InternshipHero = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <Button
               className={cn(
-                "bg-[#156374] text-white hover:bg-[#0f4d5a] rounded-full px-8 py-6 text-base",
-                "border-2 border-white/20 flex items-center gap-2",
+                "bg-[#0F4652] text-white hover:bg-[#0f4d5a] rounded-full px-8 py-6 text-base",
+                "flex items-center gap-2",
               )}
             >
               Get started
@@ -55,8 +55,8 @@ const InternshipHero = () => {
             </Button>
             <Button
               className={cn(
-                "bg-white/10 text-white hover:bg-white/20 rounded-full px-8 py-6 text-base",
-                "border-2 border-white/20 flex items-center gap-2",
+                "bg-[#448290] text-white hover:bg-white/20 rounded-full px-8 py-6 text-base",
+                "flex items-center gap-2",
               )}
             >
               Learn more
