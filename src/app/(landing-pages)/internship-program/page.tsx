@@ -2,6 +2,7 @@ import InternshipHero from '@/components/_core/landing-pages/internship-program/
 import Partners from '@/components/_core/landing-pages/internship-program/partners'
 import WhatWeOffer from '@/components/_core/landing-pages/internship-program/what-we-offer/index'
 import Testimonial from '@/components/_core/landing-pages/internship-program/testimonial'
+import Portfolio from '@/components/_core/landing-pages/internship-program/portfolio'
 
 const InternShipProgram = () => {
   return (
@@ -10,6 +11,7 @@ const InternShipProgram = () => {
       <WhatWeOffer/>
       <Partners/>
       <Testimonial/>
+      <Portfolio/>
     </div>
   )
 }
