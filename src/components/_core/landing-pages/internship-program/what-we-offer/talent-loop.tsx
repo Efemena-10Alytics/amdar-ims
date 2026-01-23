@@ -7,9 +7,9 @@ const TalentLoop = () => {
   return (
     <div>
       {/* Main Content Area */}
-      <div className="flex gap-6 bg-[#E8EFF1] rounded-xl p-6 lg:p-10">
+      <div className="flex flex-col md:flex-row gap-6 bg-[#E8EFF1] rounded-xl p-6 lg:p-10">
         {/* Left Panel - Promotional CTA */}
-        <div className="w-[36%] flex flex-col">
+        <div className="md:w-[36%] flex flex-col">
           <div>
             <h2 className="text-[24px] lg:text-[28px] font-bold text-[#092A31] mb-4 leading-tight">
               Tired of Job Hunting? Let Us Do It for You!

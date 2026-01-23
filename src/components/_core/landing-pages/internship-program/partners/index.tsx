@@ -6,16 +6,21 @@ import LogoSlider from "./logo-slider";
 
 const Partners = () => {
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
-  
+
 
   return (
-    <div className="bg-[#F8FAFB] py-12 lg:py-20 mt-10 relative overflow-hidden">
+    <div className="bg-[#F8FAFB] min-h-150 py-12 lg:py-20 relative overflow-hidden">
       {/* Subtle background patterns */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-10 left-1/2 w-32 h-32 bg-primary rounded-lg transform -translate-x-1/2" />
-        <div className="absolute bottom-20 left-10 w-24 h-24 bg-primary rounded-lg" />
-        <div className="absolute bottom-32 left-1/2 w-28 h-28 bg-primary rounded-lg transform -translate-x-1/2" />
-      </div>
+      {/* Ellipse Overlay */}
+      <div
+        className="absolute inset-0 z-1"
+        style={{
+          backgroundImage: 'url(/images/svgs/partners-ellipse.svg)',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+        }}
+      />
 
       <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header Section */}

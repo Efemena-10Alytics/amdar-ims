@@ -25,11 +25,11 @@ const RealWorldProject = () => {
   return (
     <div>
       {/* Main Content Area */}
-      <div className="flex gap-6 bg-[#E8EFF1] rounded-xl p-6 lg:p-10">
+      <div className="flex flex-col lg:flex-row gap-6 bg-[#E8EFF1] rounded-xl p-4 sm:p-6 lg:p-10">
         {/* Left Panel - Promotional CTA */}
-        <div className="w-[36%] flex flex-col">
+        <div className="lg:w-[36%] flex flex-col">
           <div>
-            <h2 className="text-[24px] lg:text-[28px] font-bold text-[#092A31] mb-4 leading-tight">
+            <h2 className="text-[24px] max-w-sm lg:text-[28px] font-bold text-[#092A31] mb-4 leading-tight">
               The perfect real world project to have on your portfolio
             </h2>
             <p className="text-[#64748B] text-sm mb-6">

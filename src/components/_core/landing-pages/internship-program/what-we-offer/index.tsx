@@ -49,19 +49,19 @@ const WhatWeOffer = () => {
 
   return (
     <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8 mt-10 py-10">
-      <div className="flex items-end justify-between">
+      <div className="flex flex-col md:flex-row md:items-end justify-between">
         <p className="text-sm text-gray-500 mb-4">Use switch tab</p>
         <div className="flex justify-end mb-6">
-          <div className="flex gap-2 rounded-full bg-[#E8EFF1] py-1.5 px-3">
+          <div className="flex gap-2 rounded-full bg-[#E8EFF1] py-2 px-3">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => handleTabClick(tab.id, tab.index)}
                 className={cn(
-                  "py-2 rounded-full text-sm font-medium transition-colors",
+                  "py-2 rounded-full text-xs md:text-sm font-medium transition-colors",
                   activeTab === tab.id
-                    ? "bg-[#B6CFD4] text-primary px-3"
-                    : "text-gray-600 hover:text-gray-900",
+                    ? "bg-[#B6CFD4] text-primary px-4"
+                    : "text-gray-600 hover:text-gray-900 px-2",
                 )}
               >
                 {tab.label}

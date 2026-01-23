@@ -26,7 +26,7 @@ const LogoSlider = () => {
   const duplicatedPartners = [...partners, ...partners];
 
   return (
-    <div className="max-w-225 mx-auto overflow-hidden">
+    <div className="max-w-225 mx-auto overflow-hidden mt-20">
       <div className="relative">
         {/* Continuous scrolling animation */}
         <div 
@@ -39,7 +39,7 @@ const LogoSlider = () => {
           {duplicatedPartners.map((partner, index) => (
             <div
               key={`${partner.name}-${index}`}
-              className="flex-shrink-0 w-1/2 md:w-1/4 px-2 md:px-4"
+              className="shrink-0 w-1/2 md:w-1/4 px-2 md:px-4"
             >
               <div className="relative w-full h-20 flex items-center justify-center">
                 <Image
