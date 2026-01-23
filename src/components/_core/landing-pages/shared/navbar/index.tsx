@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,8 @@ import MobileDrawer from "./mobile-drawer";
 
 const Navbr = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const pathname = usePathname();
+  const isInternshipPage = pathname === "/internship-program";
 
   // Prevent body scroll when drawer is open
   useEffect(() => {
@@ -33,28 +36,44 @@ const Navbr = () => {
   const closeDrawer = () => {
     setIsDrawerOpen(false);
   };
-
+  const logoImg = isInternshipPage ? "/logo-white.svg" : "/logo.svg";
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 w-full bg-white border-b border-gray-200 z-50">
+      <nav
+        className={cn(
+          "fixed top-0 left-0 right-0 w-full z-50 transition-colors",
+          isInternshipPage
+            ? "bg-[#156374] border-white/20"
+            : "bg-white border-gray-200 border-b",
+        )}
+      >
         <div className="max-w-325 w-full mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2">
-              <Image src={"/logo.svg"} height={22} width={154} alt="amdari" />
+              <Image src={logoImg} height={22} width={154} alt="amdari" />
             </Link>
 
             {/* Navigation Links - Desktop */}
             <div className="hidden lg:flex items-center gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  className="text-sm font-medium text-[#156374] hover:text-[#0f4d5a] transition-colors"
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = link.href !== "#" && pathname.startsWith(link.href);
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className={cn(
+                      "text-sm font-medium transition-colors relative",
+                      isActive && "underline underline-offset-10",
+                      isInternshipPage
+                        ? "text-white hover:text-white/80"
+                        : "text-[#156374] hover:text-[#0f4d5a]",
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
             </div>
 
             {/* Action Buttons - Desktop */}
@@ -62,16 +81,20 @@ const Navbr = () => {
               <Button
                 variant="outline"
                 className={cn(
-                  "border-[#156374] text-[#156374] bg-white hover:bg-[#156374]/5 rounded-full whitespace-nowrap px-10",
-                  "hover:border-[#0f4d5a] hover:text-[#0f4d5a]",
+                  "rounded-full whitespace-nowrap px-10",
+                  isInternshipPage
+                    ? "border-white text-white bg-transparent hover:bg-white/10 hover:border-white"
+                    : "border-[#156374] text-[#156374] bg-white hover:bg-[#156374]/5 hover:border-[#0f4d5a] hover:text-[#0f4d5a]",
                 )}
               >
                 Login
               </Button>
               <Button
                 className={cn(
-                  "bg-[#156374] text-white hover:bg-[#0f4d5a] rounded-full whitespace-nowrap px-10",
-                  "border-0",
+                  "rounded-full whitespace-nowrap px-10 border-0",
+                  isInternshipPage
+                    ? "bg-white text-[#156374] hover:bg-white/90"
+                    : "bg-[#156374] text-white hover:bg-[#0f4d5a]",
                 )}
               >
                 Get Started
@@ -81,7 +104,12 @@ const Navbr = () => {
             {/* Hamburger Menu - Mobile */}
             <button
               onClick={() => setIsDrawerOpen(true)}
-              className="lg:hidden p-2 text-[#156374] hover:text-[#0f4d5a] transition-colors"
+              className={cn(
+                "lg:hidden p-2 transition-colors",
+                isInternshipPage
+                  ? "text-white hover:text-white/80"
+                  : "text-[#156374] hover:text-[#0f4d5a]",
+              )}
               aria-label="Open menu"
             >
               <Menu className="w-6 h-6" />
@@ -90,7 +118,7 @@ const Navbr = () => {
         </div>
       </nav>
 
-      <MobileDrawer 
+      <MobileDrawer
         isDrawerOpen={isDrawerOpen}
         onClose={closeDrawer}
         navLinks={navLinks}
