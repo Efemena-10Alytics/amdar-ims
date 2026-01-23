@@ -38,7 +38,7 @@ const RealWorldProject = () => {
           </div>
           <Button
             className={cn(
-              "bg-primary text-white hover:bg-[#0f4d5a] rounded-full px-5 py-5",
+              "bg-primary text-white hover:bg-[#0f4d5a] rounded-full px-8 py-6 text-base",
               "inline-flex items-center gap-2 w-fit justify-center",
             )}
           >
@@ -52,7 +52,10 @@ const RealWorldProject = () => {
         {/* Right Section - Career Cards */}
         <div className="flex-1 lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
           {careerItems.map((item, index) => (
-            <div key={index} className="bg-white p-5 rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+            <div
+              key={index}
+              className="bg-white p-5 rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
+            >
               {/* Card Image */}
               <div className="relative w-full h-48 bg-gray-200 rounded-md">
                 <Image

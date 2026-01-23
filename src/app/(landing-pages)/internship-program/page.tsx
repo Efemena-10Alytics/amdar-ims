@@ -1,6 +1,7 @@
 import InternshipHero from '@/components/_core/landing-pages/internship-program/hero'
 import Partners from '@/components/_core/landing-pages/internship-program/partners'
 import WhatWeOffer from '@/components/_core/landing-pages/internship-program/what-we-offer/index'
+import Testimonial from '@/components/_core/landing-pages/internship-program/testimonial'
 
 const InternShipProgram = () => {
   return (
@@ -8,6 +9,7 @@ const InternShipProgram = () => {
       <InternshipHero />
       <WhatWeOffer/>
       <Partners/>
+      <Testimonial/>
     </div>
   )
 }

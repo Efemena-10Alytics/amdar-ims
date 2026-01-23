@@ -10,7 +10,6 @@ const Partners = () => {
 
   return (
     <div className="bg-[#F8FAFB] min-h-150 py-12 lg:py-20 relative overflow-hidden">
-      {/* Subtle background patterns */}
       {/* Ellipse Overlay */}
       <div
         className="absolute inset-0 z-1"
