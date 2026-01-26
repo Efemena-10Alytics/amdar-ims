@@ -27,7 +27,8 @@ const Faq = () => {
     },
     {
       id: 4,
-      question: "Do I need prior experience to join Amdari's internship programs?",
+      question:
+        "Do I need prior experience to join Amdari's internship programs?",
       answer:
         "No prior experience is required! Our programs are designed to help individuals at all levels, from beginners to those looking to advance their careers. We provide comprehensive guidance and resources to support your learning journey.",
     },
@@ -47,20 +48,19 @@ const Faq = () => {
 
   const toggleItem = (id: number) => {
     setOpenItems((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
     );
   };
 
   return (
     <div className="bg-[#F8FAFB] py-12 lg:py-20">
       <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="lg:max-w-[420px] text-3xl lg:text-4xl xl:text-5xl font-bold text-[#092A31] mb-8">
+          Frequently Asked Questions
+        </h2>
         <div className="flex flex-col lg:flex-row gap-20 lg:gap-12">
           {/* Left Section - FAQ */}
-          <div className="lg:w-[60%] gap-4">
-            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-[#092A31] mb-8">
-              Frequently Asked Questions
-            </h2>
-
+          <div className="lg:w-[55%] gap-4">
             <div className="space-y-4">
               {faqs.map((faq) => {
                 const isOpen = openItems.includes(faq.id);
@@ -102,27 +102,32 @@ const Faq = () => {
 
           {/* Right Section - Chat CTA */}
           <div className="flex-1">
-            <h2 className="text-2xl lg:text-3xl font-bold text-[#092A31] mb-6">
-              Need To Talk To Us?
-            </h2>
-
-            <div className="bg-[#15535E] rounded-lg p-6 flex items-center gap-4 cursor-pointer hover:bg-[#124a54] transition-colors">
-              {/* Chat Icon */}
-              <div className="shrink-0 relative">
-                <div className="w-12 h-12 rounded-full bg-amdari-yellow flex items-center justify-center border-2 border-[#15535E]">
-                  <MessageCircle className="w-6 h-6 text-[#092A31]" />
+            <div className="lg:w-[80%] ml-auto">
+              <h2 className="text-2xl lg:text-3xl font-bold text-[#092A31] mb-6">
+                Need To Talk To Us?
+              </h2>
+              <div className="bg-[#15535E] rounded-lg p-6 flex items-center gap-4 cursor-pointer hover:bg-[#124a54] transition-colors">
+                {/* Chat Icon */}
+                <div className="shrink-0 relative">
+                  <div className="w-12 h-12 rounded-full bg-amdari-yellow flex items-center justify-center border-2 border-[#15535E]">
+                    <MessageCircle className="w-6 h-6 text-[#092A31]" />
+                  </div>
                 </div>
-              </div>
 
-              {/* Text */}
-              <div className="flex-1">
-                <p className="text-white/90 text-sm mb-1">Couldn't find an answer?</p>
-                <p className="text-white font-semibold text-base">Chat with us</p>
-              </div>
+                {/* Text */}
+                <div className="flex-1">
+                  <p className="text-white/90 text-sm mb-1">
+                    Couldn't find an answer?
+                  </p>
+                  <p className="text-white font-semibold text-base">
+                    Chat with us
+                  </p>
+                </div>
 
-              {/* Arrow */}
-              <div className="shrink-0">
-                <ArrowRight className="w-5 h-5 text-white" />
+                {/* Arrow */}
+                <div className="shrink-0">
+                  <ArrowRight className="w-5 h-5 text-white" />
+                </div>
               </div>
             </div>
           </div>
