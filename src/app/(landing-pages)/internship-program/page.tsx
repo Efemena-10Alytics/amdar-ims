@@ -10,7 +10,6 @@ const ChoosePathPage = () => {
       <ChoosePath />
       <WhyTakeTheInternship />
       <JobReady />
-      <Faq />
     </div>
   );
 };
