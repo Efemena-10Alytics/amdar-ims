@@ -12,7 +12,7 @@ import MobileDrawer from "./mobile-drawer";
 const Navbr = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const pathname = usePathname();
-  const isInternshipPage = pathname === "/internship-program";
+  const isInternshipPage = pathname === "/home";
 
   // Prevent body scroll when drawer is open
   useEffect(() => {

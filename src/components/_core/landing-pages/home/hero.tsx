@@ -44,8 +44,8 @@ const InternshipHero = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <Button
               className={cn(
-                "bg-[#0F4652] text-white hover:bg-[#0f4d5a] rounded-full px-8 py-6 text-base",
-                "flex items-center gap-2",
+                "bg-[#0F4652] text-white hover:bg-[#0f4d5a] rounded-full py-6 text-base",
+                "flex items-center gap-3",
               )}
             >
               Get started
@@ -55,8 +55,8 @@ const InternshipHero = () => {
             </Button>
             <Button
               className={cn(
-                "bg-[#448290] text-white hover:bg-white/20 rounded-full px-8 py-6 text-base",
-                "flex items-center gap-2",
+                "bg-[#448290] text-white hover:bg-white/20 rounded-full py-6 text-base",
+                "flex items-center gap-3",
               )}
             >
               Learn more
