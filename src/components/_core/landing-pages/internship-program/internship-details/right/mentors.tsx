@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ArrowLeftCurve, ArrowRightCurve } from "../../svg";
+import { ArrowLeftCurve, ArrowRightCurve } from "../../../home/svg";
 
 interface Mentor {
   id: number;
@@ -131,14 +131,14 @@ const Mentors = ({ mentors }: MentorsProps) => {
               <div className="relative bg-[#E8EFF1] rounded-lg overflow-hidden mb-4">
                 <div className="relative w-full h-64">
                   <Image
-                    src="/images/pngs/woman.png"
+                    src={mentor.image}
                     alt={mentor.name}
                     fill
                     className="object-cover"
                   />
 
                   {/* Overlay with Name and Title */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+                  <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent p-4">
                     <div className="flex items-end justify-between">
                       <div>
                         <h4 className="text-white font-bold text-lg mb-1">
