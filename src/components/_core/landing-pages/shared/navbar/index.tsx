@@ -50,7 +50,7 @@ const Navbr = () => {
         <div className="max-w-325 w-full mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/home" className="flex items-center gap-2">
               <Image src={logoImg} height={22} width={154} alt="amdari" />
             </Link>
 
