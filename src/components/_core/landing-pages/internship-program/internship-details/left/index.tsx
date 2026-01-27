@@ -9,6 +9,11 @@ import Overview from "./overview";
 import InternsProject from "./interns-project";
 import { CalendarSvg, LocationSvg, TrensFillDvg, UserFillSVG } from "../../svg";
 import Gain from "./gain";
+import CareerOpporturnity from "./career-opporturnity";
+import ProgramStructure from "./program-structure";
+import Faq from "./faq";
+import PaymentStructure from "./payment-structure";
+import Mentors from "./mentors";
 
 const Left = () => {
   const [activeTab, setActiveTab] = useState("Overview");
@@ -19,7 +24,6 @@ const Left = () => {
     "Career Opportunity",
     "Program Structure",
     "Faqs",
-    "Payment",
     "Payment Structure",
     "Mentors",
     "Interns projects",
@@ -142,15 +146,11 @@ const Left = () => {
       {activeTab === "Overview" && <Overview />}
       {activeTab === "Interns projects" && <InternsProject />}
       {activeTab === "What you'll gain" && <Gain />}
-
-      {/* Placeholder for other tabs */}
-      {activeTab !== "Overview" &&
-        activeTab !== "Interns projects" &&
-        activeTab !== "What you'll gain" && (
-          <div className="text-center py-12">
-            <p className="text-gray-600">{activeTab} content coming soon...</p>
-          </div>
-        )}
+      {activeTab === "Career Opportunity" && <CareerOpporturnity />}
+      {activeTab === "Program Structure" && <ProgramStructure />}
+      {activeTab === "Faqs" && <Faq />}
+      {activeTab === "Payment Structure" && <PaymentStructure />}
+      {activeTab === "Mentors" && <Mentors />}
 
       {/* Bottom CTA Banner */}
       <div className="mt-16 bg-[#156374] rounded-xl p-8 lg:p-12">
