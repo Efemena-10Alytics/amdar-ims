@@ -129,9 +129,9 @@ const Mentors = ({ mentors }: MentorsProps) => {
           {mentors.map((mentor) => (
             <CarouselItem key={mentor.id} className="basis-full">
               <div className="relative bg-[#E8EFF1] rounded-lg overflow-hidden mb-4">
-                <div className="relative w-full h-64">
+                <div className="relative w-full h-92">
                   <Image
-                    src={mentor.image}
+                    src={"/images/pngs/woman.png"}
                     alt={mentor.name}
                     fill
                     className="object-cover"
@@ -166,7 +166,7 @@ const Mentors = ({ mentors }: MentorsProps) => {
         </CarouselContent>
 
         {/* Navigation Buttons */}
-        <div className="flex items-center justify-center gap-4 mt-4">
+        <div className="flex items-center justify-end gap-4 mt-4">
           <CustomCarouselPrevious api={api} />
           <CustomCarouselNext api={api} />
         </div>
