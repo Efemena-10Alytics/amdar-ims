@@ -1,6 +1,7 @@
 import React from 'react'
 import Left from '@/components/_core/landing-pages/internship-program/internship-details/left'
 import Right from '@/components/_core/landing-pages/internship-program/internship-details/right'
+import Project from '@/components/_core/landing-pages/internship-program/project'
 
 const InternshipProgramDetails = () => {
   return (
@@ -15,6 +16,7 @@ const InternshipProgramDetails = () => {
           </div>
         </div>
       </div>
+      <Project />
     </div>
   )
 }
