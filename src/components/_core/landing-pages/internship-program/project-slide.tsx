@@ -1,36 +1,40 @@
+"use client";
+
 import { cn } from "@/lib/utils";
-import React from "react";
+import React, { useEffect } from "react";
+
+const FIRST_TEXT = "Real"; // constant, only the rest changes
+
+const GAIN_ITEMS = [
+  "Projects",
+  "Responsibilities",
+  "Collaboration",
+  "Documentation",
+  "Contributions",
+  "Reference",
+];
+
+const AUTO_ADVANCE_MS = 4000;
 
 const ProjectSlide = () => {
   const [activeIndex, setActiveIndex] = React.useState(0);
 
-  const GAIN_ITEMS = [
-    "Real Projects",
-    "Structured Experience",
-    "Team Collaboration",
-    "Leadership Guidance",
-    "Deliverables & Results",
-    "Portfolio Evidence",
-  ];
+  useEffect(() => {
+    const id = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % GAIN_ITEMS.length);
+    }, AUTO_ADVANCE_MS);
+    return () => clearInterval(id);
+  }, []);
+
   return (
     <div className="text-start">
       <div className="mb-6 text-start">
-        {(() => {
-          const phrase = GAIN_ITEMS[activeIndex] ?? GAIN_ITEMS[0];
-          const parts = phrase.split(" ");
-          const first = parts[0];
-          const rest = parts.slice(1).join(" ");
-          return (
-            <>
-              <span className="text-[#64748B] text-xl lg:text-2xl font-medium">
-                {first}{" "}
-              </span>
-              <span className="text-[#092A31] text-2xl lg:text-3xl font-bold">
-                {rest}
-              </span>
-            </>
-          );
-        })()}
+        <span className="text-[#64748B] text-xl lg:text-2xl font-semibold">
+          {FIRST_TEXT}{" "}
+        </span>
+        <span className="text-[#092A31] text-2xl lg:text-3xl font-bold">
+          {GAIN_ITEMS[activeIndex] ?? GAIN_ITEMS[0]}
+        </span>
       </div>
       <div className="flex gap-1 flex-wrap justify-start">
         {GAIN_ITEMS.map((_, i) => (
@@ -45,12 +49,14 @@ const ProjectSlide = () => {
             >
               <span>{String(i + 1).padStart(2, "0")}</span>
             </button>
-            <div
-              className={cn(
-                "h-2 xl:w-20 transition-colors",
-                activeIndex === i ? "bg-[#092A31]" : "bg-[#B6CFD4]",
-              )}
-            />
+            <div className="h-2 xl:w-20 w-16 overflow-hidden bg-[#B6CFD4]">
+              <div
+                className={cn(
+                  "h-full bg-[#0C3640] transition-[width] duration-500 ease-out",
+                  activeIndex === i ? "w-full" : "w-0",
+                )}
+              />
+            </div>
           </div>
         ))}
       </div>

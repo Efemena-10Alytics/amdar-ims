@@ -116,7 +116,7 @@ const Mentors = ({ mentors }: MentorsProps) => {
   const [api, setApi] = useState<CarouselApi>();
 
   return (
-    <div className="relative">
+    <div className="relative mb-10">
       <Carousel
         setApi={setApi}
         opts={{

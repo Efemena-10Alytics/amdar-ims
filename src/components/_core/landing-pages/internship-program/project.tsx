@@ -45,7 +45,7 @@ const Project = () => {
               {PARAGRAPH}
             </p>
             <div className="mt-20">
-              <p className="text-[#64748B] text-base font-medium mb-4">
+              <p className="text-[#64748B] text-base font-medium mb-2">
                 With Amdari, you gain
               </p>
               <ProjectSlide />
