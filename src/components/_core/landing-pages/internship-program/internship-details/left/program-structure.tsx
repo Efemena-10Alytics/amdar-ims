@@ -7,10 +7,12 @@ const overviewContent = {
   "Impactful Work": `DevOps engineers play a critical role in enabling faster product delivery, system stability, and scalability. Your work directly impacts uptime, performance, security, and reliability—factors that can make or break a company's success in today's competitive market.`,
 };
 
-const Overview = () => {
+const ProgramStructure = () => {
   return (
     <div className="space-y-8">
-      <h2 className="text-2xl font-bold text-[#092A31] mb-6">Over view</h2>
+      <h2 className="text-2xl font-bold text-[#092A31] mb-6">
+        Program Structure
+      </h2>
 
       {/* Who Is This For? */}
 
@@ -24,19 +26,13 @@ const Overview = () => {
 
         {/* High Demand */}
         <div>
-          <h3 className="text-xl font-medium mb-1">
-            High Demand
-          </h3>
-          <p className="leading-relaxed">
-            {overviewContent["High Demand"]}
-          </p>
+          <h3 className="text-xl font-medium mb-1">High Demand</h3>
+          <p className="leading-relaxed">{overviewContent["High Demand"]}</p>
         </div>
 
         {/* Competitive Salaries */}
         <div>
-          <h3 className="text-xl font-medium mb-1">
-            Competitive Salaries
-          </h3>
+          <h3 className="text-xl font-medium mb-1">Competitive Salaries</h3>
           <p className="leading-relaxed">
             {overviewContent["Competitive Salaries"]}
           </p>
@@ -44,9 +40,7 @@ const Overview = () => {
 
         {/* Diverse Opportunities */}
         <div>
-          <h3 className="text-xl font-medium mb-1">
-            Diverse Opportunities
-          </h3>
+          <h3 className="text-xl font-medium mb-1">Diverse Opportunities</h3>
           <p className="leading-relaxed">
             {overviewContent["Diverse Opportunities"]}
           </p>
@@ -54,16 +48,12 @@ const Overview = () => {
 
         {/* Impactful Work */}
         <div>
-          <h3 className="text-xl font-medium mb-1">
-            Impactful Work
-          </h3>
-          <p className="leading-relaxed">
-            {overviewContent["Impactful Work"]}
-          </p>
+          <h3 className="text-xl font-medium mb-1">Impactful Work</h3>
+          <p className="leading-relaxed">{overviewContent["Impactful Work"]}</p>
         </div>
       </div>
     </div>
   );
 };
 
-export default Overview;
+export default ProgramStructure;

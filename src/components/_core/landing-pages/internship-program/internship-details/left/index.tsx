@@ -6,7 +6,14 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Overview from "./overview";
+import InternsProject from "./interns-project";
 import { CalendarSvg, LocationSvg, TrensFillDvg, UserFillSVG } from "../../svg";
+import Gain from "./gain";
+import CareerOpporturnity from "./career-opporturnity";
+import ProgramStructure from "./program-structure";
+import Faq from "./faq";
+import PaymentStructure from "./payment-structure";
+import Mentors from "./mentors";
 
 const Left = () => {
   const [activeTab, setActiveTab] = useState("Overview");
@@ -17,7 +24,9 @@ const Left = () => {
     "Career Opportunity",
     "Program Structure",
     "Faqs",
-    "Payment",
+    "Payment Structure",
+    "Mentors",
+    "Interns projects",
   ];
 
   const tools = [
@@ -95,10 +104,10 @@ const Left = () => {
       </div>
 
       {/* Pricing and Apply Bar */}
-      <div className="bg-[#0F4652] rounded-lg p-4 lg:p-6 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="text-gray-400 line-through text-lg">USD 500</div>
-          <div className="text-2xl lg:text-3xl font-bold text-white">
+      <div className="bg-[#C8DDE3] rounded-lg p-4 lg:p-6 mb-8 flex items-center justify-between gap-4">
+        <div className="flex flex-col gap-2">
+          <div className="text-[#64748B] line-through text-lg">USD 500</div>
+          <div className="text-2xl lg:text-3xl font-bold text-[#092A31]">
             USD 390
           </div>
         </div>
@@ -116,16 +125,16 @@ const Left = () => {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex flex-wrap gap-4 mb-8 border-b border-gray-200 pb-4">
+      <div className="flex overflow-x-auto gap-4 mb-8 border-b border-gray-200 pb-4">
         {tabs.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={cn(
-              "text-base font-medium transition-colors pb-2",
+              "text-base font-medium transition-colors pb-2 whitespace-nowrap",
               activeTab === tab
-                ? "text-[#092A31] border-b-2 border-[#092A31]"
-                : "text-gray-600 hover:text-[#092A31]",
+                ? "text-[#156374] border-b-2 border-[#156374]"
+                : "text-[#B6CFD4] hover:text-[#092A31]",
             )}
           >
             {tab}
@@ -135,16 +144,16 @@ const Left = () => {
 
       {/* Content Section */}
       {activeTab === "Overview" && <Overview />}
-
-      {/* Placeholder for other tabs */}
-      {activeTab !== "Overview" && (
-        <div className="text-center py-12">
-          <p className="text-gray-600">{activeTab} content coming soon...</p>
-        </div>
-      )}
+      {activeTab === "Interns projects" && <InternsProject />}
+      {activeTab === "What you'll gain" && <Gain />}
+      {activeTab === "Career Opportunity" && <CareerOpporturnity />}
+      {activeTab === "Program Structure" && <ProgramStructure />}
+      {activeTab === "Faqs" && <Faq />}
+      {activeTab === "Payment Structure" && <PaymentStructure />}
+      {activeTab === "Mentors" && <Mentors />}
 
       {/* Bottom CTA Banner */}
-      <div className="mt-16 bg-[#0F4652] rounded-xl p-8 lg:p-12 text-center">
+      <div className="mt-16 bg-[#156374] rounded-xl p-8 lg:p-12">
         <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-white mb-4">
           Land Your First Job In Tech
         </h2>
