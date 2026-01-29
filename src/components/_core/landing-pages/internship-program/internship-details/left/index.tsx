@@ -14,6 +14,7 @@ import ProgramStructure from "./program-structure";
 import Faq from "./faq";
 import PaymentStructure from "./payment-structure";
 import Mentors from "./mentors";
+import Link from "next/link";
 
 const Left = () => {
   const [activeTab, setActiveTab] = useState("Overview");
@@ -111,17 +112,19 @@ const Left = () => {
             USD 390
           </div>
         </div>
-        <Button
-          className={cn(
-            "bg-primary text-white hover:bg-[#0f4d5a] rounded-full px-6 py-6 text-base font-medium",
-            "inline-flex items-center gap-2",
-          )}
-        >
-          Apply now
-          <div className="flex h-5 w-5 rounded-full justify-center items-center bg-amdari-yellow">
-            <ArrowRight className="w-3 h-3" color="#156374" />
-          </div>
-        </Button>
+        <Link href={"/payment/1"}>
+          <Button
+            className={cn(
+              "bg-primary text-white hover:bg-[#0f4d5a] rounded-full px-6 py-6 text-base font-medium",
+              "inline-flex items-center gap-2",
+            )}
+          >
+            Apply now
+            <div className="flex h-5 w-5 rounded-full justify-center items-center bg-amdari-yellow">
+              <ArrowRight className="w-3 h-3" color="#156374" />
+            </div>
+          </Button>
+        </Link>
       </div>
 
       {/* Navigation Tabs */}

@@ -12,7 +12,11 @@ import MobileDrawer from "./mobile-drawer";
 const Navbr = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const pathname = usePathname();
-  const isInternshipPage = pathname === "/home";
+  const isHomePageRoute = pathname === "/home";
+  const isInternshipProgramRoute =
+    pathname === "/internship-program" ||
+    pathname.startsWith("/payment") ||
+    pathname.startsWith("/internship-program");
 
   // Prevent body scroll when drawer is open
   useEffect(() => {
@@ -36,13 +40,13 @@ const Navbr = () => {
   const closeDrawer = () => {
     setIsDrawerOpen(false);
   };
-  const logoImg = isInternshipPage ? "/logo-white.svg" : "/logo.svg";
+  const logoImg = isHomePageRoute ? "/logo-white.svg" : "/logo.svg";
   return (
     <>
       <nav
         className={cn(
           "fixed top-0 left-0 right-0 w-full z-50 transition-colors",
-          isInternshipPage
+          isHomePageRoute
             ? "bg-[#156374] border-white/20"
             : "bg-white border-gray-200 border-b",
         )}
@@ -57,7 +61,10 @@ const Navbr = () => {
             {/* Navigation Links - Desktop */}
             <div className="hidden lg:flex items-center gap-8">
               {navLinks.map((link) => {
-                const isActive = link.href !== "#" && pathname.startsWith(link.href);
+                const isActive =
+                  link.href === "/internship-program"
+                    ? isInternshipProgramRoute
+                    : link.href !== "#" && pathname.startsWith(link.href);
                 return (
                   <Link
                     key={link.label}
@@ -65,7 +72,7 @@ const Navbr = () => {
                     className={cn(
                       "text-sm font-medium transition-colors relative",
                       isActive && "underline underline-offset-10",
-                      isInternshipPage
+                      isHomePageRoute
                         ? "text-white hover:text-white/80"
                         : "text-[#156374] hover:text-[#0f4d5a]",
                     )}
@@ -82,7 +89,7 @@ const Navbr = () => {
                 variant="outline"
                 className={cn(
                   "rounded-full whitespace-nowrap px-10",
-                  isInternshipPage
+                  isHomePageRoute
                     ? "border-white text-white bg-transparent hover:bg-white/10 hover:border-white"
                     : "border-[#156374] text-[#156374] bg-white hover:bg-[#156374]/5 hover:border-[#0f4d5a] hover:text-[#0f4d5a]",
                 )}
@@ -92,7 +99,7 @@ const Navbr = () => {
               <Button
                 className={cn(
                   "rounded-full whitespace-nowrap px-10 border-0",
-                  isInternshipPage
+                  isHomePageRoute
                     ? "bg-white text-[#156374] hover:bg-white/90"
                     : "bg-[#156374] text-white hover:bg-[#0f4d5a]",
                 )}
@@ -106,7 +113,7 @@ const Navbr = () => {
               onClick={() => setIsDrawerOpen(true)}
               className={cn(
                 "lg:hidden p-2 transition-colors",
-                isInternshipPage
+                isHomePageRoute
                   ? "text-white hover:text-white/80"
                   : "text-[#156374] hover:text-[#0f4d5a]",
               )}
