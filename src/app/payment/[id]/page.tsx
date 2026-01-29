@@ -1,4 +1,3 @@
-
 import PaymentMain from "@/components/_core/payment";
 
 const STEPS = [
@@ -9,8 +8,8 @@ const STEPS = [
 
 export default function PaymentPage() {
   return (
-    <div className="min-h-screen bg-white">
-      <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white mt-20">
+      <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
         <header className="mb-10">
           <h1 className="font-clash-display text-3xl font-bold text-[#092A31] sm:text-4xl">
             Your Internship Enrollment

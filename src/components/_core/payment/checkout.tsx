@@ -62,7 +62,7 @@ const Checkout = () => {
   const [currency, setCurrency] = useState<string>("USD");
 
   return (
-    <main className="min-w-0 flex-1 space-y-10 pb-24">
+    <main className="lg:max-w-2xl flex-1 space-y-10 pb-24">
       {/* 1. Confirm your enrollment */}
       <section>
         <h2 className="font-clash-display text-xl font-bold text-[#092A31]">
