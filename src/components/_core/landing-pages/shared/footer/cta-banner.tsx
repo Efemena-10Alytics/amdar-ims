@@ -15,7 +15,7 @@ const CTAbanner = () => {
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
           {/* Left Section - Headline & Tagline */}
           <div className="flex-1">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 leading-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold mb-4 leading-tight">
               Ready To Get the job you always wanted?
             </h2>
             <p className="text-lg sm:text-xl text-white/90">

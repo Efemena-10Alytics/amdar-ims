@@ -59,7 +59,7 @@ const Faq = () => {
   return (
     <div data-aos="fade-up" className="bg-[#F8FAFB] py-12 lg:py-20">
       <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="lg:max-w-105 text-3xl lg:text-4xl xl:text-5xl font-bold text-[#092A31] mb-8">
+        <h2 className="lg:max-w-105 text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] mb-8">
           Frequently Asked Questions
         </h2>
         <div className="flex flex-col lg:flex-row gap-20 lg:gap-12">
@@ -71,16 +71,16 @@ const Faq = () => {
                 return (
                   <div
                     key={faq.id}
-                    className="bg-white rounded-lg border border-gray-200 overflow-hidden transition-all"
+                    className="bg-[#E8EFF1] rounded-lg border border-gray-200 overflow-hidden transition-colors duration-200"
                   >
                     <button
                       onClick={() => toggleItem(faq.id)}
-                      className="w-full flex items-center justify-between p-4 lg:p-6 text-left hover:bg-gray-50 transition-colors"
+                      className="w-full flex items-center justify-between p-4 lg:p-6 text-left hover:bg-gray-50 transition-colors duration-200"
                     >
                       <span className="text-base lg:text-lg font-medium text-gray-800 pr-4">
                         {faq.question}
                       </span>
-                      <div className="shrink-0">
+                      <div className="shrink-0 transition-transform duration-300">
                         <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
                           {isOpen ? (
                             <Minus className="w-4 h-4 text-white" />
@@ -91,13 +91,18 @@ const Faq = () => {
                       </div>
                     </button>
 
-                    {isOpen && (
-                      <div className="px-4 lg:px-6 pb-4 lg:pb-6">
-                        <p className="text-gray-600 text-sm lg:text-base leading-relaxed">
-                          {faq.answer}
-                        </p>
+                    <div
+                      className="grid transition-[grid-template-rows] duration-300 ease-out"
+                      style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
+                    >
+                      <div className="overflow-hidden">
+                        <div className="px-4 lg:px-6 pb-4 lg:pb-6">
+                          <p className="text-gray-600 text-sm lg:text-base leading-relaxed">
+                            {faq.answer}
+                          </p>
+                        </div>
                       </div>
-                    )}
+                    </div>
                   </div>
                 );
               })}
@@ -107,7 +112,7 @@ const Faq = () => {
           {/* Right Section - Chat CTA */}
           <div className="flex-1">
             <div className="lg:w-[80%] ml-auto">
-              <h2 className="text-2xl lg:text-3xl font-bold text-[#092A31] mb-6">
+              <h2 className="text-2xl lg:text-3xl font-semibold text-[#092A31] mb-6">
                 Need To Talk To Us?
               </h2>
               <div className="bg-[#15535E] rounded-lg p-6 flex items-center gap-4 cursor-pointer hover:bg-[#124a54] transition-colors">

@@ -87,10 +87,10 @@ const SuccessStories = () => {
       <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
         {/* Title Section */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-[#092A31] mb-4">
+          <h2 className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] mb-4">
             Success Stories
           </h2>
-          <p className="text-[#092A31]/80 text-base lg:text-lg max-w-2xl mx-auto">
+          <p className="text-[#092A31]/80 text-base lg:text-lg max-w-md mx-auto">
             Our interns have gone on to secure roles across the UK, US, Canada,
             and Africa
           </p>

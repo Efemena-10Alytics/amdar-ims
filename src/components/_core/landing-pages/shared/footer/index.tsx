@@ -84,7 +84,7 @@ const Footer = () => {
         {/* Upper Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-12">
           {/* Company Information & Newsletter */}
-          <div className="lg:col-span-1">
+          <div data-aos="fade-down" className="lg:col-span-1">
             <Image
               src="/logo-white.svg"
               height={40}
@@ -125,7 +125,7 @@ const Footer = () => {
           </div>
 
           {/* Projects Links */}
-          <div>
+          <div data-aos="fade-up">
             <h3 className="text-base font-bold uppercase mb-4">PROJECTS</h3>
             <nav className="flex flex-col gap-3">
               {projectsLinks.map((link) => (
@@ -141,7 +141,7 @@ const Footer = () => {
           </div>
 
           {/* Company Links */}
-          <div>
+          <div data-aos="fade-up">
             <h3 className="text-base font-bold uppercase mb-4">COMPANY</h3>
             <nav className="flex flex-col gap-3">
               {companyLinks.map((link) => (
@@ -157,7 +157,7 @@ const Footer = () => {
           </div>
 
           {/* Contact Us */}
-          <div>
+          <div data-aos="fade-down">
             <h3 className="text-base font-bold uppercase mb-4">CONTACT US</h3>
 
             {/* WhatsApp Contacts */}

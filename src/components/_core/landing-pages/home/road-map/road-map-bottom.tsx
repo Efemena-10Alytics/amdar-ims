@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import ToolsSlider from "./tools-slider";
@@ -18,7 +18,7 @@ const RoadMapBottom = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Left Side */}
           <div>
-            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-white mb-8 leading-tight">
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-white mb-8 leading-tight">
               Learn New Tools and Technology from Experts
             </h2>
 
@@ -37,12 +37,13 @@ const RoadMapBottom = () => {
             <Button
               className={cn(
                 "bg-amdari-yellow text-[#092A31] hover:bg-amdari-yellow/90",
-                "rounded-full px-6 py-6 text-base font-medium",
-                "inline-flex items-center gap-2 w-fit",
+                "rounded-full px-5! py-6 text-base font-medium",
+                "inline-flex items-center gap-2 w-fit cursor-pointer",
+                "hover:bg-primary hover:text-amdari-yellow transition-shadow duration-300",
               )}
             >
               Create an account
-              <ArrowRight className="w-5 h-5" />
+              <ArrowUpRight className="w-5 h-5" />
             </Button>
           </div>
         </div>

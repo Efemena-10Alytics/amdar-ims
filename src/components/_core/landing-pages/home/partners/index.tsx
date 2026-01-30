@@ -26,7 +26,7 @@ const Partners = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
           {/* Heading */}
           <div>
-            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-[#092A31] leading-tight mb-6">
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] leading-tight mb-6">
               Businesses We Have Partnered With
             </h2>
           </div>

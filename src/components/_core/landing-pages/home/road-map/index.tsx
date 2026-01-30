@@ -31,12 +31,9 @@ const RoadMap = () => {
         <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Title Section */}
           <div data-aos="zoom-in" className="text-center mb-12 lg:mb-16">
-            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-white mb-2">
-              Go from Learner to Earner
+            <h2 className="max-w-157.75 mx-auto text-3xl lg:text-4xl xl:text-5xl font-semibold text-white mb-2">
+              Go from Learner to Earner Using Amdari Road Map
             </h2>
-            <p className="text-xl lg:text-2xl font-bold text-white">
-              Using Amdari Road Map
-            </p>
           </div>
 
           {/* Roadmap Steps */}

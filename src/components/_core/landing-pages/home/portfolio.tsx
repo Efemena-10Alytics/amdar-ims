@@ -1,11 +1,9 @@
 "use client";
 
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Aos from "aos";
+import CustomButton from "../shared/custom-button";
 
 const Portfolio = () => {
   const [imageError, setImageError] = React.useState(false);
@@ -15,28 +13,21 @@ const Portfolio = () => {
   }, []);
 
   return (
-    <div data-aos="fade-up" className="bg-white py-12 lg:py-20 relative overflow-hidden">
+    <div
+      data-aos="fade-up"
+      className="bg-white py-12 lg:py-20 relative overflow-hidden"
+    >
       <div className="flex flex-col lg:flex-row">
         {/* Left Section - Promotional Content */}
         <div className="bg-[#E8EFF1] flex-1 p-6 lg:p-12 flex flex-col justify-">
-          <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-[#092A31] mb-6 leading-tight">
+          <h2 data-aos="zoom-in" className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] mb-6 leading-tight">
             Build a Professional Portfolio Website
           </h2>
-          <p className="text-[#092A31]/70 text-base lg:text-lg mb-8 leading-relaxed">
+          <p data-aos="zoom-out" className="text-[#092A31]/70 text-base lg:text-lg mb-8 leading-relaxed">
             Showcase your experience, projects and proficiency level with our
             portfolio builder to stand out in the competitive tech landscape.
           </p>
-          <Button
-            className={cn(
-              "bg-primary text-white hover:bg-[#0f4d5a] rounded-full px-8 py-6 text-base",
-              "inline-flex items-center gap-2 w-fit justify-center",
-            )}
-          >
-            Create your portfolio
-            <div className="flex h-5 w-5 rounded-full justify-center items-center bg-amdari-yellow">
-              <ArrowUpRight className="w-3 h-3" color="#156374" />
-            </div>
-          </Button>
+          <CustomButton btnText="Create your portfolio" />
         </div>
 
         {/* Right Section - Laptop Display */}
