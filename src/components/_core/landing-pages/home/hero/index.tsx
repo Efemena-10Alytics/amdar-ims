@@ -9,6 +9,7 @@ import Slider from "./slider";
 import Image from "next/image";
 import WordDrop from "./word-drop";
 import Aos from "aos";
+import Flag from "./flag";
 
 const InternshipHero = () => {
   React.useEffect(() => {
@@ -34,7 +35,7 @@ const InternshipHero = () => {
       <div className="relative z-10 max-w-325 mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-20 lg:py-24">
         <div className="text-center max-w-202.5 mx-auto">
           {/* Main Headline */}
-          <h1 className="text-4xl sm:text-5xl lg:text-[48px] font-bold mb-6 leading-12 md:leading-16">
+          <h1 className="text-4xl sm:text-5xl lg:text-[48px] font-semibold mb-6 leading-12 md:leading-16">
             <WordDrop />
             <br />
             {/* Carousel */}
@@ -57,23 +58,25 @@ const InternshipHero = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <Button
               className={cn(
-                "bg-[#0F4652] text-white hover:bg-[#0f4d5a] rounded-full py-6 text-base",
-                "flex items-center gap-3",
+                "group bg-[#0F4652] text-white hover:bg-amdari-yellow hover:text-primary rounded-full py-6 h-12 text-base",
+                "flex items-center gap-8 px-5",
+                "transition-colors duration-300",
               )}
             >
               Get started
-              <div className="flex h-5 w-5 rounded-full justify-center items-center bg-amdari-yellow text-primary">
-                <ArrowUpRight className="w-3! h-3!" color="#156374" />
+              <div className="flex h-5 w-5 rounded-full justify-center items-center bg-amdari-yellow group-hover:bg-primary text-primary group-hover:text-white">
+                <ArrowUpRight className="w-3! h-3! text-current" />
               </div>
             </Button>
             <Button
               className={cn(
-                "bg-[#448290] text-white hover:bg-white/20 rounded-full py-6 text-base",
-                "flex items-center gap-3",
+                "group bg-[#448290] hover:bg-[#0F4652] text-white rounded-full h-12 py-6 text-base",
+                "flex items-center gap-8 px-5",
+                "transition-colors duration-300",
               )}
             >
               Learn more
-              <div className="flex h-5 w-5 rounded-full justify-center items-center bg-white border-2 border-gray-300 text-primary">
+              <div className="group-hover:bg-amdari-yellow flex h-5 w-5 rounded-full justify-center items-center bg-white border-2 border-gray-300 text-primary">
                 <PlayIcon
                   className="w-3! h-3!"
                   color="#156374"
@@ -85,12 +88,7 @@ const InternshipHero = () => {
 
           {/* Social Proof */}
           <div className="flex items-center justify-center gap-2 text-sm sm:text-base">
-            <Image
-              src={"/images/svgs/flags.svg"}
-              height={32}
-              width={80}
-              alt="USA/UK/Canada"
-            />
+            <Flag />
             <span className="text-white/80">
               + 10K interns Across the world Got hired
             </span>
@@ -100,7 +98,7 @@ const InternshipHero = () => {
 
       {/* Service Cards Section */}
       <div className="relative z-10 max-w-325 mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
           <ServiceCard
             title="Real-world Projects"
             description="Industry-relevant projects that replicate real-world challenges, helping you build practical skills."

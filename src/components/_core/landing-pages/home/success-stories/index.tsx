@@ -4,11 +4,15 @@ import React, { useState, useEffect } from "react";
 import { Star } from "lucide-react";
 import type { CarouselApi } from "@/components/ui/carousel";
 import SuccessStoriesSlider from "./success-stories-slider";
+import Aos from "aos";
 
 const SuccessStories = () => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
+  React.useEffect(() => {
+    Aos.init();
+  }, []);
   const testimonials = [
     {
       id: 1,
@@ -79,14 +83,14 @@ const SuccessStories = () => {
   }, [api]);
 
   return (
-    <div className="bg-[#F8FAFB] py-12 lg:py-20">
+    <div data-aos="fade-up" className="bg-[#F8FAFB] py-12 lg:py-20">
       <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
         {/* Title Section */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-[#092A31] mb-4">
+          <h2 className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] mb-4">
             Success Stories
           </h2>
-          <p className="text-[#092A31]/80 text-base lg:text-lg max-w-2xl mx-auto">
+          <p className="text-[#092A31]/80 text-base lg:text-lg max-w-md mx-auto">
             Our interns have gone on to secure roles across the UK, US, Canada,
             and Africa
           </p>
@@ -101,7 +105,7 @@ const SuccessStories = () => {
 
         {/* Testimonial Content */}
         {testimonials[current] && (
-          <div className="text-center max-w-3xl mx-auto">
+          <div data-aos="fade-up" className="text-center max-w-3xl mx-auto">
             {/* Quote */}
             <p className="text-xl lg:text-2xl text-gray-800 font-medium mb-6 leading-relaxed">
               "{testimonials[current].quote}"

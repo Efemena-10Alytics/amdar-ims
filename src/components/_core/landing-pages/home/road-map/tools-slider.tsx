@@ -16,31 +16,41 @@ const ToolsSlider = () => {
   const duplicatedTools = [...tools, ...tools];
 
   return (
-    <div className="w-full overflow-hidden">
+    <div className="w-full overflow-hidden relative">
       <div className="relative">
         {/* Continuous scrolling animation */}
-        <div 
+        <div
           className="flex gap-4"
           style={{
-            animation: 'scroll 12s linear infinite',
-            width: 'fit-content',
+            animation: "scroll 12s linear infinite",
+            width: "fit-content",
           }}
         >
           {duplicatedTools.map((tool, index) => (
             <div
               key={`${tool.name}-${index}`}
-              className="shrink-0 w-14 h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center backdrop-blur-sm"
+              className="shrink-0 w-12 h-12 cursor-pointer rounded-full bg-white/10 border border-white/20 flex items-center justify-center backdrop-blur-sm"
             >
               <Image
                 src={tool.icon}
                 alt={tool.name}
                 width={32}
                 height={32}
-                className="object-contain"
+                className="object-contain grayscale opacity-30 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
               />
             </div>
           ))}
         </div>
+        {/* Left edge blur/fade - matches section bg #092A31 */}
+        <div
+          className="absolute left-0 top-0 bottom-0 w-6 z-10 pointer-events-none bg-gradient-to-r from-[#092A31] via-[#092A31]/60 to-transparent backdrop-blur-sm"
+          aria-hidden
+        />
+        {/* Right edge blur/fade */}
+        <div
+          className="absolute right-0 top-0 bottom-0 w-6 z-10 pointer-events-none bg-gradient-to-l from-[#092A31] via-[#092A31]/60 to-transparent backdrop-blur-sm"
+          aria-hidden
+        />
       </div>
       <style dangerouslySetInnerHTML={{
         __html: `

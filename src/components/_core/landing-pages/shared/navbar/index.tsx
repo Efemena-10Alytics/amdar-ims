@@ -52,14 +52,14 @@ const Navbr = () => {
         )}
       >
         <div className="max-w-325 w-full mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex gap-2 items-center justify-between h-20">
             {/* Logo */}
             <Link href="/home" className="flex items-center gap-2">
               <Image src={logoImg} height={22} width={154} alt="amdari" />
             </Link>
 
             {/* Navigation Links - Desktop */}
-            <div className="hidden lg:flex items-center gap-8">
+            <div className="hidden lg:flex items-center gap-4 xl:gap-8">
               {navLinks.map((link) => {
                 const isActive =
                   link.href === "/internship-program"
@@ -70,7 +70,7 @@ const Navbr = () => {
                     key={link.label}
                     href={link.href}
                     className={cn(
-                      "text-sm font-medium transition-colors relative",
+                      "text-sm transition-colors relative",
                       isActive && "underline underline-offset-10",
                       isHomePageRoute
                         ? "text-white hover:text-white/80"
@@ -88,7 +88,7 @@ const Navbr = () => {
               <Button
                 variant="outline"
                 className={cn(
-                  "rounded-full whitespace-nowrap px-10",
+                  "rounded-full whitespace-nowrap px-10 xl:px-14 xl:h-12",
                   isHomePageRoute
                     ? "border-white text-white bg-transparent hover:bg-white/10 hover:border-white"
                     : "border-[#156374] text-[#156374] bg-white hover:bg-[#156374]/5 hover:border-[#0f4d5a] hover:text-[#0f4d5a]",
@@ -98,10 +98,10 @@ const Navbr = () => {
               </Button>
               <Button
                 className={cn(
-                  "rounded-full whitespace-nowrap px-10 border-0",
+                  "rounded-full whitespace-nowrap px-10 border-0 xl:h-12",
                   isHomePageRoute
-                    ? "bg-white text-[#156374] hover:bg-white/90"
-                    : "bg-[#156374] text-white hover:bg-[#0f4d5a]",
+                    ? "bg-white text-[#156374] hover:bg-amdari-yellow hover:text-primary"
+                    : "bg-[#156374] text-white hover:bg-amdari-yellow hover:text-primary",
                 )}
               >
                 Get Started

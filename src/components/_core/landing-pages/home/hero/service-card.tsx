@@ -21,18 +21,19 @@ const ServiceCard = ({
     <div
       data-aos={dataAos}
       data-aos-duration={dataAosDuration}
-      className="bg-[#135A6A] rounded-lg p-6 lg:p-8"
+      className="bg-[#135A6A] hover:bg-transparent hover:text-white rounded-lg p-6 lg:p-8 text-[#B6CFD4] group transition-colors duration-300"
     >
-      <h3 className="text-xl lg:text-[22px] font-bold mb-4">{title}</h3>
-      <p className="text-white/80 mb-6 text-sm lg:text-base">{description}</p>
+      <h3 className="text-xl lg:text-[22px] font-semibold mb-4">{title}</h3>
+      <p className="mb-6 text-sm">{description}</p>
       <Button
+        // variant={"link"}
         className={cn(
-          "bg-transparent text-white hover:bg-white/10 rounded-full",
-          "flex items-center gap-2 w-full justify-start",
+          "bg-transparent rounded-full p-0 hover:p-4 hover:bg-transparent",
+          "inline-flex items-center gap-2 justify-start",
         )}
       >
         {buttonText}
-        <div className="flex justify-center items-center h-6 w-6 bg-[#156374] rounded-full">
+        <div className="flex justify-center items-center h-6 w-6 bg-[#156374] group-hover:bg-amdari-yellow group-hover:text-primary rounded-full">
           <ArrowUpRight className="w-4 h-4" />
         </div>
       </Button>

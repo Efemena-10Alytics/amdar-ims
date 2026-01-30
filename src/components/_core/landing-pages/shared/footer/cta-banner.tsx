@@ -1,16 +1,21 @@
+"use client";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import Aos from "aos";
 import { ArrowRight } from "lucide-react";
-import React from "react";
 
 const CTAbanner = () => {
+  React.useEffect(() => {
+    Aos.init({ duration: 600 });
+  }, []);
   return (
-    <div className="max-w-325  mx-auto px-4 sm:px-6 lg:px-8 pt-12 lg:pt-16 pb-8">
+    <div data-aos="zoom-in" className="max-w-325  mx-auto px-4 sm:px-6 lg:px-8 pt-12 lg:pt-16 pb-8">
       <div className="bg-[#156374] rounded-2xl p-8 lg:p-12 shadow-lg">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
           {/* Left Section - Headline & Tagline */}
           <div className="flex-1">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 leading-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold mb-4 leading-tight">
               Ready To Get the job you always wanted?
             </h2>
             <p className="text-lg sm:text-xl text-white/90">

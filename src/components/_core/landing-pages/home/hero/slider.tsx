@@ -43,13 +43,13 @@ const Slider = () => {
       <CarouselContent className="mt-0 h-[1.2em]">
         {slidesItem.map((item, index) => (
           <CarouselItem key={index} className="pt-0">
-            <span
-              className="text-amdari-yellow lg:whitespace-nowrap block"
+            <div
+              className="text-amdari-yellow lg:whitespace-nowrap gap-3 flex items-center justify-center"
               style={{ lineHeight: "1.2em" }}
             >
-              {item} {" "}
-              <span className="text-white">Project</span>
-            </span>
+              <h1>{item} </h1>
+              <h1 className="text-white">Project</h1>
+            </div>
           </CarouselItem>
         ))}
       </CarouselContent>
