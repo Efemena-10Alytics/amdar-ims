@@ -1,46 +1,45 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { Play, MoreVertical } from 'lucide-react';
+import React from "react";
+import Image from "next/image";
+import { Play, MoreVertical } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   type CarouselApi,
-} from '@/components/ui/carousel';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { ArrowLeftCurve, ArrowRightCurve } from './svg';
+} from "@/components/ui/carousel";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { ArrowLeftCurve, ArrowRightCurve } from "./svg";
+import Aos from "aos";
 
 // Custom Curved Arrow Icons
 
-
-
 // Custom Navigation Buttons
-const CustomCarouselPrevious = ({ 
-  className, 
-  api 
-}: { 
+const CustomCarouselPrevious = ({
+  className,
+  api,
+}: {
   className?: string;
   api: CarouselApi | undefined;
 }) => {
-  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollPrev, setCanScrollPrev] = React.useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!api) return;
-    
+
     const onSelect = () => {
       setCanScrollPrev(api.canScrollPrev());
     };
-    
+
     onSelect();
-    api.on('select', onSelect);
-    api.on('reInit', onSelect);
-    
+    api.on("select", onSelect);
+    api.on("reInit", onSelect);
+
     return () => {
-      api.off('select', onSelect);
-      api.off('reInit', onSelect);
+      api.off("select", onSelect);
+      api.off("reInit", onSelect);
     };
   }, [api]);
 
@@ -48,7 +47,7 @@ const CustomCarouselPrevious = ({
     <Button
       variant="outline"
       size="icon"
-      className={cn('w-10 h-10 rounded-full', className)}
+      className={cn("w-10 h-10 rounded-full", className)}
       disabled={!canScrollPrev}
       onClick={() => api?.scrollPrev()}
       aria-label="Previous slide"
@@ -58,37 +57,41 @@ const CustomCarouselPrevious = ({
   );
 };
 
-const CustomCarouselNext = ({ 
-  className, 
-  api 
-}: { 
+const CustomCarouselNext = ({
+  className,
+  api,
+}: {
   className?: string;
   api: CarouselApi | undefined;
 }) => {
-  const [canScrollNext, setCanScrollNext] = useState(false);
+  const [canScrollNext, setCanScrollNext] = React.useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!api) return;
-    
+
     const onSelect = () => {
       setCanScrollNext(api.canScrollNext());
     };
-    
+
     onSelect();
-    api.on('select', onSelect);
-    api.on('reInit', onSelect);
-    
+    api.on("select", onSelect);
+    api.on("reInit", onSelect);
+
     return () => {
-      api.off('select', onSelect);
-      api.off('reInit', onSelect);
+      api.off("select", onSelect);
+      api.off("reInit", onSelect);
     };
   }, [api]);
+
+  React.useEffect(() => {
+    Aos.init();
+  }, []);
 
   return (
     <Button
       variant="outline"
       size="icon"
-      className={cn('w-10 h-10 rounded-full', className)}
+      className={cn("w-10 h-10 rounded-full", className)}
       disabled={!canScrollNext}
       onClick={() => api?.scrollNext()}
       aria-label="Next slide"
@@ -99,39 +102,46 @@ const CustomCarouselNext = ({
 };
 
 const WhatOurInternsSays = () => {
-  const [api, setApi] = useState<CarouselApi>();
-  const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
+  const [api, setApi] = React.useState<CarouselApi>();
+  const [imageErrors, setImageErrors] = React.useState<Record<number, boolean>>(
+    {},
+  );
 
   const testimonials = [
     {
       id: 1,
-      image: '/images/testimonials/intern-1.jpg',
-      caption: "If I can say i'm confident in my data science skills, then I am...",
+      image: "/images/testimonials/intern-1.jpg",
+      caption:
+        "If I can say i'm confident in my data science skills, then I am...",
     },
     {
       id: 2,
-      image: '/images/testimonials/intern-2.jpg',
-      caption: 'How to get a job as a data Analyst in the UK with the UK civil service...',
+      image: "/images/testimonials/intern-2.jpg",
+      caption:
+        "How to get a job as a data Analyst in the UK with the UK civil service...",
     },
     {
       id: 3,
-      image: '/images/testimonials/intern-3.jpg',
-      caption: 'How to get a job as a data Analyst in the UK with the UK civil service.',
+      image: "/images/testimonials/intern-3.jpg",
+      caption:
+        "How to get a job as a data Analyst in the UK with the UK civil service.",
     },
     {
       id: 4,
-      image: '/images/testimonials/intern-4.jpg',
-      caption: 'How to get a job as a data Analyst in the UK with the UK civil service...',
+      image: "/images/testimonials/intern-4.jpg",
+      caption:
+        "How to get a job as a data Analyst in the UK with the UK civil service...",
     },
     {
       id: 5,
-      image: '/images/testimonials/intern-5.jpg',
-      caption: 'How to get a job as a data Analyst in the UK with the UK civil service...',
+      image: "/images/testimonials/intern-5.jpg",
+      caption:
+        "How to get a job as a data Analyst in the UK with the UK civil service...",
     },
   ];
 
   return (
-    <div className="bg-white py-12 relative overflow-hidden">
+    <div data-aos="fade-up" className="bg-white py-12 relative overflow-hidden">
       <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-12">
@@ -139,7 +149,8 @@ const WhatOurInternsSays = () => {
             What Our Interns Says
           </h2>
           <p className="text-[#092A31]/70 text-base lg:text-lg max-w-2xl mx-auto">
-            Our interns have gone on to secure roles across the UK, US, Canada, and Africa.
+            Our interns have gone on to secure roles across the UK, US, Canada,
+            and Africa.
           </p>
         </div>
 
@@ -148,7 +159,7 @@ const WhatOurInternsSays = () => {
           <Carousel
             setApi={setApi}
             opts={{
-              align: 'start',
+              align: "start",
               loop: false,
             }}
             className="w-full"
@@ -169,7 +180,10 @@ const WhatOurInternsSays = () => {
                           fill
                           className="object-cover"
                           onError={() => {
-                            setImageErrors((prev) => ({ ...prev, [testimonial.id]: true }));
+                            setImageErrors((prev) => ({
+                              ...prev,
+                              [testimonial.id]: true,
+                            }));
                           }}
                         />
                       ) : (
@@ -217,13 +231,13 @@ const WhatOurInternsSays = () => {
               <CustomCarouselPrevious
                 api={api}
                 className={cn(
-                  'bg-[#E8EFF1] text-[#092A31] hover:bg-[#D1D9DC] border-0',
+                  "bg-[#E8EFF1] text-[#092A31] hover:bg-[#D1D9DC] border-0",
                 )}
               />
               <CustomCarouselNext
                 api={api}
                 className={cn(
-                  'bg-primary text-white hover:bg-[#0f4d5a] border-0',
+                  "bg-primary text-white hover:bg-[#0f4d5a] border-0",
                 )}
               />
             </div>

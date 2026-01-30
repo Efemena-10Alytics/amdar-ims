@@ -1,23 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
+import React from "react";
 import LogoSlider from "./logo-slider";
+import Aos from "aos";
 
 const Partners = () => {
-  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
-
-
+  React.useEffect(() => {
+    Aos.init();
+  }, []);
   return (
-    <div className="bg-[#F8FAFB] min-h-150 py-12 lg:py-20 relative overflow-hidden">
+    <div data-aos="fade-up" className="bg-[#F8FAFB] min-h-150 py-12 lg:py-20 relative overflow-hidden">
       {/* Ellipse Overlay */}
       <div
         className="absolute inset-0 z-1"
         style={{
-          backgroundImage: 'url(/images/svgs/partners-ellipse.svg)',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover',
+          backgroundImage: "url(/images/svgs/partners-ellipse.svg)",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
         }}
       />
 

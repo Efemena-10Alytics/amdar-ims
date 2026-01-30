@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Sora } from "next/font/google";
+import { Sora } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
+import "aos/dist/aos.css";
 
 const sora = Sora({
   variable: "--font-sora",
