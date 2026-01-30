@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import CustomButton from "../../shared/custom-button";
+import Link from "next/link";
 
 const Internship = () => {
   const careerItems = [
@@ -42,7 +43,9 @@ const Internship = () => {
               <ArrowUpRight className="w-3 h-3" color="#156374" />
             </div>
           </Button> */}
-          <CustomButton btnText="View more" />
+          <Link href="/internship-program">
+            <CustomButton btnText="View more" />
+          </Link>
         </div>
 
         {/* Right Section - Career Cards */}
