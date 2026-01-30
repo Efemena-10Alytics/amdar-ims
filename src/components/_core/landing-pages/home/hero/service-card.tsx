@@ -6,11 +6,23 @@ interface ServiceCardProps {
   title: string;
   description: string;
   buttonText: string;
+  dataAos?: string;
+  dataAosDuration?: string;
 }
 
-const ServiceCard = ({ title, description, buttonText }: ServiceCardProps) => {
+const ServiceCard = ({
+  title,
+  description,
+  buttonText,
+  dataAos,
+  dataAosDuration,
+}: ServiceCardProps) => {
   return (
-    <div className="bg-[#135A6A] rounded-lg p-6 lg:p-8">
+    <div
+      data-aos={dataAos}
+      data-aos-duration={dataAosDuration}
+      className="bg-[#135A6A] rounded-lg p-6 lg:p-8"
+    >
       <h3 className="text-xl lg:text-[22px] font-bold mb-4">{title}</h3>
       <p className="text-white/80 mb-6 text-sm lg:text-base">{description}</p>
       <Button

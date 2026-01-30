@@ -1,32 +1,42 @@
+"use client";
+
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import ServiceCard from "./service-card";
 import { ArrowUpRight, PlayIcon } from "lucide-react";
 import Slider from "./slider";
 import Image from "next/image";
+import WordDrop from "./word-drop";
+import Aos from "aos";
 
 const InternshipHero = () => {
+  React.useEffect(() => {
+    Aos.init({ duration: 600 });
+  }, []);
+
   return (
     <div className="text-white relative overflow-hidden">
       {/* Primary Color Background */}
       <div className="absolute inset-0 bg-primary z-0" />
       {/* Ellipse Overlay */}
-      <div 
+      <div
         className="absolute inset-0 z-1"
         style={{
-          backgroundImage: 'url(/images/svgs/hero-ellipse.svg)',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover',
+          backgroundImage: "url(/images/svgs/hero-ellipse.svg)",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
         }}
       />
-      
+
       {/* Hero Section */}
       <div className="relative z-10 max-w-325 mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-20 lg:py-24">
         <div className="text-center max-w-202.5 mx-auto">
           {/* Main Headline */}
           <h1 className="text-4xl sm:text-5xl lg:text-[48px] font-bold mb-6 leading-12 md:leading-16">
-            Gain Work Experience Through <br />
+            <WordDrop />
+            <br />
             {/* Carousel */}
             <h1 className="inline-block overflow-hidden h-[1.2em] relative align-middle">
               <Slider />
@@ -34,7 +44,10 @@ const InternshipHero = () => {
           </h1>
 
           {/* Description */}
-          <p className="text-lg sm:text-xl text-white/90 max-w-3xl mx-auto mb-10">
+          <p
+            data-aos="zoom-in"
+            className="text-lg sm:text-xl text-white/90 max-w-3xl mx-auto mb-10"
+          >
             Join the Work Experience Platform Trusted by Aspiring Tech
             Professionals Worldwide to Build Real-World Experience and Land Your
             Dream Job
@@ -72,7 +85,12 @@ const InternshipHero = () => {
 
           {/* Social Proof */}
           <div className="flex items-center justify-center gap-2 text-sm sm:text-base">
-            <Image src={"/images/svgs/flags.svg"} height={32} width={80} alt="USA/UK/Canada" />
+            <Image
+              src={"/images/svgs/flags.svg"}
+              height={32}
+              width={80}
+              alt="USA/UK/Canada"
+            />
             <span className="text-white/80">
               + 10K interns Across the world Got hired
             </span>
@@ -87,16 +105,22 @@ const InternshipHero = () => {
             title="Real-world Projects"
             description="Industry-relevant projects that replicate real-world challenges, helping you build practical skills."
             buttonText="Get me started"
+            dataAos="fade-up"
+            dataAosDuration="600"
           />
           <ServiceCard
             title="Work Experience Internship"
             description="Work experience internship with businesses that will connect you with global work opportunities and mentorship"
             buttonText="Apply now"
+            dataAos="fade-up"
+            dataAosDuration="1000"
           />
           <ServiceCard
             title="Interview Prep"
             description="We help you prepare for interviews by revamping your CV and coaching you on acing technical questions."
             buttonText="I need this"
+            dataAos="fade-up"
+            dataAosDuration="1200"
           />
         </div>
       </div>

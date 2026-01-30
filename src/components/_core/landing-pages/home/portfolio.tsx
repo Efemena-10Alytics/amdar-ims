@@ -1,16 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
+import Aos from "aos";
 
 const Portfolio = () => {
-  const [imageError, setImageError] = useState(false);
+  const [imageError, setImageError] = React.useState(false);
+
+  React.useEffect(() => {
+    Aos.init();
+  }, []);
 
   return (
-    <div className="bg-white py-12 lg:py-20 relative overflow-hidden">
+    <div data-aos="fade-up" className="bg-white py-12 lg:py-20 relative overflow-hidden">
       <div className="flex flex-col lg:flex-row">
         {/* Left Section - Promotional Content */}
         <div className="bg-[#E8EFF1] flex-1 p-6 lg:p-12 flex flex-col justify-">

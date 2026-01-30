@@ -1,7 +1,12 @@
+"use client";
 import React from "react";
 import Image from "next/image";
+import Aos from "aos";
 
 const Experience = () => {
+  React.useEffect(() => {
+    Aos.init();
+  }, []);
   return (
     <div className="py-12 lg:py-20 relative overflow-hidden">
       {/* Background Image */}
@@ -17,13 +22,11 @@ const Experience = () => {
 
       <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Headline Section */}
-        <div className="text-center max-w-211 mx-auto">
+        <div data-aos="fade-up" className="text-center max-w-211 mx-auto">
           <h2 className="text-4xl lg:text-[52px] font-bold text-[#092A31] leading-14 sm:leading-16">
-            We Have Worked With Over {" "}
-            <span className="text-primary font-extrabold">
-              10,000+
-            </span>{" "}
-            Tech Professionals
+            We Have Worked With Over{" "}
+            <span className="text-primary font-extrabold">10,000+</span> Tech
+            Professionals
           </h2>
         </div>
 
