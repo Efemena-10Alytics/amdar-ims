@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface ServiceCardProps {
   title: string;
@@ -25,18 +26,20 @@ const ServiceCard = ({
     >
       <h3 className="text-xl lg:text-[22px] font-semibold mb-4">{title}</h3>
       <p className="mb-6 text-sm">{description}</p>
-      <Button
-        // variant={"link"}
-        className={cn(
-          "bg-transparent rounded-full p-0 hover:p-4 hover:bg-transparent",
-          "inline-flex items-center gap-2 justify-start",
-        )}
-      >
-        {buttonText}
-        <div className="flex justify-center items-center h-6 w-6 bg-[#156374] group-hover:bg-amdari-yellow group-hover:text-primary rounded-full">
-          <ArrowUpRight className="w-4 h-4" />
-        </div>
-      </Button>
+      <Link href="/internship-program">
+        <Button
+          // variant={"link"}
+          className={cn(
+            "bg-transparent rounded-full p-0 hover:p-4 hover:bg-transparent",
+            "inline-flex items-center gap-2 justify-start",
+          )}
+        >
+          {buttonText}
+          <div className="flex justify-center items-center h-6 w-6 bg-[#156374] group-hover:bg-amdari-yellow group-hover:text-primary rounded-full">
+            <ArrowUpRight className="w-4 h-4" />
+          </div>
+        </Button>
+      </Link>
     </div>
   );
 };

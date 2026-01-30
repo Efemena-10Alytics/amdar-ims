@@ -6,10 +6,10 @@ import { cn } from "@/lib/utils";
 import ServiceCard from "./service-card";
 import { ArrowUpRight, PlayIcon } from "lucide-react";
 import Slider from "./slider";
-import Image from "next/image";
 import WordDrop from "./word-drop";
 import Aos from "aos";
 import Flag from "./flag";
+import Link from "next/link";
 
 const InternshipHero = () => {
   React.useEffect(() => {

@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import CustomButton from "../../shared/custom-button";
+import Link from "next/link";
 
 const RealWorldProject = () => {
   const careerItems = [
@@ -38,7 +39,9 @@ const RealWorldProject = () => {
               Real world projects you can work on.
             </p>
           </div>
-          <CustomButton btnText="Work on projects" />
+          <Link href="/internship-program">
+            <CustomButton btnText="Work on projects" />
+          </Link>
         </div>
 
         {/* Right Section - Career Cards */}
