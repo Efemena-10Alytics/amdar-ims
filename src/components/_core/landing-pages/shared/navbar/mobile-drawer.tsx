@@ -84,7 +84,7 @@ const MobileDrawer = ({ isDrawerOpen, onClose, navLinks }: MobileDrawerProps) =>
               <Button
                 onClick={onClose}
                 className={cn(
-                  "w-full bg-[#156374] text-white hover:bg-[#0f4d5a]",
+                  "w-full bg-[#156374] text-white hover:bg-amdari-yellow hover:text-primary",
                   "border-0",
                 )}
               >

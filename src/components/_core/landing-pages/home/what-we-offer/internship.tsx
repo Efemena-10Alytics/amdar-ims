@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
+import CustomButton from "../../shared/custom-button";
 
 const Internship = () => {
   const careerItems = [
@@ -30,9 +31,9 @@ const Internship = () => {
               Some of our current Work Experience Programmes
             </p>
           </div>
-          <Button
+          {/* <Button
             className={cn(
-              "bg-primary text-white hover:bg-[#0f4d5a] rounded-full px-8 py-6 text-base",
+              "bg-primary text-white hover:bg-[#0f4d5a] rounded-full h-12 text-base",
               "inline-flex items-center gap-2 w-fit justify-center",
             )}
           >
@@ -40,7 +41,8 @@ const Internship = () => {
             <div className="flex h-5 w-5 rounded-full justify-center items-center bg-amdari-yellow">
               <ArrowUpRight className="w-3 h-3" color="#156374" />
             </div>
-          </Button>
+          </Button> */}
+          <CustomButton btnText="View more" />
         </div>
 
         {/* Right Section - Career Cards */}

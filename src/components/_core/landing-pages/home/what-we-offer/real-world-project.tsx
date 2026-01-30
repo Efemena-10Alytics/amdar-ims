@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
+import CustomButton from "../../shared/custom-button";
 
 const RealWorldProject = () => {
   const careerItems = [
@@ -29,24 +30,15 @@ const RealWorldProject = () => {
         {/* Left Panel - Promotional CTA */}
         <div className="lg:w-[36%] flex flex-col">
           <div>
-            <h2 className="text-[24px] max-w-sm lg:text-[28px] font-bold text-[#092A31] mb-4 leading-tight">
-              The perfect real world project to have on your portfolio
+            <h2 className="text-[24px] max-w-sm lg:text-[28px] font-semibold text-[#092A31] mb-4 leading-tight">
+              The perfect real world <br /> project to have on <br /> your
+              portfolio
             </h2>
             <p className="text-[#64748B] text-sm mb-6">
               Real world projects you can work on.
             </p>
           </div>
-          <Button
-            className={cn(
-              "bg-primary text-white hover:bg-[#0f4d5a] rounded-full px-8 py-6 text-base",
-              "inline-flex items-center gap-2 w-fit justify-center",
-            )}
-          >
-            Work on projects
-            <div className="flex h-5 w-5 rounded-full justify-center items-center bg-amdari-yellow">
-              <ArrowUpRight className="w-3 h-3" color="#156374" />
-            </div>
-          </Button>
+          <CustomButton btnText="Work on projects" />
         </div>
 
         {/* Right Section - Career Cards */}
