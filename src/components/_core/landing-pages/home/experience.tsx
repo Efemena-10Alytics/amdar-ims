@@ -23,16 +23,16 @@ const Experience = () => {
       <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Headline Section */}
         <div data-aos="fade-up" className="text-center max-w-211 mx-auto">
-          <h2 className="text-4xl lg:text-[52px] font-bold text-[#092A31] leading-14 sm:leading-16">
+          <h2 className="text-4xl lg:text-[52px] font-semibold text-[#092A31] leading-14 sm:leading-16">
             We Have Worked With Over{" "}
-            <span className="text-primary font-extrabold">10,000+</span> Tech
+            <span className="text-primary font-black text-4xl lg:text-[72px]">10,000+</span> Tech
             Professionals
           </h2>
         </div>
 
         {/* Tech Professionals Image Collage */}
         <div className="relative w-full">
-          <div className="relative w-full aspect-16/10 lg:aspect-video">
+          <div data-aos="zoom-in" className="relative w-full aspect-16/10 lg:aspect-video">
             <Image
               src="/images/pngs/tech-professionals.png"
               alt="Tech professionals community"

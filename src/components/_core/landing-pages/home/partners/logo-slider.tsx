@@ -26,7 +26,7 @@ const LogoSlider = () => {
   const duplicatedPartners = [...partners, ...partners];
 
   return (
-    <div className="max-w-225 mx-auto overflow-hidden mt-20">
+    <div className="max-w-225 mx-auto overflow-hidden mt-60">
       <div className="relative">
         {/* Continuous scrolling animation */}
         <div 

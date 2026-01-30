@@ -23,8 +23,8 @@ const ServiceCard = ({
       data-aos-duration={dataAosDuration}
       className="bg-[#135A6A] rounded-lg p-6 lg:p-8"
     >
-      <h3 className="text-xl lg:text-[22px] font-bold mb-4">{title}</h3>
-      <p className="text-white/80 mb-6 text-sm lg:text-base">{description}</p>
+      <h3 className="text-xl lg:text-[22px] font-semibold mb-4">{title}</h3>
+      <p className="text-white/80 mb-6 text-sm">{description}</p>
       <Button
         className={cn(
           "bg-transparent text-white hover:bg-white/10 rounded-full",

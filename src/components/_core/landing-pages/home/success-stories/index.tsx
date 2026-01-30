@@ -4,11 +4,15 @@ import React, { useState, useEffect } from "react";
 import { Star } from "lucide-react";
 import type { CarouselApi } from "@/components/ui/carousel";
 import SuccessStoriesSlider from "./success-stories-slider";
+import Aos from "aos";
 
 const SuccessStories = () => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
+  React.useEffect(() => {
+    Aos.init();
+  }, []);
   const testimonials = [
     {
       id: 1,
@@ -79,7 +83,7 @@ const SuccessStories = () => {
   }, [api]);
 
   return (
-    <div className="bg-[#F8FAFB] py-12 lg:py-20">
+    <div data-aos="fade-up" className="bg-[#F8FAFB] py-12 lg:py-20">
       <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
         {/* Title Section */}
         <div className="text-center mb-12">
@@ -101,7 +105,7 @@ const SuccessStories = () => {
 
         {/* Testimonial Content */}
         {testimonials[current] && (
-          <div className="text-center max-w-3xl mx-auto">
+          <div data-aos="fade-up" className="text-center max-w-3xl mx-auto">
             {/* Quote */}
             <p className="text-xl lg:text-2xl text-gray-800 font-medium mb-6 leading-relaxed">
               "{testimonials[current].quote}"

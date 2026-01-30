@@ -2,9 +2,13 @@
 
 import React, { useState } from "react";
 import { Plus, Minus, ArrowRight, MessageCircle } from "lucide-react";
+import Aos from "aos";
 
 const Faq = () => {
   const [openItems, setOpenItems] = useState<number[]>([]);
+  React.useEffect(() => {
+    Aos.init();
+  }, []);
 
   const faqs = [
     {
@@ -53,9 +57,9 @@ const Faq = () => {
   };
 
   return (
-    <div className="bg-[#F8FAFB] py-12 lg:py-20">
+    <div data-aos="fade-up" className="bg-[#F8FAFB] py-12 lg:py-20">
       <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="lg:max-w-[420px] text-3xl lg:text-4xl xl:text-5xl font-bold text-[#092A31] mb-8">
+        <h2 className="lg:max-w-105 text-3xl lg:text-4xl xl:text-5xl font-bold text-[#092A31] mb-8">
           Frequently Asked Questions
         </h2>
         <div className="flex flex-col lg:flex-row gap-20 lg:gap-12">

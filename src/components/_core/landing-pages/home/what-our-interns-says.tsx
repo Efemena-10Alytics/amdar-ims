@@ -146,7 +146,7 @@ const WhatOurInternsSays = () => {
         {/* Header Section */}
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-[#092A31] mb-4">
-            What Our Interns Says
+            What Our Interns Say
           </h2>
           <p className="text-[#092A31]/70 text-base lg:text-lg max-w-2xl mx-auto">
             Our interns have gone on to secure roles across the UK, US, Canada,

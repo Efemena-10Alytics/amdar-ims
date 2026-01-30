@@ -23,8 +23,8 @@ const Internship = () => {
         {/* Left Panel - Promotional CTA */}
         <div className="lg:w-[36%] flex flex-col">
           <div>
-            <h2 className="text-[24px] max-w-sm lg:text-[28px] font-bold text-[#092A31] mb-4 leading-tight">
-              Gain global work experience in any of these careers
+            <h2 className="text-[24px] max-w-sm lg:text-[28px] font-semibold text-[#092A31] mb-4 leading-tight">
+              Gain global <br /> work experience <br /> in any of these careers
             </h2>
             <p className="text-[#64748B] text-sm mb-6">
               Some of our current Work Experience Programmes

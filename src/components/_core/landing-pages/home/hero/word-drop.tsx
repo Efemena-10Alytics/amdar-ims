@@ -2,7 +2,7 @@ import React from "react";
 import gsap from "gsap";
 
 const WordDrop = () => {
-  const headlineRef = React.useRef<HTMLSpanElement>(null);
+  const headlineRef = React.useRef<HTMLDivElement>(null);
   const HEADLINE_WORDS = ["Gain", "Work", "Experience", "Through"];
 
   React.useEffect(() => {
@@ -26,13 +26,13 @@ const WordDrop = () => {
     );
   }, []);
   return (
-    <span ref={headlineRef} className="inline-block">
+    <div ref={headlineRef} className="inline-block">
       {HEADLINE_WORDS.map((word) => (
-        <span key={word} className="hero-word inline-block mr-[0.25em]">
+        <h1 key={word} className="hero-word font-clash-display inline-block mr-[0.25em]">
           {word}
-        </span>
+        </h1>
       ))}
-    </span>
+    </div>
   );
 };
 

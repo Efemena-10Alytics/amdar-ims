@@ -1,11 +1,20 @@
+"use client";
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Phone, MessageCircle, Instagram, Facebook, Twitter, Youtube } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import {
+  ArrowRight,
+  Phone,
+  MessageCircle,
+  Instagram,
+  Facebook,
+  Twitter,
+  Youtube,
+} from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import CTAbanner from "./cta-banner";
+import Aos from "aos";
 
 const Footer = () => {
   const projectsLinks = [
@@ -46,21 +55,25 @@ const Footer = () => {
     { icon: Youtube, href: "#", label: "YouTube" },
   ];
 
+  React.useEffect(() => {
+    Aos.init();
+  }, []);
+
   return (
     <footer className="text-white relative overflow-hidden">
       {/* Background Color */}
       <div className="absolute inset-0 bg-[#092A31] z-0" />
       {/* Ellipse Overlay */}
-      <div 
+      <div
         className="absolute inset-0 z-1"
         style={{
-          backgroundImage: 'url(/images/svgs/footer-ellipse.svg)',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover',
+          backgroundImage: "url(/images/svgs/footer-ellipse.svg)",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
         }}
       />
-      
+
       {/* CTA Banner */}
       <div className="relative z-10">
         <CTAbanner />
@@ -80,9 +93,10 @@ const Footer = () => {
               className="mb-4"
             />
             <p className="text-sm text-white/80 mb-6 leading-relaxed">
-              At AMDARI, our goal is to get you closer to career success with our
-              ready-made project solutions. Our end-to-end portfolio projects are
-              designed to help you Increase your chances of landing a Data Science job
+              At AMDARI, our goal is to get you closer to career success with
+              our ready-made project solutions. Our end-to-end portfolio
+              projects are designed to help you Increase your chances of landing
+              a Data Science job
             </p>
             <div className="flex rounded-lg bg-[#0F4652] overflow-hidden mb-4 border-0">
               <input
@@ -103,7 +117,7 @@ const Footer = () => {
                 id="terms"
                 className={cn(
                   "border-white/60 data-[state=checked]:bg-primary",
-                  "data-[state=checked]:border-amdari-yellow"
+                  "data-[state=checked]:border-amdari-yellow",
                 )}
               />
               <span>I agree to the terms of service</span>
@@ -145,7 +159,7 @@ const Footer = () => {
           {/* Contact Us */}
           <div>
             <h3 className="text-base font-bold uppercase mb-4">CONTACT US</h3>
-            
+
             {/* WhatsApp Contacts */}
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-3">

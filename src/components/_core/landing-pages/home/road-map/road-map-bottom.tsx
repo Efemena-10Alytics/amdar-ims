@@ -1,24 +1,20 @@
+"use client";
 import React from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import ToolsSlider from "./tools-slider";
+import Aos from "aos";
 
 const RoadMapBottom = () => {
   // Technology icons - placeholder for now, you can replace with actual icons
-  const techIcons = [
-    { id: 1, name: "Tool 1" },
-    { id: 2, name: "Tool 2" },
-    { id: 3, name: "Tool 3" },
-    { id: 4, name: "Tool 4" },
-    { id: 5, name: "Tool 5" },
-    { id: 6, name: "Tool 6" },
-    { id: 7, name: "Tool 7" },
-  ];
+  React.useEffect(() => {
+    Aos.init();
+  }, []);
 
   return (
     <div className="bg-[#092A31] py-12 lg:py-20 relative overflow-hidden">
-      <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
+      <div data-aos="fade-up" className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Left Side */}
           <div>
