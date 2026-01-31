@@ -3,6 +3,7 @@ import { Sora } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
 import "aos/dist/aos.css";
+import { Providers } from "./providers";
 
 const sora = Sora({
   variable: "--font-sora",
@@ -32,8 +33,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${sora.variable}! antialiased`}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${sora.variable}! antialiased`} suppressHydrationWarning>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

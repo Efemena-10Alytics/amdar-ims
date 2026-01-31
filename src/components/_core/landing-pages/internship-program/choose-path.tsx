@@ -1,99 +1,23 @@
+"use client";
+
+import { useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { useGetInternshipPrograms } from "@/features/internship/use-get-all-internship-programs";
+import { InternshipProgram } from "@/types/internship-program";
 
 const ChoosePath = () => {
-  const careerPaths = [
-    {
-      id: 1,
-      title: "Project Management / Scrum",
-      description:
-        "Lead projects successfully, manage resources, mitigate risks, and ensure timely delivery. Transition into a crucial role in functional initiatives.",
-      price: "USD 390",
-      image: "/images/pngs/internship.png", // Placeholder - replace with actual image
-    },
-    {
-      id: 2,
-      title: "Cybersecurity",
-      description:
-        "Protect systems against threats, identify vulnerabilities, implement security protocols, and fortify industry best practices to ensure robust security postures.",
-      price: "USD 390",
-      image: "/images/pngs/internship.png",
-    },
-    {
-      id: 3,
-      title: "Data Analytics",
-      description:
-        "Turn complex data into insights that drive strategic decisions. Develop predictive models, and communicate findings to key stakeholders.",
-      price: "USD 390",
-      image: "/images/pngs/internship.png",
-    },
-    {
-      id: 4,
-      title: "Product Design",
-      description:
-        "Create user-centric designs, analyze user behavior, and iterate on prototypes. Develop intuitive interfaces that align with industry standards.",
-      price: "USD 599",
-      image: "/images/pngs/internship.png",
-    },
-    {
-      id: 5,
-      title: "Data Science",
-      description:
-        "Develop algorithms, manage pipelines, optimize databases, and interpret complex data to derive actionable insights.",
-      price: "USD 390",
-      image: "/images/pngs/internship.png",
-    },
-    {
-      id: 6,
-      title: "Business Analytics",
-      description:
-        "Work with stakeholders, use data to provide strategic recommendations, and generate feedback loops to optimize business processes.",
-      price: "USD 390",
-      image: "/images/pngs/internship.png",
-    },
-    {
-      id: 7,
-      title: "Data Engineering",
-      description:
-        "Build scalable data insights that drive strategic decisions. Develop predictive models, and communicate findings to key stakeholders.",
-      price: "USD 390",
-      image: "/images/pngs/internship.png",
-    },
-    {
-      id: 8,
-      title: "Cloud & DevOps",
-      description:
-        "Deploy, automate, monitor, & administer cloud environments. Implement CI/CD pipelines & ensure system reliability and efficiency.",
-      price: "USD 390",
-      image: "/images/pngs/internship.png",
-    },
-    {
-      id: 9,
-      title: "SOC Analytics",
-      description:
-        "Monitor, evaluate, monitor and respond to security incidents. Implement security controls & ensure compliance with industry procedures.",
-      price: "USD 390",
-      image: "/images/pngs/internship.png",
-    },
-    {
-      id: 10,
-      title: "Ethical Hacking",
-      description:
-        "Identify, evaluate, monitor, and implement security controls and compliance with industry procedures.",
-      price: "USD 390",
-      image: "/images/pngs/internship.png",
-    },
-    {
-      id: 11,
-      title: "Governance Risk & Compliance",
-      description:
-        "Deploy, automate, monitor, and administer cloud environments. Implement CI/CD pipelines and ensure system reliability and efficiency.",
-      price: "USD 390",
-      image: "/images/pngs/internship.png",
-    },
-  ];
+  const internshipProgramsQuery = useGetInternshipPrograms();
+
+  useEffect(() => {
+    console.log("useGetInternshipPrograms:", internshipProgramsQuery);
+  }, [internshipProgramsQuery]);
+
+  const { data: internshipPrograms } = internshipProgramsQuery as unknown as {
+    data: InternshipProgram[];
+  };
 
   return (
     <div className="bg-white py-12 lg:py-20">
@@ -121,7 +45,7 @@ const ChoosePath = () => {
 
         {/* Career Path Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {careerPaths.map((career) => (
+          {internshipPrograms?.map((career) => (
             <div
               key={career.id}
               className="bg-[#E8EFF1] p-4 md:p-6 rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
@@ -148,9 +72,9 @@ const ChoosePath = () => {
 
                 <div className="flex items-center justify-between">
                   <span className="text-lg font-bold text-[#092A31]">
-                    {career.price}
+                    {career.duration}
                   </span>
-                  <Link href={"/internship-program/1"}>
+                  <Link href={`/internship-program/${career.id}`}>
                     <Button
                       className={cn(
                         "bg-primary text-white hover:bg-[#0f4d5a] rounded-full px-4 py-2 text-sm font-medium",

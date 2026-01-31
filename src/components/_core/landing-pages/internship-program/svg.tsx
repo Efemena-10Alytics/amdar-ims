@@ -65,34 +65,34 @@ export const LinkedInSVG = () => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <g clip-path="url(#clip0_833_7588)">
+    <g clipPath="url(#clip0_833_7588)">
       <path
         d="M23.625 3.5H4.375C3.89175 3.5 3.5 3.89175 3.5 4.375V23.625C3.5 24.1082 3.89175 24.5 4.375 24.5H23.625C24.1082 24.5 24.5 24.1082 24.5 23.625V4.375C24.5 3.89175 24.1082 3.5 23.625 3.5Z"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M13.125 12.25V19.25"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M9.625 12.25V19.25"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M13.125 15.3125C13.125 14.5003 13.4477 13.7213 14.022 13.147C14.5963 12.5727 15.3753 12.25 16.1875 12.25C16.9997 12.25 17.7787 12.5727 18.353 13.147C18.9273 13.7213 19.25 14.5003 19.25 15.3125V19.25"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M9.625 10.5C10.3499 10.5 10.9375 9.91237 10.9375 9.1875C10.9375 8.46263 10.3499 7.875 9.625 7.875C8.90013 7.875 8.3125 8.46263 8.3125 9.1875C8.3125 9.91237 8.90013 10.5 9.625 10.5Z"
@@ -115,48 +115,48 @@ export const UserFourSVG = () => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <g clip-path="url(#clip0_833_7607)">
+    <g clipPath="url(#clip0_833_7607)">
       <path
         d="M8.75 21.875C10.683 21.875 12.25 20.308 12.25 18.375C12.25 16.442 10.683 14.875 8.75 14.875C6.817 14.875 5.25 16.442 5.25 18.375C5.25 20.308 6.817 21.875 8.75 21.875Z"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M8.75 10.5C10.683 10.5 12.25 8.933 12.25 7C12.25 5.067 10.683 3.5 8.75 3.5C6.817 3.5 5.25 5.067 5.25 7C5.25 8.933 6.817 10.5 8.75 10.5Z"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M19.25 21.875C21.183 21.875 22.75 20.308 22.75 18.375C22.75 16.442 21.183 14.875 19.25 14.875C17.317 14.875 15.75 16.442 15.75 18.375C15.75 20.308 17.317 21.875 19.25 21.875Z"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M3.5 24.5C4.11128 23.685 4.90392 23.0234 5.81516 22.5678C6.7264 22.1122 7.7312 21.875 8.75 21.875C9.7688 21.875 10.7736 22.1122 11.6848 22.5678C12.5961 23.0234 13.3887 23.685 14 24.5C14.6113 23.685 15.4039 23.0234 16.3152 22.5678C17.2264 22.1122 18.2312 21.875 19.25 21.875C20.2688 21.875 21.2736 22.1122 22.1848 22.5678C23.0961 23.0234 23.8887 23.685 24.5 24.5"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M19.25 10.5C21.183 10.5 22.75 8.933 22.75 7C22.75 5.067 21.183 3.5 19.25 3.5C17.317 3.5 15.75 5.067 15.75 7C15.75 8.933 17.317 10.5 19.25 10.5Z"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M3.5 13.125C4.11128 12.31 4.90392 11.6484 5.81516 11.1928C6.7264 10.7372 7.7312 10.5 8.75 10.5C9.7688 10.5 10.7736 10.7372 11.6848 11.1928C12.5961 11.6484 13.3887 12.31 14 13.125C14.6113 12.31 15.4039 11.6484 16.3152 11.1928C17.2264 10.7372 18.2312 10.5 19.25 10.5C20.2688 10.5 21.2736 10.7372 22.1848 11.1928C23.0961 11.6484 23.8887 12.31 24.5 13.125"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </g>
     <defs>
@@ -175,55 +175,55 @@ export const DeskSVG = () => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <g clip-path="url(#clip0_833_7634)">
+    <g clipPath="url(#clip0_833_7634)">
       <path
         d="M2.625 7.875V21"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M25.375 7.875V21"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M14 7.875V14.875"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M0.875 7.875H27.125"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M2.625 14.875H25.375"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M7 11.375H9.625"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M18.375 11.375H21"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </g>
     <defs>
@@ -242,72 +242,72 @@ export const PlugSVG = () => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <g clip-path="url(#clip0_833_7658)">
+    <g clipPath="url(#clip0_833_7658)">
       <path
         d="M15.75 15.75L13.125 18.375"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M15.75 15.75L13.125 18.375"
         stroke="#092A31"
-        stroke-width="0.125"
+        strokeWidth="0.125"
       />
       <path
         d="M12.25 12.25L9.625 14.875"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M12.25 12.25L9.625 14.875"
         stroke="#092A31"
-        stroke-width="0.125"
+        strokeWidth="0.125"
       />
       <path
         d="M7 12.25L15.75 21"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M6.35031 21.6504L2.625 25.3757"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M14.4371 19.6875L11.2652 22.8594C10.7729 23.3516 10.1053 23.6282 9.4091 23.6282C8.71293 23.6282 8.04528 23.3516 7.553 22.8594L5.14019 20.4433C4.64895 19.9511 4.37305 19.2842 4.37305 18.5888C4.37305 17.8935 4.64895 17.2265 5.14019 16.7344L8.31207 13.5625"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M12.25 7L21 15.75"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M21.6494 6.35031L25.3747 2.625"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M19.6875 14.4371L22.8594 11.2652C23.3516 10.7729 23.6282 10.1053 23.6282 9.4091C23.6282 8.71293 23.3516 8.04528 22.8594 7.553L20.4433 5.14019C19.9511 4.64895 19.2842 4.37305 18.5888 4.37305C17.8935 4.37305 17.2265 4.64895 16.7344 5.14019L13.5625 8.31207"
         stroke="#092A31"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </g>
     <defs>
