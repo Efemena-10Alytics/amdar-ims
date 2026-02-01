@@ -4,8 +4,13 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Play } from "lucide-react";
 import Mentors from "./mentors";
+import type { InternshipProgram } from "@/types/internship-program";
 
-const Right = () => {
+interface RightProps {
+  program?: InternshipProgram;
+}
+
+const Right = ({ program }: RightProps) => {
   const [countdown, setCountdown] = useState({
     days: 21,
     hours: 3,

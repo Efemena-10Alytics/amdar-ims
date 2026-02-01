@@ -1,3 +1,5 @@
+import { CareerOpportunity } from "@/types/internship-program";
+
 const overviewContent = {
   "Who Is This For?": `Entry-level DevOps engineers with foundational cloud or system knowledge,Recent graduates of DevOps, Cloud Engineering, or SRE programs Software engineers transitioning into DevOps or Cloud roles IT professionals seeking hands-on experience in cloud infrastructure and automation`,
 
@@ -7,10 +9,18 @@ const overviewContent = {
   "Impactful Work": `DevOps engineers play a critical role in enabling faster product delivery, system stability, and scalability. Your work directly impacts uptime, performance, security, and reliability—factors that can make or break a company's success in today's competitive market.`,
 };
 
-const CareerOpporturnity = () => {
+interface CareerOpporturnityProps {
+  careerOpporturnity: CareerOpportunity[] | undefined;
+}
+
+const CareerOpporturnity = ({
+  careerOpporturnity,
+}: CareerOpporturnityProps) => {
   return (
     <div className="space-y-8">
-      <h2 className="text-2xl font-bold text-[#092A31] mb-6">Career Opporturnity</h2>
+      <h2 className="text-2xl font-bold text-[#092A31] mb-6">
+        Career Opporturnity
+      </h2>
 
       {/* Who Is This For? */}
 

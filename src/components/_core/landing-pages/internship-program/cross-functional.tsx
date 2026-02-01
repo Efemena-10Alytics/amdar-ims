@@ -1,6 +1,11 @@
 import Image from "next/image";
+import type { InternshipProgram } from "@/types/internship-program";
 
-const CrossFunctional = () => {
+interface CrossFunctionalProps {
+  program?: InternshipProgram;
+}
+
+const CrossFunctional = ({ program }: CrossFunctionalProps) => {
   return (
     <div className="max-w-325 mx-auto py-16 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col md:flex-row gap-2 md:gap-6">

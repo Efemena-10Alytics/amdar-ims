@@ -71,9 +71,14 @@ const ChoosePath = () => {
                 </p>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-lg font-bold text-[#092A31]">
-                    {career.duration}
-                  </span>
+                  <div>
+                    <span className="text-lg font-semibold text-[#092A31]">
+                      <div className="text-[#64748B] line-through text-sm font-normal">
+                        USD 500
+                      </div>
+                      <div>USD 390</div>
+                    </span>
+                  </div>
                   <Link href={`/internship-program/${career.id}`}>
                     <Button
                       className={cn(
