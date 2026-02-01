@@ -3,8 +3,10 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import ViewProjectDialog from "./view-project-dialog";
+import { Project } from "@/types/internship-program";
+import { imageBaseurl, imageUrl } from "@/lib/utils";
 
-const projects = [
+const hhah = [
   {
     id: 1,
     title: "TeleCare Connection Expansion Project",
@@ -22,11 +24,15 @@ const projects = [
   },
 ];
 
-const InternsProject = () => {
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null);
+interface InternsProjectProps {
+  projects?: Project[];
+}
 
-  const openDialog = (project: typeof projects[0]) => {
+const InternsProject = ({ projects = [] }: InternsProjectProps) => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
+  const openDialog = (project: (typeof projects)[0]) => {
     setSelectedProject(project);
     setDialogOpen(true);
   };
@@ -38,15 +44,15 @@ const InternsProject = () => {
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {projects.map((project) => (
+        {(projects ?? []).map((project) => (
           <div key={project.id} className="space-y-3">
             <div
               className="group relative block overflow-hidden aspect-4/3 min-h-60 cursor-pointer"
               onClick={() => openDialog(project)}
             >
               <Image
-                src={project.image}
-                alt={project.title}
+                src={`${imageUrl}${project?.project_image}`}
+                alt={project?.name}
                 fill
                 className="object-cover transition-transform group-hover:scale-105"
               />
@@ -60,11 +66,11 @@ const InternsProject = () => {
             </div>
             <div className="space-y-2">
               <p className="text-sm text-[#092A31] font-medium truncate">
-                {project.caption}
+                {project?.description}
               </p>
-              {project.author && (
+              {project?.project_contributor && (
                 <p className="text-sm text-[#092A31] font-medium truncate">
-                  {project.author}
+                  {project?.project_contributor}
                 </p>
               )}
             </div>
@@ -75,16 +81,7 @@ const InternsProject = () => {
       <ViewProjectDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
-        project={
-          selectedProject
-            ? {
-                title: selectedProject.title,
-                overviewTitle: selectedProject.title,
-                overviewSubtitle: selectedProject.author,
-                overviewImage: selectedProject.image,
-              }
-            : undefined
-        }
+        project={selectedProject ?? undefined}
       />
     </div>
   );

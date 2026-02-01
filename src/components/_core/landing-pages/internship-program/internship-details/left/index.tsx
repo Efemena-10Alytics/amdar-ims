@@ -163,11 +163,17 @@ const Left = ({ program }: LeftProps) => {
 
       {/* Content Section */}
       {activeTab === "Overview" && <Overview overview={program?.overview} />}
-      {activeTab === "Interns projects" && <InternsProject />}
+      {activeTab === "Interns projects" && (
+        <InternsProject projects={program?.projects ?? []} />
+      )}
       {activeTab === "What you'll gain" && <Gain gain={program?.gain} />}
-      {activeTab === "Career Opportunity" && <CareerOpporturnity careerOpporturnity={program?.career_opportunities} />}
+      {activeTab === "Career Opportunity" && (
+        <CareerOpporturnity
+          careerOpporturnity={program?.career_opportunities}
+        />
+      )}
       {activeTab === "Program Structure" && <ProgramStructure />}
-      {activeTab === "Faqs" && <Faq />}
+      {activeTab === "Faqs" && <Faq faqs={program?.faqs || []} />}
       {activeTab === "Payment Structure" && <PaymentStructure />}
       {activeTab === "Mentors" && <Mentors />}
 

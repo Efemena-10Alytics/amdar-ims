@@ -1,3 +1,4 @@
+import { imageBaseurl } from "@/lib/utils";
 import { CareerOpportunity } from "@/types/internship-program";
 import Image from "next/image";
 
@@ -8,7 +9,7 @@ interface CareerOpporturnityProps {
 const CareerOpporturnity = ({
   careerOpporturnity,
 }: CareerOpporturnityProps) => {
-  const url = process.env.NEXT_PUBLIC_REACT_IMAGE_URL ?? "";
+
   return (
     <div className="space-y-8">
       <h2 className="text-2xl font-bold text-[#092A31] mb-6">
@@ -23,7 +24,7 @@ const CareerOpporturnity = ({
           >
             {item.icon ? (
               <Image
-                src={`${url}/${item.icon}`}
+                src={`${imageBaseurl}/${item.icon}`}
                 alt={item.text ?? "Career opportunity"}
                 width={16}
                 height={16}
