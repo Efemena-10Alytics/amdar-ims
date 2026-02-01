@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { Calendar, User, MapPin, TrendingUp, ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -15,9 +15,16 @@ import Faq from "./faq";
 import PaymentStructure from "./payment-structure";
 import Mentors from "./mentors";
 import Link from "next/link";
+import type { InternshipProgram } from "@/types/internship-program";
 
-const Left = () => {
+interface LeftProps {
+  program?: InternshipProgram;
+}
+
+const Left = ({ program }: LeftProps) => {
   const [activeTab, setActiveTab] = useState("Overview");
+
+  console.log("program:", program);
 
   const tabs = [
     "Overview",
@@ -25,35 +32,40 @@ const Left = () => {
     "Career Opportunity",
     "Program Structure",
     "Faqs",
-    "Payment Structure",
-    "Mentors",
+    // "Mentors",
     "Interns projects",
   ];
 
-  const tools = [
+  const defaultTools = [
     { name: "Figma", icon: "/images/svgs/tools/figma.svg" },
-    { name: "Sketch", icon: "/images/svgs/tools/sketch.svg" }, // Placeholder
-    { name: "Trello", icon: "/images/svgs/tools/trello.svg" }, // Placeholder
+    { name: "Sketch", icon: "/images/svgs/tools/sketch.svg" },
+    { name: "Trello", icon: "/images/svgs/tools/trello.svg" },
     { name: "Jira", icon: "/images/svgs/tools/jira-2.svg" },
-    { name: "Photoshop", icon: "/images/svgs/tools/photoshop.svg" }, // Placeholder
-    { name: "Canva", icon: "/images/svgs/tools/canva.svg" }, // Placeholder
+    { name: "Photoshop", icon: "/images/svgs/tools/photoshop.svg" },
+    { name: "Canva", icon: "/images/svgs/tools/canva.svg" },
     {
       name: "Adobe Illustration",
       icon: "/images/svgs/tools/adobe-illustrator.svg",
-    }, // Placeholder
-    { name: "Light Room", icon: "/images/svgs/tools/light-room.svg" }, // Placeholder
+    },
+    { name: "Light Room", icon: "/images/svgs/tools/light-room.svg" },
   ];
+  const tools =
+    (program?.tools?.length &&
+      program.tools.map((t) => ({
+        name: t.name,
+        icon: "/images/svgs/tools/adobe-illustrator.svg",
+      }))) ||
+    defaultTools;
 
   return (
     <div className="py-12 lg:py-20">
       {/* Header Section */}
       <div className="mb-8">
         <h1 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-[#092A31] mb-4">
-          DevOps Career Experience Internship (DCEI)
+          {program?.title}
         </h1>
         <p className="text-gray-600 text-base lg:text-lg mb-6 leading-relaxed">
-          Deploy, automate, monitor, and optimize cloud environments using
-          real-world infrastructure principles and workflows.
+          {program?.description}
         </p>
 
         {/* Key Details */}
@@ -61,7 +73,9 @@ const Left = () => {
           <div className="grid gap-2">
             <div className="flex items-center gap-2 px-3 py-1.5">
               <CalendarSvg />
-              <span className="text-sm text-[#64748B]">4 months</span>
+              <span className="text-sm text-[#64748B]">
+                {program?.duration}
+              </span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5">
               <UserFillSVG />
@@ -71,12 +85,14 @@ const Left = () => {
           <div className="grid gap-2">
             <div className="flex items-center gap-2 px-3 py-1.5">
               <LocationSvg />
-              <span className="text-sm text-[#64748B]">Remote</span>
+              <span className="text-sm text-[#64748B] capitalize">
+                {program?.type}
+              </span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5">
               <TrensFillDvg />
               <span className="text-sm text-[#64748B]">
-                Beginner - Intermediate
+                {program?.level ? program.level : "Beginner - Intermediate"}
               </span>
             </div>
           </div>
@@ -86,7 +102,7 @@ const Left = () => {
         <div className="flex flex-wrap gap-3">
           {tools.map((tool, index) => (
             <div
-              key={index}
+              key={tool.name}
               className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-gray-200"
             >
               <Image
@@ -146,10 +162,10 @@ const Left = () => {
       </div>
 
       {/* Content Section */}
-      {activeTab === "Overview" && <Overview />}
+      {activeTab === "Overview" && <Overview overview={program?.overview} />}
       {activeTab === "Interns projects" && <InternsProject />}
-      {activeTab === "What you'll gain" && <Gain />}
-      {activeTab === "Career Opportunity" && <CareerOpporturnity />}
+      {activeTab === "What you'll gain" && <Gain gain={program?.gain} />}
+      {activeTab === "Career Opportunity" && <CareerOpporturnity careerOpporturnity={program?.career_opportunities} />}
       {activeTab === "Program Structure" && <ProgramStructure />}
       {activeTab === "Faqs" && <Faq />}
       {activeTab === "Payment Structure" && <PaymentStructure />}

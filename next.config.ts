@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "api.amdari.io",
-        pathname: "/storage/images/**",
+        pathname: "/storage/**",
       },
     ],
   },

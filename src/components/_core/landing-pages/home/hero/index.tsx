@@ -104,7 +104,7 @@ const InternshipHero = () => {
             description="Industry-relevant projects that replicate real-world challenges, helping you build practical skills."
             buttonText="Get me started"
             dataAos="fade-up"
-            dataAosDuration="600"
+            // dataAosDuration="00"
           />
           <ServiceCard
             title="Work Experience Internship"

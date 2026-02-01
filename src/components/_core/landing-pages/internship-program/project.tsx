@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import ProjectSlide from "./project-slide";
+import type { InternshipProgram } from "@/types/internship-program";
 
 const OVERLAY_QUOTE =
   "Our program is not a course. It is work experience, with expectations, deliverables, teamwork, leadership guidance, and results.";
@@ -11,7 +12,11 @@ const OVERLAY_QUOTE =
 const PARAGRAPH =
   "Most people learn tech skills... but can't prove they can apply them. Amdari was created to solve this problem. We give you structured work experience that mirrors how teams operate in real organizations.";
 
-const Project = () => {
+interface ProjectProps {
+  program?: InternshipProgram;
+}
+
+const Project = ({ program }: ProjectProps) => {
   return (
     <div className="bg-[#F1F5F6] py-12 lg:py-20">
       <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
