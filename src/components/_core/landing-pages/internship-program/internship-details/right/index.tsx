@@ -18,20 +18,6 @@ const Right = ({ program }: RightProps) => {
     seconds: 48,
   });
 
-  const skills = [
-    "Prototyping",
-    "Interface design",
-    "User research",
-    "Quantitative research",
-    "Qualitative research",
-    "Wireframing",
-    "Presentations",
-    "Slides",
-    "Animation",
-    "Brain storming",
-    "Mood board",
-  ];
-
   const mentors = [
     {
       id: 1,
@@ -130,7 +116,10 @@ const Right = ({ program }: RightProps) => {
           </div>
         </div>
 
-        <a href="#" className="text-primary underline text-sm font-medium">
+        <a
+          href={`/payment/${program?.id}`}
+          className="text-primary underline text-sm font-medium"
+        >
           Apply for the next cohort
         </a>
       </div>
@@ -141,7 +130,7 @@ const Right = ({ program }: RightProps) => {
           Skills you will learn
         </h3>
         <div className="flex flex-wrap gap-2">
-          {skills.map((skill, index) => (
+          {program?.skills.map((skill, index) => (
             <span
               key={index}
               className="px-3 py-1.5 rounded-full bg-[#E8EFF1] text-sm text-[#092A31] font-medium"

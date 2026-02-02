@@ -1,12 +1,30 @@
-import PaymentMain from "@/components/_core/payment";
+"use client";
 
-const STEPS = [
-  { id: "checkout", label: "Checkout", active: true },
-  { id: "personal", label: "Personal Details", active: false },
-  { id: "payment", label: "Payment", active: false },
-];
+import { useParams } from "next/navigation";
+import PaymentMain from "@/components/_core/payment";
+import { useGetInternshipProgram } from "@/features/internship/use-get-internship-program";
 
 export default function PaymentPage() {
+  const params = useParams();
+  const id = params?.id as string | undefined;
+  const { data: program, isLoading, error } = useGetInternshipProgram(id);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white mt-20 flex items-center justify-center">
+        <p className="text-[#64748B]">Loading program...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-white mt-20 flex items-center justify-center">
+        <p className="text-destructive">Failed to load program. Please try again.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white mt-20">
       <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,7 +36,7 @@ export default function PaymentPage() {
             Please review and fill appropriate details.
           </p>
         </header>
-        <PaymentMain />
+        <PaymentMain program={program ?? undefined} />
       </div>
     </div>
   );

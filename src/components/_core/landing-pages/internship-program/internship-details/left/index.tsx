@@ -128,7 +128,7 @@ const Left = ({ program }: LeftProps) => {
             USD 390
           </div>
         </div>
-        <Link href={"/payment/1"}>
+        <Link href={`/payment/${program?.id}`}>
           <Button
             className={cn(
               "bg-primary text-white hover:bg-[#0f4d5a] rounded-full px-6 py-6 text-base font-medium",
