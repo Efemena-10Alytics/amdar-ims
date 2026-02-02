@@ -49,7 +49,7 @@ const RealWorldProject = () => {
           {careerItems.map((item, index) => (
             <div
               key={index}
-              className="bg-white p-5 rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
+              className="group hover:bg-primary bg-white p-5 rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
             >
               {/* Card Image */}
               <div className="relative w-full h-48 bg-gray-200 rounded-md">
@@ -63,17 +63,22 @@ const RealWorldProject = () => {
 
               {/* Card Content */}
               <div className="mt-4">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-bold text-[#092A31] group-hover:text-white mb-3">
                   {item.title}
                 </h3>
                 <ul className="text-gray-600 text-sm mb-4 leading-relaxed list-disc list-inside space-y-1">
                   {item.desc.map((x: string, i: number) => (
-                    <li key={i}>{x}</li>
+                    <li
+                      className="text-[#64748B] group-hover:text-white text-sm mb-4 leading-relaxed line-clamp-2"
+                      key={i}
+                    >
+                      {x}
+                    </li>
                   ))}
                 </ul>
                 <a
                   href="#"
-                  className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors text-sm font-medium"
+                  className="flex text-[#092A31] group-hover:text-white items-center gap-2 hover:text-primary transition-colors text-sm font-medium"
                 >
                   View Project
                   <div className="flex h-6 w-6 rounded-full justify-center items-center bg-primary">
