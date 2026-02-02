@@ -1,11 +1,12 @@
 "use client";
 
+import { useMemo } from "react";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import CustomButton from "../../shared/custom-button";
 import Link from "next/link";
 import { useGetInternshipPrograms } from "@/features/internship/use-get-all-internship-programs";
-import { getImageUrl } from "@/lib/utils";
+import { getImageUrl, pickRandomTwo } from "@/lib/utils";
 import type { InternshipProgram } from "@/types/internship-program";
 
 const FALLBACK_ITEMS = [
@@ -25,19 +26,22 @@ const Internship = () => {
   const { data: programs } = useGetInternshipPrograms() as unknown as {
     data: InternshipProgram[] | undefined;
   };
-  const careerItems = programs?.length
-    ? programs.slice(0, 2).map((p) => ({
-        id: p.id,
-        title: p.title,
-        desc: p.description,
-        image: getImageUrl(p.image) || "/images/pngs/internship.png",
-      }))
-    : FALLBACK_ITEMS.map((item, i) => ({
+  const careerItems = useMemo(() => {
+    if (!programs?.length)
+      return FALLBACK_ITEMS.map((item, i) => ({
         id: i,
         title: item.title,
         desc: item.desc,
         image: item.image,
       }));
+    const picked = pickRandomTwo(programs);
+    return picked.map((p) => ({
+      id: p.id,
+      title: p.title,
+      desc: p.description,
+      image: getImageUrl(p.image) || "/images/pngs/internship.png",
+    }));
+  }, [programs]);
 
   return (
     <div>
