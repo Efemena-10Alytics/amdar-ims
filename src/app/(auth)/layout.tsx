@@ -1,7 +1,7 @@
 import Aside from "@/components/_core/auth/aside";
 import React from "react";
 
-const LandingPageLayout = ({
+const AuthPagesLayout = ({
   children,
 }: Readonly<{ children: React.ReactNode }>) => {
   return (
@@ -12,4 +12,4 @@ const LandingPageLayout = ({
   );
 };
 
-export default LandingPageLayout;
+export default AuthPagesLayout;

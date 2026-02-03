@@ -12,10 +12,13 @@ import {
   GoogleSvg,
   LinkedInSvg,
 } from "@/components/_core/auth/svg";
+import ErrorElert from "@/components/_core/auth/error-alert";
+import ErrorAlert from "@/components/_core/auth/error-alert";
 
 export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
+  const [error, setError] = useState("Invalid email or password.");
 
   return (
     <main className="flex-1 w-full h-screen overflow-y-auto bg-[#F8FAFB] flex flex-col lg:pl-10">
@@ -35,13 +38,7 @@ export default function SignInPage() {
       <div className="w-full max-w-120">
         <div className="flex items-center gap-10 mb-2 px-6">
           <h1 className="text-2xl font-bold text-[#092A31]">Login</h1>
-          <div className="flex-1 p-3 flex justify-between gap-4 border border-[#AA3030] bg-[#FDECEC] rounded-md">
-            <div className="flex text-[#AA3030] gap-2 items-center">
-              <AlertCycleSvg />
-              <p className="text-xs flex-1">Email or password not recognized</p>
-            </div>
-            <X className="h-6 w-6 text-[#AA3030]" />
-          </div>
+          <ErrorAlert error={error} />
         </div>
         <div className="flex-1 flex items-center px-6 pb-6">
           <div className="w-full rounded-2xl bg-white p-6 border border-gray-100">
