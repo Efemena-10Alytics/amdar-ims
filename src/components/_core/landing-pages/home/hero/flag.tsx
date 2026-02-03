@@ -9,7 +9,7 @@ const flagsArray = [
   "/images/svgs/country/GER.svg",
 ];
 
-const Flag = () => {
+const Flag = ({ width = 32 }: { width?: number }) => {
   const [middleIndex, setMiddleIndex] = useState(0);
 
   useEffect(() => {
@@ -23,21 +23,21 @@ const Flag = () => {
     <div className="flex">
       <Image
         src={"/images/svgs/country/USA.svg"}
-        height={32}
-        width={32}
+        height={width}
+        width={width}
         alt="USA"
       />
       <Image
         src={flagsArray[middleIndex]}
-        height={32}
-        width={32}
+        height={width}
+        width={width}
         alt="Country flag"
         className="-translate-x-1.5"
       />
       <Image
         src={"/images/svgs/country/UK.svg"}
-        height={32}
-        width={32}
+        height={width}
+        width={width}
         alt="UK"
         className="-translate-x-3"
       />
