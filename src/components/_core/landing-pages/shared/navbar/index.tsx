@@ -85,7 +85,7 @@ const Navbr = () => {
 
             {/* Action Buttons - Desktop */}
             <div className="hidden lg:flex items-center gap-3 shrink-0">
-              <Link href="/sign-in">
+              <Link href="/auth/sign-in">
                 <Button
                   variant="outline"
                   className={cn(
@@ -98,7 +98,7 @@ const Navbr = () => {
                   Login
                 </Button>
               </Link>
-              <Link href="/sign-up">
+              <Link href="/auth/sign-up">
                 <Button
                   className={cn(
                     "rounded-full whitespace-nowrap px-10 border-0 xl:h-12",

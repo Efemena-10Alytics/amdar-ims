@@ -18,7 +18,11 @@ const REQUIREMENTS = [
   { id: "special", label: "One special character", test: (p: string) => /[^A-Za-z0-9]/.test(p) },
 ] as const;
 
-const CreatePassword = () => {
+interface CreatePasswordProps {
+  onSignUpSuccess?: () => void;
+}
+
+const CreatePassword = ({ onSignUpSuccess }: CreatePasswordProps) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -27,6 +31,11 @@ const CreatePassword = () => {
   const passwordsMatch = confirmPassword === "" || password === confirmPassword;
   const showMatchError = confirmPassword.length > 0 && !passwordsMatch;
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSignUpSuccess?.();
+  };
+
   const requirementStatus = useMemo(
     () => REQUIREMENTS.map((r) => ({ ...r, met: r.test(password) })),
     [password],
@@ -34,12 +43,12 @@ const CreatePassword = () => {
 
   return (
     <div className="rounded-2xl bg-white p-6 border border-gray-100">
-      <h2 className="text-xl font-bold text-[#092A31]">Create Password</h2>
+      <h2 className="text-xl font-semibold text-[#092A31]">Create Password</h2>
       <p className="mt-1 text-sm text-[#64748B]">
         We value your security create a solid password
       </p>
 
-      <form className="mt-6 space-y-5">
+      <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
         <div>
           <label
             htmlFor="password"
@@ -130,14 +139,14 @@ const CreatePassword = () => {
                   className={cn(
                     "flex h-5 w-5 shrink-0 items-center justify-center rounded border",
                     met
-                      ? "border-[#156374] bg-[#156374] text-white"
+                      ? "border-transprent bg-[#C7F5D8] text-primary"
                       : "border-gray-300 bg-white",
                   )}
                   aria-hidden
                 >
                   {met ? <Check className="h-3 w-3" strokeWidth={3} /> : null}
                 </span>
-                <span className={met ? "text-[#092A31]" : undefined}>
+                <span className={met ? "text-[#359E5B]" : undefined}>
                   {label}
                 </span>
               </li>

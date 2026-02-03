@@ -50,7 +50,7 @@ const PersonalInfo = ({ onContinue }: PersonalInfoProps) => {
 
   return (
     <div className="rounded-2xl bg-white p-6 border border-gray-100">
-      <h2 className="text-xl font-bold text-[#092A31]">Personal Information</h2>
+      <h2 className="text-xl font-semibold text-[#092A31]">Personal Information</h2>
       <p className="mt-1 text-sm text-[#64748B]">
         Fill in your appropriate details below
       </p>

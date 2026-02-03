@@ -17,7 +17,7 @@ export default function SignInPage() {
   return (
     <main className="flex-1 w-full h-full overflow-y-auto flex flex-col">
       <div className="flex justify-end p-6">
-        <Link href="/sign-up">
+        <Link href="/auth/sign-up">
           <Button
             variant="outline"
             className="rounded-md bg-[#B6CFD4] border-[#C8DDE3] text-[#092A31] hover:bg-[#B8CDD3] hover:border-[#B8CDD3] px-6"
@@ -29,7 +29,7 @@ export default function SignInPage() {
 
       <div className="w-full max-w-120">
         <div className="flex items-center gap-10 mb-2 px-6">
-          <h1 className="text-2xl font-bold text-[#092A31]">Login</h1>
+          <h1 className="text-2xl font-semibold text-[#092A31]">Login</h1>
           <ErrorAlert error={error} />
         </div>
         <div className="flex-1 flex items-center px-6 pb-6">
