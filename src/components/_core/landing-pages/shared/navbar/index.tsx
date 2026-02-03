@@ -85,27 +85,31 @@ const Navbr = () => {
 
             {/* Action Buttons - Desktop */}
             <div className="hidden lg:flex items-center gap-3 shrink-0">
-              <Button
-                variant="outline"
-                className={cn(
-                  "rounded-full whitespace-nowrap px-10 xl:px-14 xl:h-12",
-                  isHomePageRoute
-                    ? "border-white text-white bg-transparent hover:bg-white/10 hover:border-white"
-                    : "border-[#156374] text-[#156374] bg-white hover:bg-[#156374]/5 hover:border-[#0f4d5a] hover:text-[#0f4d5a]",
-                )}
-              >
-                Login
-              </Button>
-              <Button
-                className={cn(
-                  "rounded-full whitespace-nowrap px-10 border-0 xl:h-12",
-                  isHomePageRoute
-                    ? "bg-white text-[#156374] hover:bg-amdari-yellow hover:text-primary"
-                    : "bg-[#156374] text-white hover:bg-amdari-yellow hover:text-primary",
-                )}
-              >
-                Get Started
-              </Button>
+              <Link href="/sign-in">
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "rounded-full whitespace-nowrap px-10 xl:px-14 xl:h-12",
+                    isHomePageRoute
+                      ? "border-white text-white bg-transparent hover:bg-white/10 hover:border-white"
+                      : "border-[#156374] text-[#156374] bg-white hover:bg-[#156374]/5 hover:border-[#0f4d5a] hover:text-[#0f4d5a]",
+                  )}
+                >
+                  Login
+                </Button>
+              </Link>
+              <Link href="/sign-up">
+                <Button
+                  className={cn(
+                    "rounded-full whitespace-nowrap px-10 border-0 xl:h-12",
+                    isHomePageRoute
+                      ? "bg-white text-[#156374] hover:bg-amdari-yellow hover:text-primary"
+                      : "bg-[#156374] text-white hover:bg-amdari-yellow hover:text-primary",
+                  )}
+                >
+                  Get Started
+                </Button>
+              </Link>
             </div>
 
             {/* Hamburger Menu - Mobile */}

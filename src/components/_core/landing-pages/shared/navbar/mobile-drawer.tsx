@@ -1,21 +1,24 @@
-"use client"
+"use client";
 
-import React from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface MobileDrawerProps {
-  isDrawerOpen: boolean
-  onClose: () => void
-  navLinks: Array<{ label: string; href: string }>
+  isDrawerOpen: boolean;
+  onClose: () => void;
+  navLinks: Array<{ label: string; href: string }>;
 }
 
-const MobileDrawer = ({ isDrawerOpen, onClose, navLinks }: MobileDrawerProps) => {
-  const pathname = usePathname()
-  const isInternshipPage = pathname.startsWith("/internship-program")
+const MobileDrawer = ({
+  isDrawerOpen,
+  onClose,
+  navLinks,
+}: MobileDrawerProps) => {
+  const pathname = usePathname();
   return (
     <>
       {/* Drawer Overlay */}
@@ -51,7 +54,8 @@ const MobileDrawer = ({ isDrawerOpen, onClose, navLinks }: MobileDrawerProps) =>
           <div className="flex-1 overflow-y-auto p-4">
             <nav className="flex flex-col gap-4">
               {navLinks.map((link) => {
-                const isActive = link.href !== "#" && pathname.startsWith(link.href);
+                const isActive =
+                  link.href !== "#" && pathname.startsWith(link.href);
                 return (
                   <Link
                     key={link.label}
@@ -71,31 +75,36 @@ const MobileDrawer = ({ isDrawerOpen, onClose, navLinks }: MobileDrawerProps) =>
 
             {/* Drawer Buttons */}
             <div className="flex flex-col gap-3 mt-6 pt-6 border-t border-gray-200">
-              <Button
-                variant="outline"
-                onClick={onClose}
-                className={cn(
-                  "w-full border-[#156374] text-[#156374] bg-white hover:bg-[#156374]/5",
-                  "hover:border-[#0f4d5a] hover:text-[#0f4d5a]",
-                )}
-              >
-                Login
-              </Button>
-              <Button
-                onClick={onClose}
-                className={cn(
-                  "w-full bg-[#156374] text-white hover:bg-amdari-yellow hover:text-primary",
-                  "border-0",
-                )}
-              >
-                Get Started
-              </Button>
+              <Link href="/sign-in">
+                <Button
+                  variant="outline"
+                  onClick={onClose}
+                  className={cn(
+                    "w-full border-[#156374] text-[#156374] bg-white hover:bg-[#156374]/5",
+                    "hover:border-[#0f4d5a] hover:text-[#0f4d5a]",
+                  )}
+                >
+                  Login
+                </Button>
+              </Link>
+
+              <Link href="/sign-up">
+                <Button
+                  onClick={onClose}
+                  className={cn(
+                    "w-full bg-[#156374] text-white hover:bg-amdari-yellow hover:text-primary",
+                    "border-0",
+                  )}
+                >
+                  Get Started
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default MobileDrawer
+export default MobileDrawer;

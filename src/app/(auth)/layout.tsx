@@ -7,7 +7,7 @@ const AuthPagesLayout = ({
   return (
     <div className="w-full h-screen overflow-hidden flex bg-white p-5">
       <Aside />
-      <div className="w-full bg-[#E8EFF1]">{children}</div>
+      <div className="w-full bg-[#E8EFF1] lg:pl-10">{children}</div>
     </div>
   );
 };
