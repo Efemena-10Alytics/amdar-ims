@@ -48,7 +48,7 @@ const ChoosePath = () => {
           {internshipPrograms?.map((career) => (
             <div
               key={career.id}
-              className="bg-[#E8EFF1] p-4 md:p-6 rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
+              className="group bg-[#E8EFF1] hover:bg-primary p-4 md:p-6 rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
             >
               {/* Image */}
               <div className="relative w-full h-48 bg-gray-200">
@@ -62,18 +62,18 @@ const ChoosePath = () => {
 
               {/* Content */}
               <div className="mt-4">
-                <h3 className="text-xl font-semibold text-[#092A31] mb-3">
+                <h3 className="text-xl font-semibold group-hover:text-white text-[#092A31] mb-3">
                   {career.title}
                 </h3>
 
-                <p className="text-gray-600 text-sm mb-4 leading-relaxed line-clamp-3">
+                <p className="text-[#0C3640] group-hover:text-white text-sm mb-4 leading-relaxed line-clamp-3">
                   {career.description}
                 </p>
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-lg font-semibold text-[#092A31]">
-                      <div className="text-[#64748B] line-through text-sm font-normal">
+                    <span className="text-lg font-semibold group-hover:text-white text-[#092A31]">
+                      <div className="text-[#64748B] group-hover:text-white line-through text-sm font-normal">
                         USD 500
                       </div>
                       <div>USD 390</div>
@@ -82,7 +82,7 @@ const ChoosePath = () => {
                   <Link href={`/internship-program/${career.id}`}>
                     <Button
                       className={cn(
-                        "bg-primary text-white hover:bg-[#0f4d5a] rounded-full px-4 py-2 text-sm font-medium",
+                        "bg-primary group-hover:bg-amdari-yellow group-hover:text-primary hover:text-primary hover:bg-amdari-yellow text-white rounded-full px-4 py-2 text-sm font-medium",
                       )}
                     >
                       Apply here

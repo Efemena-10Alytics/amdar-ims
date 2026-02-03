@@ -5,8 +5,13 @@ import SideNav, { type PaymentStepId } from "./side-nav";
 import Checkout from "./checkout";
 import PaymentDetails from "./payment-details";
 import Payment from "./payment";
+import type { InternshipProgram } from "@/types/internship-program";
 
-const PaymentMain = () => {
+interface PaymentMainProps {
+  program?: InternshipProgram;
+}
+
+const PaymentMain = ({ program }: PaymentMainProps) => {
   const [activeStep, setActiveStep] = useState<PaymentStepId>("checkout");
 
   return (
