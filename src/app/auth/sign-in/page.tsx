@@ -101,19 +101,21 @@ export default function SignInPage() {
                   <span className="text-sm text-[#64748B]">Remember me</span>
                 </label>
                 <Link
-                  href="/forgot-password"
+                  href="/auth/forgot-password"
                   className="text-sm text-[#156374] hover:underline"
                 >
                   Forgot password?
                 </Link>
               </div>
 
-              <Button
-                type="submit"
-                className="w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium"
-              >
-                Login
-              </Button>
+              <Link href={"/"}>
+                <Button
+                  type="submit"
+                  className="w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium"
+                >
+                  Login
+                </Button>
+              </Link>
             </form>
 
             {/* Social login */}

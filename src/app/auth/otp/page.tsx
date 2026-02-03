@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   InputOTP,
@@ -20,10 +21,19 @@ function formatTime(seconds: number) {
 }
 
 const OtpPage = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const typeParam = searchParams.get("type") ?? "";
+  const emailParam = searchParams.get("email") ?? "";
+
   const [otp, setOtp] = useState("");
-  const [email, setEmail] = useState("amberinc.io");
+  const [email, setEmail] = useState(emailParam || "amberinc.io");
   const [changeEmailOpen, setChangeEmailOpen] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(RESEND_COOLDOWN_SECONDS);
+
+  useEffect(() => {
+    if (emailParam) setEmail(emailParam);
+  }, [emailParam]);
 
   useEffect(() => {
     if (secondsLeft <= 0) return;
@@ -33,6 +43,17 @@ const OtpPage = () => {
 
   const canVerify = otp.length === 6;
   const canResend = secondsLeft <= 0;
+
+  const handleVerify = () => {
+    if (!canVerify) return;
+    if (typeParam) {
+      const params = new URLSearchParams({ type: typeParam });
+      if (email) params.set("email", email);
+      router.push(`/auth/reset-password?${params.toString()}`);
+    } else {
+      router.push("/auth/success");
+    }
+  };
 
   return (
     <main className="flex-1 w-full min-h-full overflow-y-auto flex flex-col">
@@ -91,15 +112,14 @@ const OtpPage = () => {
             </InputOTP>
           </div>
 
-          <Link href={"/auth/success"}>
-            <Button
-              type="button"
-              disabled={!canVerify}
-              className="mt-6 w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium disabled:opacity-50 disabled:pointer-events-none"
-            >
-              Verify
-            </Button>
-          </Link>
+          <Button
+            type="button"
+            disabled={!canVerify}
+            onClick={handleVerify}
+            className="mt-6 w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium disabled:opacity-50 disabled:pointer-events-none"
+          >
+            Verify
+          </Button>
 
           <p className="mt-6 text-center text-sm text-[#64748B]">
             Didn&apos;t get a code?{" "}
