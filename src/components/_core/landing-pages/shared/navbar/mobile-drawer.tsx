@@ -75,7 +75,7 @@ const MobileDrawer = ({
 
             {/* Drawer Buttons */}
             <div className="flex flex-col gap-3 mt-6 pt-6 border-t border-gray-200">
-              <Link href="/sign-in">
+              <Link href="/auth/sign-in">
                 <Button
                   variant="outline"
                   onClick={onClose}
@@ -88,7 +88,7 @@ const MobileDrawer = ({
                 </Button>
               </Link>
 
-              <Link href="/sign-up">
+              <Link href="/auth/sign-up">
                 <Button
                   onClick={onClose}
                   className={cn(
