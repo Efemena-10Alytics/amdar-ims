@@ -5,36 +5,28 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import { CircleAlert, Eye, EyeOff, X } from "lucide-react";
-import {
-  AlertCycleSvg,
-  AppleSvg,
-  GoogleSvg,
-  LinkedInSvg,
-} from "@/components/_core/auth/svg";
-import ErrorElert from "@/components/_core/auth/error-alert";
+import { Eye, EyeOff, X } from "lucide-react";
+import { AppleSvg, GoogleSvg, LinkedInSvg } from "@/components/_core/auth/svg";
 import ErrorAlert from "@/components/_core/auth/error-alert";
 
 export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
-  const [error, setError] = useState("Invalid email or password.");
+  const [error] = useState("Invalid email or password.");
 
   return (
-    <main className="flex-1 w-full h-screen overflow-y-auto bg-[#F8FAFB] flex flex-col lg:pl-10">
-      {/* Top bar – Sign Up */}
+    <main className="flex-1 w-full h-full overflow-y-auto flex flex-col">
       <div className="flex justify-end p-6">
         <Link href="/sign-up">
           <Button
             variant="outline"
-            className="rounded-full bg-[#C8DDE3] border-[#C8DDE3] text-[#092A31] hover:bg-[#B8CDD3] hover:border-[#B8CDD3] px-6"
+            className="rounded-md bg-[#B6CFD4] border-[#C8DDE3] text-[#092A31] hover:bg-[#B8CDD3] hover:border-[#B8CDD3] px-6"
           >
             Sign Up
           </Button>
         </Link>
       </div>
 
-      {/* Centered form card */}
       <div className="w-full max-w-120">
         <div className="flex items-center gap-10 mb-2 px-6">
           <h1 className="text-2xl font-bold text-[#092A31]">Login</h1>

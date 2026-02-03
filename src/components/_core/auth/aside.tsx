@@ -77,7 +77,7 @@ const Aside = () => {
       </div>
 
       {/* Testimonial carousel */}
-      <div className="mt-8 max-w-sm overflow-hidden">
+      <div className="mt-8 max-w-sm bg-[#135A6A]/60 p-3 rounded-xl overflow-hidden">
         <p className="text-lg font-semibold tracking-wide text-[#93B7BF] uppercase">
           TRUSTED BY OVER 10K+ USERS
         </p>
@@ -89,7 +89,7 @@ const Aside = () => {
           <CarouselContent>
             {TESTIMONIALS.map((item, index) => (
               <CarouselItem key={index}>
-                <blockquote className="mt-3 text-sm leading-relaxed text-white/95">
+                <blockquote className="mt-3 text-sm leading-relaxed text-[#E8EFF1]">
                   &ldquo;{item.quote}&rdquo;
                 </blockquote>
                 <div className="flex justify-between">
