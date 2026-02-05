@@ -1,17 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import SideNav, { type PaymentStepId } from "./side-nav";
 import Checkout from "./checkout";
 import PaymentDetails from "./payment-details";
-import Payment from "./payment";
 import type { InternshipProgram } from "@/types/internship-program";
+import type { CheckoutData } from "@/features/payment/use-get-checkout-data";
 
 interface PaymentMainProps {
   program?: InternshipProgram;
+  checkoutData?: CheckoutData;
 }
 
-const PaymentMain = ({ program }: PaymentMainProps) => {
+const PaymentMain = ({ program, checkoutData }: PaymentMainProps) => {
   const [activeStep, setActiveStep] = useState<PaymentStepId>("checkout");
 
   return (
@@ -19,9 +20,15 @@ const PaymentMain = ({ program }: PaymentMainProps) => {
       <SideNav activeStep={activeStep} onStepChange={setActiveStep} />
 
       {/* Right content – render based on active step */}
-      {activeStep === "checkout" && <Checkout />}
+      {activeStep === "checkout" && (
+        <Checkout
+          checkoutData={checkoutData}
+          program={program}
+          setActiveStep={setActiveStep}
+        />
+      )}
       {activeStep === "personal" && <PaymentDetails />}
-      {activeStep === "payment" && <Payment />}
+      {/* {activeStep === "payment" && <Payment />} */}
     </div>
   );
 };
