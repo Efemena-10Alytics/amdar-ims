@@ -61,3 +61,15 @@ export interface CheckoutApiResponse {
   message: string;
   data: CheckoutData;
 }
+
+/** Collected checkout selections to pass to Payment / PaymentDetails */
+export type CheckoutSelections = {
+  cohort: CheckoutCohort;
+  planId: "full" | "2-installments" | "3-installments";
+  currency: string;
+  pricing: CheckoutPricing;
+  planLabel: string;
+  planTotal: string;
+  /** First payment amount for display (e.g. "GBP 250"); null for full payment. */
+  firstPaymentAmount: string | null;
+};

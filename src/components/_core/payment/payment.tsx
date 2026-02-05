@@ -5,11 +5,18 @@ import Link from "next/link";
 import Coupon from "./coupon";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import type { CheckoutSelections } from "@/types/payment";
+import type { InternshipProgram } from "@/types/internship-program";
 
 const inputClassName =
   "w-full rounded-lg border border-[#e5e7eb] bg-white px-3 py-2 text-sm text-[#092A31] placeholder:text-[#9ca3af] focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20";
 
-const Payment = () => {
+interface PaymentProps {
+  checkoutSelections?: CheckoutSelections | null;
+  program?: InternshipProgram;
+}
+
+const Payment = ({ checkoutSelections, program }: PaymentProps) => {
   const [saveCard, setSaveCard] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
 
@@ -24,15 +31,21 @@ const Payment = () => {
           <div className="mt-4  bg-[#F8FAFC] p-5">
             <div className="flex justify-between gap-4 text-sm">
               <span className="text-[#6b7280]">Program</span>
-              <span className="font-medium text-[#092A31]">Cybersecurity</span>
+              <span className="font-medium text-[#092A31]">
+                {program?.title ?? checkoutSelections?.pricing?.currency ?? "—"}
+              </span>
             </div>
             <div className="mt-3 flex justify-between gap-4 text-sm">
               <span className="text-[#6b7280]">Preferred cohort</span>
-              <span className="font-medium text-[#092A31]">February Cohort</span>
+              <span className="font-medium text-[#092A31]">
+                {checkoutSelections?.cohort?.name ?? "—"}
+              </span>
             </div>
             <div className="mt-3 flex justify-between gap-4 text-sm">
               <span className="text-[#6b7280]">First payment</span>
-              <span className="font-medium text-[#092A31]">USD 195</span>
+              <span className="font-medium text-[#092A31]">
+                {checkoutSelections?.firstPaymentAmount ?? checkoutSelections?.planTotal ?? "—"}
+              </span>
             </div>
           </div>
         </section>

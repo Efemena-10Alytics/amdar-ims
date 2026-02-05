@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import Coupon from "./coupon";
+import type { CheckoutSelections } from "@/types/payment";
 
 const PERSONAL_DATA: Array<{
   label: string;
@@ -19,7 +20,12 @@ const PERSONAL_DATA: Array<{
   { label: "Location", value: "Nigeria", withFlag: true },
 ];
 
-const PaymentDetails = () => {
+interface PaymentDetailsProps {
+  checkoutSelections?: CheckoutSelections | null;
+  onProceed?: () => void;
+}
+
+const PaymentDetails = ({ checkoutSelections, onProceed }: PaymentDetailsProps) => {
   const [confirmInfo, setConfirmInfo] = useState(false);
   const [confirmTerms, setConfirmTerms] = useState(false);
 
@@ -59,16 +65,18 @@ const PaymentDetails = () => {
               <div>
                 <p className="text-sm text-[#6b7280]">Preferred cohort</p>
                 <p className="mt-1 flex items-center gap-2 font-medium text-[#092A31]">
-                  February Cohort
+                  {checkoutSelections?.cohort?.name ?? "February Cohort"}
                   <span className="inline-flex rounded-full bg-[#d1fae5] px-2.5 py-0.5 text-xs font-medium text-[#065f46]">
-                    February 7, 2026
+                    {checkoutSelections?.cohort?.start_date ?? "February 7, 2026"}
                   </span>
                 </p>
               </div>
             </div>
             <div className="mt-4 border-t border-[#B6CFD4]/50 pt-4">
               <p className="text-sm text-[#6b7280]">Plan selected</p>
-              <p className="mt-1 font-medium text-[#092A31]">Full payment</p>
+              <p className="mt-1 font-medium text-[#092A31]">
+                {checkoutSelections?.planLabel ?? "Full payment"}
+              </p>
             </div>
           </div>
         </section>
@@ -85,7 +93,9 @@ const PaymentDetails = () => {
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-[#6b7280]">Program fee</span>
-              <span className="font-medium text-[#092A31]">USD 500</span>
+              <span className="font-medium text-[#092A31]">
+                {checkoutSelections?.planTotal ?? "USD 500"}
+              </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-[#6b7280]">Coupon (Discount)</span>
@@ -94,7 +104,9 @@ const PaymentDetails = () => {
             <div className="flex justify-between border-t border-[#e5e7eb] pt-3 text-base">
               <span className="font-medium text-[#092A31]">Amount to pay</span>
               <span className="font-clash-display font-bold text-primary">
-                USD 390
+                {checkoutSelections
+                  ? (checkoutSelections.firstPaymentAmount ?? checkoutSelections.planTotal)
+                  : "USD 390"}
               </span>
             </div>
           </div>
@@ -138,6 +150,7 @@ const PaymentDetails = () => {
           )}
           size="lg"
           disabled={!confirmInfo || !confirmTerms}
+          onClick={onProceed}
         >
           Proceed
         </Button>

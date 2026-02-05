@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Check, Calendar, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CheckoutData } from "@/features/payment/use-get-checkout-data";
-import type { CheckoutPricing } from "@/types/payment";
+import type { CheckoutPricing, CheckoutSelections } from "@/types/payment";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -72,32 +72,20 @@ function getPaymentPlansFromPricing(price: CheckoutPricing): PaymentPlanOption[]
   ];
 }
 
-const COHORTS = [
-  {
-    id: "feb",
-    label: "February Cohort",
-    date: "February 7, 2026",
-    months: "4 months",
-  },
-  {
-    id: "mar",
-    label: "March Cohort",
-    date: "March 7, 2026",
-    months: "4 months",
-  },
-];
+
 
 
 interface CheckoutProps {
   checkoutData?: CheckoutData;
   program?: InternshipProgram;
-  setActiveStep: React.Dispatch<React.SetStateAction<PaymentStepId>>
+  setActiveStep: React.Dispatch<React.SetStateAction<PaymentStepId>>;
+  onProceed?: (selections: CheckoutSelections) => void;
 }
 
-const Checkout = ({ checkoutData, program, setActiveStep }: CheckoutProps) => {
+const Checkout = ({ checkoutData, program, setActiveStep, onProceed }: CheckoutProps) => {
   const firstCurrency = checkoutData?.pricings?.[0]?.currency ?? "USD";
   const [selectedCohort, setSelectedCohort] = useState<number | null>(null);
-  const [selectedPlan, setSelectedPlan] = useState<PaymentPlanId>("2-installments");
+  const [selectedPlan, setSelectedPlan] = useState<PaymentPlanId | null>(null);
   const [currency, setCurrency] = useState<string>(firstCurrency);
 
   const selectedPricing = useMemo(
@@ -120,6 +108,33 @@ const Checkout = ({ checkoutData, program, setActiveStep }: CheckoutProps) => {
 
   const canProceed =
     selectedCohort !== null && !!selectedPricing && !!selectedPlan;
+
+  const selectedCohortData = useMemo(
+    () => checkoutData?.upcoming_cohorts?.find((c) => c.id === selectedCohort),
+    [checkoutData?.upcoming_cohorts, selectedCohort]
+  );
+  const selectedPlanOption = useMemo(
+    () => paymentPlans.find((p) => p.id === selectedPlan),
+    [paymentPlans, selectedPlan]
+  );
+
+  const handleProceed = () => {
+    if (!selectedCohortData || !selectedPricing || !selectedPlanOption) return;
+    const firstPaymentAmount =
+      selectedPlan === "full"
+        ? null
+        : selectedPlanOption.breakdown?.[0]?.amount ?? null;
+    onProceed?.({
+      cohort: selectedCohortData,
+      planId: selectedPlanOption.id,
+      currency,
+      pricing: selectedPricing,
+      planLabel: selectedPlanOption.label,
+      planTotal: selectedPlanOption.total,
+      firstPaymentAmount,
+    });
+    setActiveStep("personal");
+  };
 
   return (
     <main className="lg:max-w-2xl flex-1 space-y-10 pb-24">
@@ -312,7 +327,7 @@ const Checkout = ({ checkoutData, program, setActiveStep }: CheckoutProps) => {
 
       <div className="w-full">
         <Button
-          onClick={() => setActiveStep("personal")}
+          onClick={handleProceed}
           disabled={!canProceed}
           className="w-full bg-primary h-12 font-medium text-white hover:bg-primary/90 disabled:opacity-50 disabled:pointer-events-none"
         >
