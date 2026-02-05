@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { Eye, EyeOff, Lock, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import type { SignUpFormData } from "./types";
 
 export const inputBase = cn(
   "w-full rounded-lg bg-[#F8FAFC] px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8] border border-transparent",
@@ -18,16 +19,25 @@ const REQUIREMENTS = [
   { id: "special", label: "One special character", test: (p: string) => /[^A-Za-z0-9]/.test(p) },
 ] as const;
 
-interface CreatePasswordProps {
+export interface CreatePasswordProps {
+  formData: SignUpFormData;
+  setFormData: React.Dispatch<React.SetStateAction<SignUpFormData>>;
   onSignUpSuccess?: () => void;
+  isSigningUp?: boolean;
 }
 
-const CreatePassword = ({ onSignUpSuccess }: CreatePasswordProps) => {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+const CreatePassword = ({
+  formData,
+  setFormData,
+  onSignUpSuccess,
+  isSigningUp = false,
+}: CreatePasswordProps) => {
+  const {
+    password,
+    confirmPassword,
+    showPassword,
+    showConfirmPassword,
+  } = formData;
   const passwordsMatch = confirmPassword === "" || password === confirmPassword;
   const showMatchError = confirmPassword.length > 0 && !passwordsMatch;
 
@@ -62,12 +72,16 @@ const CreatePassword = ({ onSignUpSuccess }: CreatePasswordProps) => {
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, password: e.target.value }))
+              }
               className={cn(inputBase, "pr-12")}
             />
             <button
               type="button"
-              onClick={() => setShowPassword((p) => !p)}
+              onClick={() =>
+                setFormData((prev) => ({ ...prev, showPassword: !prev.showPassword }))
+              }
               className="absolute right-3 top-1/2 -translate-y-1/2 text-[#64748B] hover:text-[#092A31] p-1"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
@@ -93,7 +107,12 @@ const CreatePassword = ({ onSignUpSuccess }: CreatePasswordProps) => {
               type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm your password"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  confirmPassword: e.target.value,
+                }))
+              }
               className={cn(
                 inputBase,
                 "pr-12",
@@ -104,7 +123,12 @@ const CreatePassword = ({ onSignUpSuccess }: CreatePasswordProps) => {
             />
             <button
               type="button"
-              onClick={() => setShowConfirmPassword((p) => !p)}
+              onClick={() =>
+                setFormData((prev) => ({
+                  ...prev,
+                  showConfirmPassword: !prev.showConfirmPassword,
+                }))
+              }
               className="absolute right-3 top-1/2 -translate-y-1/2 text-[#64748B] hover:text-[#092A31] p-1"
               aria-label={
                 showConfirmPassword ? "Hide password" : "Show password"
@@ -156,9 +180,10 @@ const CreatePassword = ({ onSignUpSuccess }: CreatePasswordProps) => {
 
         <Button
           type="submit"
-          className="w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium"
+          disabled={isSigningUp || showMatchError}
+          className="w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium disabled:opacity-70"
         >
-          Sign Up
+          {isSigningUp ? "Signing up…" : "Sign Up"}
         </Button>
       </form>
 
