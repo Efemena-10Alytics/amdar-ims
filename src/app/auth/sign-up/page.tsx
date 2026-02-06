@@ -33,7 +33,7 @@ const SignUp = () => {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
-        phone: formData.phone,
+        phoneNumber: formData.phone,
         password: formData.password,
         password_confirmation: formData.confirmPassword,
         location: formData.selectedCountryName,

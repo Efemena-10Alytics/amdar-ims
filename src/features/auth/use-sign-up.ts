@@ -9,7 +9,7 @@ export type SignUpCredentials = {
   firstName?: string;
   lastName?: string;
   location?: string;
-  phone?: string;
+  phoneNumber?: string;
   [key: string]: unknown;
 };
 

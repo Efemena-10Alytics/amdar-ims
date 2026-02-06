@@ -1,24 +1,51 @@
 "use client";
 
-import React, { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/store/auth-store";
 import Coupon from "./coupon";
 import type { CheckoutSelections } from "@/types/payment";
 
-const PERSONAL_DATA: Array<{
+const PERSONAL_DATA_KEYS: Array<{
+  key: keyof Record<string, unknown>;
+  label: string;
+  withFlag?: boolean;
+}> = [
+  { key: "firstName", label: "First name" },
+  { key: "lastName", label: "Last name" },
+  { key: "email", label: "Email" },
+  { key: "phone", label: "Phone number" },
+  { key: "location", label: "Location", withFlag: true },
+];
+
+function getPersonalDataFromUser(user: Record<string, unknown> | null): Array<{
   label: string;
   value: string;
   withFlag?: boolean;
-}> = [
-  { label: "First name", value: "Juwonlo" },
-  { label: "Last name", value: "Amber" },
-  { label: "Email", value: "juwonlo@amdari.io" },
-  { label: "Phone number", value: "(+234) 081 1122 333" },
-  { label: "Location", value: "Nigeria", withFlag: true },
-];
+}> {
+  if (!user) {
+    return PERSONAL_DATA_KEYS.map(({ label, withFlag }) => ({
+      label,
+      value: "—",
+      ...(withFlag && { withFlag }),
+    }));
+  }
+  return PERSONAL_DATA_KEYS.map(({ key, label, withFlag }) => {
+    let raw = user[key as string];
+    if (
+      key === "location" &&
+      (raw == null || raw === "") &&
+      user.country != null
+    ) {
+      raw = user.country;
+    }
+    const value = raw != null && typeof raw === "string" ? raw : "—";
+    return { label, value, ...(withFlag && { withFlag }) };
+  });
+}
 
 interface PaymentDetailsProps {
   checkoutSelections?: CheckoutSelections | null;
@@ -31,29 +58,44 @@ const PaymentDetails = ({
 }: PaymentDetailsProps) => {
   const [confirmInfo, setConfirmInfo] = useState(false);
   const [confirmTerms, setConfirmTerms] = useState(false);
+  const { user } = useAuthStore();
+  const profile =
+    user &&
+    typeof user === "object" &&
+    "user" in user &&
+    user.user &&
+    typeof user.user === "object"
+      ? (user.user as Record<string, unknown>)
+      : (user as Record<string, unknown> | null);
+  const personalData = useMemo(
+    () => getPersonalDataFromUser(profile),
+    [profile],
+  );
 
   return (
-    <div className="flex flex-col gap-10 lg:flex-row lg:gap-12">
+    <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
       {/* Left column */}
-      <div className="min-w-0 flex-1 space-y-8 pb-24">
+      <div className="min-w-0 flex-1 space-y-8 lg:pb-24">
         {/* Personal data */}
         <section>
           <h2 className="font-clash-display text-xl font-bold text-[#092A31]">
             Personal data
           </h2>
-          <dl className="mt-4 grid gap-3 sm:grid-cols-[auto_1fr] sm:gap-x-6 bg-[#F8FAFC] p-5 rounded-xl">
-            {PERSONAL_DATA.map(({ label, value, withFlag }) => (
-              <React.Fragment key={label}>
-                <dt className="text-sm text-[#6b7280]">{label}</dt>
-                <dd className="flex items-center justify-end gap-2 text-right text-sm font-medium text-[#092A31] sm:justify-end">
-                  {withFlag && (
-                    <span className="text-base leading-none" aria-hidden>
-                      🇳🇬
-                    </span>
-                  )}
-                  {value}
-                </dd>
-              </React.Fragment>
+          <dl className="mt-4 space-y-3 sm:gap-x-6 bg-[#F8FAFC] p-5 rounded-xl">
+            {personalData.map(({ label, value, withFlag }) => (
+              <div key={label}>
+                <div className="flex items-center justify-between gap-2 text-right text-sm font-medium text-[#092A31] sm:justify-end">
+                  <div className="text-sm text-[#6b7280]">{label}</div>
+                  <div className="flex gap-2">
+                    {withFlag && (
+                      <span className="text-base leading-none" aria-hidden>
+                        🇳🇬
+                      </span>
+                    )}
+                    {value}
+                  </div>
+                </div>
+              </div>
             ))}
           </dl>
         </section>
@@ -180,7 +222,7 @@ const PaymentDetails = ({
 
         <Button
           className={cn(
-            "w-full py-6 text-base font-semibold",
+            "w-full py-6 text-base font-semibold hidden lg:block",
             (!confirmInfo || !confirmTerms) && "pointer-events-none opacity-60",
           )}
           size="lg"
@@ -192,7 +234,20 @@ const PaymentDetails = ({
       </div>
 
       {/* Right column – Coupon/promo code */}
-      <Coupon />
+      <div className="space-y-6">
+        <Coupon />
+        <Button
+          className={cn(
+            "w-full py-6 text-base font-semibold lg:hidden",
+            (!confirmInfo || !confirmTerms) && "pointer-events-none opacity-60",
+          )}
+          size="lg"
+          disabled={!confirmInfo || !confirmTerms}
+          onClick={onProceed}
+        >
+          Proceed
+        </Button>
+      </div>
     </div>
   );
 };

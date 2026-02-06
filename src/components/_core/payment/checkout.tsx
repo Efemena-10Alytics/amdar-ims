@@ -35,7 +35,7 @@ function getOrdinal(i: number): string {
 
 /** Derive payment plan options from the selected pricing (full = original_amount, 2 = two_installments_amount/2 each, 3 = display_three_installment_breakdown). */
 function getPaymentPlansFromPricing(price: CheckoutPricing): PaymentPlanOption[] {
-  const { currency, original_amount, two_installments_amount, three_installments_amount, display_three_installment_breakdown } = price;
+  const { currency, amount, original_amount, two_installments_amount, three_installments_amount, display_three_installment_breakdown } = price;
   const half = Math.round(two_installments_amount / 2);
   const threeBreakdown = display_three_installment_breakdown && display_three_installment_breakdown.length >= 3
     ? display_three_installment_breakdown
@@ -46,7 +46,7 @@ function getPaymentPlansFromPricing(price: CheckoutPricing): PaymentPlanOption[]
       id: "full",
       label: "Full Payment",
       description: "Make one time payment now and get full access to your course",
-      total: `${currency} ${original_amount}`,
+      total: `${currency} ${amount}`,
       breakdown: null,
     },
     {
