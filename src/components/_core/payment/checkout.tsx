@@ -138,7 +138,7 @@ const Checkout = ({ checkoutData, program, setActiveStep, onProceed }: CheckoutP
   };
 
   return (
-    <main className="lg:max-w-2xl flex-1 space-y-10 pb-24">
+    <main className="flex-1 space-y-10 pb-24">
       {/* 1. Confirm your enrollment */}
       <section>
         <h2 className="font-clash-display text-xl font-bold text-[#092A31]">
@@ -162,10 +162,14 @@ const Checkout = ({ checkoutData, program, setActiveStep, onProceed }: CheckoutP
             </div>
             <div className="flex items-baseline gap-2">
               <span className="text-sm text-[#9ca3af] line-through">
-                USD 500
+                {selectedPricing
+                  ? `${selectedPricing.currency} ${selectedPricing.original_amount}`
+                  : "—"}
               </span>
               <span className="font-clash-display text-xl font-bold text-primary">
-                USD 390
+                {selectedPricing
+                  ? `${selectedPricing.currency} ${selectedPricing.amount}`
+                  : "—"}
               </span>
             </div>
           </div>

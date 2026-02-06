@@ -7,6 +7,7 @@ import PaymentDetails from "./payment-details";
 import type { InternshipProgram } from "@/types/internship-program";
 import type { CheckoutData } from "@/features/payment/use-get-checkout-data";
 import type { CheckoutSelections } from "@/types/payment";
+import Coupon from "./coupon";
 
 interface PaymentMainProps {
   program?: InternshipProgram;
@@ -23,20 +24,23 @@ const PaymentMain = ({ program, checkoutData }: PaymentMainProps) => {
       <SideNav activeStep={activeStep} onStepChange={setActiveStep} />
 
       {/* Right content – render based on active step */}
-      {activeStep === "checkout" && (
-        <Checkout
-          checkoutData={checkoutData}
-          program={program}
-          setActiveStep={setActiveStep}
-          onProceed={setCheckoutSelections}
-        />
-      )}
-      {activeStep === "personal" && (
-        <PaymentDetails
-          checkoutSelections={checkoutSelections}
-          onProceed={() => {}}
-        />
-      )}
+      <div>
+        {activeStep === "checkout" && (
+          <Checkout
+            checkoutData={checkoutData}
+            program={program}
+            setActiveStep={setActiveStep}
+            onProceed={setCheckoutSelections}
+          />
+        )}
+        {activeStep === "personal" && (
+          <PaymentDetails
+            checkoutSelections={checkoutSelections}
+            onProceed={() => {}}
+          />
+        )}
+      </div>
+      <Coupon />
     </div>
   );
 };

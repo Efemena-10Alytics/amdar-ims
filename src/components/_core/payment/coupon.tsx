@@ -1,15 +1,19 @@
 "use client";
 
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 
 export const DEFAULT_PROMO_CODE = "WELCOME30";
+
+const CHECKOUT_QUERY_KEY_PREFIX = ["payment", "checkout"] as const;
 
 const Coupon = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
   const promoFromUrl = searchParams.get("promo_code") ?? DEFAULT_PROMO_CODE;
   const [inputValue, setInputValue] = useState(promoFromUrl);
 
@@ -27,6 +31,7 @@ const Coupon = () => {
     }
     const query = next.toString();
     router.replace(query ? `${pathname}?${query}` : pathname);
+    queryClient.invalidateQueries({ queryKey: [...CHECKOUT_QUERY_KEY_PREFIX] });
   };
 
   return (

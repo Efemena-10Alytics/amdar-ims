@@ -73,9 +73,9 @@ const PaymentDetails = ({
   );
 
   return (
-    <div className="flex flex-col gap-4 lg:flex-row lg:gap-12">
+    <div className="flex flex-col w-full">
       {/* Left column */}
-      <div className="min-w-0 flex-1 space-y-8 lg:pb-24">
+      <div className="flex-1 w-full space-y-8 lg:pb-24">
         {/* Personal data */}
         <section>
           <h2 className="font-clash-display text-xl font-bold text-[#092A31]">
@@ -84,7 +84,7 @@ const PaymentDetails = ({
           <dl className="mt-4 space-y-3 sm:gap-x-6 bg-[#F8FAFC] p-5 rounded-xl">
             {personalData.map(({ label, value, withFlag }) => (
               <div key={label}>
-                <div className="flex items-center justify-between gap-2 text-right text-sm font-medium text-[#092A31] sm:justify-end">
+                <div className="flex items-center justify-between gap-2 text-right text-sm font-medium text-[#092A31]">
                   <div className="text-sm text-[#6b7280]">{label}</div>
                   <div className="flex gap-2">
                     {withFlag && (
@@ -235,7 +235,7 @@ const PaymentDetails = ({
 
       {/* Right column – Coupon/promo code */}
       <div className="space-y-6">
-        <Coupon />
+        {/* <Coupon /> */}
         <Button
           className={cn(
             "w-full py-6 text-base font-semibold lg:hidden",
