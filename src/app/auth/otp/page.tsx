@@ -10,9 +10,13 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import ChangeEmail from "@/components/_core/auth/change-email";
+import ErrorAlert from "@/components/_core/auth/error-alert";
+import {
+  useResendOtp,
+  RESEND_COOLDOWN_SECONDS,
+} from "@/features/auth/use-resend-otp";
+import { useVerifyEmail } from "@/features/auth/use-verify-otp";
 import { cn } from "@/lib/utils";
-
-const RESEND_COOLDOWN_SECONDS = 332; // 5:32
 
 function formatTime(seconds: number) {
   const m = Math.floor(seconds / 60);
@@ -25,11 +29,18 @@ const OtpPage = () => {
   const searchParams = useSearchParams();
   const typeParam = searchParams.get("type") ?? "";
   const emailParam = searchParams.get("email") ?? "";
+  const redirectParam = searchParams.get("redirect") ?? "";
+  const uStatusParam = searchParams.get("u-status") ?? "";
 
   const [otp, setOtp] = useState("");
   const [email, setEmail] = useState(emailParam || "amberinc.io");
   const [changeEmailOpen, setChangeEmailOpen] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(RESEND_COOLDOWN_SECONDS);
+
+  const { verify, isVerifying, errorMessage } = useVerifyEmail();
+  const { resend, isResending, resendErrorMessage } = useResendOtp({
+    onResendSuccess: () => setSecondsLeft(RESEND_COOLDOWN_SECONDS),
+  });
 
   useEffect(() => {
     if (emailParam) setEmail(emailParam);
@@ -41,17 +52,25 @@ const OtpPage = () => {
     return () => clearInterval(timer);
   }, [secondsLeft]);
 
-  const canVerify = otp.length === 6;
+  const canVerify = otp.length === 5;
   const canResend = secondsLeft <= 0;
 
-  const handleVerify = () => {
+  const handleResend = () => {
+    if (!canResend || isResending) return;
+    resend();
+  };
+
+  const handleVerify = async () => {
     if (!canVerify) return;
     if (typeParam) {
       const params = new URLSearchParams({ type: typeParam });
       if (email) params.set("email", email);
       router.push(`/auth/reset-password?${params.toString()}`);
     } else {
-      router.push("/auth/success");
+      await verify(otp, {
+        redirect: redirectParam || undefined,
+        newUser: uStatusParam === "new",
+      });
     }
   };
 
@@ -71,6 +90,11 @@ const OtpPage = () => {
       <div className="flex-1 flex flex-col items-start justify-start px-6 pb-12">
         <div className="flex items-center gap-10 mb-2 px-6">
           <h1 className="text-2xl font-semibold text-[#092A31]">Sign Up</h1>
+          {errorMessage ? (
+            <ErrorAlert error={errorMessage} />
+          ) : resendErrorMessage ? (
+            <ErrorAlert error={resendErrorMessage} />
+          ) : null}
         </div>
         <div className="w-full max-w-md rounded-2xl bg-white p-6 sm:p-8 border border-gray-100">
           <h1 className="text-xl font-semibold text-[#092A31]">
@@ -90,7 +114,7 @@ const OtpPage = () => {
 
           <div className="mt-6 flex justify-center">
             <InputOTP
-              maxLength={6}
+              maxLength={5}
               value={otp}
               onChange={setOtp}
               containerClassName="gap-2"
@@ -107,18 +131,17 @@ const OtpPage = () => {
                 <InputOTPSlot index={2} />
                 <InputOTPSlot index={3} />
                 <InputOTPSlot index={4} />
-                <InputOTPSlot index={5} />
               </InputOTPGroup>
             </InputOTP>
           </div>
 
           <Button
             type="button"
-            disabled={!canVerify}
+            disabled={!canVerify || isVerifying}
             onClick={handleVerify}
             className="mt-6 w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium disabled:opacity-50 disabled:pointer-events-none"
           >
-            Verify
+            {isVerifying ? "Verifying…" : "Verify"}
           </Button>
 
           <p className="mt-6 text-center text-sm text-[#64748B]">
@@ -126,9 +149,11 @@ const OtpPage = () => {
             {canResend ? (
               <button
                 type="button"
-                className="text-primary font-medium hover:underline"
+                disabled={isResending}
+                onClick={handleResend}
+                className="text-primary font-medium hover:underline disabled:opacity-50"
               >
-                Resend code
+                {isResending ? "Sending…" : "Resend code"}
               </button>
             ) : (
               <span className="text-primary font-medium">

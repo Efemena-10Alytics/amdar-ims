@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Check, Calendar, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { CheckoutData } from "@/features/payment/use-get-checkout-data";
+import type { CheckoutPricing, CheckoutSelections } from "@/types/payment";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,58 +13,132 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { InternshipProgram } from "@/types/internship-program";
+import { PaymentStepId } from "./side-nav";
 
-const COHORTS = [
-  {
-    id: "feb",
-    label: "February Cohort",
-    date: "February 7, 2026",
-    months: "4 months",
-  },
-  {
-    id: "mar",
-    label: "March Cohort",
-    date: "March 7, 2026",
-    months: "4 months",
-  },
-];
+type PaymentPlanId = "full" | "2-installments" | "3-installments";
 
-const PAYMENT_PLANS = [
-  {
-    id: "full",
-    label: "Full Payment",
-    description: "Make one time payment now and get full access to your course",
-    total: "USD 390",
-    breakdown: null,
-  },
-  {
-    id: "2-installments",
-    label: "2 Installments",
-    description: "Pay GBP 195 now and 2nd installment in the next month",
-    total: "USD 390",
-    breakdown: [
-      { label: "1st payment", date: "Jan 21, 2026", amount: "USD 195" },
-      { label: "2nd payment", date: "Feb 21, 2026", amount: "USD 195" },
-    ],
-  },
-  {
-    id: "3-installments",
-    label: "3 installments",
-    description: "Pay GBP 130 monthly for 3 months",
-    total: "USD 390",
-    breakdown: null,
-  },
-];
+interface PaymentPlanOption {
+  id: PaymentPlanId;
+  label: string;
+  description: string;
+  total: string;
+  breakdown: { label: string; amount: string }[] | null;
+}
 
-const CURRENCIES = ["USD", "GBP", "EUR", "CAD"] as const;
+function getOrdinal(i: number): string {
+  if (i === 0) return "1st";
+  if (i === 1) return "2nd";
+  if (i === 2) return "3rd";
+  return `${i + 1}th`;
+}
 
-const Checkout = () => {
-  const [selectedCohort, setSelectedCohort] = useState<string>("feb");
-  const [selectedPlan, setSelectedPlan] = useState<string>("2-installments");
-  const [currency, setCurrency] = useState<string>("USD");
+/** Derive payment plan options from the selected pricing (full = original_amount, 2 = two_installments_amount/2 each, 3 = display_three_installment_breakdown). */
+function getPaymentPlansFromPricing(price: CheckoutPricing): PaymentPlanOption[] {
+  const { currency, amount, original_amount, two_installments_amount, three_installments_amount, display_three_installment_breakdown } = price;
+  const half = Math.round(two_installments_amount / 2);
+  const threeBreakdown = display_three_installment_breakdown && display_three_installment_breakdown.length >= 3
+    ? display_three_installment_breakdown
+    : [Math.round(three_installments_amount / 3), Math.round(three_installments_amount / 3), three_installments_amount - 2 * Math.round(three_installments_amount / 3)];
+
+  return [
+    {
+      id: "full",
+      label: "Full Payment",
+      description: "Make one time payment now and get full access to your course",
+      total: `${currency} ${amount}`,
+      breakdown: null,
+    },
+    {
+      id: "2-installments",
+      label: "2 Installments",
+      description: `Pay ${currency} ${half} now and 2nd installment in the next month`,
+      total: `${currency} ${two_installments_amount}`,
+      breakdown: [
+        { label: "1st payment", amount: `${currency} ${half}` },
+        { label: "2nd payment", amount: `${currency} ${half}` },
+      ],
+    },
+    {
+      id: "3-installments",
+      label: "3 Installments",
+      description: "Pay in 3 installments over 3 months",
+      total: `${currency} ${three_installments_amount}`,
+      breakdown: threeBreakdown.map((amt, i) => ({
+        label: `${getOrdinal(i)} payment`,
+        amount: `${currency} ${amt}`,
+      })),
+    },
+  ];
+}
+
+
+
+
+interface CheckoutProps {
+  checkoutData?: CheckoutData;
+  program?: InternshipProgram;
+  setActiveStep: React.Dispatch<React.SetStateAction<PaymentStepId>>;
+  onProceed?: (selections: CheckoutSelections) => void;
+}
+
+const Checkout = ({ checkoutData, program, setActiveStep, onProceed }: CheckoutProps) => {
+  const firstCurrency = checkoutData?.pricings?.[0]?.currency ?? "USD";
+  const [selectedCohort, setSelectedCohort] = useState<number | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<PaymentPlanId | null>(null);
+  const [currency, setCurrency] = useState<string>(firstCurrency);
+
+  const selectedPricing = useMemo(
+    () =>
+      checkoutData?.pricings?.find((p) => p.currency === currency) ??
+      checkoutData?.pricings?.[0],
+    [checkoutData?.pricings, currency]
+  );
+  const paymentPlans = useMemo(
+    () => (selectedPricing ? getPaymentPlansFromPricing(selectedPricing) : []),
+    [selectedPricing]
+  );
+
+  useEffect(() => {
+    const currencies = checkoutData?.pricings?.map((p) => p.currency) ?? [];
+    if (currencies.length > 0 && !currencies.includes(currency)) {
+      setCurrency(currencies[0]);
+    }
+  }, [checkoutData?.pricings, currency]);
+
+  const canProceed =
+    selectedCohort !== null && !!selectedPricing && !!selectedPlan;
+
+  const selectedCohortData = useMemo(
+    () => checkoutData?.upcoming_cohorts?.find((c) => c.id === selectedCohort),
+    [checkoutData?.upcoming_cohorts, selectedCohort]
+  );
+  const selectedPlanOption = useMemo(
+    () => paymentPlans.find((p) => p.id === selectedPlan),
+    [paymentPlans, selectedPlan]
+  );
+
+  const handleProceed = () => {
+    if (!selectedCohortData || !selectedPricing || !selectedPlanOption) return;
+    const firstPaymentAmount =
+      selectedPlan === "full"
+        ? null
+        : selectedPlanOption.breakdown?.[0]?.amount ?? null;
+    onProceed?.({
+      cohort: selectedCohortData,
+      planId: selectedPlanOption.id,
+      currency,
+      pricing: selectedPricing,
+      planLabel: selectedPlanOption.label,
+      planTotal: selectedPlanOption.total,
+      firstPaymentAmount,
+      installmentBreakdown: selectedPlanOption.breakdown ?? null,
+    });
+    setActiveStep("personal");
+  };
 
   return (
-    <main className="lg:max-w-2xl flex-1 space-y-10 pb-24">
+    <main className="flex-1 space-y-10 pb-24">
       {/* 1. Confirm your enrollment */}
       <section>
         <h2 className="font-clash-display text-xl font-bold text-[#092A31]">
@@ -74,12 +150,10 @@ const Checkout = () => {
         </p>
         <div className="mt-4 rounded-xl bg-[#E8EFF1] p-5">
           <h3 className="font-clash-display font-semibold text-[#092A31]">
-            Cybersecurity
+            {program?.title}
           </h3>
           <p className="mt-2 text-sm leading-relaxed text-[#4a5568]">
-            Protect systems, analyze threats, investigate incidents, run
-            assessments, and apply industry frameworks used by modern security
-            teams.
+            {program?.description}
           </p>
           <div className="mt-4 flex flex-wrap items-end justify-between gap-2">
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-[#6b7280]">
@@ -88,10 +162,14 @@ const Checkout = () => {
             </div>
             <div className="flex items-baseline gap-2">
               <span className="text-sm text-[#9ca3af] line-through">
-                USD 500
+                {selectedPricing
+                  ? `${selectedPricing.currency} ${selectedPricing.original_amount}`
+                  : "—"}
               </span>
               <span className="font-clash-display text-xl font-bold text-primary">
-                USD 390
+                {selectedPricing
+                  ? `${selectedPricing.currency} ${selectedPricing.amount}`
+                  : "—"}
               </span>
             </div>
           </div>
@@ -108,7 +186,7 @@ const Checkout = () => {
           best fits your schedule.
         </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          {COHORTS.map((cohort) => {
+          {checkoutData?.upcoming_cohorts.map((cohort) => {
             const isSelected = selectedCohort === cohort.id;
             return (
               <button
@@ -141,13 +219,13 @@ const Checkout = () => {
                       isSelected ? "text-[#092A31]" : "text-[#4a5568]",
                     )}
                   >
-                    {cohort.label}
+                    {cohort.name}
                   </span>
                   <div className="mt-2 flex items-center gap-2 text-sm text-[#6b7280]">
                     <Calendar className="h-4 w-4 shrink-0" />
-                    <span>{cohort.date}</span>
+                    <span>{cohort.start_date}</span>
                     <span>·</span>
-                    <span>{cohort.months}</span>
+                    <span>{cohort.month}</span>
                   </div>
                 </div>
               </button>
@@ -182,9 +260,9 @@ const Checkout = () => {
                 value={currency}
                 onValueChange={setCurrency}
               >
-                {CURRENCIES.map((code) => (
-                  <DropdownMenuRadioItem key={code} value={code}>
-                    {code}
+                {checkoutData?.pricings.map((price) => (
+                  <DropdownMenuRadioItem key={price.id} value={price.currency}>
+                    {price.currency}
                   </DropdownMenuRadioItem>
                 ))}
               </DropdownMenuRadioGroup>
@@ -192,7 +270,7 @@ const Checkout = () => {
           </DropdownMenu>
         </div>
         <div className="mt-4 space-y-3">
-          {PAYMENT_PLANS.map((plan) => {
+          {paymentPlans.map((plan) => {
             const isSelected = selectedPlan === plan.id;
             return (
               <button
@@ -230,12 +308,11 @@ const Checkout = () => {
                   <p className="mt-1 text-sm text-[#6b7280]">
                     {plan.description}
                   </p>
-                  {plan.breakdown && (
+                  {plan.breakdown && plan.breakdown.length > 0 && (
                     <div className="mt-3 space-y-1 rounded-lg bg-white/60 py-2 pl-3 pr-4 text-sm text-[#6b7280]">
                       {plan.breakdown.map((row, i) => (
                         <div key={i} className="flex justify-between gap-4">
                           <span>{row.label}</span>
-                          <span>{row.date}</span>
                           <span className="font-medium text-[#4a5568]">
                             {row.amount}
                           </span>
@@ -254,7 +331,11 @@ const Checkout = () => {
       </section>
 
       <div className="w-full">
-        <Button className="w-full bg-primary h-12 font-medium text-white hover:bg-primary/90">
+        <Button
+          onClick={handleProceed}
+          disabled={!canProceed}
+          className="w-full bg-primary h-12 font-medium text-white hover:bg-primary/90 disabled:opacity-50 disabled:pointer-events-none"
+        >
           Proceed to Payment
         </Button>
       </div>

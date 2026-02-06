@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { AppleSvg, GoogleSvg, LinkedInSvg } from "@/components/_core/auth/svg";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import type { SignUpFormData } from "./types";
 
 const inputBase = cn(
   "w-full rounded-lg bg-[#F8FAFC] px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8] border border-transparent",
@@ -22,18 +22,18 @@ const COUNTRY_OPTIONS = [
   { name: "Other", code: "", flag: "🌐" },
 ] as const;
 
-interface PersonalInfoProps {
+export interface PersonalInfoProps {
+  formData: SignUpFormData;
+  setFormData: React.Dispatch<React.SetStateAction<SignUpFormData>>;
   onContinue?: () => void;
 }
 
-const DEFAULT_COUNTRY = "Nigeria";
-
-const PersonalInfo = ({ onContinue }: PersonalInfoProps) => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [selectedCountryName, setSelectedCountryName] = useState(DEFAULT_COUNTRY);
+const PersonalInfo = ({
+  formData,
+  setFormData,
+  onContinue,
+}: PersonalInfoProps) => {
+  const { firstName, lastName, email, phone, selectedCountryName } = formData;
   const selectedCountry = COUNTRY_OPTIONS.find((c) => c.name === selectedCountryName);
 
   const isFormComplete =
@@ -69,7 +69,9 @@ const PersonalInfo = ({ onContinue }: PersonalInfoProps) => {
               type="text"
               placeholder="Enter your first name"
               value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, firstName: e.target.value }))
+              }
               className={inputBase}
             />
           </div>
@@ -85,7 +87,9 @@ const PersonalInfo = ({ onContinue }: PersonalInfoProps) => {
               type="text"
               placeholder="Enter your last name"
               value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, lastName: e.target.value }))
+              }
               className={inputBase}
             />
           </div>
@@ -103,7 +107,9 @@ const PersonalInfo = ({ onContinue }: PersonalInfoProps) => {
             type="email"
             placeholder="Enter your email address"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, email: e.target.value }))
+            }
             className={inputBase}
           />
         </div>
@@ -124,7 +130,12 @@ const PersonalInfo = ({ onContinue }: PersonalInfoProps) => {
                 "bg-[#F8FAFC]",
               )}
               value={selectedCountryName}
-              onChange={(e) => setSelectedCountryName(e.target.value)}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  selectedCountryName: e.target.value,
+                }))
+              }
             >
               <option value="" disabled>
                 Select your location
@@ -167,7 +178,9 @@ const PersonalInfo = ({ onContinue }: PersonalInfoProps) => {
               type="tel"
               placeholder="Your phone number"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, phone: e.target.value }))
+              }
               className={cn(
                 "flex-1 min-w-0 rounded-r-lg bg-[#F8FAFC] px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8]",
                 "focus:outline-none focus:ring-0 border-0",

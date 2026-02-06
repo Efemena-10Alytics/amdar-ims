@@ -2,17 +2,28 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import { Eye, EyeOff, X } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { AppleSvg, GoogleSvg, LinkedInSvg } from "@/components/_core/auth/svg";
 import ErrorAlert from "@/components/_core/auth/error-alert";
+import { useLogin } from "@/features/auth/use-login";
 
 export default function SignInPage() {
+  const searchParams = useSearchParams();
+  const { login, isLoggingIn, errorMessage } = useLogin();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
-  const [error] = useState("Invalid email or password.");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const redirect = searchParams.get("redirect") ?? undefined;
+    login({ email, password }, redirect);
+  };
 
   return (
     <main className="flex-1 w-full h-full overflow-y-auto flex flex-col">
@@ -30,7 +41,7 @@ export default function SignInPage() {
       <div className="w-full max-w-120">
         <div className="flex items-center gap-10 mb-2 px-6">
           <h1 className="text-2xl font-semibold text-[#092A31]">Login</h1>
-          <ErrorAlert error={error} />
+          {errorMessage ? <ErrorAlert error={errorMessage} /> : null}
         </div>
         <div className="flex-1 flex items-center px-6 pb-6">
           <div className="w-full rounded-2xl bg-white p-6 border border-gray-100">
@@ -39,7 +50,7 @@ export default function SignInPage() {
               Fill in your appropriate details below
             </p>
 
-            <form className="mt-4 space-y-5">
+            <form className="mt-4 space-y-5" onSubmit={handleSubmit}>
               <div>
                 <label
                   htmlFor="email"
@@ -51,6 +62,10 @@ export default function SignInPage() {
                   id="email"
                   type="email"
                   placeholder="Enter your email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
                   className={cn(
                     "w-full rounded-lg bg-[#F8FAFC] px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8]",
                     "focus:outline-none focus:ring-2 focus:ring-[#156374] focus:ring-offset-0 focus:border-transparent",
@@ -70,6 +85,10 @@ export default function SignInPage() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    autoComplete="current-password"
                     className={cn(
                       "w-full rounded-lg bg-[#F8FAFC] px-4 py-3 pr-12 text-[#092A31] placeholder:text-[#94A3B8]",
                       "focus:outline-none focus:ring-2 focus:ring-[#156374] focus:ring-offset-0 focus:border-transparent",
@@ -108,14 +127,13 @@ export default function SignInPage() {
                 </Link>
               </div>
 
-              <Link href={"/"}>
-                <Button
-                  type="submit"
-                  className="w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium"
-                >
-                  Login
-                </Button>
-              </Link>
+              <Button
+                type="submit"
+                disabled={isLoggingIn || !email.trim() || !password.trim()}
+                className="w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium disabled:opacity-70"
+              >
+                {isLoggingIn ? "Signing in…" : "Login"}
+              </Button>
             </form>
 
             {/* Social login */}

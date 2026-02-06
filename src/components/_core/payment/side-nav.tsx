@@ -3,12 +3,12 @@
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
-export type PaymentStepId = "checkout" | "personal" | "payment";
+export type PaymentStepId = "checkout" | "personal";
 
 const STEPS: { id: PaymentStepId; label: string }[] = [
   { id: "checkout", label: "Checkout" },
   { id: "personal", label: "Personal Details" },
-  { id: "payment", label: "Payment" },
+  // { id: "payment", label: "Payment" },
 ];
 
 type SideNavProps = {
@@ -19,7 +19,10 @@ type SideNavProps = {
 const SideNav = ({ activeStep, onStepChange }: SideNavProps) => {
   return (
     <aside className="shrink-0 ">
-      <nav className="rounded-xl bg-[#E8EFF1] p-4" aria-label="Enrollment steps">
+      <nav
+        className="rounded-xl bg-[#E8EFF1] p-4"
+        aria-label="Enrollment steps"
+      >
         <ul className="space-y-1 flex justify-between lg:flex-col gap-2 overflow-x-auto">
           {STEPS.map((step, i) => {
             const isActive = activeStep === step.id;

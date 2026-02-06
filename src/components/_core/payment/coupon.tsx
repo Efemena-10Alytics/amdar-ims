@@ -1,7 +1,39 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import React from "react";
+
+export const DEFAULT_PROMO_CODE = "WELCOME30";
+
+const CHECKOUT_QUERY_KEY_PREFIX = ["payment", "checkout"] as const;
 
 const Coupon = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
+  const promoFromUrl = searchParams.get("promo_code") ?? DEFAULT_PROMO_CODE;
+  const [inputValue, setInputValue] = useState(promoFromUrl);
+
+  useEffect(() => {
+    setInputValue(promoFromUrl);
+  }, [promoFromUrl]);
+
+  const handleApply = () => {
+    const trimmed = inputValue.trim();
+    const next = new URLSearchParams(searchParams.toString());
+    if (trimmed) {
+      next.set("promo_code", trimmed);
+    } else {
+      next.delete("promo_code");
+    }
+    const query = next.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname);
+    queryClient.invalidateQueries({ queryKey: [...CHECKOUT_QUERY_KEY_PREFIX] });
+  };
+
   return (
     <aside className="lg:w-80 shrink-0">
       <section>
@@ -15,6 +47,9 @@ const Coupon = () => {
               <input
                 type="text"
                 placeholder="Enter code"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleApply()}
                 className="mt-1 w-full rounded-lg border border-[#e5e7eb] bg-white px-3 py-2 text-sm text-[#092A31] placeholder:text-[#9ca3af] focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
@@ -24,10 +59,12 @@ const Coupon = () => {
             </div>
           </div>
           <Button
+            type="button"
             variant="secondary"
             className="mt-4 w-full bg-primary/10 text-primary hover:bg-primary/15"
+            onClick={handleApply}
           >
-            Applied
+            Apply
           </Button>
         </div>
       </section>
