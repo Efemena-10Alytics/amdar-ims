@@ -25,7 +25,10 @@ interface PaymentDetailsProps {
   onProceed?: () => void;
 }
 
-const PaymentDetails = ({ checkoutSelections, onProceed }: PaymentDetailsProps) => {
+const PaymentDetails = ({
+  checkoutSelections,
+  onProceed,
+}: PaymentDetailsProps) => {
   const [confirmInfo, setConfirmInfo] = useState(false);
   const [confirmTerms, setConfirmTerms] = useState(false);
 
@@ -67,16 +70,47 @@ const PaymentDetails = ({ checkoutSelections, onProceed }: PaymentDetailsProps) 
                 <p className="mt-1 flex items-center gap-2 font-medium text-[#092A31]">
                   {checkoutSelections?.cohort?.name ?? "February Cohort"}
                   <span className="inline-flex rounded-full bg-[#d1fae5] px-2.5 py-0.5 text-xs font-medium text-[#065f46]">
-                    {checkoutSelections?.cohort?.start_date ?? "February 7, 2026"}
+                    {checkoutSelections?.cohort?.start_date ??
+                      "February 7, 2026"}
                   </span>
                 </p>
               </div>
             </div>
             <div className="mt-4 border-t border-[#B6CFD4]/50 pt-4">
-              <p className="text-sm text-[#6b7280]">Plan selected</p>
-              <p className="mt-1 font-medium text-[#092A31]">
-                {checkoutSelections?.planLabel ?? "Full payment"}
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-[#6b7280]">Plan selected</p>
+                <p className="mt-1 font-medium text-[#092A31]">
+                  {checkoutSelections?.planLabel ?? "Full payment"}
+                </p>
+              </div>
+              {checkoutSelections?.installmentBreakdown &&
+              checkoutSelections.installmentBreakdown.length > 0 ? (
+                <div className="space-y-2 border-[#B6CFD4]/50 pt-3">
+                  {checkoutSelections.installmentBreakdown.map((item, i) => (
+                    <div key={i} className="flex justify-between text-sm">
+                      <span className="text-[#6b7280]">
+                        {item.label === "1st payment"
+                          ? "First payment"
+                          : item.label === "2nd payment"
+                            ? "Second payment"
+                            : item.label === "3rd payment"
+                              ? "Third payment"
+                              : item.label}
+                      </span>
+                      <span className="font-medium text-[#092A31]">
+                        {item.amount}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : checkoutSelections?.planTotal ? (
+                <div className="mt-3 flex justify-between text-sm border-t border-[#B6CFD4]/50 pt-3">
+                  <span className="text-[#6b7280]">Payment</span>
+                  <span className="font-medium text-[#092A31]">
+                    {checkoutSelections.planTotal}
+                  </span>
+                </div>
+              ) : null}
             </div>
           </div>
         </section>
@@ -105,7 +139,8 @@ const PaymentDetails = ({ checkoutSelections, onProceed }: PaymentDetailsProps) 
               <span className="font-medium text-[#092A31]">Amount to pay</span>
               <span className="font-clash-display font-bold text-primary">
                 {checkoutSelections
-                  ? (checkoutSelections.firstPaymentAmount ?? checkoutSelections.planTotal)
+                  ? (checkoutSelections.firstPaymentAmount ??
+                    checkoutSelections.planTotal)
                   : "USD 390"}
               </span>
             </div>

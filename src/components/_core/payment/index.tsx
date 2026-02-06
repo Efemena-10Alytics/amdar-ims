@@ -4,7 +4,6 @@ import { useState } from "react";
 import SideNav, { type PaymentStepId } from "./side-nav";
 import Checkout from "./checkout";
 import PaymentDetails from "./payment-details";
-import Payment from "./payment";
 import type { InternshipProgram } from "@/types/internship-program";
 import type { CheckoutData } from "@/features/payment/use-get-checkout-data";
 import type { CheckoutSelections } from "@/types/payment";

@@ -62,6 +62,12 @@ export interface CheckoutApiResponse {
   data: CheckoutData;
 }
 
+/** Single installment row for display (e.g. "First payment" / "GBP 250") */
+export interface InstallmentBreakdownItem {
+  label: string;
+  amount: string;
+}
+
 /** Collected checkout selections to pass to Payment / PaymentDetails */
 export type CheckoutSelections = {
   cohort: CheckoutCohort;
@@ -72,4 +78,6 @@ export type CheckoutSelections = {
   planTotal: string;
   /** First payment amount for display (e.g. "GBP 250"); null for full payment. */
   firstPaymentAmount: string | null;
+  /** Per-installment rows for 2- or 3-installment plans; null for full payment. */
+  installmentBreakdown: InstallmentBreakdownItem[] | null;
 };

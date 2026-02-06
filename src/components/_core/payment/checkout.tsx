@@ -132,6 +132,7 @@ const Checkout = ({ checkoutData, program, setActiveStep, onProceed }: CheckoutP
       planLabel: selectedPlanOption.label,
       planTotal: selectedPlanOption.total,
       firstPaymentAmount,
+      installmentBreakdown: selectedPlanOption.breakdown ?? null,
     });
     setActiveStep("personal");
   };
