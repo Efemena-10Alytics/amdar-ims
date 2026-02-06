@@ -14,7 +14,7 @@ const login = async (user: LoginCredentials, redirectURL?: string) => {
     if (res.status === 200 && res.data?.data) {
       useAuthStore.getState().setUser(res.data.data);
       if (typeof window !== "undefined") {
-        window.location.replace(redirectURL ?? "/dashboard");
+        window.location.replace(redirectURL ?? "/internship-program");
       }
     }
   } catch (error) {

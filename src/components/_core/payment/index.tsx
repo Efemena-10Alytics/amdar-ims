@@ -1,23 +1,52 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import SideNav, { type PaymentStepId } from "./side-nav";
 import Checkout from "./checkout";
 import PaymentDetails from "./payment-details";
+import Coupon from "./coupon";
 import type { InternshipProgram } from "@/types/internship-program";
 import type { CheckoutData } from "@/features/payment/use-get-checkout-data";
 import type { CheckoutSelections } from "@/types/payment";
-import Coupon from "./coupon";
+import { usePayNow } from "@/features/payment/use-pay-now";
+import { DEFAULT_PROMO_CODE } from "./coupon";
 
 interface PaymentMainProps {
   program?: InternshipProgram;
   checkoutData?: CheckoutData;
+  /** Payment page [id] for success redirect (so Stripe returns here with session_id) */
+  paymentPageId?: string;
 }
 
-const PaymentMain = ({ program, checkoutData }: PaymentMainProps) => {
+const PaymentMain = ({ program, checkoutData, paymentPageId }: PaymentMainProps) => {
+  const searchParams = useSearchParams();
+  const promoCode = searchParams.get("promo_code") ?? DEFAULT_PROMO_CODE;
   const [activeStep, setActiveStep] = useState<PaymentStepId>("checkout");
   const [checkoutSelections, setCheckoutSelections] =
     useState<CheckoutSelections | null>(null);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
+
+  const { payNow, isProcessingPayment } = usePayNow({
+    checkoutData: checkoutData ?? null,
+    checkoutSelections,
+    slug: program?.slug,
+    paymentPageId,
+    promoCode,
+    promoApplied: !!searchParams.get("promo_code"),
+    onError: (message) => setPaymentError(message),
+    onSuccess: (checkoutUrl) => {
+      setPaymentError(null);
+      if (typeof window !== "undefined") {
+        window.location.href = checkoutUrl;
+      }
+    },
+  });
+
+  const handlePayNow = () => {
+    setPaymentError(null);
+    payNow();
+  };
 
   return (
     <div className="flex flex-col gap-8 lg:flex-row lg:gap-12">
@@ -36,7 +65,9 @@ const PaymentMain = ({ program, checkoutData }: PaymentMainProps) => {
         {activeStep === "personal" && (
           <PaymentDetails
             checkoutSelections={checkoutSelections}
-            onProceed={() => {}}
+            onProceed={handlePayNow}
+            isProcessingPayment={isProcessingPayment}
+            paymentError={paymentError}
           />
         )}
       </div>
