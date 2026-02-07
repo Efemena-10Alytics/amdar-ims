@@ -91,7 +91,7 @@ const PaymentMain = ({ program, checkoutData, paymentPageId }: PaymentMainProps)
       <SideNav activeStep={activeStep} onStepChange={setActiveStep} />
 
       {/* Right content – render based on active step */}
-      <div>
+      <div className="min-w-0 flex-1 w-full">
         {activeStep === "checkout" && (
           <Checkout
             checkoutData={checkoutData}
@@ -110,7 +110,7 @@ const PaymentMain = ({ program, checkoutData, paymentPageId }: PaymentMainProps)
         )}
         {activeStep === "complete-profile" && <CompleteProfile />}
       </div>
-      <Coupon />
+      {activeStep !== "complete-profile" && <Coupon />}
 
       <PaymentSuccessModal
         open={showSuccessModal}

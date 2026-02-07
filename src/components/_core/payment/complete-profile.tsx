@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const inputBase = cn(
-  "w-full rounded-lg bg-[#F8FAFC] px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8] border border-gray-200",
+  "w-full rounded-lg bg-[#F8FAFC] px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8]",
   "focus:outline-none focus:ring-2 focus:ring-[#156374] focus:ring-offset-0 focus:border-transparent",
 );
 
@@ -52,7 +52,7 @@ export default function CompleteProfile() {
   };
 
   return (
-    <div className="flex-1 w-full">
+    <div className="min-w-0 max-w-xl flex-1 w-full pb-12">
       <h2 className="font-clash-display text-xl font-bold text-[#092A31]">
         Complete profile to confirm enrollment
       </h2>
@@ -164,7 +164,7 @@ export default function CompleteProfile() {
 
         <Button
           type="submit"
-          className="w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium"
+          className="w-full mt-12 rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium"
         >
           Complete profile
         </Button>

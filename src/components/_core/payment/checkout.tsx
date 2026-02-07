@@ -34,18 +34,35 @@ function getOrdinal(i: number): string {
 }
 
 /** Derive payment plan options from the selected pricing (full = original_amount, 2 = two_installments_amount/2 each, 3 = display_three_installment_breakdown). */
-function getPaymentPlansFromPricing(price: CheckoutPricing): PaymentPlanOption[] {
-  const { currency, amount, original_amount, two_installments_amount, three_installments_amount, display_three_installment_breakdown } = price;
+function getPaymentPlansFromPricing(
+  price: CheckoutPricing,
+): PaymentPlanOption[] {
+  const {
+    currency,
+    amount,
+    original_amount,
+    two_installments_amount,
+    three_installments_amount,
+    display_three_installment_breakdown,
+  } = price;
   const half = Math.round(two_installments_amount / 2);
-  const threeBreakdown = display_three_installment_breakdown && display_three_installment_breakdown.length >= 3
-    ? display_three_installment_breakdown
-    : [Math.round(three_installments_amount / 3), Math.round(three_installments_amount / 3), three_installments_amount - 2 * Math.round(three_installments_amount / 3)];
+  const threeBreakdown =
+    display_three_installment_breakdown &&
+    display_three_installment_breakdown.length >= 3
+      ? display_three_installment_breakdown
+      : [
+          Math.round(three_installments_amount / 3),
+          Math.round(three_installments_amount / 3),
+          three_installments_amount -
+            2 * Math.round(three_installments_amount / 3),
+        ];
 
   return [
     {
       id: "full",
       label: "Full Payment",
-      description: "Make one time payment now and get full access to your course",
+      description:
+        "Make one time payment now and get full access to your course",
       total: `${currency} ${amount}`,
       breakdown: null,
     },
@@ -72,9 +89,6 @@ function getPaymentPlansFromPricing(price: CheckoutPricing): PaymentPlanOption[]
   ];
 }
 
-
-
-
 interface CheckoutProps {
   checkoutData?: CheckoutData;
   program?: InternshipProgram;
@@ -82,7 +96,12 @@ interface CheckoutProps {
   onProceed?: (selections: CheckoutSelections) => void;
 }
 
-const Checkout = ({ checkoutData, program, setActiveStep, onProceed }: CheckoutProps) => {
+const Checkout = ({
+  checkoutData,
+  program,
+  setActiveStep,
+  onProceed,
+}: CheckoutProps) => {
   const firstCurrency = checkoutData?.pricings?.[0]?.currency ?? "USD";
   const [selectedCohort, setSelectedCohort] = useState<number | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<PaymentPlanId | null>(null);
@@ -92,11 +111,11 @@ const Checkout = ({ checkoutData, program, setActiveStep, onProceed }: CheckoutP
     () =>
       checkoutData?.pricings?.find((p) => p.currency === currency) ??
       checkoutData?.pricings?.[0],
-    [checkoutData?.pricings, currency]
+    [checkoutData?.pricings, currency],
   );
   const paymentPlans = useMemo(
     () => (selectedPricing ? getPaymentPlansFromPricing(selectedPricing) : []),
-    [selectedPricing]
+    [selectedPricing],
   );
 
   useEffect(() => {
@@ -111,11 +130,11 @@ const Checkout = ({ checkoutData, program, setActiveStep, onProceed }: CheckoutP
 
   const selectedCohortData = useMemo(
     () => checkoutData?.upcoming_cohorts?.find((c) => c.id === selectedCohort),
-    [checkoutData?.upcoming_cohorts, selectedCohort]
+    [checkoutData?.upcoming_cohorts, selectedCohort],
   );
   const selectedPlanOption = useMemo(
     () => paymentPlans.find((p) => p.id === selectedPlan),
-    [paymentPlans, selectedPlan]
+    [paymentPlans, selectedPlan],
   );
 
   const handleProceed = () => {
@@ -123,7 +142,7 @@ const Checkout = ({ checkoutData, program, setActiveStep, onProceed }: CheckoutP
     const firstPaymentAmount =
       selectedPlan === "full"
         ? null
-        : selectedPlanOption.breakdown?.[0]?.amount ?? null;
+        : (selectedPlanOption.breakdown?.[0]?.amount ?? null);
     onProceed?.({
       cohort: selectedCohortData,
       planId: selectedPlanOption.id,
@@ -138,7 +157,7 @@ const Checkout = ({ checkoutData, program, setActiveStep, onProceed }: CheckoutP
   };
 
   return (
-    <main className="flex-1 space-y-10 pb-24">
+    <main className="min-w-0 w-full flex-1 space-y-10 pb-24">
       {/* 1. Confirm your enrollment */}
       <section>
         <h2 className="font-clash-display text-xl font-bold text-[#092A31]">
@@ -200,19 +219,19 @@ const Checkout = ({ checkoutData, program, setActiveStep, onProceed }: CheckoutP
                     : "border-[#e5e7eb] bg-white hover:border-[#d1d5db]",
                 )}
               >
-                <span
-                  className={cn(
-                    "absolute left-4 top-4 flex h-5 w-5 items-center justify-center rounded border",
-                    isSelected
-                      ? "border-[#22c55e] bg-[#22c55e] text-white"
-                      : "border-[#d1d5db] bg-white",
-                  )}
-                >
-                  {isSelected && (
-                    <Check className="h-3 w-3" strokeWidth={2.5} />
-                  )}
-                </span>
-                <div className="pl-8">
+                <div className="flex gap-2 items-center mb-1">
+                  <span
+                    className={cn(
+                      "flex h-5 w-5 items-center justify-center rounded border",
+                      isSelected
+                        ? "border-[#22c55e] bg-[#22c55e] text-white"
+                        : "border-[#d1d5db] bg-white",
+                    )}
+                  >
+                    {isSelected && (
+                      <Check className="h-3 w-3" strokeWidth={2.5} />
+                    )}
+                  </span>
                   <span
                     className={cn(
                       "font-clash-display font-semibold",
@@ -221,12 +240,12 @@ const Checkout = ({ checkoutData, program, setActiveStep, onProceed }: CheckoutP
                   >
                     {cohort.name}
                   </span>
-                  <div className="mt-2 flex items-center gap-2 text-sm text-[#6b7280]">
-                    <Calendar className="h-4 w-4 shrink-0" />
-                    <span>{cohort.start_date}</span>
-                    <span>·</span>
-                    <span>{cohort.month}</span>
-                  </div>
+                </div>
+                <div className="mt-2 flex items-center gap-2 text-sm text-[#6b7280]">
+                  <Calendar className="h-4 w-4 shrink-0" />
+                  <span>{cohort.start_date}</span>
+                  <span>·</span>
+                  <span>{cohort.month}</span>
                 </div>
               </button>
             );
@@ -236,7 +255,7 @@ const Checkout = ({ checkoutData, program, setActiveStep, onProceed }: CheckoutP
 
       {/* 3. Payment options */}
       <section>
-        <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="font-clash-display text-xl font-bold text-[#092A31]">
               Payment options
