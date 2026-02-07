@@ -139,7 +139,7 @@ export function usePayNow({
         success_url: newUser
           ? `${origin}/complete-your-profile?program=${slug}&u-status=new`
           : paymentPageId
-            ? `${origin}/payment/${paymentPageId}?status=success`
+            ? `${origin}/payment/${paymentPageId}?status=success&session_id={CHECKOUT_SESSION_ID}`
             : `${origin}/internship/${slug}/apply/payment-checkout?tab=3&status=success`,
         cancel_url: `${origin}/internship/${slug}/apply/payment-checkout?tab=3&status=cancelled${newUser ? "&u-status=new" : ""}`,
         next_payment_date: apiNextPaymentDate,
