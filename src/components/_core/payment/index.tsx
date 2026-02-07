@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useCallback, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import SideNav, { type PaymentStepId } from "./side-nav";
 import Checkout from "./checkout";
 import PaymentDetails from "./payment-details";
@@ -12,6 +12,14 @@ import type { CheckoutSelections } from "@/types/payment";
 import { usePayNow } from "@/features/payment/use-pay-now";
 import { DEFAULT_PROMO_CODE } from "./coupon";
 
+const VALID_STEPS: PaymentStepId[] = ["checkout", "personal", "complete-profile"];
+
+function stepFromParam(param: string | null): PaymentStepId {
+  return param && VALID_STEPS.includes(param as PaymentStepId)
+    ? (param as PaymentStepId)
+    : "checkout";
+}
+
 interface PaymentMainProps {
   program?: InternshipProgram;
   checkoutData?: CheckoutData;
@@ -20,12 +28,25 @@ interface PaymentMainProps {
 }
 
 const PaymentMain = ({ program, checkoutData, paymentPageId }: PaymentMainProps) => {
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const promoCode = searchParams.get("promo_code") ?? DEFAULT_PROMO_CODE;
-  const [activeStep, setActiveStep] = useState<PaymentStepId>("checkout");
+  const activeStep = stepFromParam(searchParams.get("step"));
   const [checkoutSelections, setCheckoutSelections] =
     useState<CheckoutSelections | null>(null);
   const [paymentError, setPaymentError] = useState<string | null>(null);
+
+  const setActiveStep = useCallback(
+    (value: React.SetStateAction<PaymentStepId>) => {
+      const step =
+        typeof value === "function" ? value(activeStep) : value;
+      const next = new URLSearchParams(searchParams.toString());
+      next.set("step", step);
+      router.replace(`${pathname}?${next.toString()}`);
+    },
+    [activeStep, pathname, router, searchParams],
+  );
 
   const { payNow, isProcessingPayment } = usePayNow({
     checkoutData: checkoutData ?? null,

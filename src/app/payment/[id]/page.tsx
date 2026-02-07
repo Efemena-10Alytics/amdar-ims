@@ -12,7 +12,13 @@ export default function PaymentPage() {
   const searchParams = useSearchParams();
   const id = params?.id as string | undefined;
   const promoCode = searchParams.get("promo_code") ?? DEFAULT_PROMO_CODE;
-  const statusSuccess = searchParams.get("status") === "success";
+  const statusParam = searchParams.get("status") ?? "";
+  const statusSuccess =
+    statusParam === "success" ||
+    statusParam === "sucess" ||
+    (typeof window !== "undefined" &&
+      (window.location.search.includes("status=success") ||
+        window.location.search.includes("status=sucess")));
   const sessionId = searchParams.get("session_id") ?? null;
 
   const { data: program, isLoading, error } = useGetInternshipProgram(id);
@@ -22,7 +28,7 @@ export default function PaymentPage() {
     error: checkoutError,
   } = useGetCheckoutData(program?.slug, promoCode);
 
-  const showSuccessModal = statusSuccess && !!sessionId?.trim();
+  const showSuccessModal = statusSuccess;
 
   if (isLoading) {
     return (

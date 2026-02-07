@@ -138,10 +138,8 @@ export function usePayNow({
         currency: checkoutSelections.currency,
         success_url: newUser
           ? `${origin}/complete-your-profile?program=${slug}&u-status=new`
-          : paymentPageId
-            ? `${origin}/payment/${paymentPageId}?status=success&session_id={CHECKOUT_SESSION_ID}`
-            : `${origin}/internship/${slug}/apply/payment-checkout?tab=3&status=success`,
-        cancel_url: `${origin}/internship/${slug}/apply/payment-checkout?tab=3&status=cancelled${newUser ? "&u-status=new" : ""}`,
+          : `${origin}/payment/${paymentPageId ?? slug}?status=success`,
+        cancel_url: `${origin}/payment/${paymentPageId ?? slug}?status=cancelled${newUser ? "&u-status=new" : ""}`,
         next_payment_date: apiNextPaymentDate,
         promo_code: promoApplied && promoCode ? promoCode : "default",
       };
