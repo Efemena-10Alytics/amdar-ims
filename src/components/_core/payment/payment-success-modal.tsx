@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { Loader2, Check, AlertCircle } from "lucide-react";
 import {
   Dialog,
@@ -11,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useVerifyStripeSession } from "@/features/payment/use-verify-stripe-session";
+import type { PaymentStepId } from "./side-nav";
 
 export type PaymentSuccessPhase = "processing" | "success" | "error";
 
@@ -22,6 +22,8 @@ interface PaymentSuccessModalProps {
   sessionId?: string | null;
   /** Only used when sessionId is not set: seconds before switching to success (default 2) */
   processingDuration?: number;
+  /** Optional step setter from payment flow (e.g. to switch to complete-profile) */
+  setActiveStep?: (step: PaymentStepId) => void;
 }
 
 export function PaymentSuccessModal({
@@ -30,8 +32,11 @@ export function PaymentSuccessModal({
   programSlug,
   sessionId = null,
   processingDuration = 2,
+  setActiveStep,
 }: PaymentSuccessModalProps) {
-  const [timerPhase, setTimerPhase] = useState<"processing" | "success">("processing");
+  const [timerPhase, setTimerPhase] = useState<"processing" | "success">(
+    "processing",
+  );
 
   const {
     status: verifyStatus,
@@ -50,22 +55,22 @@ export function PaymentSuccessModal({
       return;
     }
     if (sessionId?.trim()) return;
-    const t = setTimeout(() => setTimerPhase("success"), processingDuration * 1000);
+    const t = setTimeout(
+      () => setTimerPhase("success"),
+      processingDuration * 1000,
+    );
     return () => clearTimeout(t);
   }, [open, sessionId, processingDuration]);
 
-  const phase: PaymentSuccessPhase =
-    sessionId?.trim()
-      ? isVerifying || verifyStatus === "processing"
-        ? "processing"
-        : verifyStatus === "success"
-          ? "success"
-          : "error"
-      : timerPhase;
+  const phase: PaymentSuccessPhase = sessionId?.trim()
+    ? isVerifying || verifyStatus === "processing"
+      ? "processing"
+      : verifyStatus === "success"
+        ? "success"
+        : "error"
+    : timerPhase;
 
-  const seeMyProgramHref = programSlug
-    ? `/internship/${programSlug}/apply/payment-checkout?tab=3`
-    : "/internship";
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -76,9 +81,7 @@ export function PaymentSuccessModal({
         {phase === "processing" && (
           <>
             <DialogHeader>
-              <DialogTitle className="sr-only">
-                Processing payment
-              </DialogTitle>
+              <DialogTitle className="sr-only">Processing payment</DialogTitle>
             </DialogHeader>
             <div className="flex flex-col items-center gap-6 py-4">
               <div className="relative flex h-16 w-16 items-center justify-center">
@@ -114,8 +117,14 @@ export function PaymentSuccessModal({
               <p className="text-sm text-[#6b7280]">
                 Your payment receipt has been sent to your mail
               </p>
-              <Button asChild className="w-full bg-[#092A31] hover:bg-[#092A31]/90">
-                <Link href={seeMyProgramHref}>See my program</Link>
+              <Button
+                onClick={() => {
+                  setActiveStep?.("complete-profile");
+                  onOpenChange?.(false);
+                }}
+                className="w-full h-10 hover:bg-[#092A31]/90"
+              >
+                Complete Profile
               </Button>
             </div>
           </>
@@ -136,7 +145,8 @@ export function PaymentSuccessModal({
                 <AlertCircle className="h-9 w-9" strokeWidth={2} />
               </div>
               <p className="text-sm text-[#6b7280]">
-                {verifyError ?? "Unable to verify your payment. Please contact support."}
+                {verifyError ??
+                  "Unable to verify your payment. Please contact support."}
               </p>
               <div className="flex w-full gap-3">
                 <Button

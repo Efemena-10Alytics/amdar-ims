@@ -2,7 +2,6 @@
 
 import { useParams, useSearchParams } from "next/navigation";
 import PaymentMain from "@/components/_core/payment";
-import { PaymentSuccessModal } from "@/components/_core/payment/payment-success-modal";
 import { useGetInternshipProgram } from "@/features/internship/use-get-internship-program";
 import { useGetCheckoutData } from "@/features/payment/use-get-checkout-data";
 import { DEFAULT_PROMO_CODE } from "@/components/_core/payment/coupon";
@@ -12,14 +11,6 @@ export default function PaymentPage() {
   const searchParams = useSearchParams();
   const id = params?.id as string | undefined;
   const promoCode = searchParams.get("promo_code") ?? DEFAULT_PROMO_CODE;
-  const statusParam = searchParams.get("status") ?? "";
-  const statusSuccess =
-    statusParam === "success" ||
-    statusParam === "sucess" ||
-    (typeof window !== "undefined" &&
-      (window.location.search.includes("status=success") ||
-        window.location.search.includes("status=sucess")));
-  const sessionId = searchParams.get("session_id") ?? null;
 
   const { data: program, isLoading, error } = useGetInternshipProgram(id);
   const {
@@ -27,8 +18,6 @@ export default function PaymentPage() {
     isLoading: isCheckoutLoading,
     error: checkoutError,
   } = useGetCheckoutData(program?.slug, promoCode);
-
-  const showSuccessModal = statusSuccess;
 
   if (isLoading) {
     return (
@@ -79,11 +68,7 @@ export default function PaymentPage() {
           paymentPageId={id}
         />
       </div>
-      <PaymentSuccessModal
-        open={showSuccessModal}
-        programSlug={program?.slug}
-        sessionId={sessionId}
-      />
+      
     </div>
   );
 }
