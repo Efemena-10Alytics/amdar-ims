@@ -3,12 +3,12 @@
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
-export type PaymentStepId = "checkout" | "personal";
+export type PaymentStepId = "checkout" | "personal" | "complete-profile";
 
 const STEPS: { id: PaymentStepId; label: string }[] = [
   { id: "checkout", label: "Checkout" },
   { id: "personal", label: "Personal Details" },
-  // { id: "payment", label: "Payment" },
+  { id: "complete-profile", label: "Complete Profile" },
 ];
 
 type SideNavProps = {

@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
-import Coupon from "./coupon";
 import type { CheckoutSelections } from "@/types/payment";
 
 const PERSONAL_DATA_KEYS: Array<{
@@ -50,11 +49,15 @@ function getPersonalDataFromUser(user: Record<string, unknown> | null): Array<{
 interface PaymentDetailsProps {
   checkoutSelections?: CheckoutSelections | null;
   onProceed?: () => void;
+  isProcessingPayment?: boolean;
+  paymentError?: string | null;
 }
 
 const PaymentDetails = ({
   checkoutSelections,
   onProceed,
+  isProcessingPayment = false,
+  paymentError = null,
 }: PaymentDetailsProps) => {
   const [confirmInfo, setConfirmInfo] = useState(false);
   const [confirmTerms, setConfirmTerms] = useState(false);
@@ -220,32 +223,39 @@ const PaymentDetails = ({
           </label>
         </div>
 
+        {paymentError && (
+          <p className="text-sm text-destructive" role="alert">
+            {paymentError}
+          </p>
+        )}
+
         <Button
           className={cn(
-            "w-full py-6 text-base font-semibold hidden lg:block",
-            (!confirmInfo || !confirmTerms) && "pointer-events-none opacity-60",
+            "w-full h-12 text-base font-semibold hidden lg:block",
+            (!confirmInfo || !confirmTerms || isProcessingPayment) &&
+              "pointer-events-none opacity-60",
           )}
           size="lg"
-          disabled={!confirmInfo || !confirmTerms}
+          disabled={!confirmInfo || !confirmTerms || isProcessingPayment}
           onClick={onProceed}
         >
-          Proceed
+          {isProcessingPayment ? "Processing…" : "Pay now"}
         </Button>
       </div>
 
       {/* Right column – Coupon/promo code */}
       <div className="space-y-6">
-        {/* <Coupon /> */}
         <Button
           className={cn(
             "w-full py-6 text-base font-semibold lg:hidden",
-            (!confirmInfo || !confirmTerms) && "pointer-events-none opacity-60",
+            (!confirmInfo || !confirmTerms || isProcessingPayment) &&
+              "pointer-events-none opacity-60",
           )}
           size="lg"
-          disabled={!confirmInfo || !confirmTerms}
+          disabled={!confirmInfo || !confirmTerms || isProcessingPayment}
           onClick={onProceed}
         >
-          Proceed
+          {isProcessingPayment ? "Processing…" : "Pay now"}
         </Button>
       </div>
     </div>
