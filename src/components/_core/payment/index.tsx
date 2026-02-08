@@ -11,6 +11,7 @@ import type { InternshipProgram } from "@/types/internship-program";
 import type { CheckoutData } from "@/features/payment/use-get-checkout-data";
 import type { CheckoutSelections } from "@/types/payment";
 import { usePayNow } from "@/features/payment/use-pay-now";
+import { useCheckoutSelectionsStorage } from "@/features/payment/use-checkout-storage";
 import { DEFAULT_PROMO_CODE } from "./coupon";
 import { PaymentSuccessModal } from "./payment-success-modal";
 
@@ -46,7 +47,7 @@ const PaymentMain = ({ program, checkoutData, paymentPageId }: PaymentMainProps)
   const [successModalDismissed, setSuccessModalDismissed] = useState(false);
   const showSuccessModal = statusSuccess && !successModalDismissed;
   const [checkoutSelections, setCheckoutSelections] =
-    useState<CheckoutSelections | null>(null);
+    useCheckoutSelectionsStorage(program?.id);
   const [paymentError, setPaymentError] = useState<string | null>(null);
 
   // Reset dismissed state when URL has status=success again (e.g. return from Stripe)
