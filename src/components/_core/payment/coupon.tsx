@@ -35,7 +35,7 @@ const Coupon = () => {
   };
 
   return (
-    <aside className="lg:w-80 shrink-0">
+    <aside className="w-60 xl:w-80 shrink-0">
       <section>
         <h2 className="font-clash-display text-xl font-bold text-[#092A31]">
           Coupon/promo code

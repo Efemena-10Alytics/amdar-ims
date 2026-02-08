@@ -76,7 +76,7 @@ const PaymentDetails = ({
   );
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-1 flex-col w-full">
       {/* Left column */}
       <div className="flex-1 w-full space-y-8 lg:pb-24">
         {/* Personal data */}
@@ -243,21 +243,18 @@ const PaymentDetails = ({
         </Button>
       </div>
 
-      {/* Right column – Coupon/promo code */}
-      <div className="space-y-6">
-        <Button
-          className={cn(
-            "w-full py-6 text-base font-semibold lg:hidden",
-            (!confirmInfo || !confirmTerms || isProcessingPayment) &&
-              "pointer-events-none opacity-60",
-          )}
-          size="lg"
-          disabled={!confirmInfo || !confirmTerms || isProcessingPayment}
-          onClick={onProceed}
-        >
-          {isProcessingPayment ? "Processing…" : "Pay now"}
-        </Button>
-      </div>
+      <Button
+        className={cn(
+          "w-full py-6 text-base font-semibold lg:hidden",
+          (!confirmInfo || !confirmTerms || isProcessingPayment) &&
+            "pointer-events-none opacity-60",
+        )}
+        size="lg"
+        disabled={!confirmInfo || !confirmTerms || isProcessingPayment}
+        onClick={onProceed}
+      >
+        {isProcessingPayment ? "Processing…" : "Pay now"}
+      </Button>
     </div>
   );
 };
