@@ -109,7 +109,9 @@ const PaymentMain = ({ program, checkoutData, paymentPageId }: PaymentMainProps)
             paymentError={paymentError}
           />
         )}
-        {activeStep === "complete-profile" && <CompleteProfile />}
+        {activeStep === "complete-profile" && (
+            <CompleteProfile programTitle={program?.title} />
+          )}
       </div>
       {activeStep !== "complete-profile" && <Coupon />}
 
