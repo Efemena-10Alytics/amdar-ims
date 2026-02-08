@@ -16,7 +16,7 @@ const PERSONAL_DATA_KEYS: Array<{
   { key: "firstName", label: "First name" },
   { key: "lastName", label: "Last name" },
   { key: "email", label: "Email" },
-  { key: "phone", label: "Phone number" },
+  { key: "phoneNumber", label: "Phone number" },
   { key: "location", label: "Location", withFlag: true },
 ];
 

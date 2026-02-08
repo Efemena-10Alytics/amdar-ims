@@ -6,6 +6,8 @@ export type VerifyEmailOptions = {
   redirect?: string;
   /** If true, redirect URL gets ?u-status=new (or &u-status=new). */
   newUser?: boolean;
+  /** Program id to pass to success/next route (e.g. for payment). */
+  program?: string;
 };
 
 type VerifyEmailResponse = {
@@ -38,10 +40,11 @@ export function useVerifyEmail() {
         );
 
         if (res?.data?.success === true && typeof window !== "undefined") {
-          const { redirect, newUser } = options;
+          const { redirect, newUser, program } = options;
           const params = new URLSearchParams();
           if (redirect) params.set("redirect", redirect);
           if (newUser) params.set("u-status", "new");
+          if (program) params.set("program", program);
           const query = params.toString();
           const successUrl = query
             ? `/auth/success?${query}`

@@ -15,8 +15,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { InternshipProgram } from "@/types/internship-program";
 import { PaymentStepId } from "./side-nav";
-
-type PaymentPlanId = "full" | "2-installments" | "3-installments";
+import {
+  useCheckoutFormStorage,
+  type PaymentPlanId,
+} from "@/features/payment/use-checkout-storage";
 
 interface PaymentPlanOption {
   id: PaymentPlanId;
@@ -40,7 +42,6 @@ function getPaymentPlansFromPricing(
   const {
     currency,
     amount,
-    original_amount,
     two_installments_amount,
     three_installments_amount,
     display_three_installment_breakdown,
@@ -103,9 +104,22 @@ const Checkout = ({
   onProceed,
 }: CheckoutProps) => {
   const firstCurrency = checkoutData?.pricings?.[0]?.currency ?? "USD";
-  const [selectedCohort, setSelectedCohort] = useState<number | null>(null);
-  const [selectedPlan, setSelectedPlan] = useState<PaymentPlanId | null>(null);
-  const [currency, setCurrency] = useState<string>(firstCurrency);
+  const {
+    selectedCohort,
+    setSelectedCohort,
+    selectedPlan,
+    setSelectedPlan,
+    currency,
+    setCurrency,
+    persistSelections,
+  } = useCheckoutFormStorage(program?.id, checkoutData, firstCurrency);
+
+  // Persist full selections when proceeding so parent can hydrate after refresh
+  const handleProceedWithPersist = (selections: CheckoutSelections) => {
+    onProceed?.(selections);
+    persistSelections(selections);
+    setActiveStep("personal");
+  };
 
   const selectedPricing = useMemo(
     () =>
@@ -143,7 +157,7 @@ const Checkout = ({
       selectedPlan === "full"
         ? null
         : (selectedPlanOption.breakdown?.[0]?.amount ?? null);
-    onProceed?.({
+    const selections: CheckoutSelections = {
       cohort: selectedCohortData,
       planId: selectedPlanOption.id,
       currency,
@@ -152,8 +166,8 @@ const Checkout = ({
       planTotal: selectedPlanOption.total,
       firstPaymentAmount,
       installmentBreakdown: selectedPlanOption.breakdown ?? null,
-    });
-    setActiveStep("personal");
+    };
+    handleProceedWithPersist(selections);
   };
 
   return (
