@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useGetInternshipPrograms } from "@/features/internship/use-get-all-internship-programs";
+import { useAuthStore } from "@/store/auth-store";
 import { InternshipProgram } from "@/types/internship-program";
 
 const ChoosePath = () => {
+  const { user } = useAuthStore();
   const internshipProgramsQuery = useGetInternshipPrograms();
 
   useEffect(() => {
@@ -79,7 +81,13 @@ const ChoosePath = () => {
                       <div>USD 390</div>
                     </span>
                   </div>
-                  <Link href={`/internship-program/${career.id}`}>
+                  <Link
+                    href={
+                      user
+                        ? `/internship-program/${career.id}`
+                        : `/auth/sign-in?program=${career.id}`
+                    }
+                  >
                     <Button
                       className={cn(
                         "bg-primary group-hover:bg-amdari-yellow group-hover:text-primary hover:text-primary hover:bg-amdari-yellow text-white rounded-full px-4 py-2 text-sm font-medium",

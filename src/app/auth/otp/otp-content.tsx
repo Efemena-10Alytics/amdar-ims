@@ -31,6 +31,7 @@ export default function OtpContent() {
   const emailParam = searchParams.get("email") ?? "";
   const redirectParam = searchParams.get("redirect") ?? "";
   const uStatusParam = searchParams.get("u-status") ?? "";
+  const programParam = searchParams.get("program") ?? "";
 
   const [otp, setOtp] = useState("");
   const [email, setEmail] = useState(emailParam || "amberinc.io");
@@ -70,14 +71,19 @@ export default function OtpContent() {
       await verify(otp, {
         redirect: redirectParam || undefined,
         newUser: uStatusParam === "new",
+        program: programParam || undefined,
       });
     }
   };
 
+  const signInHref = programParam
+    ? `/auth/sign-in?program=${programParam}`
+    : "/auth/sign-in";
+
   return (
     <main className="flex-1 w-full min-h-full overflow-y-auto flex flex-col">
       <div className="flex justify-end p-6">
-        <Link href="/auth/sign-in" className="cursor-pointer">
+        <Link href={signInHref} className="cursor-pointer">
           <Button
             variant="outline"
             className="rounded-md bg-[#C8DDE3] border-[#C8DDE3] text-[#092A31] hover:bg-[#B8CDD3] hover:border-[#B8CDD3] px-6"

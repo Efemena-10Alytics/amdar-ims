@@ -8,6 +8,10 @@ import { Button } from "@/components/ui/button";
 export default function SuccessContent() {
   const searchParams = useSearchParams();
   const typeParam = searchParams.get("type") ?? "";
+  const programParam = searchParams.get("program") ?? "";
+  const signInHref = programParam
+    ? `/auth/sign-in?program=${programParam}`
+    : "/auth/sign-in";
 
   return (
     <div className="flex-1 w-full h-full overflow-y-auto flex items-center justify-center">
@@ -37,7 +41,7 @@ export default function SuccessContent() {
 
         <div className="mt-6">
           <Button asChild className="w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12">
-            <Link href="/auth/sign-in">Login</Link>
+            <Link href={signInHref}>Login</Link>
           </Button>
         </div>
       </div>

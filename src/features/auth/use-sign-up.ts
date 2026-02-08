@@ -13,9 +13,16 @@ export type SignUpCredentials = {
   [key: string]: unknown;
 };
 
+export type SignUpFn = (
+  data: SignUpCredentials,
+  redirect?: string,
+  program?: string
+) => Promise<void>;
+
 const signUp = async (
   data: SignUpCredentials,
-  redirect?: string
+  redirect?: string,
+  program?: string
 ) => {
   try {
     const res = await axiosInstance.post<{ data: AuthUser }>("register", data);
@@ -24,6 +31,7 @@ const signUp = async (
       if (typeof window !== "undefined") {
         const params = new URLSearchParams();
         if (redirect) params.set("redirect", redirect);
+        if (program) params.set("program", program);
         params.set("u-status", "new");
         const query = params.toString();
         window.location.replace(
@@ -41,18 +49,23 @@ const signUp = async (
   }
 };
 
-export function useSignUp() {
+export function useSignUp(): {
+  signUp: SignUpFn;
+  isSigningUp: boolean;
+  errorMessage: string;
+  clearError: () => void;
+} {
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const clearError = useCallback(() => setErrorMessage(""), []);
 
-  const doSignUp = useCallback(
-    async (data: SignUpCredentials, redirect?: string) => {
+  const doSignUp = useCallback<SignUpFn>(
+    async (data, redirect, program) => {
       setIsSigningUp(true);
       setErrorMessage("");
       try {
-        await signUp(data, redirect);
+        await signUp(data, redirect, program);
       } catch (error) {
         setErrorMessage(
           error instanceof Error ? error.message : "Sign up failed"

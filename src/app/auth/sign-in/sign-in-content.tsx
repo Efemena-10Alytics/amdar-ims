@@ -19,16 +19,24 @@ export default function SignInContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
+  const program = searchParams.get("program");
+  const redirectParam = searchParams.get("redirect") ?? undefined;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const redirect = searchParams.get("redirect") ?? undefined;
-    login({ email, password }, redirect);
+    const redirectUrl = program
+      ? `/payment/${program}`
+      : redirectParam;
+    login({ email, password }, redirectUrl);
   };
+  const signUpHref = program
+    ? `/auth/sign-up?program=${program}`
+    : "/auth/sign-up";
 
   return (
     <main className="flex-1 w-full h-full overflow-y-auto flex flex-col">
       <div className="flex justify-end p-6">
-        <Link href="/auth/sign-up">
+        <Link href={signUpHref}>
           <Button
             variant="outline"
             className="rounded-md bg-[#B6CFD4] border-[#C8DDE3] text-[#092A31] hover:bg-[#B8CDD3] hover:border-[#B8CDD3] px-6"

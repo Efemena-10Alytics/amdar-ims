@@ -15,6 +15,7 @@ import Faq from "./faq";
 import PaymentStructure from "./payment-structure";
 import Mentors from "./mentors";
 import Link from "next/link";
+import { useAuthStore } from "@/store/auth-store";
 import type { InternshipProgram } from "@/types/internship-program";
 
 interface LeftProps {
@@ -22,6 +23,7 @@ interface LeftProps {
 }
 
 const Left = ({ program }: LeftProps) => {
+  const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState("Overview");
 
   console.log("program:", program);
@@ -128,7 +130,13 @@ const Left = ({ program }: LeftProps) => {
             USD 390
           </div>
         </div>
-        <Link href={`/payment/${program?.id}`}>
+        <Link
+          href={
+            user
+              ? `/payment/${program?.id}`
+              : `/auth/sign-in?program=${program?.id}`
+          }
+        >
           <Button
             className={cn(
               "bg-primary text-white hover:bg-[#0f4d5a] rounded-full px-6 py-6 text-base font-medium",
@@ -186,17 +194,25 @@ const Left = ({ program }: LeftProps) => {
           Don't let the lack of real world experience hold you back. Join Amdari
           today and take a decisive step toward a successful career in tech.
         </p>
-        <Button
-          className={cn(
-            "bg-amdari-yellow text-[#092A31] hover:bg-amdari-yellow/90 rounded-full px-8 py-6 text-base font-medium",
-            "inline-flex items-center gap-2",
-          )}
+        <Link
+          href={
+            user
+              ? `/payment/${program?.id}`
+              : `/auth/sign-in?program=${program?.id}`
+          }
         >
-          Apply for next cohort
-          <div className="flex h-5 w-5 rounded-full justify-center items-center bg-[#092A31]">
-            <ArrowRight className="w-3 h-3" color="#FFE082" />
-          </div>
-        </Button>
+          <Button
+            className={cn(
+              "bg-amdari-yellow text-[#092A31] hover:bg-amdari-yellow/90 rounded-full px-8 py-6 text-base font-medium",
+              "inline-flex items-center gap-2",
+            )}
+          >
+            Apply for next cohort
+            <div className="flex h-5 w-5 rounded-full justify-center items-center bg-[#092A31]">
+              <ArrowRight className="w-3 h-3" color="#FFE082" />
+            </div>
+          </Button>
+        </Link>
       </div>
     </div>
   );

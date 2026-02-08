@@ -28,6 +28,7 @@ export default function SignUpContent() {
 
   const handleSignUpSuccess = () => {
     const redirect = searchParams.get("redirect") ?? undefined;
+    const program = searchParams.get("program") ?? undefined;
     signUp(
       {
         firstName: formData.firstName,
@@ -38,7 +39,8 @@ export default function SignUpContent() {
         password_confirmation: formData.confirmPassword,
         location: formData.selectedCountryName,
       },
-      redirect
+      redirect,
+      program
     );
   };
 
