@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   InputOTP,
@@ -25,12 +25,9 @@ function formatTime(seconds: number) {
 }
 
 export default function OtpContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const typeParam = searchParams.get("type") ?? "";
   const emailParam = searchParams.get("email") ?? "";
   const redirectParam = searchParams.get("redirect") ?? "";
-  const uStatusParam = searchParams.get("u-status") ?? "";
   const programParam = searchParams.get("program") ?? "";
 
   const [otp, setOtp] = useState("");
@@ -63,17 +60,10 @@ export default function OtpContent() {
 
   const handleVerify = async () => {
     if (!canVerify) return;
-    if (typeParam) {
-      const params = new URLSearchParams({ type: typeParam });
-      if (email) params.set("email", email);
-      router.push(`/auth/reset-password?${params.toString()}`);
-    } else {
-      await verify(otp, {
-        redirect: redirectParam || undefined,
-        newUser: uStatusParam === "new",
-        program: programParam || undefined,
-      });
-    }
+    await verify(otp, {
+      redirect: redirectParam || undefined,
+      program: programParam || undefined,
+    });
   };
 
   const signInHref = programParam

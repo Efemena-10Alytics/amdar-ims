@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { PadlockInSvg } from "@/components/_core/auth/svg";
+import { useForgotPassword } from "@/features/auth/use-forgot-password";
 
 const inputBase = cn(
   "w-full rounded-lg bg-[#F8FAFC] px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8] border border-gray-200",
@@ -14,13 +14,12 @@ const inputBase = cn(
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
-  const router = useRouter();
+  const { submit, isLoading, errorMessage } = useForgotPassword();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const params = new URLSearchParams({ type: "forgot-password" });
-    if (email.trim()) params.set("email", email.trim());
-    router.push(`/auth/otp?${params.toString()}`);
+    if (!email.trim()) return;
+    submit(email.trim());
   };
 
   return (
@@ -60,13 +59,19 @@ const ForgotPasswordPage = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={inputBase}
+              disabled={isLoading}
             />
+            {errorMessage && (
+              <p className="mt-2 text-sm text-red-600" role="alert">
+                {errorMessage}
+              </p>
+            )}
             <Button
               type="submit"
-              disabled={!email.trim()}
+              disabled={!email.trim() || isLoading}
               className="mt-6 w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium disabled:opacity-50 disabled:pointer-events-none"
             >
-              Continue
+              {isLoading ? "Sending…" : "Continue"}
             </Button>
           </form>
         </div>
