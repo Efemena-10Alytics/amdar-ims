@@ -46,7 +46,7 @@ export default function SignUpContent() {
 
   return (
     <main className="flex-1 w-full h-full overflow-y-auto flex flex-col">
-      <div className="flex justify-end p-6">
+      <div className="flex justify-end pt-4 pr-4">
         <Link href="/auth/sign-in" className="cursor-pointer">
           <Button
             variant="outline"
@@ -57,7 +57,7 @@ export default function SignUpContent() {
         </Link>
       </div>
 
-      <div className="w-full max-w-120">
+      <div className="w-full max-w-120 mx-auto md:mx-[unset]">
         <div className="flex items-center gap-10 mb-2 px-6">
           <h1 className="text-2xl font-semibold text-[#092A31]">Sign Up</h1>
           {errorMessage ? <ErrorAlert error={errorMessage} /> : null}

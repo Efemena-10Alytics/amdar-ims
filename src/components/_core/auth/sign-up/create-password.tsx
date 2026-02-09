@@ -8,7 +8,7 @@ import Link from "next/link";
 import type { SignUpFormData } from "./types";
 
 export const inputBase = cn(
-  "w-full rounded-lg bg-[#F8FAFC] px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8] border border-transparent",
+  "w-full rounded-lg bg-[#F8FAFC] text-sm placeholder:text-xs px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8] border border-transparent",
   "focus:outline-none focus:ring-2 focus:ring-[#156374] focus:ring-offset-0 focus:border-transparent",
 );
 
@@ -52,13 +52,13 @@ const CreatePassword = ({
   );
 
   return (
-    <div className="rounded-2xl bg-white p-6 border border-gray-100">
+    <div className="rounded-2xl bg-white p-4 border border-gray-100">
       <h2 className="text-xl font-semibold text-[#092A31]">Create Password</h2>
       <p className="mt-1 text-sm text-[#64748B]">
         We value your security create a solid password
       </p>
 
-      <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
+      <form className="mt-3 space-y-2" onSubmit={handleSubmit}>
         <div>
           <label
             htmlFor="password"
@@ -156,12 +156,12 @@ const CreatePassword = ({
               Password hint
             </span>
           </div>
-          <ul className="space-y-2" role="list">
+          <ul className="space-y-2 grid grid-cols-2" role="list">
             {requirementStatus.map(({ id, label, met }) => (
-              <li key={id} className="flex items-center gap-2 text-sm text-[#64748B]">
+              <li key={id} className="flex items-start gap-2 text-xs text-[#64748B]">
                 <span
                   className={cn(
-                    "flex h-5 w-5 shrink-0 items-center justify-center rounded border",
+                    "flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded border",
                     met
                       ? "border-transprent bg-[#C7F5D8] text-primary"
                       : "border-gray-300 bg-white",
@@ -187,7 +187,7 @@ const CreatePassword = ({
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-[#64748B]">
+      <p className="mt-4 text-center text-sm text-[#64748B]">
         Continuing means you agree to{" "}
         <Link
           href="/terms"
