@@ -35,7 +35,7 @@ export default function SignInContent() {
 
   return (
     <main className="flex-1 w-full h-full overflow-y-auto flex flex-col">
-      <div className="flex justify-end p-6">
+      <div className="flex justify-end pt-4 pr-4">
         <Link href={signUpHref}>
           <Button
             variant="outline"
@@ -46,7 +46,7 @@ export default function SignInContent() {
         </Link>
       </div>
 
-      <div className="w-full max-w-120">
+      <div className="w-full max-w-120 mx-auto md:mx-[unset]">
         <div className="flex items-center gap-10 mb-2 px-6">
           <h1 className="text-2xl font-semibold text-[#092A31]">Login</h1>
           {errorMessage ? <ErrorAlert error={errorMessage} /> : null}
@@ -58,7 +58,7 @@ export default function SignInContent() {
               Fill in your appropriate details below
             </p>
 
-            <form className="mt-4 space-y-5" onSubmit={handleSubmit}>
+            <form className="mt-4 space-y-3" onSubmit={handleSubmit}>
               <div>
                 <label
                   htmlFor="email"
@@ -75,7 +75,7 @@ export default function SignInContent() {
                   required
                   autoComplete="email"
                   className={cn(
-                    "w-full rounded-lg bg-[#F8FAFC] px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8]",
+                    "w-full rounded-md bg-[#F8FAFC] text-sm px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8]",
                     "focus:outline-none focus:ring-2 focus:ring-[#156374] focus:ring-offset-0 focus:border-transparent",
                   )}
                 />
@@ -98,7 +98,7 @@ export default function SignInContent() {
                     required
                     autoComplete="current-password"
                     className={cn(
-                      "w-full rounded-lg bg-[#F8FAFC] px-4 py-3 pr-12 text-[#092A31] placeholder:text-[#94A3B8]",
+                      "w-full rounded-lg bg-[#F8FAFC] px-4 py-3 pr-12 text-sm text-[#092A31] placeholder:text-[#94A3B8]",
                       "focus:outline-none focus:ring-2 focus:ring-[#156374] focus:ring-offset-0 focus:border-transparent",
                     )}
                   />
@@ -138,14 +138,14 @@ export default function SignInContent() {
               <Button
                 type="submit"
                 disabled={isLoggingIn || !email.trim() || !password.trim()}
-                className="w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium disabled:opacity-70"
+                className="w-full rounded-md bg-[#0F4652] hover:bg-[#0d3d47] text-white h-10 text-base font-medium disabled:opacity-70"
               >
                 {isLoggingIn ? "Signing in…" : "Login"}
               </Button>
             </form>
 
             {/* Social login */}
-            <div className="mt-8 flex justify-center gap-4">
+            <div className="mt-4 flex justify-center gap-4">
               <button
                 type="button"
                 className="flex h-11 w-11 items-center justify-center rounded-full bg-[#F8FAFC] text-[#092A31] hover:bg-gray-50 transition-colors"

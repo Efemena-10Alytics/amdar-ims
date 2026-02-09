@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import type { SignUpFormData } from "./types";
 
 const inputBase = cn(
-  "w-full rounded-lg bg-[#F8FAFC] px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8] border border-transparent",
+  "w-full rounded-lg bg-[#F8FAFC] text-sm placeholder:text-xs px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8] border border-transparent",
   "focus:outline-none focus:ring-2 focus:ring-[#156374] focus:ring-offset-0 focus:border-transparent",
 );
 
@@ -34,7 +34,9 @@ const PersonalInfo = ({
   onContinue,
 }: PersonalInfoProps) => {
   const { firstName, lastName, email, phone, selectedCountryName } = formData;
-  const selectedCountry = COUNTRY_OPTIONS.find((c) => c.name === selectedCountryName);
+  const selectedCountry = COUNTRY_OPTIONS.find(
+    (c) => c.name === selectedCountryName,
+  );
 
   const isFormComplete =
     firstName.trim().length > 0 &&
@@ -49,14 +51,16 @@ const PersonalInfo = ({
   };
 
   return (
-    <div className="rounded-2xl bg-white p-6 border border-gray-100">
-      <h2 className="text-xl font-semibold text-[#092A31]">Personal Information</h2>
+    <div className="rounded-2xl bg-white p-3 2xl:p-5 border border-gray-100">
+      <h2 className="text-xl font-semibold text-[#092A31]">
+        Personal Information
+      </h2>
       <p className="mt-1 text-sm text-[#64748B]">
         Fill in your appropriate details below
       </p>
 
-      <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <form className="mt-6 space-y-3" onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label
               htmlFor="firstName"
@@ -95,61 +99,63 @@ const PersonalInfo = ({
           </div>
         </div>
 
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-[#092A31] mb-1.5"
-          >
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            placeholder="Enter your email address"
-            value={email}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, email: e.target.value }))
-            }
-            className={inputBase}
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="location"
-            className="block text-sm font-medium text-[#092A31] mb-1.5"
-          >
-            Location (Country)
-          </label>
-          <div className="relative">
-            <select
-              id="location"
-              className={cn(
-                inputBase,
-                "appearance-none pr-10 cursor-pointer",
-                "bg-[#F8FAFC]",
-              )}
-              value={selectedCountryName}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  selectedCountryName: e.target.value,
-                }))
-              }
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-[#092A31] mb-1.5"
             >
-              <option value="" disabled>
-                Select your location
-              </option>
-              {COUNTRY_OPTIONS.map((c) => (
-                <option key={c.name} value={c.name}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-            <ChevronDown
-              className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#64748B] pointer-events-none"
-              aria-hidden
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              placeholder="Enter your email address"
+              value={email}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, email: e.target.value }))
+              }
+              className={inputBase}
             />
+          </div>
+
+          <div>
+            <label
+              htmlFor="location"
+              className="block text-sm font-medium text-[#092A31] mb-1.5"
+            >
+              Location (Country)
+            </label>
+            <div className="relative">
+              <select
+                id="location"
+                className={cn(
+                  inputBase,
+                  "appearance-none pr-10 cursor-pointer tex-xs",
+                  "bg-[#F8FAFC]",
+                )}
+                value={selectedCountryName}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    selectedCountryName: e.target.value,
+                  }))
+                }
+              >
+                <option value="" disabled>
+                  Select your location
+                </option>
+                {COUNTRY_OPTIONS.map((c) => (
+                  <option key={c.name} value={c.name} className="text-sm">
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#64748B] pointer-events-none"
+                aria-hidden
+              />
+            </div>
           </div>
         </div>
 
@@ -182,7 +188,7 @@ const PersonalInfo = ({
                 setFormData((prev) => ({ ...prev, phone: e.target.value }))
               }
               className={cn(
-                "flex-1 min-w-0 rounded-r-lg bg-[#F8FAFC] px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8]",
+                "flex-1 min-w-0 rounded-r-lg bg-[#F8FAFC] text-sm placeholder:text-xs px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8]",
                 "focus:outline-none focus:ring-0 border-0",
               )}
             />
@@ -192,14 +198,14 @@ const PersonalInfo = ({
         <Button
           type="submit"
           disabled={!isFormComplete}
-          className="w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium disabled:opacity-50 disabled:pointer-events-none"
+          className="w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-10 text-base font-medium disabled:opacity-50 disabled:pointer-events-none"
         >
           Continue
         </Button>
       </form>
 
       {/* Social login */}
-      <div className="mt-8 flex justify-center gap-4">
+      <div className="mt-4 flex justify-center gap-4">
         <button
           type="button"
           className="flex h-11 w-11 items-center justify-center rounded-full bg-[#F8FAFC] border border-gray-100 text-[#092A31] hover:bg-gray-50 transition-colors"

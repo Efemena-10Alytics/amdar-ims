@@ -77,7 +77,7 @@ const Aside = () => {
       </div>
 
       {/* Testimonial carousel */}
-      <div className="mt-8 max-w-sm bg-[#135A6A]/60 p-3 rounded-xl overflow-hidden">
+      <div className="mt-8 w-full bg-[#135A6A]/60 p-3 rounded-xl overflow-hidden">
         <p className="text-lg font-semibold tracking-wide text-[#93B7BF] uppercase">
           TRUSTED BY OVER 10K+ USERS
         </p>
