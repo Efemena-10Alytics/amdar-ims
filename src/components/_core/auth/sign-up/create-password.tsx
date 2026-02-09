@@ -181,7 +181,7 @@ const CreatePassword = ({
         <Button
           type="submit"
           disabled={isSigningUp || showMatchError}
-          className="w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-11 text-base font-medium disabled:opacity-70"
+          className="w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium disabled:opacity-70"
         >
           {isSigningUp ? "Signing up…" : "Sign Up"}
         </Button>

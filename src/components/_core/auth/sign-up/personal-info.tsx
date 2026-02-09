@@ -198,7 +198,7 @@ const PersonalInfo = ({
         <Button
           type="submit"
           disabled={!isFormComplete}
-          className="w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-10 text-base font-medium disabled:opacity-50 disabled:pointer-events-none"
+          className="w-full rounded-xl mt-3 bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium disabled:opacity-50 disabled:pointer-events-none"
         >
           Continue
         </Button>
