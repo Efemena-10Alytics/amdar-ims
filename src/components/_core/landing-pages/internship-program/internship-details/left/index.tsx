@@ -16,8 +16,9 @@ import PaymentStructure from "./payment-structure";
 import Mentors from "./mentors";
 import Link from "next/link";
 import { useAuthStore } from "@/store/auth-store";
-import { getImageUrl } from "@/lib/utils";
 import type { InternshipProgram } from "@/types/internship-program";
+
+const TOOLS_ICON_BASE = "https://api.amdari.io/tools/";
 
 interface LeftProps {
   program?: InternshipProgram;
@@ -43,8 +44,7 @@ const Left = ({ program }: LeftProps) => {
     program?.tools?.map((t) => ({
       id: t.id,
       name: t.name,
-      icon: getImageUrl(t.icon),
-
+      icon: t.icon ? TOOLS_ICON_BASE + t.icon : "",
     })) ?? [];
 
   console.log("tools:", tools);
@@ -98,14 +98,15 @@ const Left = ({ program }: LeftProps) => {
                 key={tool.id}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-gray-200"
               >
-                <Image
-                  src={tool.icon}
-                  // alt={tool.name}
-                  alt={""}
-                  width={16}
-                  height={16}
-                  className="object-contain"
-                />
+                {tool.icon ? (
+                  <Image
+                    src={tool.icon}
+                    alt=""
+                    width={16}
+                    height={16}
+                    className="object-contain"
+                  />
+                ) : null}
                 <span className="text-sm text-[#092A31] font-medium">
                   {tool.name}
                 </span>
