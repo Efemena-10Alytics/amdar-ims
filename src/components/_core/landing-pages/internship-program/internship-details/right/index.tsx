@@ -5,18 +5,26 @@ import Image from "next/image";
 import { Play } from "lucide-react";
 import Mentors from "./mentors";
 import type { InternshipProgram } from "@/types/internship-program";
+import { getYoutubeThumbnail } from "../../../shared/youtube-video";
+import { YoutubeVideo } from "../../../shared/youtube-video";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 interface RightProps {
   program?: InternshipProgram;
 }
 
 const Right = ({ program }: RightProps) => {
+  const [videoOpen, setVideoOpen] = useState(false);
   const [countdown, setCountdown] = useState({
     days: 21,
     hours: 3,
     minutes: 50,
     seconds: 48,
   });
+
+  const PROGRAM_VIDEO_URL =
+    program?.projects[0].project_video ??
+    "https://www.youtube.com/watch?v=jY-j0xYXzpo&list=PLZNtzcTK9hBYzlV-VPg-JZjbRjl4PP52Z&index=12";
 
   const mentors =
     program?.mentors?.map((m) => ({
@@ -59,22 +67,46 @@ const Right = ({ program }: RightProps) => {
   return (
     <div className="space-y-6 mt-20">
       {/* Video Player Section */}
-      <div className="relative rounded-lg overflow-hidden bg-gray-200 aspect-video">
+      <div
+        role="button"
+        tabIndex={0}
+        className="relative rounded-lg overflow-hidden bg-gray-200 aspect-video cursor-pointer"
+        onClick={() => setVideoOpen(true)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setVideoOpen(true);
+          }
+        }}
+        aria-label="Play program video"
+      >
         <Image
-          src="/images/pngs/woman.png"
+          src={getYoutubeThumbnail(PROGRAM_VIDEO_URL)}
           alt="Video thumbnail"
           fill
           className="object-cover"
         />
         <div className="absolute inset-0 flex items-end p-3 justify-start bg-black/40">
           <div className="flex items-center gap-2">
-            <div className="border-2 border-gray-500 w-6 h-6 bg-primary rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform">
+            <div className="border-2 border-gray-500 w-6 h-6 bg-primary rounded-full flex items-center justify-center pointer-events-none">
               <Play className="w-3 h-3 text-white fill-white" />
             </div>
             <span className="text-white text-sm font-medium">Play to view</span>
           </div>
         </div>
       </div>
+
+      <Dialog open={videoOpen} onOpenChange={setVideoOpen}>
+        <DialogContent className="max-w-4xl w-[calc(100%-2rem)] p-0 gap-0 overflow-hidden">
+          <DialogTitle className="sr-only">Program video</DialogTitle>
+          <YoutubeVideo
+            videoUrl={PROGRAM_VIDEO_URL}
+            autoplay
+            title="Program overview"
+            className="w-full"
+          />
+        </DialogContent>
+      </Dialog>
 
       {/* Secure Your Seat Section */}
       <div className="bg-[#F8FAFB] rounded-lg p-6">

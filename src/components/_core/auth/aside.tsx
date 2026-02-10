@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Play } from "lucide-react";
+import { Play, Pause } from "lucide-react";
 import Link from "next/link";
 import Autoplay from "embla-carousel-autoplay";
 import {
@@ -57,6 +57,7 @@ const Aside = () => {
   const [api, setApi] = useState<CarouselApi | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [volume, setVolume] = useState(0.5); // Volume state (0 to 1)
+  const [videoPlaying, setVideoPlaying] = useState(true);
 
   const onSelect = useCallback((carouselApi: CarouselApi | undefined) => {
     if (carouselApi) setSelectedIndex(carouselApi.selectedScrollSnap());
@@ -81,11 +82,23 @@ const Aside = () => {
 
       <div>
         {/* Video thumbnail */}
-        <div className="mt-8 relative aspect-video  rounded-xl overflow-hidden bg-[#156374]">
-          <div className="relative w-full h-58 mb-5 rounded-2xl overflow-hidden">
+        <div className="mt-8 relative aspect-video rounded-xl overflow-hidden bg-[#156374]">
+          <div
+            role="button"
+            tabIndex={0}
+            className="relative w-full h-58 mb-5 rounded-2xl overflow-hidden cursor-pointer"
+            onClick={() => setVideoPlaying((p) => !p)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setVideoPlaying((p) => !p);
+              }
+            }}
+            aria-label={videoPlaying ? "Pause video" : "Play video"}
+          >
             <ReactPlayer
               src="https://vimeo.com/1123856639"
-              playing={true}
+              playing={videoPlaying}
               loop={true}
               volume={volume}
               width="100%"
@@ -96,8 +109,29 @@ const Aside = () => {
               }}
             />
 
+            {/* Play / Pause overlay hint */}
+            <div
+              className={cn(
+                "absolute inset-0 flex items-center justify-center bg-black/30 transition-opacity rounded-2xl",
+                videoPlaying ? "opacity-0 hover:opacity-100" : "opacity-100",
+              )}
+              aria-hidden
+            >
+              <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                {videoPlaying ? (
+                  <Pause className="w-7 h-7 text-[#0F4652] fill-current" />
+                ) : (
+                  <Play className="w-7 h-7 text-[#0F4652] fill-current ml-1" />
+                )}
+              </div>
+            </div>
+
             {/* Custom Volume Control Overlay */}
-            <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-black bg-opacity-50 rounded-lg px-1 py-1">
+            <div
+              className="absolute bottom-4 left-4 flex items-center gap-2 bg-black bg-opacity-50 rounded-lg px-1 py-1"
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => e.stopPropagation()}
+            >
               <svg
                 width="16"
                 height="16"
@@ -122,9 +156,8 @@ const Aside = () => {
                 onChange={(e) => setVolume(parseFloat(e.target.value))}
                 className="w-20 h-1 bg-gray-300 rounded-lg appearance-none cursor-pointer slider"
                 style={{
-                  background: `linear-gradient(to right, #F2DA05 0%, #F2DA05 ${
-                    volume * 100
-                  }%, #374151 ${volume * 100}%, #374151 100%)`,
+                  background: `linear-gradient(to right, #F2DA05 0%, #F2DA05 ${volume * 100
+                    }%, #374151 ${volume * 100}%, #374151 100%)`,
                 }}
               />
               <span className="text-white text-xs font-medium min-w-8">
@@ -132,18 +165,7 @@ const Aside = () => {
               </span>
             </div>
           </div>
-          {/* <div className="absolute inset-0 flex items-center justify-center">
-          <button
-            type="button"
-            className="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 text-[#0F4652] hover:bg-white transition-colors"
-            aria-label="Play welcome video"
-          >
-            <Play className="h-6 w-6 ml-1" fill="currentColor" />
-          </button>
-        </div>
-        <p className="absolute bottom-3 left-3 right-3 text-sm font-medium">
-          Welcome here
-        </p> */}
+
         </div>
 
         {/* Testimonial carousel */}

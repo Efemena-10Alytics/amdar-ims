@@ -9,6 +9,13 @@ export function getYoutubeVideoId(urlOrId: string): string | null {
   return match ? match[1] : urlOrId.length === 11 ? urlOrId : null;
 }
 
+/** Get YouTube thumbnail image URL from a watch URL or video ID. */
+export function getYoutubeThumbnail(urlOrId: string): string {
+  const videoId = getYoutubeVideoId(urlOrId);
+  if (!videoId) return "";
+  return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+}
+
 /** Get embed URL for YouTube (no autoplay by default). */
 export function getYoutubeEmbedUrl(
   urlOrId: string,
