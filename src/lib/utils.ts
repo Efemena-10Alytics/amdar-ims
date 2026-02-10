@@ -12,10 +12,9 @@ export function getImageUrl(image: string | undefined | null): string {
   if (!image) return "";
   if (image.startsWith("http://") || image.startsWith("https://")) return image;
   if (image.startsWith("/images")) return image;
-  const apiBase = (process.env.NEXT_PUBLIC_REACT_APP_API_URL ?? "").replace(
-    /\/$/,
-    "",
-  );
+  const apiBase = (process.env.NEXT_PUBLIC_REACT_APP_API_URL ?? "")
+    .replace(/\/api\/?$/, "")
+    .replace(/\/$/, "");
   return `${apiBase}/storage/images/${image.replace(/^\//, "")}`;
 }
 

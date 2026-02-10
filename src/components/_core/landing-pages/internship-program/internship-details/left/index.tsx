@@ -16,6 +16,7 @@ import PaymentStructure from "./payment-structure";
 import Mentors from "./mentors";
 import Link from "next/link";
 import { useAuthStore } from "@/store/auth-store";
+import { getImageUrl } from "@/lib/utils";
 import type { InternshipProgram } from "@/types/internship-program";
 
 interface LeftProps {
@@ -38,26 +39,15 @@ const Left = ({ program }: LeftProps) => {
     "Interns projects",
   ];
 
-  const defaultTools = [
-    { name: "Figma", icon: "/images/svgs/tools/figma.svg" },
-    { name: "Sketch", icon: "/images/svgs/tools/sketch.svg" },
-    { name: "Trello", icon: "/images/svgs/tools/trello.svg" },
-    { name: "Jira", icon: "/images/svgs/tools/jira-2.svg" },
-    { name: "Photoshop", icon: "/images/svgs/tools/photoshop.svg" },
-    { name: "Canva", icon: "/images/svgs/tools/canva.svg" },
-    {
-      name: "Adobe Illustration",
-      icon: "/images/svgs/tools/adobe-illustrator.svg",
-    },
-    { name: "Light Room", icon: "/images/svgs/tools/light-room.svg" },
-  ];
   const tools =
-    (program?.tools?.length &&
-      program.tools.map((t) => ({
-        name: t.name,
-        icon: "/images/svgs/tools/adobe-illustrator.svg",
-      }))) ||
-    defaultTools;
+    program?.tools?.map((t) => ({
+      id: t.id,
+      name: t.name,
+      icon: getImageUrl(t.icon),
+
+    })) ?? [];
+
+  console.log("tools:", tools);
 
   return (
     <div className="py-12 lg:py-20">
@@ -101,25 +91,27 @@ const Left = ({ program }: LeftProps) => {
         </div>
 
         {/* Software Tools */}
-        <div className="flex flex-wrap gap-3">
-          {tools.map((tool, index) => (
-            <div
-              key={tool.name}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-gray-200"
-            >
-              <Image
-                src={tool.icon}
-                alt={tool.name}
-                width={16}
-                height={16}
-                className="object-contain"
-              />
-              <span className="text-sm text-[#092A31] font-medium">
-                {tool.name}
-              </span>
-            </div>
-          ))}
-        </div>
+        {tools.length > 0 && (
+          <div className="flex flex-wrap gap-3">
+            {tools.map((tool) => (
+              <div
+                key={tool.id}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-gray-200"
+              >
+                <Image
+                  src={tool.icon}
+                  alt={tool.name}
+                  width={16}
+                  height={16}
+                  className="object-contain"
+                />
+                <span className="text-sm text-[#092A31] font-medium">
+                  {tool.name}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Pricing and Apply Bar */}

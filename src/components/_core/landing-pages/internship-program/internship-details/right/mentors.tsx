@@ -131,7 +131,7 @@ const Mentors = ({ mentors }: MentorsProps) => {
               <div className="relative bg-[#E8EFF1] rounded-lg overflow-hidden mb-4">
                 <div className="relative w-full h-92">
                   <Image
-                    src={"/images/pngs/woman.png"}
+                    src={mentor.image}
                     alt={mentor.name}
                     fill
                     className="object-cover"
