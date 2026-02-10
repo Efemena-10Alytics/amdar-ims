@@ -13,7 +13,7 @@ interface LearnMoreVideoProps {
   setShowPopUpVid: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const VID_URL = "https://vimeo.com/1123856639";
+const VID_URL = "https://www.youtube.com/watch?v=kifEHRJmOKw";
 
 const LearnMoreVideo = ({ setShowPopUpVid, showPopUpVid }: LearnMoreVideoProps) => {
   const [isLoading, setIsLoading] = useState(true);

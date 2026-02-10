@@ -38,7 +38,7 @@ export function ProfileCompleteModal({
             Your profile has been updated successfully.
           </p>
           <Button asChild className="w-full mt-6 rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium">
-            <Link href="/dashboard" onClick={() => onOpenChange(false)}>
+            <Link href="https://www.amdari.io/dashboard" onClick={() => onOpenChange(false)}>
               Proceed to dashboard
             </Link>
           </Button>

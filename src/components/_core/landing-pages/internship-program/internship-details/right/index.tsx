@@ -18,22 +18,14 @@ const Right = ({ program }: RightProps) => {
     seconds: 48,
   });
 
-  const mentors = [
-    {
-      id: 1,
-      name: "Somadina Uche",
-      title: "Data Science Specialist",
-      image: "/images/testimonials/intern-1.jpg",
-      linkedin: "#",
-    },
-    {
-      id: 2,
-      name: "John Doe",
-      title: "DevOps Engineer",
-      image: "/images/testimonials/intern-2.jpg",
-      linkedin: "#",
-    },
-  ];
+  const mentors =
+    program?.mentors?.map((m) => ({
+      id: m.id,
+      name: m.name,
+      title: m.role,
+      image: m.image,
+      linkedin: m.linkedin_url ?? "#",
+    })) ?? [];
 
   // Countdown timer effect
   useEffect(() => {

@@ -12,6 +12,7 @@ import {
   defaultSignUpFormData,
   type SignUpFormData,
 } from "@/components/_core/auth/sign-up/types";
+import { ArrowLeft } from "lucide-react";
 
 type SignUpStep = "personal" | "password";
 
@@ -19,7 +20,9 @@ export default function SignUpContent() {
   const searchParams = useSearchParams();
   const { signUp, isSigningUp, errorMessage, clearError } = useSignUp();
   const [step, setStep] = useState<SignUpStep>("personal");
-  const [formData, setFormData] = useState<SignUpFormData>(defaultSignUpFormData);
+  const [formData, setFormData] = useState<SignUpFormData>(
+    defaultSignUpFormData,
+  );
 
   const handleContinue = () => {
     clearError();
@@ -40,13 +43,25 @@ export default function SignUpContent() {
         location: formData.selectedCountryName,
       },
       redirect,
-      program
+      program,
     );
   };
 
   return (
     <main className="flex-1 w-full h-full overflow-y-auto flex flex-col">
-      <div className="flex justify-end pt-4 pr-4">
+      <div className="flex justify-between items-center pt-4 pr-4 mb-2">
+        {step === "password" ? (
+          <Button
+            variant={"ghost"}
+            onClick={() => setStep("personal")}
+            className="text-primary/60"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back</span>
+          </Button>
+        ) : (
+          <div />
+        )}
         <Link href="/auth/sign-in" className="cursor-pointer">
           <Button
             variant="outline"
@@ -57,7 +72,7 @@ export default function SignUpContent() {
         </Link>
       </div>
 
-      <div className="w-full max-w-120 mx-auto md:mx-[unset]">
+      <div className="w-full max-w-152 flex-1 mx-auto md:mx-[unset]">
         <div className="flex items-center gap-10 mb-2 px-6">
           <h1 className="text-2xl font-semibold text-[#092A31]">Sign Up</h1>
           {errorMessage ? <ErrorAlert error={errorMessage} /> : null}

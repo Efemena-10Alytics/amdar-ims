@@ -15,6 +15,16 @@ const nextConfig: NextConfig = {
         hostname: "api.amdari.io",
         pathname: "/storage/**",
       },
+      {
+        protocol: "https",
+        hostname: "api.amdari.io",
+        pathname: "/api/storage/**",
+      },
+      {
+        protocol: "https",
+        hostname: "img.youtube.com",
+        pathname: "/vi/**",
+      },
     ],
   },
 };

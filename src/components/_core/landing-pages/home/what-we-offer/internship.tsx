@@ -43,6 +43,8 @@ const Internship = () => {
     }));
   }, [programs]);
 
+  console.log("careerItems", careerItems)
+
   return (
     <div>
       {/* Main Content Area */}
@@ -93,14 +95,12 @@ const Internship = () => {
                 <p className="text-[#64748B] group-hover:text-white text-sm mb-4 leading-relaxed line-clamp-2">
                   {item.desc}
                 </p>
-                <Link href={`/internship-program/${item.id}`}>
-                  <span className="flex text-[#092A31] group-hover:text-white items-center gap-2 text-sm font-medium">
-                    Explore course
-                    <div className="flex h-6 w-6 rounded-full justify-center items-center bg-primary">
-                      <ArrowUpRight className="w-4 h-4 text-white" />
-                    </div>
-                  </span>
-                </Link>
+                <span className="flex text-[#092A31] group-hover:text-white items-center gap-2 text-sm font-medium">
+                  Explore course
+                  <div className="flex h-6 w-6 rounded-full justify-center items-center bg-primary">
+                    <ArrowUpRight className="w-4 h-4 text-white" />
+                  </div>
+                </span>
               </div>
             </Link>
           ))}
