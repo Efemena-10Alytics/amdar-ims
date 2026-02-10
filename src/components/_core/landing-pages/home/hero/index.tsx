@@ -10,8 +10,11 @@ import WordDrop from "./word-drop";
 import Aos from "aos";
 import Flag from "./flag";
 import Link from "next/link";
+import LearnMoreVideo from "../learn-more-video";
 
 const InternshipHero = () => {
+    const [showPopUpVid, setShowPopUpVid] = React.useState(false);
+  
   React.useEffect(() => {
     Aos.init({ duration: 600 });
   }, []);
@@ -69,6 +72,7 @@ const InternshipHero = () => {
               </div>
             </Button>
             <Button
+            onClick={() => setShowPopUpVid(true)}
               className={cn(
                 "group bg-[#448290] hover:bg-[#0F4652] text-white rounded-full h-12 py-6 text-base",
                 "flex items-center gap-8 px-5",
@@ -122,6 +126,8 @@ const InternshipHero = () => {
           />
         </div>
       </div>
+
+      <LearnMoreVideo setShowPopUpVid={setShowPopUpVid} showPopUpVid={showPopUpVid} />
     </div>
   );
 };
