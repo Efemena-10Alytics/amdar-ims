@@ -76,7 +76,7 @@ const RealWorldProject = () => {
                 </ul>
                 <a
                   href="#"
-                  className="flex text-[#092A31] group-hover:text-white items-center gap-2 hover:text-primary transition-colors text-sm font-medium"
+                  className="flex text-[#092A31] group-hover:text-white items-center gap-2 text-sm font-medium"
                 >
                   View Project
                   <div className="flex h-6 w-6 rounded-full justify-center items-center bg-primary">

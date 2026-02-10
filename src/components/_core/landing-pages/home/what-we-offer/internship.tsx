@@ -94,7 +94,7 @@ const Internship = () => {
                   {item.desc}
                 </p>
                 <Link href={`/internship-program/${item.id}`}>
-                  <span className="flex text-[#092A31] group-hover:text-white items-center gap-2 hover:text-primary transition-colors text-sm font-medium">
+                  <span className="flex text-[#092A31] group-hover:text-white items-center gap-2 text-sm font-medium">
                     Explore course
                     <div className="flex h-6 w-6 rounded-full justify-center items-center bg-primary">
                       <ArrowUpRight className="w-4 h-4 text-white" />
