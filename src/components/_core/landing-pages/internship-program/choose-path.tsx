@@ -83,9 +83,9 @@ const ChoosePath = () => {
                   </div>
                   <Link
                     href={
-                      user
-                        ? `/internship-program/${career.id}`
-                        : `/auth/sign-in?program=${career.id}`
+                      // user
+                        `/internship-program/${career.id}`
+                        // : `/auth/sign-in?program=${career.id}`
                     }
                   >
                     <Button

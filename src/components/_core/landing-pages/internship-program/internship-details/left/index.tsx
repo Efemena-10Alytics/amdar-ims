@@ -100,7 +100,8 @@ const Left = ({ program }: LeftProps) => {
               >
                 <Image
                   src={tool.icon}
-                  alt={tool.name}
+                  // alt={tool.name}
+                  alt={""}
                   width={16}
                   height={16}
                   className="object-contain"

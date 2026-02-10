@@ -51,7 +51,7 @@ const PersonalInfo = ({
   };
 
   return (
-    <div className="rounded-2xl bg-white p-3 2xl:p-5 border border-gray-100">
+    <div className="rounded-2xl w-full bg-white p-3 2xl:p-5 border border-gray-100">
       <h2 className="text-xl font-semibold text-[#092A31]">
         Personal Information
       </h2>

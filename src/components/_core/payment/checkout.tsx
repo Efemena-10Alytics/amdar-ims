@@ -49,14 +49,14 @@ function getPaymentPlansFromPricing(
   const half = Math.round(two_installments_amount / 2);
   const threeBreakdown =
     display_three_installment_breakdown &&
-    display_three_installment_breakdown.length >= 3
+      display_three_installment_breakdown.length >= 3
       ? display_three_installment_breakdown
       : [
-          Math.round(three_installments_amount / 3),
-          Math.round(three_installments_amount / 3),
-          three_installments_amount -
-            2 * Math.round(three_installments_amount / 3),
-        ];
+        Math.round(three_installments_amount / 3),
+        Math.round(three_installments_amount / 3),
+        three_installments_amount -
+        2 * Math.round(three_installments_amount / 3),
+      ];
 
   return [
     {
@@ -227,24 +227,23 @@ const Checkout = ({
                 type="button"
                 onClick={() => setSelectedCohort(cohort.id)}
                 className={cn(
-                  "relative rounded-xl border-2 p-4 text-left transition-colors",
+                  "relative rounded-lg border-2  p-4 text-left transition-colors",
                   isSelected
                     ? "border-[#22c55e] bg-[#f0fdf4]"
-                    : "border-[#e5e7eb] bg-white hover:border-[#d1d5db]",
+                    : "border-transparent bg-[#F8FAFC] hover:bg-[#f0fdf4] hover:border-[#22c55e]",
                 )}
               >
                 <div className="flex gap-2 items-center mb-1">
                   <span
                     className={cn(
-                      "flex h-5 w-5 items-center justify-center rounded border",
+                      "flex h-4 w-4 shrink-0 items-center justify-center rounded border",
                       isSelected
-                        ? "border-[#22c55e] bg-[#22c55e] text-white"
-                        : "border-[#d1d5db] bg-white",
+                        ? "border-transprent bg-[#C7F5D8] text-primary"
+                        : "border-gray-300 bg-white",
                     )}
+                    aria-hidden
                   >
-                    {isSelected && (
-                      <Check className="h-3 w-3" strokeWidth={2.5} />
-                    )}
+                    {isSelected ? <Check className="h-3 w-3" strokeWidth={3} /> : null}
                   </span>
                   <span
                     className={cn(
@@ -281,8 +280,8 @@ const Checkout = ({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                variant="outline"
-                className="min-w-22 justify-between gap-2 rounded-lg border-[#e5e7eb] bg-white px-3 py-2 text-sm font-medium text-[#092A31] hover:bg-[#f9fafb] focus:border-primary focus:ring-2 focus:ring-primary/20"
+                // variant="outline"
+                className="min-w-22 justify-between gap-2 rounded-xl border-[#e5e7eb] bg-[#E8EFF1] px-3 py-2 text-sm font-medium text-[#156374] hover:bg-[#f9fafb] focus:border-primary focus:ring-2 focus:ring-primary/20"
               >
                 {currency}
                 <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
@@ -311,23 +310,22 @@ const Checkout = ({
                 type="button"
                 onClick={() => setSelectedPlan(plan.id)}
                 className={cn(
-                  "flex w-full items-start gap-4 rounded-xl border-2 p-4 text-left transition-colors",
+                  "flex w-full items-start gap-4 rounded-lg border-2 p-4 text-left transition-colors",
                   isSelected
                     ? "border-[#22c55e] bg-[#f0fdf4]"
-                    : "border-[#e5e7eb] bg-white hover:border-[#d1d5db]",
+                    : "border-transparent bg-[#F8FAFC] hover:border-[#22c55e] hover:bg-[#f0fdf4]",
                 )}
               >
                 <span
                   className={cn(
-                    "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2",
+                    "flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded border",
                     isSelected
-                      ? "border-[#22c55e] bg-[#22c55e]"
-                      : "border-[#d1d5db] bg-white",
+                      ? "border-transprent bg-[#C7F5D8] text-primary"
+                      : "border-gray-300 bg-white",
                   )}
+                  aria-hidden
                 >
-                  {isSelected && (
-                    <span className="h-2 w-2 rounded-full bg-white" />
-                  )}
+                  {isSelected ? <Check className="h-3 w-3" strokeWidth={3} /> : null}
                 </span>
                 <div className="min-w-0 flex-1">
                   <span
@@ -342,7 +340,7 @@ const Checkout = ({
                     {plan.description}
                   </p>
                   {plan.breakdown && plan.breakdown.length > 0 && (
-                    <div className="mt-3 space-y-1 rounded-lg bg-white/60 py-2 pl-3 pr-4 text-sm text-[#6b7280]">
+                    <div className="mt-3 space-y-1 py-2 pr-4 text-sm text-[#6b7280]">
                       {plan.breakdown.map((row, i) => (
                         <div key={i} className="flex justify-between gap-4">
                           <span>{row.label}</span>
