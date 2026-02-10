@@ -213,7 +213,7 @@ const PaymentDetails = ({
             <span className="text-[#4a5568]">
               I have read the{" "}
               <Link
-                href="/terms"
+                href="/privacy-policy"
                 className="font-medium text-primary underline underline-offset-2 hover:text-primary/90"
               >
                 Amdari Terms & Conditions

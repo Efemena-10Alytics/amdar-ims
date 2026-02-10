@@ -10,8 +10,15 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { ArrowLeftCurve, ArrowRightCurve } from "./svg";
+import { YoutubeVideo } from "../shared/youtube-video";
+import { useYoutubeCaptions } from "../../../../features/youtube/use-youtube-caption";
 import Aos from "aos";
 
 // Custom Curved Arrow Icons
@@ -101,44 +108,60 @@ const CustomCarouselNext = ({
   );
 };
 
+/** Get YouTube thumbnail image URL from a watch URL or video ID. */
+function getYoutubeThumbnail(urlOrId: string): string {
+  const match = urlOrId.match(/(?:v=|\/vi\/)([a-zA-Z0-9_-]{11})/);
+  const videoId = match ? match[1] : urlOrId;
+  return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+}
+
 const WhatOurInternsSays = () => {
   const [api, setApi] = React.useState<CarouselApi>();
   const [imageErrors, setImageErrors] = React.useState<Record<number, boolean>>(
     {},
   );
+  const [playingVideoUrl, setPlayingVideoUrl] = React.useState<string | null>(
+    null,
+  );
 
   const testimonials = [
     {
       id: 1,
-      image: "/images/testimonials/intern-1.jpg",
-      caption:
-        "If I can say i'm confident in my data science skills, then I am...",
+      videoUrl:
+        "https://www.youtube.com/watch?v=MME05VFUbUY&list=PLZNtzcTK9hBYzlV-VPg-JZjbRjl4PP52Z",
     },
     {
       id: 2,
-      image: "/images/testimonials/intern-2.jpg",
-      caption:
-        "How to get a job as a data Analyst in the UK with the UK civil service...",
+      videoUrl:
+        "https://www.youtube.com/watch?v=OzipG-7I3bU&list=PLZNtzcTK9hBYzlV-VPg-JZjbRjl4PP52Z&index=3",
     },
     {
       id: 3,
-      image: "/images/testimonials/intern-3.jpg",
-      caption:
-        "How to get a job as a data Analyst in the UK with the UK civil service.",
+      videoUrl:
+        "https://www.youtube.com/watch?v=ab_c-mPVzEA&list=PLZNtzcTK9hBYzlV-VPg-JZjbRjl4PP52Z&index=8",
     },
     {
       id: 4,
-      image: "/images/testimonials/intern-4.jpg",
-      caption:
-        "How to get a job as a data Analyst in the UK with the UK civil service...",
+      videoUrl:
+        "https://www.youtube.com/watch?v=GRSz3ndb-tQ&list=PLZNtzcTK9hBYzlV-VPg-JZjbRjl4PP52Z&index=9",
     },
     {
       id: 5,
-      image: "/images/testimonials/intern-5.jpg",
-      caption:
-        "How to get a job as a data Analyst in the UK with the UK civil service...",
+      videoUrl:
+        "https://www.youtube.com/watch?v=kX1LWvJx9Ks&list=PLZNtzcTK9hBYzlV-VPg-JZjbRjl4PP52Z&index=10",
+    },
+    {
+      id: 6,
+      videoUrl:
+        "https://www.youtube.com/watch?v=jY-j0xYXzpo&list=PLZNtzcTK9hBYzlV-VPg-JZjbRjl4PP52Z&index=12",
     },
   ];
+
+  const videoUrls = testimonials.map((t) => t.videoUrl);
+  const { captions, isLoaded } = useYoutubeCaptions(videoUrls);
+
+  const getCaption = (videoUrl: string) =>
+    captions[videoUrl] ?? (isLoaded ? "Testimonial" : "Loading...");
 
   return (
     <div data-aos="fade-up" className="bg-white py-12 relative overflow-hidden">
@@ -170,12 +193,24 @@ const WhatOurInternsSays = () => {
                   key={testimonial.id}
                   className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-[28.57%]"
                 >
-                  <div className="relative group rounded-xl overflow-hidden cursor-pointer">
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    className="relative group rounded-xl overflow-hidden cursor-pointer"
+                    onClick={() => setPlayingVideoUrl(testimonial.videoUrl)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setPlayingVideoUrl(testimonial.videoUrl);
+                      }
+                    }}
+                    aria-label={`Play video: ${getCaption(testimonial.videoUrl)}`}
+                  >
                     {/* Testimonial Image */}
                     <div className="relative w-full h-87.5 aspect-video bg-gray-200">
                       {!imageErrors[testimonial.id] ? (
                         <Image
-                          src={testimonial.image}
+                          src={getYoutubeThumbnail(testimonial.videoUrl)}
                           alt={`Testimonial ${testimonial.id}`}
                           fill
                           className="object-cover"
@@ -210,11 +245,13 @@ const WhatOurInternsSays = () => {
                       <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent p-4">
                         <div className="flex items-start justify-between gap-2">
                           <p className="text-white text-sm font-medium line-clamp-2 flex-1">
-                            {testimonial.caption}
+                            {getCaption(testimonial.videoUrl)}
                           </p>
                           <button
+                            type="button"
                             className="text-white/80 hover:text-white transition-colors p-1"
                             aria-label="More options"
+                            onClick={(e) => e.stopPropagation()}
                           >
                             <MoreVertical className="w-5 h-5" />
                           </button>
@@ -243,6 +280,23 @@ const WhatOurInternsSays = () => {
             </div>
           </Carousel>
         </div>
+
+        <Dialog
+          open={!!playingVideoUrl}
+          onOpenChange={(open) => !open && setPlayingVideoUrl(null)}
+        >
+          <DialogContent className="max-w-4xl w-[calc(100%-2rem)] p-0 gap-0 overflow-hidden">
+            <DialogTitle className="sr-only">Play testimonial video</DialogTitle>
+            {playingVideoUrl && (
+              <YoutubeVideo
+                videoUrl={playingVideoUrl}
+                autoplay
+                title="Intern testimonial"
+                className="w-full"
+              />
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
