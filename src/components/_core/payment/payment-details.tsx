@@ -89,7 +89,7 @@ const PaymentDetails = ({
               <div key={label}>
                 <div className="flex items-center justify-between gap-2 text-right text-sm font-medium text-[#092A31]">
                   <div className="text-sm text-[#6b7280]">{label}</div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 text-[#092A31]">
                     {withFlag && (
                       <span className="text-base leading-none" aria-hidden>
                         🇳🇬
@@ -112,16 +112,15 @@ const PaymentDetails = ({
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-sm text-[#6b7280]">Preferred cohort</p>
-                <p className="mt-1 flex items-center gap-2 font-medium text-[#092A31]">
-                  {checkoutSelections?.cohort?.name ?? "February Cohort"}
-                  <span className="inline-flex rounded-full bg-[#d1fae5] px-2.5 py-0.5 text-xs font-medium text-[#065f46]">
-                    {checkoutSelections?.cohort?.start_date ??
-                      "February 7, 2026"}
-                  </span>
-                </p>
               </div>
+              <p className="mt-1 flex items-center gap-2 font-medium text-[#092A31]">
+                {checkoutSelections?.cohort?.name ?? "February Cohort"}
+                <span className="inline-flex rounded-full bg-[#d1fae5] px-2.5 py-0.5 text-xs font-medium text-[##092A31]">
+                  {checkoutSelections?.cohort?.start_date ?? "February 7, 2026"}
+                </span>
+              </p>
             </div>
-            <div className="mt-4 border-t border-[#B6CFD4]/50 pt-4">
+            <div className="pt-1">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-[#6b7280]">Plan selected</p>
                 <p className="mt-1 font-medium text-[#092A31]">
@@ -130,9 +129,9 @@ const PaymentDetails = ({
               </div>
               {checkoutSelections?.installmentBreakdown &&
               checkoutSelections.installmentBreakdown.length > 0 ? (
-                <div className="space-y-2 border-[#B6CFD4]/50 pt-3">
+                <div className="space-y-2 border-[#B6CFD4]/50">
                   {checkoutSelections.installmentBreakdown.map((item, i) => (
-                    <div key={i} className="flex justify-between text-sm">
+                    <div key={i} className="flex justify-between text-sm pt-2">
                       <span className="text-[#6b7280]">
                         {item.label === "1st payment"
                           ? "First payment"
