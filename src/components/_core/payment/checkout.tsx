@@ -268,13 +268,13 @@ const Checkout = ({
                   <span
                     className={cn(
                       "font-clash-display font-semibold",
-                      isSelected ? "text-[#092A31]" : "text-[#4a5568]",
+                      isSelected ? "text-[#092A31]" : "text-[#64748B]",
                     )}
                   >
                     {cohort.name}
                   </span>
                 </div>
-                <div className="mt-2 flex items-center gap-2 text-sm text-[#6b7280]">
+                <div className="mt-2 flex items-center gap-2 text-sm text-[#64748B]">
                   <Calendar className="h-4 w-4 shrink-0" />
                   <span>{cohort.start_date}</span>
                   <span>·</span>

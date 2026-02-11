@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
 import type { CheckoutSelections } from "@/types/payment";
+import { ChangeDate } from "./change-date";
 
 const PERSONAL_DATA_KEYS: Array<{
   key: keyof Record<string, unknown>;
@@ -19,6 +20,29 @@ const PERSONAL_DATA_KEYS: Array<{
   { key: "phoneNumber", label: "Phone number" },
   { key: "location", label: "Location", withFlag: true },
 ];
+
+/** Get date N months from today as YYYY-MM-DD. Optional dayOfMonth (1–31) for fixed day. */
+function getNextPaymentDateYmd(
+  monthsFromNow: number,
+  dayOfMonth?: number,
+): string {
+  const d = new Date();
+  d.setMonth(d.getMonth() + monthsFromNow);
+  if (dayOfMonth != null) {
+    d.setDate(dayOfMonth);
+  }
+  return d.toISOString().slice(0, 10);
+}
+
+/** Format YYYY-MM-DD for display. */
+function formatYmdToDisplay(ymd: string): string {
+  const d = new Date(ymd + "T12:00:00");
+  return d.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
 
 function getPersonalDataFromUser(user: Record<string, unknown> | null): Array<{
   label: string;
@@ -61,6 +85,12 @@ const PaymentDetails = ({
 }: PaymentDetailsProps) => {
   const [confirmInfo, setConfirmInfo] = useState(false);
   const [confirmTerms, setConfirmTerms] = useState(false);
+  const [nextPaymentDateYmd, setNextPaymentDateYmd] = useState(() =>
+    getNextPaymentDateYmd(1, 11),
+  );
+  const isInstallmentPlan =
+    checkoutSelections?.planId &&
+    checkoutSelections.planId !== "full";
   const { user } = useAuthStore();
   const profile =
     user &&
@@ -74,6 +104,51 @@ const PaymentDetails = ({
     () => getPersonalDataFromUser(profile),
     [profile],
   );
+
+  const { originalPlanTotal, originalAmounts } = useMemo(() => {
+    const pricing = checkoutSelections?.pricing;
+    const planId = checkoutSelections?.planId;
+    if (!pricing || !planId) {
+      return { originalPlanTotal: undefined, originalAmounts: [] as (string | undefined)[] };
+    }
+    const { currency } = pricing;
+    if (planId === "full") {
+      const orig = pricing.original_amount;
+      return {
+        originalPlanTotal: orig != null ? `${currency} ${orig}` : undefined,
+        originalAmounts: [],
+      };
+    }
+    if (planId === "2-installments") {
+      const orig = pricing.original_two_installments_amount;
+      const half = orig != null ? Math.round(orig / 2) : undefined;
+      const amountStr = half != null ? `${currency} ${half}` : undefined;
+      return {
+        originalPlanTotal:
+          orig != null ? `${currency} ${orig}` : undefined,
+        originalAmounts: [amountStr, amountStr],
+      };
+    }
+    if (planId === "3-installments") {
+      const orig = pricing.original_three_installments_amount;
+      if (orig == null) {
+        return { originalPlanTotal: undefined, originalAmounts: [] };
+      }
+      const third = Math.round(orig / 3);
+      const third2 = Math.round(orig / 3);
+      const third3 = orig - third - third2;
+      const amountStr = (n: number) => `${currency} ${n}`;
+      return {
+        originalPlanTotal: `${currency} ${orig}`,
+        originalAmounts: [
+          amountStr(third),
+          amountStr(third2),
+          amountStr(third3),
+        ],
+      };
+    }
+    return { originalPlanTotal: undefined, originalAmounts: [] };
+  }, [checkoutSelections?.pricing, checkoutSelections?.planId]);
 
   return (
     <div className="flex flex-1 flex-col w-full">
@@ -120,7 +195,7 @@ const PaymentDetails = ({
                 </span>
               </p>
             </div>
-            <div className="pt-1">
+            <div className="pt-1 space-y-3">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-[#6b7280]">Plan selected</p>
                 <p className="mt-1 font-medium text-[#092A31]">
@@ -141,7 +216,12 @@ const PaymentDetails = ({
                               ? "Third payment"
                               : item.label}
                       </span>
-                      <span className="font-medium text-[#092A31]">
+                      <span className="flex items-center gap-2 font-medium text-[#092A31]">
+                        {originalAmounts[i] != null && (
+                          <span className="text-[#9ca3af] line-through text-xs">
+                            {originalAmounts[i]}
+                          </span>
+                        )}
                         {item.amount}
                       </span>
                     </div>
@@ -150,11 +230,32 @@ const PaymentDetails = ({
               ) : checkoutSelections?.planTotal ? (
                 <div className="mt-3 flex justify-between text-sm border-t border-[#B6CFD4]/50 pt-3">
                   <span className="text-[#6b7280]">Payment</span>
-                  <span className="font-medium text-[#092A31]">
+                  <span className="flex items-center gap-2 font-medium text-[#092A31]">
+                    {originalPlanTotal != null && (
+                      <span className="text-[#9ca3af] line-through text-sm">
+                        {originalPlanTotal}
+                      </span>
+                    )}
                     {checkoutSelections.planTotal}
                   </span>
                 </div>
               ) : null}
+              {isInstallmentPlan && (
+                <div className="flex flex-col gap-2 pt-1">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-sm text-[#6b7280]">Next payment date</p>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-[#092A31]">
+                        {formatYmdToDisplay(nextPaymentDateYmd)}
+                      </span>
+                      <ChangeDate
+                        value={nextPaymentDateYmd}
+                        onChange={setNextPaymentDateYmd}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>
