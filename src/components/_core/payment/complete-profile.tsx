@@ -11,7 +11,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ErrorAlert from "@/components/_core/auth/error-alert";
-import { ProfileCompleteModal } from "@/components/_core/payment/profile-complete-modal";
 import { cn } from "@/lib/utils";
 
 const inputBase = cn(
@@ -114,11 +113,12 @@ function isFormValid(data: CompleteProfileFormData): boolean {
 
 interface CompleteProfileProps {
   programTitle?: string;
+  /** When provided, called after profile is saved successfully. Parent can show PaymentSuccessModal. */
+  onProfileComplete?: () => void;
 }
 
-export default function CompleteProfile({ programTitle }: CompleteProfileProps) {
+export default function CompleteProfile({ programTitle, onProfileComplete }: CompleteProfileProps) {
   const [formData, setFormData] = useState<CompleteProfileFormData>(initialFormData);
-  const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof CompleteProfileFormData, string>>>({});
   const { updateUser, isUpdating, errorMessage } = useCompleteProfile();
 
@@ -158,7 +158,7 @@ export default function CompleteProfile({ programTitle }: CompleteProfileProps) 
         ref: referralCode,
         find_out: howDidYouHear,
       });
-      setSuccessModalOpen(true);
+      onProfileComplete?.();
     } catch {
       // errorMessage set by hook
     }
@@ -371,11 +371,6 @@ export default function CompleteProfile({ programTitle }: CompleteProfileProps) 
         </Button>
       </form>
     </div>
-
-    <ProfileCompleteModal
-      open={successModalOpen}
-      onOpenChange={setSuccessModalOpen}
-    />
     </>
   );
 }

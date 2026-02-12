@@ -47,9 +47,10 @@ const CreatePassword = ({
   };
 
   const requirementStatus = useMemo(
-    () => REQUIREMENTS.map((r) => ({ ...r, met: r.test(password) })),
+    () => REQUIREMENTS.map((r) => ({ ...r, met: r.test(password ?? "") })),
     [password],
   );
+  const allFourConditionsMet = requirementStatus.every((r) => r.met);
 
   return (
     <div className="rounded-2xl bg-white p-4 border border-gray-100">
@@ -103,6 +104,7 @@ const CreatePassword = ({
           </label>
           <div className="relative">
             <input
+              required
               id="confirmPassword"
               type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm your password"
@@ -180,7 +182,7 @@ const CreatePassword = ({
 
         <Button
           type="submit"
-          disabled={isSigningUp || showMatchError}
+          disabled={!allFourConditionsMet || isSigningUp}
           className="w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium disabled:opacity-70"
         >
           {isSigningUp ? "Signing up…" : "Sign Up"}

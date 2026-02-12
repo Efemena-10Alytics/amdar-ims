@@ -72,6 +72,10 @@ function getPersonalDataFromUser(user: Record<string, unknown> | null): Array<{
 
 interface PaymentDetailsProps {
   checkoutSelections?: CheckoutSelections | null;
+  /** Controlled next payment date (YYYY-MM-DD). When provided, used for payload and Change date. */
+  nextPaymentDateYmd?: string;
+  /** Called when user changes the next payment date. */
+  onNextPaymentDateChange?: (ymd: string) => void;
   onProceed?: () => void;
   isProcessingPayment?: boolean;
   paymentError?: string | null;
@@ -79,15 +83,21 @@ interface PaymentDetailsProps {
 
 const PaymentDetails = ({
   checkoutSelections,
+  nextPaymentDateYmd: nextPaymentDateYmdProp,
+  onNextPaymentDateChange,
   onProceed,
   isProcessingPayment = false,
   paymentError = null,
 }: PaymentDetailsProps) => {
   const [confirmInfo, setConfirmInfo] = useState(false);
   const [confirmTerms, setConfirmTerms] = useState(false);
-  const [nextPaymentDateYmd, setNextPaymentDateYmd] = useState(() =>
+  const [localNextPaymentDateYmd, setLocalNextPaymentDateYmd] = useState(() =>
     getNextPaymentDateYmd(1, 11),
   );
+  const nextPaymentDateYmd =
+    nextPaymentDateYmdProp ?? localNextPaymentDateYmd;
+  const setNextPaymentDateYmd = onNextPaymentDateChange ?? setLocalNextPaymentDateYmd;
+
   const isInstallmentPlan =
     checkoutSelections?.planId &&
     checkoutSelections.planId !== "full";

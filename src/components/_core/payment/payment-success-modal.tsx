@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import confetti from "canvas-confetti";
 import { Loader2, Check, AlertCircle } from "lucide-react";
 import {
   Dialog,
@@ -20,7 +22,9 @@ interface PaymentSuccessModalProps {
   programSlug?: string;
   /** When set, verification runs inside the modal when open. Phase is driven by verification result. */
   sessionId?: string | null;
-  /** Only used when sessionId is not set: seconds before switching to success (default 2) */
+  /** When true, show success phase immediately (e.g. after profile completed). No processing, show "Proceed to dashboard". */
+  profileCompleted?: boolean;
+  /** Only used when sessionId is not set and not profileCompleted: seconds before switching to success (default 2) */
   processingDuration?: number;
   /** Optional step setter from payment flow (e.g. to switch to complete-profile) */
   setActiveStep?: (step: PaymentStepId) => void;
@@ -31,6 +35,7 @@ export function PaymentSuccessModal({
   onOpenChange,
   programSlug,
   sessionId = null,
+  profileCompleted = false,
   processingDuration = 2,
   setActiveStep,
 }: PaymentSuccessModalProps) {
@@ -45,32 +50,52 @@ export function PaymentSuccessModal({
     verify,
   } = useVerifyStripeSession({
     sessionId: open && sessionId?.trim() ? sessionId : null,
-    enabled: open && !!sessionId?.trim(),
+    enabled: open && !!sessionId?.trim() && !profileCompleted,
   });
 
-  // When no sessionId, use timer to switch to success
+  // When profileCompleted, show success immediately; when no sessionId, use timer
   useEffect(() => {
     if (!open) {
       setTimerPhase("processing");
       return;
     }
-    if (sessionId?.trim()) return;
+    if (profileCompleted || sessionId?.trim()) return;
     const t = setTimeout(
       () => setTimerPhase("success"),
       processingDuration * 1000,
     );
     return () => clearTimeout(t);
-  }, [open, sessionId, processingDuration]);
+  }, [open, sessionId, profileCompleted, processingDuration]);
 
-  const phase: PaymentSuccessPhase = sessionId?.trim()
-    ? isVerifying || verifyStatus === "processing"
-      ? "processing"
-      : verifyStatus === "success"
-        ? "success"
-        : "error"
-    : timerPhase;
+  const phase: PaymentSuccessPhase = profileCompleted
+    ? "success"
+    : sessionId?.trim()
+      ? isVerifying || verifyStatus === "processing"
+        ? "processing"
+        : verifyStatus === "success"
+          ? "success"
+          : "error"
+      : timerPhase;
 
-
+  const confettiFired = useRef(false);
+  useEffect(() => {
+    if (!open || phase !== "success" || !profileCompleted) {
+      if (!open) confettiFired.current = false;
+      return;
+    }
+    if (confettiFired.current) return;
+    confettiFired.current = true;
+    const colors = ["#0F4652", "#156374", "#22c55e", "#C8DDE3"];
+    const fire = (origin: { x: number; y?: number }, angle: number) => {
+      confetti({ particleCount: 50, spread: 70, origin, angle, colors });
+    };
+    fire({ x: 0.2, y: 0.5 }, 60);
+    fire({ x: 0.8, y: 0.5 }, 120);
+    const t = setTimeout(() => {
+      fire({ x: 0.5, y: 0.6 }, 90);
+    }, 200);
+    return () => clearTimeout(t);
+  }, [open, phase, profileCompleted]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -115,17 +140,31 @@ export function PaymentSuccessModal({
                 <Check className="h-9 w-9" strokeWidth={2.5} />
               </div>
               <p className="text-sm text-[#6b7280]">
-                Your payment receipt has been sent to your mail
+                {profileCompleted
+                  ? "Your enrollment is complete. You can now access your dashboard."
+                  : "Your payment receipt has been sent to your mail"}
               </p>
-              <Button
-                onClick={() => {
-                  setActiveStep?.("complete-profile");
-                  onOpenChange?.(false);
-                }}
-                className="w-full h-10 hover:bg-[#092A31]/90"
-              >
-                Complete Profile
-              </Button>
+              {profileCompleted ? (
+                <Button
+                  asChild
+                  className="w-full h-10 hover:bg-[#092A31]/90"
+                  onClick={() => onOpenChange?.(false)}
+                >
+                  <Link href="https://www.amdari.io/dashboard">
+                    Proceed to dashboard
+                  </Link>
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => {
+                    setActiveStep?.("complete-profile");
+                    onOpenChange?.(false);
+                  }}
+                  className="w-full h-10 hover:bg-[#092A31]/90"
+                >
+                  Complete Profile
+                </Button>
+              )}
             </div>
           </>
         )}
