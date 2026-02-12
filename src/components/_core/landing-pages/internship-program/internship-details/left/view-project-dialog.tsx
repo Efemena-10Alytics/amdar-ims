@@ -8,8 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { cn, imageBaseurl } from "@/lib/utils";
-import { NotepadText } from "lucide-react";
+import { baseUrl, cn, imageUrl } from "@/lib/utils";
 import { Project } from "@/types/internship-program";
 
 export type ViewProjectDialogProps = {
@@ -23,6 +22,10 @@ const ViewProjectDialog = ({
   onClose,
   project,
 }: ViewProjectDialogProps) => {
+  const imageSrc = project?.project_image
+    ? `${baseUrl}${project.project_image}`
+    : "/images/pngs/intern-project.png";
+  console.log("imageSrc", imageSrc);
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent
@@ -37,7 +40,7 @@ const ViewProjectDialog = ({
         <DialogHeader className="shrink-0 p-6 pb-0! border-b border-gray-100">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
-              <DialogTitle className="text-xl lg:text-2xl font-bold text-[#092A31] mb-2 text-left">
+              <DialogTitle className="text-xl font-bold text-[#092A31] mb-2 text-left">
                 {project?.name}
               </DialogTitle>
             </div>
@@ -53,14 +56,7 @@ const ViewProjectDialog = ({
           {/* Project Overview */}
           <div className="relative h-64 lg:h-80 bg-[#1e293b] overflow-hidden mt-3">
             <Image
-              src={
-                project?.project_image
-                  ? `${imageBaseurl}/${project.project_image}`.replace(
-                      /\/+/g,
-                      "/",
-                    )
-                  : "/images/pngs/intern-project.png"
-              }
+              src={imageSrc}
               alt=""
               fill
               className="object-cover opacity-80"

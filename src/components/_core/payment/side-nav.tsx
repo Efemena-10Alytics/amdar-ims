@@ -17,6 +17,8 @@ type SideNavProps = {
 };
 
 const SideNav = ({ activeStep, onStepChange }: SideNavProps) => {
+  const activeIndex = STEPS.findIndex((s) => s.id === activeStep);
+
   return (
     <aside className="shrink-0 ">
       <nav
@@ -26,6 +28,7 @@ const SideNav = ({ activeStep, onStepChange }: SideNavProps) => {
         <ul className="space-y-1 flex justify-between lg:flex-col gap-2 overflow-x-auto">
           {STEPS.map((step, i) => {
             const isActive = activeStep === step.id;
+            const isCompleted = i < activeIndex;
             return (
               <li key={step.id}>
                 <button
@@ -35,18 +38,20 @@ const SideNav = ({ activeStep, onStepChange }: SideNavProps) => {
                     "whitespace-nowrap flex flex-col lg:flex-row w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors",
                     isActive
                       ? "font-semibold text-[#092A31]"
-                      : "font-normal text-[#6b7280]",
+                      : isCompleted
+                        ? "font-medium text-[#4a5568]"
+                        : "font-normal text-[#6b7280]",
                   )}
                 >
                   <span
                     className={cn(
                       "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
-                      isActive
-                        ? "bg-primary text-white"
-                        : "bg-[#B6CFD4] text-[#6b7280]",
+                      isCompleted && "bg-primary text-white",
+                      isActive && !isCompleted && "bg-primary text-white",
+                      !isCompleted && !isActive && "bg-[#B6CFD4] text-[#6b7280]",
                     )}
                   >
-                    {isActive ? (
+                    {isCompleted ? (
                       <Check className="h-4 w-4" strokeWidth={2.5} />
                     ) : (
                       <span className="text-xs">{i + 1}</span>

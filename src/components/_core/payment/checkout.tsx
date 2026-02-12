@@ -25,7 +25,7 @@ interface PaymentPlanOption {
   label: string;
   description: string;
   total: string;
-  breakdown: { label: string; amount: string }[] | null;
+  breakdown: { label: string; amount: string; dueDate?: string }[] | null;
 }
 
 function getOrdinal(i: number): string {
@@ -33,6 +33,17 @@ function getOrdinal(i: number): string {
   if (i === 1) return "2nd";
   if (i === 2) return "3rd";
   return `${i + 1}th`;
+}
+
+/** Format a date N months from today for "next payment" display. */
+function getNextPaymentDate(monthsFromNow: number): string {
+  const d = new Date();
+  d.setMonth(d.getMonth() + monthsFromNow);
+  return d.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 }
 
 /** Derive payment plan options from the selected pricing (full = original_amount, 2 = two_installments_amount/2 each, 3 = display_three_installment_breakdown). */
@@ -73,8 +84,16 @@ function getPaymentPlansFromPricing(
       description: `Pay ${currency} ${half} now and 2nd installment in the next month`,
       total: `${currency} ${two_installments_amount}`,
       breakdown: [
-        { label: "1st payment", amount: `${currency} ${half}` },
-        { label: "2nd payment", amount: `${currency} ${half}` },
+        {
+          label: "1st payment",
+          amount: `${currency} ${half}`,
+          dueDate: "Due now",
+        },
+        {
+          label: "2nd payment",
+          amount: `${currency} ${half}`,
+          dueDate: `Due ${getNextPaymentDate(1)}`,
+        },
       ],
     },
     {
@@ -85,6 +104,7 @@ function getPaymentPlansFromPricing(
       breakdown: threeBreakdown.map((amt, i) => ({
         label: `${getOrdinal(i)} payment`,
         amount: `${currency} ${amt}`,
+        dueDate: i === 0 ? "Due now" : `Due ${getNextPaymentDate(i)}`,
       })),
     },
   ];
@@ -248,13 +268,13 @@ const Checkout = ({
                   <span
                     className={cn(
                       "font-clash-display font-semibold",
-                      isSelected ? "text-[#092A31]" : "text-[#4a5568]",
+                      isSelected ? "text-[#092A31]" : "text-[#64748B]",
                     )}
                   >
                     {cohort.name}
                   </span>
                 </div>
-                <div className="mt-2 flex items-center gap-2 text-sm text-[#6b7280]">
+                <div className="mt-2 flex items-center gap-2 text-sm text-[#64748B]">
                   <Calendar className="h-4 w-4 shrink-0" />
                   <span>{cohort.start_date}</span>
                   <span>·</span>
@@ -340,13 +360,23 @@ const Checkout = ({
                     {plan.description}
                   </p>
                   {plan.breakdown && plan.breakdown.length > 0 && (
-                    <div className="mt-3 space-y-1 py-2 pr-4 text-sm text-[#6b7280]">
+                    <div className="mt-3 space-y-1 py-2 text-sm text-[#6b7280]">
                       {plan.breakdown.map((row, i) => (
-                        <div key={i} className="flex justify-between gap-4">
-                          <span>{row.label}</span>
-                          <span className="font-medium text-[#4a5568]">
+                        <div
+                          key={i}
+                          className="flex items-center justify-between gap-x-4 gap-y-0.5"
+                        >
+                          <div className="flex-1">
+                            {row.label}
+                          </div>
+                          {row.dueDate != null && (
+                            <div className="ml-1.5 text-xs text-left text-[#64748B] flex-1">
+                              {row.dueDate}
+                            </div>
+                          )}
+                          <div className="font-medium text-[#4a5568] flex-1">
                             {row.amount}
-                          </span>
+                          </div>
                         </div>
                       ))}
                     </div>

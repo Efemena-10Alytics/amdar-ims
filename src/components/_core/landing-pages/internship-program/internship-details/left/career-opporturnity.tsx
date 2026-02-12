@@ -1,4 +1,4 @@
-import { imageBaseurl } from "@/lib/utils";
+import { imageStorageUrl } from "@/lib/utils";
 import { CareerOpportunity } from "@/types/internship-program";
 import Image from "next/image";
 
@@ -24,7 +24,7 @@ const CareerOpporturnity = ({
           >
             {item.icon ? (
               <Image
-                src={`${imageBaseurl}/${item.icon}`}
+                src={`${imageStorageUrl}/${item.icon}`}
                 alt={item.text ?? "Career opportunity"}
                 width={16}
                 height={16}

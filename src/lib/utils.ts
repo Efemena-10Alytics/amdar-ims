@@ -5,8 +5,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const imageBaseurl = process.env.NEXT_PUBLIC_REACT_IMAGE_URL ?? "";
+export const imageStorageUrl = process.env.NEXT_PUBLIC_REACT_IMAGE_STORAGE_URL ?? "";
 export const imageUrl = process.env.NEXT_PUBLIC_REACT_IMAGE_URL ?? "";
+export const baseUrl = process.env.NEXT_PUBLIC_REACT_IMAGE_URL_ALT ?? "";
 
 export function getImageUrl(image: string | undefined | null): string {
   if (!image) return "";

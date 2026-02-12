@@ -57,7 +57,7 @@ const CustomCarouselPrevious = ({
       variant="outline"
       size="icon"
       className={cn(
-        "w-10 h-10 rounded-full bg-white border border-gray-200 hover:bg-gray-50",
+        "w-10 h-10 rounded-full bg-white border border-gray-200 hover:bg-primary hover:text-white hover:border-primary",
         className,
       )}
       disabled={!canScrollPrev}
@@ -100,7 +100,7 @@ const CustomCarouselNext = ({
       variant="outline"
       size="icon"
       className={cn(
-        "w-10 h-10 rounded-full bg-white border border-gray-200 hover:bg-gray-50",
+        "w-10 h-10 rounded-full bg-primary border-primary hover:bg-white hover:text-primary text-white",
         className,
       )}
       disabled={!canScrollNext}
@@ -112,8 +112,18 @@ const CustomCarouselNext = ({
   );
 };
 
+const AUTO_SLIDE_INTERVAL_MS = 5000;
+
 const Mentors = ({ mentors }: MentorsProps) => {
   const [api, setApi] = useState<CarouselApi>();
+
+  useEffect(() => {
+    if (!api) return;
+    const interval = setInterval(() => {
+      api.scrollNext();
+    }, AUTO_SLIDE_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [api]);
 
   return (
     <div className="relative mb-10">

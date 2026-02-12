@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
 import {
   Carousel,
   CarouselContent,
@@ -99,6 +98,33 @@ const CustomCarouselNext = ({
   );
 };
 
+const AVATAR_BG_COLORS = [
+  "#0f766e", // teal
+  "#1d4ed8", // blue
+  "#15803d", // green
+  "#7c3aed", // violet
+  "#c2410c", // orange
+  "#be123c", // rose
+  "#0e7490", // cyan
+  "#4f46e5", // indigo
+  "#a16207", // amber
+  "#9f1239", // pink
+];
+
+function getInitials(name: string): string {
+  return name
+    .trim()
+    .split(/\s+/)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
+
+function getAvatarBgColor(id: number): string {
+  return AVATAR_BG_COLORS[id % AVATAR_BG_COLORS.length];
+}
+
 interface Testimonial {
   id: number;
   name: string;
@@ -113,6 +139,8 @@ interface SuccessStoriesSliderProps {
   onApiChange?: (api: CarouselApi | undefined) => void;
 }
 
+const AUTO_SLIDE_INTERVAL_MS = 5000;
+
 const SuccessStoriesSlider = ({
   testimonials,
   current,
@@ -126,13 +154,21 @@ const SuccessStoriesSlider = ({
     }
   }, [api, onApiChange]);
 
+  useEffect(() => {
+    if (!api) return;
+    const interval = setInterval(() => {
+      api.scrollNext();
+    }, AUTO_SLIDE_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [api]);
+
   return (
     <div className="relative mb-8 px-12">
       <Carousel
         setApi={setApi}
         opts={{
           align: "center",
-          loop: false,
+          loop: true,
         }}
         className="w-full max-w-2xl mx-auto"
       >
@@ -145,18 +181,15 @@ const SuccessStoriesSlider = ({
               <div className="relative flex py-10 items-center justify-center">
                 <div
                   className={cn(
-                    "relative w-16 h-16 rounded-full overflow-hidden transition-all duration-300",
+                    "relative flex w-16 h-16 shrink-0 items-center justify-center rounded-full text-lg font-semibold text-white transition-all duration-300",
                     current === index
                       ? "ring-2 ring-pink-200 scale-110"
                       : "blur-xs opacity-60"
                   )}
+                  style={{ backgroundColor: getAvatarBgColor(testimonial.id) }}
+                  aria-hidden
                 >
-                  <Image
-                    src={testimonial.avatar}
-                    alt={testimonial.name}
-                    fill
-                    className="object-cover"
-                  />
+                  {getInitials(testimonial.name)}
                 </div>
               </div>
             </CarouselItem>

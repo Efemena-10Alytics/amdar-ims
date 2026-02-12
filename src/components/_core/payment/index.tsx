@@ -45,15 +45,42 @@ const PaymentMain = ({ program, checkoutData, paymentPageId }: PaymentMainProps)
         window.location.search.includes("status=sucess")));
   const sessionId = searchParams.get("session_id") ?? null;
   const [successModalDismissed, setSuccessModalDismissed] = useState(false);
-  const showSuccessModal = statusSuccess && !successModalDismissed;
+  const [profileJustCompleted, setProfileJustCompleted] = useState(false);
+  const showSuccessModal = profileJustCompleted && !successModalDismissed;
   const [checkoutSelections, setCheckoutSelections] =
     useCheckoutSelectionsStorage(program?.id);
   const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [nextPaymentDateYmd, setNextPaymentDateYmd] = useState(() => {
+    const d = new Date();
+    d.setMonth(d.getMonth() + 1);
+    d.setDate(11);
+    return d.toISOString().slice(0, 10);
+  });
 
-  // Reset dismissed state when URL has status=success again (e.g. return from Stripe)
+  // When returning from Stripe with success: move to complete-profile step and clean URL (do not show modal yet)
   useEffect(() => {
-    if (statusSuccess) setSuccessModalDismissed(false);
-  }, [statusSuccess]);
+    if (!statusSuccess) return;
+    const next = new URLSearchParams(searchParams.toString());
+    next.set("step", "complete-profile");
+    next.delete("status");
+    next.delete("session_id");
+    router.replace(`${pathname}?${next.toString()}`);
+  }, [statusSuccess, pathname, router, searchParams]);
+
+  const handleProfileComplete = useCallback(() => {
+    setProfileJustCompleted(true);
+    setSuccessModalDismissed(false);
+  }, []);
+
+  const handleSuccessModalOpenChange = useCallback(
+    (open: boolean) => {
+      if (!open) {
+        setSuccessModalDismissed(true);
+        setProfileJustCompleted(false);
+      }
+    },
+    [],
+  );
 
   const setActiveStep = useCallback(
     (value: React.SetStateAction<PaymentStepId>) => {
@@ -66,11 +93,20 @@ const PaymentMain = ({ program, checkoutData, paymentPageId }: PaymentMainProps)
     [activeStep, pathname, router, searchParams],
   );
 
+  const isInstallmentPlan =
+    checkoutSelections?.planId &&
+    checkoutSelections.planId !== "full";
+  const nextPaymentDateForApi =
+    isInstallmentPlan && nextPaymentDateYmd
+      ? new Date(nextPaymentDateYmd + "T12:00:00")
+      : null;
+
   const { payNow, isProcessingPayment } = usePayNow({
     checkoutData: checkoutData ?? null,
     checkoutSelections,
     slug: program?.slug,
     paymentPageId,
+    nextPaymentDate: nextPaymentDateForApi,
     promoCode,
     promoApplied: !!searchParams.get("promo_code"),
     onError: (message) => setPaymentError(message),
@@ -104,31 +140,28 @@ const PaymentMain = ({ program, checkoutData, paymentPageId }: PaymentMainProps)
         {activeStep === "personal" && (
           <PaymentDetails
             checkoutSelections={checkoutSelections}
+            nextPaymentDateYmd={nextPaymentDateYmd}
+            onNextPaymentDateChange={setNextPaymentDateYmd}
             onProceed={handlePayNow}
             isProcessingPayment={isProcessingPayment}
             paymentError={paymentError}
           />
         )}
         {activeStep === "complete-profile" && (
-            <CompleteProfile programTitle={program?.title} />
+            <CompleteProfile
+              programTitle={program?.title}
+              onProfileComplete={handleProfileComplete}
+            />
           )}
       </div>
       {activeStep !== "complete-profile" && <Coupon />}
 
       <PaymentSuccessModal
         open={showSuccessModal}
-        onOpenChange={(open) => {
-          if (!open) {
-            setSuccessModalDismissed(true);
-            const next = new URLSearchParams(searchParams.toString());
-            next.delete("status");
-            next.delete("session_id");
-            next.set("step", "complete-profile");
-            router.replace(`${pathname}?${next.toString()}`);
-          }
-        }}
+        onOpenChange={handleSuccessModalOpenChange}
         programSlug={program?.slug}
-        sessionId={sessionId}
+        sessionId={null}
+        profileCompleted={profileJustCompleted}
         setActiveStep={setActiveStep}
       />
     </div>
