@@ -23,6 +23,11 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "api.amdari.io",
+        pathname: "/api/images/**",
+      },
+      {
+        protocol: "https",
+        hostname: "api.amdari.io",
         pathname: "/tools/**",
       },
       {
