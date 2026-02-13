@@ -24,12 +24,12 @@ export default function SecondHero() {
     {
       src: "/images/svgs/tools/figma.svg",
       alt: "Figma",
-      position: "top-64 right-8 md:right-0 animate-bounce-2",
+      position: "bottom-0 right-8 md:right-1/4 animate-bounce-2",
     },
     {
       src: "/images/svgs/tools/google-analytics.svg",
       alt: "Analytics",
-      position: "bottom-32 right-0 md:right-8 animate-bounce-3",
+      position: "top-2/3 right-0 md:-right-1/10 animate-bounce-3",
     },
     {
       src: "/images/svgs/tools/microsoft.svg",
@@ -42,9 +42,9 @@ export default function SecondHero() {
       position: "top-12 right-0 animate-bounce-5",
     },
     {
-      src: "/images/svgs/tools/jira.svg",
+      src: "/images/svgs/tools/ubuntu.svg",
       alt: "Trello",
-      position: "bottom-12 right-16 animate-bounce-7",
+      position: "top-0 right-1/2 animate-bounce-7",
     },
     {
       src: "/images/svgs/tools/notion.svg",
@@ -54,22 +54,26 @@ export default function SecondHero() {
     {
       src: "/images/svgs/tools/ubuntu.svg",
       alt: "Trello",
-      position: "bottom-4 right-4 animate-bounce-9",
+      position: "-bottom-1/10 right-1/2 animate-bounce-9",
     },
   ];
   return (
-    <div className="relative w-full min-h-screen overflow-hidden bg-white">
-      {/* Decorative background elements */}
-      <div className="absolute top-0 left-1/4 w-20 h-20 bg-green-100 rounded opacity-60"></div>
-      <div className="absolute top-16 right-1/4 w-24 h-24 bg-cyan-100 rounded opacity-50"></div>
-      <div className="absolute bottom-1/3 left-12 w-16 h-16 bg-green-100 rounded opacity-40"></div>
-      <div className="absolute bottom-32 right-1/3 w-32 h-32 bg-green-100 rounded opacity-30"></div>
-      <div className="absolute bottom-0 right-0 w-40 h-40 bg-yellow-100 rounded opacity-40"></div>
-      <div className="absolute top-1/3 right-1/2 translate-x-32 w-40 h-40 bg-cyan-50 rounded opacity-50"></div>
+    <div className="relative w-full min-h-screen overflow-hidden -translate-y-25">
+      {/* Section background – new-hero-bg */}
+      <div
+        className="absolute inset-0 z-0 "
+        style={{
+          backgroundImage: "url(/images/new-hero/new-hero-bg.svg)",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+        }}
+        aria-hidden
+      />
 
       {/* Main content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-12 md:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-36">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left content */}
           <div className="flex flex-col justify-center">
             {/* Pill badge */}
