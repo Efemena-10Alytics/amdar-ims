@@ -81,11 +81,12 @@ const Navbr = () => {
                     key={link.label}
                     href={link.href}
                     className={cn(
-                      "text-sm transition-colors relative",
-                      isActive && "underline underline-offset-10",
+                      "text-sm transition-colors relative pb-0.5",
+                      "after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-0.5 after:bg-current after:transition-[width] after:duration-300 after:ease-out",
+                      isActive ? "after:w-full" : "after:w-0 hover:after:w-full",
                       showWhiteNav
                         ? "text-[#156374] hover:text-[#0f4d5a]"
-                        : "text-primary hover:text-white/80",
+                        : "text-primary hover:text-[#0f4d5a]",
                     )}
                   >
                     {link.label}
