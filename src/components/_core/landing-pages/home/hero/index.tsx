@@ -9,7 +9,6 @@ import Slider from "./slider";
 import WordDrop from "./word-drop";
 import Aos from "aos";
 import Flag from "./flag";
-import Link from "next/link";
 import LearnMoreVideo from "../learn-more-video";
 
 const InternshipHero = () => {
