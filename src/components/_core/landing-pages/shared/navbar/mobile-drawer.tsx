@@ -6,13 +6,12 @@ import { usePathname } from "next/navigation";
 import { X, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useAuthStore } from "@/store/auth-store";
-
 interface MobileDrawerProps {
   isDrawerOpen: boolean;
   onClose: () => void;
   navLinks: Array<{ label: string; href: string }>;
   isLoggedIn?: boolean;
+  onLogoutClick?: () => void;
 }
 
 const MobileDrawer = ({
@@ -20,9 +19,9 @@ const MobileDrawer = ({
   onClose,
   navLinks,
   isLoggedIn = false,
+  onLogoutClick,
 }: MobileDrawerProps) => {
   const pathname = usePathname();
-  const logout = useAuthStore((s) => s.logout);
   return (
     <>
       {/* Drawer Overlay */}
@@ -92,8 +91,8 @@ const MobileDrawer = ({
                   <button
                     type="button"
                     onClick={() => {
-                      logout();
                       onClose();
+                      onLogoutClick?.();
                     }}
                     className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-lg bg-teal-100 text-[#0f4d5a] hover:bg-teal-200 transition-colors font-medium"
                   >

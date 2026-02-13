@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import MobileDrawer from "./mobile-drawer";
+import { ConfirmLogout } from "./confirm-logout";
 import { useAuthStore } from "@/store/auth-store";
 
 import {
@@ -31,6 +32,7 @@ export function TooltipDemo() {
 
 const Navbr = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
   const { user, logout } = useAuthStore();
@@ -144,7 +146,7 @@ const Navbr = () => {
                   </Tooltip>
                   <button
                     type="button"
-                    onClick={() => logout()}
+                    onClick={() => setConfirmLogoutOpen(true)}
                     className={cn(
                       "group flex h-10 xl:h-11 w-10 xl:w-11 items-center justify-center gap-2 rounded-full overflow-hidden transition-[width,color] duration-200 hover:px-3",
                       "bg-teal-100 text-[#0f4d5a] hover:bg-red-100",
@@ -210,6 +212,16 @@ const Navbr = () => {
         onClose={closeDrawer}
         navLinks={navLinks}
         isLoggedIn={isLoggedIn}
+        onLogoutClick={() => {
+          closeDrawer();
+          setConfirmLogoutOpen(true);
+        }}
+      />
+
+      <ConfirmLogout
+        open={confirmLogoutOpen}
+        onOpenChange={setConfirmLogoutOpen}
+        onConfirm={logout}
       />
     </>
   );
