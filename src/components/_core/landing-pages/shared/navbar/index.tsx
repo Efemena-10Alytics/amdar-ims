@@ -40,14 +40,14 @@ const Navbr = () => {
   const closeDrawer = () => {
     setIsDrawerOpen(false);
   };
-  const logoImg = isHomePageRoute ? "/logo-white.svg" : "/logo.svg";
+  const logoImg = isHomePageRoute ? "/logo.svg" : "/logo.svg";
   return (
     <>
       <nav
         className={cn(
           "fixed top-0 left-0 right-0 w-full z-50 transition-colors",
           isHomePageRoute
-            ? "bg-[#156374] border-white/20"
+            ? "bg-transparent border-white/20"
             : "bg-white border-gray-200 border-b",
         )}
       >
@@ -73,7 +73,7 @@ const Navbr = () => {
                       "text-sm transition-colors relative",
                       isActive && "underline underline-offset-10",
                       isHomePageRoute
-                        ? "text-white hover:text-white/80"
+                        ? "text-primary hover:text-white/80"
                         : "text-[#156374] hover:text-[#0f4d5a]",
                     )}
                   >
@@ -91,7 +91,7 @@ const Navbr = () => {
                   className={cn(
                     "rounded-full whitespace-nowrap px-10 xl:px-14 xl:h-12",
                     isHomePageRoute
-                      ? "border-white text-white bg-transparent hover:bg-white/10 hover:border-white"
+                      ? "border-primary text-primary bg-transparent hover:border-amdari-yellow"
                       : "border-[#156374] text-[#156374] bg-white hover:bg-[#156374]/5 hover:border-[#0f4d5a] hover:text-[#0f4d5a]",
                   )}
                 >
@@ -118,7 +118,7 @@ const Navbr = () => {
               className={cn(
                 "lg:hidden p-2 transition-colors",
                 isHomePageRoute
-                  ? "text-white hover:text-white/80"
+                  ? "text-primary hover:text-white/80"
                   : "text-[#156374] hover:text-[#0f4d5a]",
               )}
               aria-label="Open menu"
