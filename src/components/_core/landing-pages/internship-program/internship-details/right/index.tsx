@@ -133,7 +133,7 @@ const Right = ({ program }: RightProps) => {
             <div className="text-xs text-[#092A31]">Min</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold text-[#092A31] mb-1">
+            <div className="text-lg font-semibold text-[#092A31] mb-1">
               {String(countdown.seconds).padStart(2, "0")}
             </div>
             <div className="text-xs text-[#092A31]">Sec</div>
@@ -150,7 +150,7 @@ const Right = ({ program }: RightProps) => {
 
       {/* Skills You Will Learn Section */}
       <div className="bg-[#F8FAFB] rounded-lg p-6">
-        <h3 className="text-xl font-bold text-[#092A31] mb-4">
+        <h3 className="text-xl font-semibold text-[#092A31] mb-4">
           Skills you will learn
         </h3>
         <div className="flex flex-wrap gap-2">

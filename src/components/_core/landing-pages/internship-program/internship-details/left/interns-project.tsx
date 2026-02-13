@@ -22,7 +22,7 @@ const InternsProject = ({ projects = [] }: InternsProjectProps) => {
   console.log("project", projects);
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl lg:text-3xl font-bold text-[#092A31]">
+      <h2 className="text-2xl lg:text-3xl font-semibold text-[#092A31]">
         Interns Projects
       </h2>
 

@@ -71,11 +71,11 @@ const Faq = () => {
                 return (
                   <div
                     key={faq.id}
-                    className="bg-[#E8EFF1] rounded-lg border border-gray-200 overflow-hidden transition-colors duration-200"
+                    className="bg-[#E8EFF1] hover:bg-[#E8EFF1]/70 rounded-lg  overflow-hidden transition-colors duration-200"
                   >
                     <button
                       onClick={() => toggleItem(faq.id)}
-                      className="w-full flex items-center justify-between p-4 lg:p-6 text-left hover:bg-gray-50 transition-colors duration-200"
+                      className="w-full flex items-center justify-between p-4 lg:p-6 text-left transition-colors duration-200"
                     >
                       <span className="text-base lg:text-lg font-medium text-gray-800 pr-4">
                         {faq.question}

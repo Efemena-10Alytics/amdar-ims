@@ -32,7 +32,7 @@ const ProjectSlide = () => {
         <span className="text-[#64748B] text-xl lg:text-2xl font-semibold">
           {FIRST_TEXT}{" "}
         </span>
-        <span className="text-[#092A31] text-2xl lg:text-3xl font-bold">
+        <span className="text-[#092A31] text-2xl lg:text-3xl font-semibold">
           {GAIN_ITEMS[activeIndex] ?? GAIN_ITEMS[0]}
         </span>
       </div>

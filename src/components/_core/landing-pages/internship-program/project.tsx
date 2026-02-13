@@ -43,7 +43,7 @@ const Project = ({ program }: ProjectProps) => {
 
           {/* Right: Copy and numbered indicators */}
           <div className="flex flex-1 flex-col justify-center">
-            <h2 className="text-2xl lg:text-3xl xl:text-4xl font-bold text-[#092A31] mb-4">
+            <h2 className="text-2xl lg:text-3xl xl:text-4xl font-semibold text-[#092A31] mb-4">
               Why Take This Internship?
             </h2>
             <p className="text-[#64748B] text-base lg:text-lg leading-relaxed mb-8">

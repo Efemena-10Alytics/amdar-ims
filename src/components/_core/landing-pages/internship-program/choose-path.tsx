@@ -26,10 +26,10 @@ const ChoosePath = () => {
       <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="mb-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-end">
             {/* Title */}
             <div>
-              <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-[#092A31] leading-tight">
+              <h2 className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] leading-tight">
                 Choose & Explore A Career Path
               </h2>
             </div>
@@ -53,12 +53,12 @@ const ChoosePath = () => {
               className="group bg-[#E8EFF1] hover:bg-primary p-4 md:p-6 rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
             >
               {/* Image */}
-              <div className="relative w-full h-48 bg-gray-200">
+              <div className="relative w-full h-48 bg-gray-200 rounded-md">
                 <Image
                   src={career.image}
                   alt={career.title}
                   fill
-                  className="object-cover"
+                  className="object-cover rounded-md"
                 />
               </div>
 

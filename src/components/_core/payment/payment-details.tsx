@@ -290,7 +290,7 @@ const PaymentDetails = ({
               <span className="text-[#6b7280]">Coupon (Discount)</span>
               <span className="font-medium text-[#092A31]">30%</span>
             </div>
-            <div className="flex justify-between border-t border-[#e5e7eb] pt-3 text-base">
+            <div className="flex justify-between text-base">
               <span className="font-medium text-[#092A31]">Amount to pay</span>
               <span className="font-clash-display font-bold text-primary">
                 {checkoutSelections

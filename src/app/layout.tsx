@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   icons: {
-    icon: "https://www.Amdaridatastrategists.com/logo1.png",
+    icon: "/favicon.png",
     shortcut: "https://www.Amdaridatastrategists.com/logo1.png",
     apple: "https://www.Amdaridatastrategists.com/logo1.png",
   },
@@ -37,7 +37,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${sora.variable}! antialiased`} suppressHydrationWarning>
+      <body
+        className={`${sora.variable}! antialiased`}
+        suppressHydrationWarning
+      >
         <Providers>{children}</Providers>
       </body>
     </html>

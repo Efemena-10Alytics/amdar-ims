@@ -151,7 +151,7 @@ const Mentors = ({ mentors }: MentorsProps) => {
                   <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent p-4">
                     <div className="flex items-end justify-between">
                       <div>
-                        <h4 className="text-white font-bold text-lg mb-1">
+                        <h4 className="text-white font-semibold text-lg mb-1">
                           {mentor.name}
                         </h4>
                         <p className="text-white/90 text-sm">{mentor.title}</p>

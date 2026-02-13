@@ -12,7 +12,7 @@ const CareerOpporturnity = ({
 
   return (
     <div className="space-y-8">
-      <h2 className="text-2xl font-bold text-[#092A31] mb-6">
+      <h2 className="text-2xl font-semibold text-[#092A31] mb-6">
         Career Opporturnity
       </h2>
 

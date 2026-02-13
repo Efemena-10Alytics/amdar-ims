@@ -40,7 +40,7 @@ const ViewProjectDialog = ({
         <DialogHeader className="shrink-0 p-6 pb-0! border-b border-gray-100">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
-              <DialogTitle className="text-xl font-bold text-[#092A31] mb-2 text-left">
+              <DialogTitle className="text-xl font-semibold text-[#092A31] mb-2 text-left">
                 {project?.name}
               </DialogTitle>
             </div>

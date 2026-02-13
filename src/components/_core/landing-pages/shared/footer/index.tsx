@@ -36,14 +36,12 @@ const Footer = () => {
 
   const whatsappContacts = [
     { name: "Emem", number: "+447878711494" },
-    { name: "Uche", number: "+447414613215" },
     { name: "Rita", number: "+447471551285" },
     { name: "Ummi", number: "+447646 442409" },
   ];
 
   const callContacts = [
     { name: "Emem", number: "+447446151822" },
-    { name: "Uche", number: "+447414613215" },
     { name: "Rita", number: "+447471551285" },
     { name: "Ummi", number: "+447446 442409" },
   ];

@@ -19,7 +19,10 @@ const inputBase = cn(
 );
 
 const HOW_DID_YOU_HEAR_OPTIONS = [
-  { value: "Amdari Facebook/Instagram Ad", label: "Amdari Facebook/Instagram Ad" },
+  {
+    value: "Amdari Facebook/Instagram Ad",
+    label: "Amdari Facebook/Instagram Ad",
+  },
   { value: "Amdari Instagram Page", label: "Amdari Instagram Page" },
   { value: "Amdari LinkedIn", label: "Amdari LinkedIn" },
   { value: "Amdari Twitter", label: "Amdari Twitter" },
@@ -86,13 +89,14 @@ const initialFormData: CompleteProfileFormData = {
   referralCode: "",
 };
 
-const REQUIRED_FIELDS: (keyof Omit<CompleteProfileFormData, "referralCode">)[] = [
-  "skillLevel",
-  "gender",
-  "howDidYouHear",
-  "reasonForDecision",
-  "sessionOfDecision",
-];
+const REQUIRED_FIELDS: (keyof Omit<CompleteProfileFormData, "referralCode">)[] =
+  [
+    "skillLevel",
+    "gender",
+    "howDidYouHear",
+    "reasonForDecision",
+    "sessionOfDecision",
+  ];
 
 function validateRequiredFields(
   data: CompleteProfileFormData,
@@ -117,9 +121,15 @@ interface CompleteProfileProps {
   onProfileComplete?: () => void;
 }
 
-export default function CompleteProfile({ programTitle, onProfileComplete }: CompleteProfileProps) {
-  const [formData, setFormData] = useState<CompleteProfileFormData>(initialFormData);
-  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof CompleteProfileFormData, string>>>({});
+export default function CompleteProfile({
+  programTitle,
+  onProfileComplete,
+}: CompleteProfileProps) {
+  const [formData, setFormData] =
+    useState<CompleteProfileFormData>(initialFormData);
+  const [fieldErrors, setFieldErrors] = useState<
+    Partial<Record<keyof CompleteProfileFormData, string>>
+  >({});
   const { updateUser, isUpdating, errorMessage } = useCompleteProfile();
 
   const valid = isFormValid(formData);
@@ -146,8 +156,14 @@ export default function CompleteProfile({ programTitle, onProfileComplete }: Com
       return;
     }
     setFieldErrors({});
-    const { skillLevel, gender, howDidYouHear, reasonForDecision, sessionOfDecision, referralCode } =
-      formData;
+    const {
+      skillLevel,
+      gender,
+      howDidYouHear,
+      reasonForDecision,
+      sessionOfDecision,
+      referralCode,
+    } = formData;
     try {
       await updateUser({
         gender,
@@ -166,211 +182,242 @@ export default function CompleteProfile({ programTitle, onProfileComplete }: Com
 
   return (
     <>
-    <div className="min-w-0 max-w-xl flex-1 w-full pb-12">
-      <h2 className="font-clash-display text-xl font-bold text-[#092A31]">
-        Complete profile to confirm enrollment
-      </h2>
-      <p className="mt-1 text-sm text-[#6b7280]">
-        complete your enrollment profile
-      </p>
-      {errorMessage ? (
-        <div className="mt-4">
-          <ErrorAlert error={errorMessage} />
-        </div>
-      ) : null}
-
-      <form onSubmit={handleSubmit} className="mt-6 space-y-5 w-full">
-        <div>
-          <label
-            htmlFor="program-paid-for"
-            className="block text-sm font-medium text-[#092A31] mb-1.5"
-          >
-            Program paid for
-          </label>
-          <div
-            id="program-paid-for"
-            className={cn(inputBase, "cursor-default bg-[#E8EFF1]")}
-          >
-            {programTitle ?? "—"}
+      <div className="min-w-0 max-w-3xl flex-1 w-full pb-12">
+        <h2 className="font-clash-display text-xl font-bold text-[#092A31]">
+          Complete profile to confirm enrollment
+        </h2>
+        <p className="mt-1 text-sm text-[#6b7280]">
+          complete your enrollment profile
+        </p>
+        {errorMessage ? (
+          <div className="mt-4">
+            <ErrorAlert error={errorMessage} />
           </div>
-        </div>
+        ) : null}
 
-        <div>
-          <label
-            htmlFor="skill-level"
-            className="block text-sm font-medium text-[#092A31] mb-1.5"
-          >
-            Your skill level
-          </label>
-          <Select
-            value={formData.skillLevel || undefined}
-            onValueChange={(value) => updateField("skillLevel", value)}
-          >
-            <SelectTrigger
-              id="skill-level"
-              className={cn("w-full", fieldErrors.skillLevel && "border-[#AA3030]")}
+        <form onSubmit={handleSubmit} className="mt-6 space-y-5 w-full">
+          <div>
+            <label
+              htmlFor="program-paid-for"
+              className="block text-sm font-medium text-[#092A31] mb-1.5"
             >
-              <SelectValue placeholder="Select skill level" />
-            </SelectTrigger>
-            <SelectContent>
-              {SKILL_LEVEL_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {fieldErrors.skillLevel ? (
-            <p className="mt-1 text-xs text-[#AA3030]">{fieldErrors.skillLevel}</p>
-          ) : null}
-        </div>
-
-        <div>
-          <label
-            htmlFor="gender"
-            className="block text-sm font-medium text-[#092A31] mb-1.5"
-          >
-            Your gender
-          </label>
-          <Select
-            value={formData.gender || undefined}
-            onValueChange={(value) => updateField("gender", value)}
-          >
-            <SelectTrigger
-              id="gender"
-              className={cn("w-full", fieldErrors.gender && "border-[#AA3030]")}
+              Program paid for
+            </label>
+            <div
+              id="program-paid-for"
+              className={cn(inputBase, "cursor-default bg-[#E8EFF1]")}
             >
-              <SelectValue placeholder="Select gender" />
-            </SelectTrigger>
-            <SelectContent>
-              {GENDER_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {fieldErrors.gender ? (
-            <p className="mt-1 text-xs text-[#AA3030]">{fieldErrors.gender}</p>
-          ) : null}
-        </div>
+              {programTitle ?? "—"}
+            </div>
+          </div>
+          <div className="grid lg:grid-cols-2 gap-5">
+            <div>
+              <label
+                htmlFor="skill-level"
+                className="block text-sm font-medium text-[#092A31] mb-1.5"
+              >
+                Your skill level
+              </label>
+              <Select
+                value={formData.skillLevel || undefined}
+                onValueChange={(value) => updateField("skillLevel", value)}
+              >
+                <SelectTrigger
+                  id="skill-level"
+                  className={cn(
+                    "w-full",
+                    fieldErrors.skillLevel && "border-[#AA3030]",
+                  )}
+                >
+                  <SelectValue placeholder="Select skill level" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SKILL_LEVEL_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {fieldErrors.skillLevel ? (
+                <p className="mt-1 text-xs text-[#AA3030]">
+                  {fieldErrors.skillLevel}
+                </p>
+              ) : null}
+            </div>
 
-        <div>
-          <label
-            htmlFor="how-did-you-hear"
-            className="block text-sm font-medium text-[#092A31] mb-1.5"
-          >
-            How did you hear about Amdari
-          </label>
-          <Select
-            value={formData.howDidYouHear || undefined}
-            onValueChange={(value) => updateField("howDidYouHear", value)}
-          >
-            <SelectTrigger
-              id="how-did-you-hear"
-              className={cn("w-full", fieldErrors.howDidYouHear && "border-[#AA3030]")}
-            >
-              <SelectValue placeholder="Select how you found out" />
-            </SelectTrigger>
-            <SelectContent>
-              {HOW_DID_YOU_HEAR_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {fieldErrors.howDidYouHear ? (
-            <p className="mt-1 text-xs text-[#AA3030]">{fieldErrors.howDidYouHear}</p>
-          ) : null}
-        </div>
+            <div>
+              <label
+                htmlFor="gender"
+                className="block text-sm font-medium text-[#092A31] mb-1.5"
+              >
+                Your gender
+              </label>
+              <Select
+                value={formData.gender || undefined}
+                onValueChange={(value) => updateField("gender", value)}
+              >
+                <SelectTrigger
+                  id="gender"
+                  className={cn(
+                    "w-full",
+                    fieldErrors.gender && "border-[#AA3030]",
+                  )}
+                >
+                  <SelectValue placeholder="Select gender" />
+                </SelectTrigger>
+                <SelectContent>
+                  {GENDER_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {fieldErrors.gender ? (
+                <p className="mt-1 text-xs text-[#AA3030]">
+                  {fieldErrors.gender}
+                </p>
+              ) : null}
+            </div>
 
-        <div>
-          <label
-            htmlFor="reason-for-decision"
-            className="block text-sm font-medium text-[#092A31] mb-1.5"
-          >
-            Reason for decision
-          </label>
-          <Select
-            value={formData.reasonForDecision || undefined}
-            onValueChange={(value) => updateField("reasonForDecision", value)}
-          >
-            <SelectTrigger
-              id="reason-for-decision"
-              className={cn("w-full", fieldErrors.reasonForDecision && "border-[#AA3030]")}
-            >
-              <SelectValue placeholder="Select for decision" />
-            </SelectTrigger>
-            <SelectContent>
-              {REASON_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {fieldErrors.reasonForDecision ? (
-            <p className="mt-1 text-xs text-[#AA3030]">{fieldErrors.reasonForDecision}</p>
-          ) : null}
-        </div>
+            <div>
+              <label
+                htmlFor="how-did-you-hear"
+                className="block text-sm font-medium text-[#092A31] mb-1.5"
+              >
+                How did you hear about Amdari
+              </label>
+              <Select
+                value={formData.howDidYouHear || undefined}
+                onValueChange={(value) => updateField("howDidYouHear", value)}
+              >
+                <SelectTrigger
+                  id="how-did-you-hear"
+                  className={cn(
+                    "w-full",
+                    fieldErrors.howDidYouHear && "border-[#AA3030]",
+                  )}
+                >
+                  <SelectValue placeholder="Select how you found out" />
+                </SelectTrigger>
+                <SelectContent>
+                  {HOW_DID_YOU_HEAR_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {fieldErrors.howDidYouHear ? (
+                <p className="mt-1 text-xs text-[#AA3030]">
+                  {fieldErrors.howDidYouHear}
+                </p>
+              ) : null}
+            </div>
 
-        <div>
-          <label
-            htmlFor="session-of-decision"
-            className="block text-sm font-medium text-[#092A31] mb-1.5"
-          >
-            Which of our session influenced your decision
-          </label>
-          <Select
-            value={formData.sessionOfDecision || undefined}
-            onValueChange={(value) => updateField("sessionOfDecision", value)}
-          >
-            <SelectTrigger
-              id="session-of-decision"
-              className={cn("w-full", fieldErrors.sessionOfDecision && "border-[#AA3030]")}
-            >
-              <SelectValue placeholder="Select session" />
-            </SelectTrigger>
-            <SelectContent>
-              {SESSION_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {fieldErrors.sessionOfDecision ? (
-            <p className="mt-1 text-xs text-[#AA3030]">{fieldErrors.sessionOfDecision}</p>
-          ) : null}
-        </div>
+            <div>
+              <label
+                htmlFor="reason-for-decision"
+                className="block text-sm font-medium text-[#092A31] mb-1.5"
+              >
+                Reason for decision
+              </label>
+              <Select
+                value={formData.reasonForDecision || undefined}
+                onValueChange={(value) =>
+                  updateField("reasonForDecision", value)
+                }
+              >
+                <SelectTrigger
+                  id="reason-for-decision"
+                  className={cn(
+                    "w-full",
+                    fieldErrors.reasonForDecision && "border-[#AA3030]",
+                  )}
+                >
+                  <SelectValue placeholder="Select for decision" />
+                </SelectTrigger>
+                <SelectContent>
+                  {REASON_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {fieldErrors.reasonForDecision ? (
+                <p className="mt-1 text-xs text-[#AA3030]">
+                  {fieldErrors.reasonForDecision}
+                </p>
+              ) : null}
+            </div>
 
-        <div>
-          <label
-            htmlFor="referral-code"
-            className="block text-sm font-medium text-[#092A31] mb-1.5"
-          >
-            Referral code <span className="text-[#6b7280] font-normal">(Optional)</span>
-          </label>
-          <input
-            id="referral-code"
-            type="text"
-            placeholder="Enter referral code"
-            value={formData.referralCode}
-            onChange={(e) => updateField("referralCode", e.target.value)}
-            className={inputBase}
-          />
-        </div>
+            <div>
+              <label
+                htmlFor="session-of-decision"
+                className="block text-sm font-medium text-[#092A31] mb-1.5"
+              >
+                Which of our session influenced your decision
+              </label>
+              <Select
+                value={formData.sessionOfDecision || undefined}
+                onValueChange={(value) =>
+                  updateField("sessionOfDecision", value)
+                }
+              >
+                <SelectTrigger
+                  id="session-of-decision"
+                  className={cn(
+                    "w-full",
+                    fieldErrors.sessionOfDecision && "border-[#AA3030]",
+                  )}
+                >
+                  <SelectValue placeholder="Select session" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SESSION_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {fieldErrors.sessionOfDecision ? (
+                <p className="mt-1 text-xs text-[#AA3030]">
+                  {fieldErrors.sessionOfDecision}
+                </p>
+              ) : null}
+            </div>
 
-        <Button
-          type="submit"
-          disabled={isUpdating || !valid}
-          className="w-full mt-12 rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium disabled:opacity-70"
-        >
-          {isUpdating ? "Saving…" : "Complete profile"}
-        </Button>
-      </form>
-    </div>
+            <div>
+              <label
+                htmlFor="referral-code"
+                className="block text-sm font-medium text-[#092A31] mb-1.5"
+              >
+                Referral code{" "}
+                <span className="text-[#6b7280] font-normal">(Optional)</span>
+              </label>
+              <input
+                id="referral-code"
+                type="text"
+                placeholder="Enter referral code"
+                value={formData.referralCode}
+                onChange={(e) => updateField("referralCode", e.target.value)}
+                className={inputBase}
+              />
+            </div>
+          </div>
+
+          <Button
+            type="submit"
+            disabled={isUpdating || !valid}
+            className="w-full mt-12 rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium disabled:opacity-70"
+          >
+            {isUpdating ? "Saving…" : "Complete profile"}
+          </Button>
+        </form>
+      </div>
     </>
   );
 }
