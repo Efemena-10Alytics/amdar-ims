@@ -114,7 +114,14 @@ const Left = ({ program }: LeftProps) => {
       </div>
 
       {/* Pricing and Apply Bar */}
-      <div className="bg-[#C8DDE3] rounded-lg p-4 lg:p-6 mb-8 flex items-center justify-between gap-4">
+      <div
+        className="rounded-lg p-4 mb-8 flex items-center justify-between gap-4 animate-pricing-gradient overflow-hidden"
+        style={{
+          backgroundImage:
+            "linear-gradient(90deg, #C8DDE3 0%, #C8DDE3 30%, rgba(255, 224, 130, 0.15) 38%, rgba(255, 224, 130, 0.4) 50%, rgba(255, 224, 130, 0.15) 62%, #C8DDE3 70%, #C8DDE3 100%)",
+          backgroundSize: "300% 100%",
+        }}
+      >
         <div className="flex flex-col gap-2">
           <div className="text-[#64748B] line-through text-lg">USD 500</div>
           <div className="text-2xl lg:text-3xl font-semibold text-[#092A31]">
