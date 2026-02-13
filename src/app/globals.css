@@ -153,8 +153,8 @@
   * {
     @apply border-border outline-ring/50;
     font-family: "Sora", sans-serif !important;
-    scrollbar-width: thin;
-    scrollbar-color: #156374 transparent;
+    /* scrollbar-width: thin; */
+    scrollbar-color: #EBECEE transparent;
   }
   body {
     @apply bg-background text-foreground;

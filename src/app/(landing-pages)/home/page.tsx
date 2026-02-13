@@ -7,6 +7,8 @@ import Experience from "@/components/_core/landing-pages/home/experience";
 import RoadMap from "@/components/_core/landing-pages/home/road-map/index";
 import SuccessStories from "@/components/_core/landing-pages/home/success-stories/index";
 import CareerNeeds from "@/components/_core/landing-pages/home/career-needs";
+import NewHero from "@/components/_core/landing-pages/home/new-hero";
+import JobReady from "@/components/_core/landing-pages/internship-program/job-ready";
 
 const InternShipProgram = () => {
   return (
@@ -15,6 +17,7 @@ const InternShipProgram = () => {
       <WhatWeOffer />
       <Partners />
       <CareerNeeds />
+      <JobReady />
       <Portfolio />
       <WhatOurInternsSays />
       <Experience />

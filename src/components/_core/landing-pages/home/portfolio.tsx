@@ -15,7 +15,7 @@ const Portfolio = () => {
   return (
     <div
       data-aos="fade-up"
-      className="bg-white py-12 lg:py-20 relative overflow-hidden"
+      className="bg-white relative overflow-hidden"
     >
       <div className="flex flex-col lg:flex-row">
         {/* Left Section - Promotional Content */}

@@ -16,42 +16,42 @@ const WhyTakeTheInternship = () => {
     {
       id: 1,
       icon: BriefcaseSVG,
-      label: "Job Ready",
+      label: `A portfolio of real industry-ready deliverables`,
     },
     {
       id: 2,
       icon: FileSVG,
-      label: "Portfolio",
+      label: `A 2-year international reference from Amdari`,
     },
     {
       id: 3,
       icon: InterviewSVG,
-      label: "Experience",
+      label: `Mock interviews & career coaching`,
     },
     {
       id: 4,
       icon: LinkedInSVG,
-      label: "LinkedIn",
+      label: `LinkedIn optimization + CV revamp`,
     },
     {
       id: 5,
       icon: UserFourSVG,
-      label: "LinkedIn",
+      label: `Real team experience (standups, workflows, tools)`,
     },
     {
       id: 6,
       icon: DocSVG,
-      label: "LinkedIn",
+      label: `Documentation & communication experience`,
     },
     {
       id: 7,
       icon: DeskSVG,
-      label: "LinkedIn",
+      label: `Proof of work you can confidently show employers`,
     },
     {
       id: 8,
       icon: PlugSVG,
-      label: "LinkedIn",
+      label: `Lifetime access to our job readiness resources`,
     },
   ];
 
@@ -73,16 +73,16 @@ const WhyTakeTheInternship = () => {
           </div>
 
           {/* Title and Subtitle */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          <div className="flex gap-16 items-end">
             {/* Main Title */}
-            <div>
-              <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-[#092A31] leading-tight">
-                Professional Outcomes You Can Use Immediately
+            <div className="w-[60%]">
+              <h2 className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] leading-tight">
+                Professional Outcomes <br /> You Can Use Immediately
               </h2>
             </div>
 
             {/* Subtitle/Quote */}
-            <div>
+            <div className="flex-1">
               <p className="text-lg lg:text-xl text-[#092A31] leading-relaxed">
                 This is the difference between 'I've learned it' and 'I've done
                 it.'

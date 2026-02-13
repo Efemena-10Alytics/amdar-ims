@@ -17,7 +17,7 @@ const Faq = ({ faqs }: FaqProps) => {
   if (!faqs?.length) {
     return (
       <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-[#092A31]">Frequently asked questions</h2>
+        <h2 className="text-2xl font-semibold text-[#092A31]">Frequently asked questions</h2>
         <p className="text-[#64748B]">No FAQs available for this program.</p>
       </div>
     );
@@ -25,7 +25,7 @@ const Faq = ({ faqs }: FaqProps) => {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold text-[#092A31] mb-6">
+      <h2 className="text-2xl font-semibold text-[#092A31] mb-6">
         Frequently asked questions
       </h2>
       <Accordion type="single" collapsible className="w-full">

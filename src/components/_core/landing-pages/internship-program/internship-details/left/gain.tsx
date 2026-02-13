@@ -7,7 +7,7 @@ const Gain = ({ gain }: GainProps) => {
   if (hasGainHtml) {
     return (
       <div className="space-y-8">
-        <h2 className="text-2xl font-bold text-[#092A31] mb-6">
+        <h2 className="text-2xl font-semibold text-[#092A31] mb-6">
           What you’ll gain
         </h2>
         <div

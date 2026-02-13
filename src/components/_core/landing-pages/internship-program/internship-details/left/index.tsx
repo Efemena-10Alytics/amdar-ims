@@ -12,8 +12,6 @@ import Gain from "./gain";
 import CareerOpporturnity from "./career-opporturnity";
 import ProgramStructure from "./program-structure";
 import Faq from "./faq";
-import PaymentStructure from "./payment-structure";
-import Mentors from "./mentors";
 import Link from "next/link";
 import { useAuthStore } from "@/store/auth-store";
 import type { InternshipProgram } from "@/types/internship-program";
@@ -36,7 +34,6 @@ const Left = ({ program }: LeftProps) => {
     "Career Opportunity",
     "Program Structure",
     "Faqs",
-    // "Mentors",
     "Interns projects",
   ];
 
@@ -53,7 +50,7 @@ const Left = ({ program }: LeftProps) => {
     <div className="py-12 lg:py-20">
       {/* Header Section */}
       <div className="mb-8">
-        <h1 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-[#092A31] mb-4">
+        <h1 className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] mb-4">
           {program?.title}
         </h1>
         <p className="text-gray-600 text-base lg:text-lg mb-6 leading-relaxed">
@@ -120,7 +117,7 @@ const Left = ({ program }: LeftProps) => {
       <div className="bg-[#C8DDE3] rounded-lg p-4 lg:p-6 mb-8 flex items-center justify-between gap-4">
         <div className="flex flex-col gap-2">
           <div className="text-[#64748B] line-through text-lg">USD 500</div>
-          <div className="text-2xl lg:text-3xl font-bold text-[#092A31]">
+          <div className="text-2xl lg:text-3xl font-semibold text-[#092A31]">
             USD 390
           </div>
         </div>
@@ -176,12 +173,10 @@ const Left = ({ program }: LeftProps) => {
       )}
       {activeTab === "Program Structure" && <ProgramStructure />}
       {activeTab === "Faqs" && <Faq faqs={program?.faqs || []} />}
-      {activeTab === "Payment Structure" && <PaymentStructure />}
-      {activeTab === "Mentors" && <Mentors />}
 
       {/* Bottom CTA Banner */}
       <div className="mt-16 bg-[#156374] rounded-xl p-8 lg:p-12">
-        <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-white mb-4">
+        <h2 className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-white mb-4">
           Land Your First Job In Tech
         </h2>
         <p className="text-gray-300 text-base lg:text-lg mb-8 max-w-2xl mx-auto leading-relaxed">
