@@ -3,16 +3,40 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import MobileDrawer from "./mobile-drawer";
+import { ConfirmLogout } from "./confirm-logout";
+import { useAuthStore } from "@/store/auth-store";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+export function TooltipDemo() {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button variant="outline">Hover</Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Add to library</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+}
 
 const Navbr = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
+  const { user, logout } = useAuthStore();
+  const isLoggedIn = user != null;
   const isHomePageRoute = pathname === "/home";
   const isInternshipProgramRoute =
     pathname === "/internship-program" ||
@@ -59,7 +83,9 @@ const Navbr = () => {
       <nav
         className={cn(
           "fixed top-0 left-0 right-0 w-full z-50 transition-colors duration-300",
-          showWhiteNav ? "bg-white border-gray-200 border-b" : "bg-transparent border-white/20",
+          showWhiteNav
+            ? "bg-white border-gray-200 border-b"
+            : "bg-transparent border-white/20",
         )}
       >
         <div className="max-w-325 w-full mx-auto px-4 sm:px-6 lg:px-8">
@@ -83,7 +109,9 @@ const Navbr = () => {
                     className={cn(
                       "text-sm transition-colors relative pb-0.5",
                       "after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-0.5 after:bg-current after:transition-[width] after:duration-300 after:ease-out",
-                      isActive ? "after:w-full" : "after:w-0 hover:after:w-full",
+                      isActive
+                        ? "after:w-full"
+                        : "after:w-0 hover:after:w-full",
                       showWhiteNav
                         ? "text-[#156374] hover:text-[#0f4d5a]"
                         : "text-primary hover:text-[#0f4d5a]",
@@ -97,31 +125,69 @@ const Navbr = () => {
 
             {/* Action Buttons - Desktop */}
             <div className="hidden lg:flex items-center gap-3 shrink-0">
-              <Link href="/auth/sign-in">
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "rounded-full whitespace-nowrap px-10 xl:px-14 xl:h-12",
-                    showWhiteNav
-                      ? "border-[#156374] text-[#156374] bg-white hover:bg-[#156374]/5 hover:border-[#0f4d5a] hover:text-[#0f4d5a]"
-                      : "border-primary text-primary bg-transparent hover:border-amdari-yellow",
-                  )}
-                >
-                  Login
-                </Button>
-              </Link>
-              <Link href="/auth/sign-up">
-                <Button
-                  className={cn(
-                    "rounded-full whitespace-nowrap px-10 border-0 xl:h-12",
-                    showWhiteNav
-                      ? "bg-[#156374] text-white hover:bg-amdari-yellow hover:text-primary"
-                      : "bg-white text-[#156374] hover:bg-amdari-yellow hover:text-primary",
-                  )}
-                >
-                  Get Started
-                </Button>
-              </Link>
+              {isLoggedIn ? (
+                <>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Link
+                        href="https://www.amdari.io/dashboard"
+                        className={cn(
+                          "flex size-10 xl:size-11 items-center justify-center rounded-full transition-colors",
+                          "bg-pink-100 text-[#156374] hover:bg-pink-200",
+                        )}
+                        aria-label="Profile"
+                      >
+                        <User className="size-5 xl:size-6" />
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Go to Dashboard</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmLogoutOpen(true)}
+                    className={cn(
+                      "group flex h-10 xl:h-11 w-10 xl:w-11 items-center justify-center gap-2 rounded-full overflow-hidden transition-[width,color] duration-200 hover:px-3",
+                      "bg-teal-100 text-[#0f4d5a] hover:bg-red-100",
+                    )}
+                    aria-label="Log out"
+                  >
+                    <LogOut className="size-5 xl:size-6 shrink-0 group-hover:hidden" />
+                    <span className="hidden whitespace-nowrap text-[8px] font-medium group-hover:inline text-red-500">
+                      Log out
+                    </span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/auth/sign-in">
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "rounded-full whitespace-nowrap px-10 xl:px-14 xl:h-12",
+                        showWhiteNav
+                          ? "border-[#156374] text-[#156374] bg-white hover:bg-[#156374]/5 hover:border-[#0f4d5a] hover:text-[#0f4d5a]"
+                          : "border-primary text-primary bg-transparent hover:border-amdari-yellow",
+                      )}
+                    >
+                      Login
+                    </Button>
+                  </Link>
+                  <Link href="/auth/sign-up">
+                    <Button
+                      className={cn(
+                        "rounded-full whitespace-nowrap px-10 border-0 xl:h-12",
+                        showWhiteNav
+                          ? "bg-[#156374] text-white hover:bg-amdari-yellow hover:text-primary"
+                          : "bg-white text-[#156374] hover:bg-amdari-yellow hover:text-primary",
+                      )}
+                    >
+                      Get Started
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Hamburger Menu - Mobile */}
@@ -145,6 +211,17 @@ const Navbr = () => {
         isDrawerOpen={isDrawerOpen}
         onClose={closeDrawer}
         navLinks={navLinks}
+        isLoggedIn={isLoggedIn}
+        onLogoutClick={() => {
+          closeDrawer();
+          setConfirmLogoutOpen(true);
+        }}
+      />
+
+      <ConfirmLogout
+        open={confirmLogoutOpen}
+        onOpenChange={setConfirmLogoutOpen}
+        onConfirm={logout}
       />
     </>
   );

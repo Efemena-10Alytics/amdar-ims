@@ -123,9 +123,9 @@ const Left = ({ program }: LeftProps) => {
         }}
       >
         <div className="flex flex-col gap-2">
-          <div className="text-[#64748B] line-through text-lg">USD 500</div>
+          <div className="text-[#64748B] line-through text-lg">GBP 500</div>
           <div className="text-2xl lg:text-3xl font-semibold text-[#092A31]">
-            USD 390
+            GBP 390
           </div>
         </div>
         <Link

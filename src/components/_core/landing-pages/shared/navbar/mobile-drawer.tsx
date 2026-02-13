@@ -3,20 +3,23 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { X } from "lucide-react";
+import { X, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
 interface MobileDrawerProps {
   isDrawerOpen: boolean;
   onClose: () => void;
   navLinks: Array<{ label: string; href: string }>;
+  isLoggedIn?: boolean;
+  onLogoutClick?: () => void;
 }
 
 const MobileDrawer = ({
   isDrawerOpen,
   onClose,
   navLinks,
+  isLoggedIn = false,
+  onLogoutClick,
 }: MobileDrawerProps) => {
   const pathname = usePathname();
   return (
@@ -51,7 +54,7 @@ const MobileDrawer = ({
           </div>
 
           {/* Drawer Content */}
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 flex flex-col justify-between overflow-y-auto p-4">
             <nav className="flex flex-col gap-4">
               {navLinks.map((link) => {
                 const isActive =
@@ -74,31 +77,57 @@ const MobileDrawer = ({
             </nav>
 
             {/* Drawer Buttons */}
-            <div className="flex flex-col gap-3 mt-6 pt-6 border-t border-gray-200">
-              <Link href="/auth/sign-in">
-                <Button
-                  variant="outline"
-                  onClick={onClose}
-                  className={cn(
-                    "w-full border-[#156374] text-[#156374] bg-white hover:bg-[#156374]/5",
-                    "hover:border-[#0f4d5a] hover:text-[#0f4d5a]",
-                  )}
-                >
-                  Login
-                </Button>
-              </Link>
+            <div className="flex flex-col gap-3 mt-6 pt-6 border-t border-gray-200 mb-10">
+              {isLoggedIn ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    onClick={onClose}
+                    className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-lg bg-pink-100 text-[#156374] hover:bg-pink-200 transition-colors"
+                  >
+                    <User className="size-5" />
+                    <span className="font-medium">Profile</span>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      onLogoutClick?.();
+                    }}
+                    className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-lg bg-teal-100 text-[#0f4d5a] hover:bg-teal-200 transition-colors font-medium"
+                  >
+                    <LogOut className="size-5" />
+                    Log out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/auth/sign-in">
+                    <Button
+                      variant="outline"
+                      onClick={onClose}
+                      className={cn(
+                        "w-full border-[#156374] text-[#156374] bg-white hover:bg-[#156374]/5",
+                        "hover:border-[#0f4d5a] hover:text-[#0f4d5a]",
+                      )}
+                    >
+                      Login
+                    </Button>
+                  </Link>
 
-              <Link href="/auth/sign-up">
-                <Button
-                  onClick={onClose}
-                  className={cn(
-                    "w-full bg-[#156374] text-white hover:bg-amdari-yellow hover:text-primary",
-                    "border-0",
-                  )}
-                >
-                  Get Started
-                </Button>
-              </Link>
+                  <Link href="/auth/sign-up">
+                    <Button
+                      onClick={onClose}
+                      className={cn(
+                        "w-full bg-[#156374] text-white hover:bg-amdari-yellow hover:text-primary",
+                        "border-0",
+                      )}
+                    >
+                      Get Started
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
