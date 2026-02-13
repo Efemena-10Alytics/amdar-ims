@@ -9,11 +9,12 @@ import SuccessStories from "@/components/_core/landing-pages/home/success-storie
 import CareerNeeds from "@/components/_core/landing-pages/home/career-needs";
 import NewHero from "@/components/_core/landing-pages/home/new-hero";
 import JobReady from "@/components/_core/landing-pages/internship-program/job-ready";
+import SecondHero from "@/components/_core/landing-pages/home/sencond-hero";
 
 const InternShipProgram = () => {
   return (
     <div>
-      <InternshipHero />
+      <SecondHero />
       <WhatWeOffer />
       <Partners />
       <CareerNeeds />
