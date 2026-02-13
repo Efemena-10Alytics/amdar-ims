@@ -4,14 +4,22 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Lightbulb, ArrowRight, Play } from "lucide-react";
+import {
+  Lightbulb,
+  ArrowRight,
+  Play,
+  ArrowUpRight,
+  PlayIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
+import LearnMoreVideo from "../learn-more-video";
+import Flag from "../hero/flag";
 
 const HERO_TOOLS = [
   {
     src: "/images/svgs/tools/sales-force.svg",
     alt: "Salesforce",
-    position: "top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2",
+    position: "top-1/6 left-1/4 -translate-x-1/2 -translate-y-1/2",
   },
   {
     src: "/images/svgs/tools/figma.svg",
@@ -21,7 +29,7 @@ const HERO_TOOLS = [
   {
     src: "/images/svgs/tools/google-analytics.svg",
     alt: "Analytics",
-    position: "top-1/2 right-1/6",
+    position: "top-1/6 right-1/10",
   },
   {
     src: "/images/svgs/tools/microsoft.svg",
@@ -29,32 +37,32 @@ const HERO_TOOLS = [
     position: "bottom-1/3 right-1/4",
   },
   {
-    src: "/images/svgs/tools/jira.svg",
+    src: "/images/svgs/tools/trello.svg",
     alt: "Jira",
     position: "bottom-1/4 left-1/3",
   },
   {
-    src: "/images/svgs/tools/trello.svg",
+    src: "/images/svgs/tools/jira.svg",
     alt: "Trello",
-    position: "top-1/2 left-1/6",
+    position: "top-1/2 left-1/5",
   },
 ];
 
 const NewHero = () => {
+  const [showPopUpVid, setShowPopUpVid] = React.useState(false);
   return (
     <section className="relative min-h-[90vh] overflow-hidden">
       {/* Base: light grey */}
       <div className="absolute inset-0 z-0 bg-[#F5F7FA]" />
 
-      {/* Subtle grid pattern */}
+      {/* Hero ellipses */}
       <div
-        className="absolute inset-0 z-1 opacity-[0.4]"
+        className="absolute inset-0 z-1"
         style={{
-          backgroundImage: `
-            linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)
-          `,
-          backgroundSize: "24px 24px",
+          backgroundImage: "url(/images/svgs/hero-ellipse.svg)",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
         }}
       />
 
@@ -93,34 +101,45 @@ const NewHero = () => {
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-wrap items-center gap-4 mb-8">
-              <Link href="/auth/sign-up">
-                <Button className="rounded-full pl-6 pr-4 py-6 h-auto bg-primary hover:bg-primary/90 text-white font-medium gap-2 group">
-                  Get started
-                  <span className="inline-flex h-8 w-8 rounded-full bg-amdari-yellow text-primary items-center justify-center ml-1 group-hover:bg-amdari-yellow/90">
-                    <ArrowRight className="w-4 h-4" />
-                  </span>
-                </Button>
-              </Link>
-              <Link href="#learn-more">
-                <Button
-                  variant="outline"
-                  className="rounded-full pl-6 pr-4 py-6 h-auto border-primary text-primary bg-transparent hover:bg-primary/5 font-medium gap-2 group"
-                >
-                  Learn more
-                  <span className="inline-flex h-8 w-8 rounded-full bg-[#092A31] text-white items-center justify-center ml-1">
-                    <Play className="w-4 h-4" fill="currentColor" />
-                  </span>
-                </Button>
-              </Link>
+            <div className="flex flex-col sm:flex-row items-center justify-start gap-4 mb-8">
+              <Button
+                className={cn(
+                  "group bg-[#0F4652] text-white hover:bg-amdari-yellow hover:text-primary rounded-full py-6 h-12 text-base",
+                  "flex items-center gap-8 px-5",
+                  "transition-colors duration-300",
+                )}
+              >
+                Get started
+                <div className="flex h-5 w-5 rounded-full justify-center items-center bg-amdari-yellow group-hover:bg-primary text-primary group-hover:text-white">
+                  <ArrowUpRight className="w-3! h-3! text-current" />
+                </div>
+              </Button>
+              <Button
+                onClick={() => setShowPopUpVid(true)}
+                className={cn(
+                  "group bg-[#E8EFF1] hover:bg-[#0F4652] text-primary hover:text-amdari-yellow rounded-full h-12 py-6 text-base",
+                  "flex items-center gap-8 px-5",
+                  "transition-colors duration-300",
+                )}
+              >
+                Learn more
+                <div className="group-hover:bg-amdari-yellow flex h-5 w-5 rounded-full justify-center items-center bg-white border-2 border-gray-300 text-primary">
+                  <PlayIcon
+                    className="w-3! h-3!"
+                    color="#156374"
+                    fill="#156374"
+                  />
+                </div>
+              </Button>
             </div>
 
-            {/* Social proof */}
-            <p className="text-sm text-[#64748B]">
-              <span className="inline-block mr-1">🇬🇧</span>
-              <span className="inline-block mr-1">🇺🇸</span>+ 30K interns Across
-              the world Got hired
-            </p>
+            {/* Social Proof */}
+            <div className="flex items-center justify-start gap-2 text-sm sm:text-base">
+              <Flag />
+              <span className="text-[#A1A8B1]">
+                + 10K interns Across the world Got hired
+              </span>
+            </div>
           </div>
 
           {/* Right column: circular image + floating icons */}
@@ -142,7 +161,7 @@ const NewHero = () => {
                 src="/images/new-hero/new-hero-img.png"
                 alt="Professional at laptop"
                 fill
-                className="object-cover"
+                className="object-cover mx-auto"
                 priority
                 sizes="(max-width: 768px) 224px, 320px"
               />
@@ -169,6 +188,11 @@ const NewHero = () => {
           </div>
         </div>
       </div>
+
+      <LearnMoreVideo
+        setShowPopUpVid={setShowPopUpVid}
+        showPopUpVid={showPopUpVid}
+      />
     </section>
   );
 };

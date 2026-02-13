@@ -13,7 +13,7 @@ import JobReady from "@/components/_core/landing-pages/internship-program/job-re
 const InternShipProgram = () => {
   return (
     <div>
-      <InternshipHero />
+      <NewHero />
       <WhatWeOffer />
       <Partners />
       <CareerNeeds />
