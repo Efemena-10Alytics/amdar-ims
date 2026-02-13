@@ -11,12 +11,25 @@ import MobileDrawer from "./mobile-drawer";
 
 const Navbr = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
   const isHomePageRoute = pathname === "/home";
   const isInternshipProgramRoute =
     pathname === "/internship-program" ||
     pathname.startsWith("/payment") ||
     pathname.startsWith("/internship-program");
+
+  const showWhiteNav = isScrolled || !isHomePageRoute;
+
+  // Track scroll to add white bg on home when user scrolls
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Prevent body scroll when drawer is open
   useEffect(() => {
@@ -45,10 +58,8 @@ const Navbr = () => {
     <>
       <nav
         className={cn(
-          "fixed top-0 left-0 right-0 w-full z-50 transition-colors",
-          isHomePageRoute
-            ? "bg-transparent border-white/20"
-            : "bg-white border-gray-200 border-b",
+          "fixed top-0 left-0 right-0 w-full z-50 transition-colors duration-300",
+          showWhiteNav ? "bg-white border-gray-200 border-b" : "bg-transparent border-white/20",
         )}
       >
         <div className="max-w-325 w-full mx-auto px-4 sm:px-6 lg:px-8">
@@ -72,9 +83,9 @@ const Navbr = () => {
                     className={cn(
                       "text-sm transition-colors relative",
                       isActive && "underline underline-offset-10",
-                      isHomePageRoute
-                        ? "text-primary hover:text-white/80"
-                        : "text-[#156374] hover:text-[#0f4d5a]",
+                      showWhiteNav
+                        ? "text-[#156374] hover:text-[#0f4d5a]"
+                        : "text-primary hover:text-white/80",
                     )}
                   >
                     {link.label}
@@ -90,9 +101,9 @@ const Navbr = () => {
                   variant="outline"
                   className={cn(
                     "rounded-full whitespace-nowrap px-10 xl:px-14 xl:h-12",
-                    isHomePageRoute
-                      ? "border-primary text-primary bg-transparent hover:border-amdari-yellow"
-                      : "border-[#156374] text-[#156374] bg-white hover:bg-[#156374]/5 hover:border-[#0f4d5a] hover:text-[#0f4d5a]",
+                    showWhiteNav
+                      ? "border-[#156374] text-[#156374] bg-white hover:bg-[#156374]/5 hover:border-[#0f4d5a] hover:text-[#0f4d5a]"
+                      : "border-primary text-primary bg-transparent hover:border-amdari-yellow",
                   )}
                 >
                   Login
@@ -102,9 +113,9 @@ const Navbr = () => {
                 <Button
                   className={cn(
                     "rounded-full whitespace-nowrap px-10 border-0 xl:h-12",
-                    isHomePageRoute
-                      ? "bg-white text-[#156374] hover:bg-amdari-yellow hover:text-primary"
-                      : "bg-[#156374] text-white hover:bg-amdari-yellow hover:text-primary",
+                    showWhiteNav
+                      ? "bg-[#156374] text-white hover:bg-amdari-yellow hover:text-primary"
+                      : "bg-white text-[#156374] hover:bg-amdari-yellow hover:text-primary",
                   )}
                 >
                   Get Started
@@ -117,9 +128,9 @@ const Navbr = () => {
               onClick={() => setIsDrawerOpen(true)}
               className={cn(
                 "lg:hidden p-2 transition-colors",
-                isHomePageRoute
-                  ? "text-primary hover:text-white/80"
-                  : "text-[#156374] hover:text-[#0f4d5a]",
+                showWhiteNav
+                  ? "text-[#156374] hover:text-[#0f4d5a]"
+                  : "text-primary hover:text-white/80",
               )}
               aria-label="Open menu"
             >
