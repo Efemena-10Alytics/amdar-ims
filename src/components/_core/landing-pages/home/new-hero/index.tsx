@@ -1,105 +1,86 @@
 "use client";
 
-import React from "react";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Lightbulb, ArrowUpRight, PlayIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import LearnMoreVideo from "../learn-more-video";
+import { ArrowUpRight, Lightbulb, PlayIcon } from "lucide-react";
 import Flag from "../hero/flag";
+import React from "react";
+import LearnMoreVideo from "../learn-more-video";
+import Image from "next/image";
 import Aos from "aos";
+import VerticalCarousel from "./vertical-carousel";
 
 const HERO_TOOLS = [
   {
     src: "/images/svgs/tools/sales-force.svg",
     alt: "Salesforce",
-    position: "top-1/6 left-1/4 -translate-x-1/2 -translate-y-1/2",
-  },
-  {
-    src: "/images/svgs/tools/figma.svg",
-    alt: "Figma",
-    position: "top-1/3 right-1/4",
-  },
-  {
-    src: "/images/svgs/tools/google-analytics.svg",
-    alt: "Analytics",
-    position: "top-1/6 right-1/10",
-  },
-  {
-    src: "/images/svgs/tools/microsoft.svg",
-    alt: "Microsoft",
-    position: "bottom-1/3 right-1/4",
-  },
-  {
-    src: "/images/svgs/tools/trello.svg",
-    alt: "Jira",
-    position: "bottom-1/4 left-1/3",
+    position: "top-24 left-14 md:right-20 animate-bounce-1",
   },
   {
     src: "/images/svgs/tools/jira.svg",
     alt: "Trello",
-    position: "top-1/2 left-1/5",
+    position: "top-1/2 left-18 animate-bounce-6",
+  },
+  {
+    src: "/images/svgs/tools/figma.svg",
+    alt: "Figma",
+    position: "bottom-0 right-8 md:right-1/4 animate-bounce-2",
+  },
+  {
+    src: "/images/svgs/tools/google-analytics.svg",
+    alt: "Analytics",
+    position: "top-2/3 right-0 md:-right-1/10 animate-bounce-3",
+  },
+  {
+    src: "/images/svgs/tools/microsoft.svg",
+    alt: "Microsoft",
+    position: "bottom-16 left-0 animate-bounce-3",
+  },
+  {
+    src: "/images/svgs/tools/trello.svg",
+    alt: "Jira",
+    position: "top-12 right-0 animate-bounce-5",
+  },
+  {
+    src: "/images/svgs/tools/ubuntu.svg",
+    alt: "Trello",
+    position: "top-0 right-1/2 animate-bounce-7",
+  },
+  {
+    src: "/images/svgs/tools/notion.svg",
+    alt: "Trello",
+    position: "top-1/2 right-1/8 animate-bounce-8",
+  },
+  {
+    src: "/images/svgs/tools/ubuntu.svg",
+    alt: "Trello",
+    position: "-bottom-1/10 right-1/2 animate-bounce-9",
   },
 ];
-
-const NewHero = () => {
+export default function NewHero() {
   const [showPopUpVid, setShowPopUpVid] = React.useState(false);
   React.useEffect(() => {
     Aos.init();
   }, []);
-
   return (
-    <section className="relative min-h-[90vh] overflow-hidden">
+    <div className="relative w-full min-h-screen overflow-hidden -mt-25">
+      {/* Section background – new-hero-bg */}
       <div
-        className="absolute inset-0 z-1"
+        className="absolute inset-0 z-0 "
         style={{
-          backgroundImage: "url(/images/new-hero/hero-ellipses.svg)",
+          backgroundImage: "url(/images/new-hero/new-hero-bg.svg)",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
         }}
-      />
-
-      {/* Circle-line SVG – full section height, centered so right image sits in its center */}
-      <div
-        className="absolute inset-y-0 right-0 left-0 z-5 pointer-events-none"
-        style={{
-          backgroundImage: "url(/images/new-hero/circle-line.svg)",
-          backgroundPosition: "90% 62%",
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "auto 100%",
-        }}
         aria-hidden
       />
 
-      {/* Ellipses.svg – right side of section, full height */}
-      <div
-        className="absolute inset-y-0 right-0 left-0 z-4 pointer-events-none opacity-40"
-        style={{
-          backgroundImage: "url(/images/new-hero/ellipses.svg)",
-          backgroundPosition: "100% 50%",
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "auto 100%",
-        }}
-        aria-hidden
-      />
-
-      {/* Right ellipses (bottom-yellow) – full section height */}
-      <div
-        className="absolute inset-y-0 right-0 bottom-0 z-4 opacity-30 pointer-events-none"
-        style={{
-          backgroundImage: "url(/images/new-hero/bottom-yellow.svg)",
-          backgroundPosition: "75% 50%",
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "auto 100%",
-        }}
-        aria-hidden
-      />
-
-      <div className="relative z-10 max-w-325 mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-8 items-center min-h-[80vh]">
-          {/* Left column */}
-          <div data-aos="fade-right" className="flex flex-col justify-center order-2 lg:order-1">
+      {/* Main content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-36">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Left content */}
+          <div data-aos="fade-right" className="flex flex-col justify-center">
             {/* Pill badge */}
             <div className="inline-flex items-center gap-2 rounded-full bg-[#FEF9C3] text-[#092A31] px-4 py-2 text-sm font-medium w-fit mb-6">
               <Lightbulb className="w-4 h-4 shrink-0" />
@@ -161,41 +142,72 @@ const NewHero = () => {
             </div>
           </div>
 
-          {/* Right column: circular image + floating icons – shifted so image centers in circle-line */}
-          <div className="relative flex items-center justify-center order-1 lg:order-2 min-h-80 lg:min-h-120">
-            <div className="relative flex items-center justify-center lg:translate-x-[18%]">
-              {/* Central circular image */}
-              <div data-aos="zoom-in" className="relative z-10 w-56 h-56 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-full overflow-hidden ring-4 ring-white/80 shadow-xl shrink-0">
+          {/* Right content - Image and floating badges */}
+          <div className="relative h-96 md:h-full flex items-center justify-center">
+            {/* Outer rotating ring - larger */}
+            <div
+              className="absolute w-125 h-125 md:w-162 md:h-162 rounded-full border-[0.2px] border-[#B6CFD4]/20 animate-ring"
+              style={{
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%, -50%)",
+              }}
+            ></div>
+
+            {/* Inner rotating ring - smaller, reverse direction */}
+            <div
+              className="absolute w-80 h-80 md:w-125 md:h-125 rounded-full border-[0.2px] border-[#B6CFD4]/20 animate-ring-reverse"
+              style={{
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%, -50%)",
+              }}
+            ></div>
+
+            {/* Main circular image - inside the smaller ring */}
+            <div
+              data-aos="zoom-in"
+              className="relative z-10 w-72 h-72 md:w-96 md:h-96 rounded-full overflow-hidden shadow-2xl"
+              style={
+                {
+                  // left: "50%",
+                  // top: "50%",
+                  // transform: "translate(-50%, -50%)",
+                }
+              }
+            >
+              <img
+                src="/images/new-hero/new-hero-img.png"
+                alt="Person working on laptop"
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            {/* Floating tool icons */}
+            {HERO_TOOLS.map((tool, i) => (
+              <div
+                key={i}
+                className={cn(
+                  "absolute z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-md flex items-center justify-center p-1.5 sm:p-2 border border-gray-100",
+                  tool.position,
+                )}
+              >
                 <Image
-                  src="/images/new-hero/new-hero-img.png"
-                  alt="Professional at laptop"
-                  fill
-                  className="object-cover mx-auto"
-                  priority
-                  sizes="(max-width: 768px) 224px, 320px"
+                  src={tool.src}
+                  alt={tool.alt}
+                  width={24}
+                  height={24}
+                  className="object-contain"
                 />
               </div>
-
-              {/* Floating tool icons */}
-              {HERO_TOOLS.map((tool, i) => (
-                <div
-                  key={i}
-                  className={cn(
-                    "absolute z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-md flex items-center justify-center p-1.5 sm:p-2 border border-gray-100",
-                    tool.position,
-                  )}
-                >
-                  <Image
-                    src={tool.src}
-                    alt={tool.alt}
-                    width={24}
-                    height={24}
-                    className="object-contain"
-                  />
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto mt-10 sm:mb-16 px-2">
+        <div className="relative z-10 max-w-100 rounded-xl">
+          <VerticalCarousel className="mx-auto" />
         </div>
       </div>
 
@@ -203,8 +215,6 @@ const NewHero = () => {
         setShowPopUpVid={setShowPopUpVid}
         showPopUpVid={showPopUpVid}
       />
-    </section>
+    </div>
   );
-};
-
-export default NewHero;
+}

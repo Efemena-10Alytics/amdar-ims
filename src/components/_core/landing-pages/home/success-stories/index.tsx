@@ -66,27 +66,7 @@ My tutor, Christopher Essien, has been outstanding. He’s patient, approachable
 I’m very grateful for the opportunity to learn with Amdari. The experience is not only helping me strengthen my foundation in cybersecurity but also preparing me for a successful career ahead. I’m proud to be part of this internship and excited for what’s next!`,
       avatar: "/images/pngs/Fintech.png",
     },
-    {
-      id: 6,
-      name: "Charlotte Newman",
-      role: "Business Analyst",
-      quote: `My work experience with Amdari was an incredibly enriching and transformative professional journey.
-       As part of the Amdari team, I was exposed to real-world consulting projects that required critical thinking, 
-       collaboration, and problem-solving. These skills are essential for success in today’s competitive job market.
-During my time at Amdari, I worked on several client-based projects, where we were tasked with identifying business
- challenges, developing data-driven strategies, and delivering actionable solutions. Each project simulated the 
- dynamics of a real consulting environment from research and analysis to teamwork, communication, and presentation of deliverables.
-A key highlight of my experience was the exceptional mentorship provided by Edidiong, our coach. Her guidance went
- far beyond technical skills; she helped us understand how to navigate professional environments, structure consulting
-  tasks, and communicate our ideas effectively. Through her mentorship, we learned how to think and operate like
-   consultants, balancing analytical rigor with creativity and client-focus.
-Amdari’s approach to professional development is deeply experiential. Rather than a typical training program, 
-it offers a hands-on consulting work experience where participants engage with real tasks, meet deadlines, and contribute
- to meaningful project outcomes. This environment not only strengthened my technical and soft skills but 
-also boosted my confidence and readiness for the job market. I am deeply grateful for the opportunity and for
- Edidiong’s dedication in guiding us through every stage of the journey.`,
-      avatar: "/images/pngs/Fintech.png",
-    },
+
     {
       id: 7,
       name: "Precious Ijezie",
