@@ -9,6 +9,7 @@ import LearnMoreVideo from "../learn-more-video";
 import Image from "next/image";
 import Aos from "aos";
 import VerticalCarousel from "./vertical-carousel";
+import Slider from "../hero/slider";
 
 const HERO_TOOLS = [
   {
@@ -91,7 +92,9 @@ export default function NewHero() {
             <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-[52px] font-bold text-[#092A31] leading-tight mb-5">
               Gain Real Work Experience Through
               <br />
-              <span className="text-primary">Cybersecurity</span>
+              <h1 className="inline-block overflow-hidden h-[1.2em] relative align-middle">
+              <Slider />
+            </h1>
             </h1>
 
             <p className="text-[#64748B] text-base lg:text-lg max-w-xl mb-8 leading-relaxed">
