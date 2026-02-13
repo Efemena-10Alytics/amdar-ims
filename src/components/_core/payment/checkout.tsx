@@ -19,6 +19,7 @@ import {
   useCheckoutFormStorage,
   type PaymentPlanId,
 } from "@/features/payment/use-checkout-storage";
+import { FillCalendaSvg } from "../landing-pages/internship-program/svg";
 
 interface PaymentPlanOption {
   id: PaymentPlanId;
@@ -60,14 +61,14 @@ function getPaymentPlansFromPricing(
   const half = Math.round(two_installments_amount / 2);
   const threeBreakdown =
     display_three_installment_breakdown &&
-      display_three_installment_breakdown.length >= 3
+    display_three_installment_breakdown.length >= 3
       ? display_three_installment_breakdown
       : [
-        Math.round(three_installments_amount / 3),
-        Math.round(three_installments_amount / 3),
-        three_installments_amount -
-        2 * Math.round(three_installments_amount / 3),
-      ];
+          Math.round(three_installments_amount / 3),
+          Math.round(three_installments_amount / 3),
+          three_installments_amount -
+            2 * Math.round(three_installments_amount / 3),
+        ];
 
   return [
     {
@@ -209,11 +210,13 @@ const Checkout = ({
             {program?.description}
           </p>
           <div className="mt-4 flex flex-wrap items-end justify-between gap-2">
-            <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-[#6b7280]">
-              <span>30% discount</span>
+            <div className="flex flex-col gap-x-4 gap-y-1 text-sm text-[#6b7280]">
+              <span className="text-[#092A31] font-semibold text-base">
+                30% discount
+              </span>
               <span>Ending soon</span>
             </div>
-            <div className="flex items-baseline gap-2">
+            <div className="flex flex-col items-baseline gap-2">
               <span className="text-sm text-[#9ca3af] line-through">
                 {selectedPricing
                   ? `${selectedPricing.currency} ${selectedPricing.original_amount}`
@@ -250,7 +253,7 @@ const Checkout = ({
                   "relative rounded-lg border-2  p-4 text-left transition-colors",
                   isSelected
                     ? "border-[#22c55e] bg-[#f0fdf4]"
-                    : "border-transparent bg-[#F8FAFC] hover:bg-[#f0fdf4] hover:border-[#22c55e]",
+                    : "border-transparent bg-[#F8FAFC] hover:bg-[#E8EFF1]",
                 )}
               >
                 <div className="flex gap-2 items-center mb-1">
@@ -263,7 +266,9 @@ const Checkout = ({
                     )}
                     aria-hidden
                   >
-                    {isSelected ? <Check className="h-3 w-3" strokeWidth={3} /> : null}
+                    {isSelected ? (
+                      <Check className="h-3 w-3" strokeWidth={3} />
+                    ) : null}
                   </span>
                   <span
                     className={cn(
@@ -274,11 +279,20 @@ const Checkout = ({
                     {cohort.name}
                   </span>
                 </div>
-                <div className="mt-2 flex items-center gap-2 text-sm text-[#64748B]">
-                  <Calendar className="h-4 w-4 shrink-0" />
-                  <span>{cohort.start_date}</span>
-                  <span>·</span>
-                  <span>{cohort.month}</span>
+                <div className="mt-2 flex items-center text-sm text-[#64748B]">
+                  <div className="mr-2">
+                    <FillCalendaSvg />
+                  </div>
+                  <span
+                    className={`py-0.5 px-2 rounded-full ${isSelected ? "bg-[#C7F5D8]" : "bg-[#E8EFF1]"}`}
+                  >
+                    {cohort.start_date}
+                  </span>
+                  <span
+                    className={`py-0.5 px-2 rounded-full ${isSelected ? "bg-[#C7F5D8]" : "bg-[#E8EFF1]"}`}
+                  >
+                    {cohort.duration} Month
+                  </span>
                 </div>
               </button>
             );
@@ -330,10 +344,10 @@ const Checkout = ({
                 type="button"
                 onClick={() => setSelectedPlan(plan.id)}
                 className={cn(
-                  "flex w-full items-start gap-4 rounded-lg border-2 p-4 text-left transition-colors",
+                  "group flex w-full items-start gap-4 rounded-lg border-2 p-4 text-left transition-colors text-[#64748B]",
                   isSelected
                     ? "border-[#22c55e] bg-[#f0fdf4]"
-                    : "border-transparent bg-[#F8FAFC] hover:border-[#22c55e] hover:bg-[#f0fdf4]",
+                    : "border-transparent bg-[#F8FAFC] hover:bg-[#E8EFF1]",
                 )}
               >
                 <span
@@ -345,7 +359,9 @@ const Checkout = ({
                   )}
                   aria-hidden
                 >
-                  {isSelected ? <Check className="h-3 w-3" strokeWidth={3} /> : null}
+                  {isSelected ? (
+                    <Check className="h-3 w-3" strokeWidth={3} />
+                  ) : null}
                 </span>
                 <div className="min-w-0 flex-1">
                   <span
@@ -356,29 +372,36 @@ const Checkout = ({
                   >
                     {plan.label}
                   </span>
-                  <p className="mt-1 text-sm text-[#6b7280]">
-                    {plan.description}
-                  </p>
+                  <p className="mt-1 text-sm">{plan.description}</p>
                   {plan.breakdown && plan.breakdown.length > 0 && (
-                    <div className="mt-3 space-y-1 py-2 text-sm text-[#6b7280]">
-                      {plan.breakdown.map((row, i) => (
-                        <div
-                          key={i}
-                          className="flex items-center justify-between gap-x-4 gap-y-0.5"
-                        >
-                          <div className="flex-1">
-                            {row.label}
-                          </div>
-                          {row.dueDate != null && (
-                            <div className="ml-1.5 text-xs text-left text-[#64748B] flex-1">
-                              {row.dueDate}
+                    <div
+                      className={cn(
+                        "mt-3 grid transition-[grid-template-rows] duration-300 ease-out",
+                        isSelected
+                          ? "grid-rows-[1fr]"
+                          : "grid-rows-[0fr] group-hover:grid-rows-[1fr]",
+                      )}
+                    >
+                      <div className="min-h-0 overflow-hidden">
+                        <div className="space-y-1 py-2 text-sm">
+                          {plan.breakdown.map((row, i) => (
+                            <div
+                              key={i}
+                              className="flex items-center justify-between gap-x-4 gap-y-0.5"
+                            >
+                              <div className="flex-1">{row.label}</div>
+                              {row.dueDate != null && (
+                                <div className="ml-1.5 text-left flex-1">
+                                  {row.dueDate}
+                                </div>
+                              )}
+                              <div className="font-medium flex-1">
+                                {row.amount}
+                              </div>
                             </div>
-                          )}
-                          <div className="font-medium text-[#4a5568] flex-1">
-                            {row.amount}
-                          </div>
+                          ))}
                         </div>
-                      ))}
+                      </div>
                     </div>
                   )}
                 </div>
