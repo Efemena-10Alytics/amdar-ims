@@ -76,9 +76,9 @@ const ChoosePath = () => {
                   <div>
                     <span className="text-lg font-semibold group-hover:text-white text-[#092A31]">
                       <div className="text-[#64748B] group-hover:text-white line-through text-sm font-normal">
-                        USD 500
+                        GBP 500
                       </div>
-                      <div>USD 390</div>
+                      <div>GBP 390</div>
                     </span>
                   </div>
                   <Link
