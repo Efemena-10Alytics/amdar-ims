@@ -78,7 +78,7 @@ export default function NewHero() {
       />
 
       {/* Main content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-36">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-40">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left content */}
           <div data-aos="fade-right" className="flex flex-col justify-center">
