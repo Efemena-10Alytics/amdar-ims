@@ -158,6 +158,79 @@
   }
 }
 
+@keyframes rotate-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes bounce-vertical {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes bounce-vertical-delayed {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@layer utilities {
+  .animate-ring {
+    animation: rotate-slow 20s linear infinite;
+  }
+
+  .animate-ring-reverse {
+    animation: rotate-reverse 25s linear infinite;
+  }
+
+  .animate-bounce-1 {
+    animation: bounce-vertical 2s ease-in-out infinite;
+  }
+
+  .animate-bounce-2 {
+    animation: bounce-vertical 2.2s ease-in-out infinite 0.1s;
+  }
+
+  .animate-bounce-3 {
+    animation: bounce-vertical 2.4s ease-in-out infinite 0.2s;
+  }
+
+  .animate-bounce-4 {
+    animation: bounce-vertical 2s ease-in-out infinite 0.3s;
+  }
+
+  .animate-bounce-5 {
+    animation: bounce-vertical 2.2s ease-in-out infinite 0.4s;
+  }
+
+  .animate-bounce-6 {
+    animation: bounce-vertical 2.4s ease-in-out infinite 0.5s;
+  }
+
+  .animate-bounce-7 {
+    animation: bounce-vertical 2s ease-in-out infinite 0.6s;
+  }
+
+  .animate-bounce-8 {
+    animation: bounce-vertical 2.2s ease-in-out infinite 0.7s;
+  }
+
+  .animate-bounce-9 {
+    animation: bounce-vertical 2.4s ease-in-out infinite 0.8s;
+  }
+}
+
 .animate-pricing-gradient {
   animation: gradient-slide-right 6s linear infinite alternate;
 }

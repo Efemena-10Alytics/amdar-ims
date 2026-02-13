@@ -53,13 +53,13 @@ const NewHero = () => {
   return (
     <section className="relative min-h-[90vh] overflow-hidden">
       {/* Base: light grey */}
-      <div className="absolute inset-0 z-0 bg-[#F5F7FA]" />
+      {/* <div className="absolute inset-0 z-0 bg-[#F5F7FA]" /> */}
 
       {/* Hero ellipses */}
       <div
         className="absolute inset-0 z-1"
         style={{
-          backgroundImage: "url(/images/svgs/hero-ellipse.svg)",
+          backgroundImage: "url(/images/new-hero/hero-ellipses.svg)",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
@@ -67,7 +67,7 @@ const NewHero = () => {
       />
 
       {/* Soft gradient overlay (light blue-grey to greenish-yellow right/bottom) */}
-      <div
+      {/* <div
         className="absolute inset-0 z-2 pointer-events-none"
         style={{
           background: `
@@ -75,6 +75,42 @@ const NewHero = () => {
             linear-gradient(180deg, transparent 60%, rgba(240,245,220,0.2) 100%)
           `,
         }}
+      /> */}
+
+      {/* Circle-line SVG – full section height, centered so right image sits in its center */}
+      <div
+        className="absolute inset-y-0 right-0 left-0 z-5 pointer-events-none"
+        style={{
+          backgroundImage: "url(/images/new-hero/circle-line.svg)",
+          backgroundPosition: "90% 62%",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "auto 100%",
+        }}
+        aria-hidden
+      />
+
+      {/* Ellipses.svg – right side of section, full height */}
+      <div
+        className="absolute inset-y-0 right-0 left-0 z-4 pointer-events-none opacity-40"
+        style={{
+          backgroundImage: "url(/images/new-hero/ellipses.svg)",
+          backgroundPosition: "100% 50%",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "auto 100%",
+        }}
+        aria-hidden
+      />
+
+      {/* Right ellipses (bottom-yellow) – full section height */}
+      <div
+        className="absolute inset-y-0 right-0 bottom-0 z-4 opacity-30 pointer-events-none"
+        style={{
+          backgroundImage: "url(/images/new-hero/bottom-yellow.svg)",
+          backgroundPosition: "75% 50%",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "auto 100%",
+        }}
+        aria-hidden
       />
 
       <div className="relative z-10 max-w-325 mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16">
@@ -142,49 +178,40 @@ const NewHero = () => {
             </div>
           </div>
 
-          {/* Right column: circular image + floating icons */}
+          {/* Right column: circular image + floating icons – shifted so image centers in circle-line */}
           <div className="relative flex items-center justify-center order-1 lg:order-2 min-h-80 lg:min-h-120">
-            {/* Faint connecting lines / ellipses background */}
-            <div
-              className="absolute inset-0 z-0 opacity-30"
-              style={{
-                backgroundImage: "url(/images/new-hero/ellipses.svg)",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "contain",
-              }}
-            />
-
-            {/* Central circular image */}
-            <div className="relative z-10 w-56 h-56 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-full overflow-hidden ring-4 ring-white/80 shadow-xl shrink-0">
-              <Image
-                src="/images/new-hero/new-hero-img.png"
-                alt="Professional at laptop"
-                fill
-                className="object-cover mx-auto"
-                priority
-                sizes="(max-width: 768px) 224px, 320px"
-              />
-            </div>
-
-            {/* Floating tool icons */}
-            {HERO_TOOLS.map((tool, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "absolute z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-md flex items-center justify-center p-1.5 sm:p-2 border border-gray-100",
-                  tool.position,
-                )}
-              >
+            <div className="relative flex items-center justify-center lg:translate-x-[18%]">
+              {/* Central circular image */}
+              <div className="relative z-10 w-56 h-56 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-full overflow-hidden ring-4 ring-white/80 shadow-xl shrink-0">
                 <Image
-                  src={tool.src}
-                  alt={tool.alt}
-                  width={24}
-                  height={24}
-                  className="object-contain"
+                  src="/images/new-hero/new-hero-img.png"
+                  alt="Professional at laptop"
+                  fill
+                  className="object-cover mx-auto"
+                  priority
+                  sizes="(max-width: 768px) 224px, 320px"
                 />
               </div>
-            ))}
+
+              {/* Floating tool icons */}
+              {HERO_TOOLS.map((tool, i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    "absolute z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-md flex items-center justify-center p-1.5 sm:p-2 border border-gray-100",
+                    tool.position,
+                  )}
+                >
+                  <Image
+                    src={tool.src}
+                    alt={tool.alt}
+                    width={24}
+                    height={24}
+                    className="object-contain"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
