@@ -13,21 +13,27 @@ const Portfolio = () => {
   }, []);
 
   return (
-    <div
-      data-aos="fade-up"
-      className="bg-white relative overflow-hidden"
-    >
+    <div data-aos="fade-up" className="bg-white relative overflow-hidden">
       <div className="flex flex-col lg:flex-row">
         {/* Left Section - Promotional Content */}
-        <div className="bg-[#E8EFF1] flex-1 p-6 lg:p-12 flex flex-col justify-">
-          <h2 data-aos="zoom-in" className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] mb-6 leading-tight">
-            Build a Professional Portfolio Website
-          </h2>
-          <p data-aos="zoom-out" className="text-[#092A31]/70 text-base lg:text-lg mb-8 leading-relaxed">
-            Showcase your experience, projects and proficiency level with our
-            portfolio builder to stand out in the competitive tech landscape.
-          </p>
-          <CustomButton btnText="Create your portfolio" />
+
+        <div className="flex-1 bg-[#E8EFF1]">
+          <div className="flex flex-col w-full max-w-120 lg:mx-auto px-6 xl:px-0 py-10">
+            <h2
+              data-aos="zoom-in"
+              className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] mb-6 leading-tight"
+            >
+              Build a Professional Portfolio Website
+            </h2>
+            <p
+              data-aos="zoom-out"
+              className="text-[#092A31]/70 text-base lg:text-lg mb-8 leading-relaxed"
+            >
+              Showcase your experience, projects and proficiency level with our
+              portfolio builder to stand out in the competitive tech landscape.
+            </p>
+            <CustomButton btnText="Create your portfolio" />
+          </div>
         </div>
 
         {/* Right Section - Laptop Display */}
