@@ -4,6 +4,7 @@ import "./globals.css";
 import { siteConfig } from "@/config/site";
 import "aos/dist/aos.css";
 import { Providers } from "./providers";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const sora = Sora({
   variable: "--font-sora",
@@ -41,7 +42,9 @@ export default function RootLayout({
         className={`${sora.variable}! antialiased`}
         suppressHydrationWarning
       >
-        <Providers>{children}</Providers>
+        <TooltipProvider>
+          <Providers>{children}</Providers>
+        </TooltipProvider>
       </body>
     </html>
   );
