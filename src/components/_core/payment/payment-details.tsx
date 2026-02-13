@@ -5,9 +5,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import { useAuthStore } from "@/store/auth-store";
+import { useAuthStore, type AuthUser } from "@/store/auth-store";
 import type { CheckoutSelections } from "@/types/payment";
 import { ChangeDate } from "./change-date";
+import {
+  EditUserData,
+  type PersonalDataForm,
+} from "./edit-user-data";
 
 const PERSONAL_DATA_KEYS: Array<{
   key: keyof Record<string, unknown>;
@@ -91,17 +95,17 @@ const PaymentDetails = ({
 }: PaymentDetailsProps) => {
   const [confirmInfo, setConfirmInfo] = useState(false);
   const [confirmTerms, setConfirmTerms] = useState(false);
+  const [editDataOpen, setEditDataOpen] = useState(false);
   const [localNextPaymentDateYmd, setLocalNextPaymentDateYmd] = useState(() =>
     getNextPaymentDateYmd(1, 11),
   );
-  const nextPaymentDateYmd =
-    nextPaymentDateYmdProp ?? localNextPaymentDateYmd;
-  const setNextPaymentDateYmd = onNextPaymentDateChange ?? setLocalNextPaymentDateYmd;
+  const nextPaymentDateYmd = nextPaymentDateYmdProp ?? localNextPaymentDateYmd;
+  const setNextPaymentDateYmd =
+    onNextPaymentDateChange ?? setLocalNextPaymentDateYmd;
 
   const isInstallmentPlan =
-    checkoutSelections?.planId &&
-    checkoutSelections.planId !== "full";
-  const { user } = useAuthStore();
+    checkoutSelections?.planId && checkoutSelections.planId !== "full";
+  const { user, setUser } = useAuthStore();
   const profile =
     user &&
     typeof user === "object" &&
@@ -115,11 +119,49 @@ const PaymentDetails = ({
     [profile],
   );
 
+  const editInitialData = useMemo((): Partial<PersonalDataForm> | null => {
+    if (!profile) return null;
+    const firstName = (profile.firstName as string) ?? "";
+    const lastName = (profile.lastName as string) ?? "";
+    const email = (profile.email as string) ?? "";
+    const location = ((profile.location as string) || (profile.country as string)) ?? "";
+    const phoneNumber = (profile.phoneNumber as string) ?? "";
+    return {
+      firstName,
+      lastName,
+      email,
+      location,
+      countryCode: "+234",
+      phone: phoneNumber,
+    };
+  }, [profile]);
+
+  const handleSavePersonalData = (data: PersonalDataForm) => {
+    if (!user || typeof user !== "object") return;
+    const phoneNumber = data.countryCode ? `${data.countryCode} ${data.phone}`.trim() : data.phone;
+    const payload = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      location: data.location,
+      country: data.location,
+      phoneNumber,
+    };
+    const updatedUser =
+      "user" in user && user.user && typeof user.user === "object"
+        ? { ...user, user: { ...(user.user as Record<string, unknown>), ...payload } }
+        : { ...(user as Record<string, unknown>), ...payload };
+    setUser(updatedUser as AuthUser);
+  };
+
   const { originalPlanTotal, originalAmounts } = useMemo(() => {
     const pricing = checkoutSelections?.pricing;
     const planId = checkoutSelections?.planId;
     if (!pricing || !planId) {
-      return { originalPlanTotal: undefined, originalAmounts: [] as (string | undefined)[] };
+      return {
+        originalPlanTotal: undefined,
+        originalAmounts: [] as (string | undefined)[],
+      };
     }
     const { currency } = pricing;
     if (planId === "full") {
@@ -134,8 +176,7 @@ const PaymentDetails = ({
       const half = orig != null ? Math.round(orig / 2) : undefined;
       const amountStr = half != null ? `${currency} ${half}` : undefined;
       return {
-        originalPlanTotal:
-          orig != null ? `${currency} ${orig}` : undefined,
+        originalPlanTotal: orig != null ? `${currency} ${orig}` : undefined,
         originalAmounts: [amountStr, amountStr],
       };
     }
@@ -166,9 +207,12 @@ const PaymentDetails = ({
       <div className="flex-1 w-full space-y-8 lg:pb-24">
         {/* Personal data */}
         <section>
-          <h2 className="font-clash-display text-xl font-bold text-[#092A31]">
-            Personal data
-          </h2>
+          <div className="flex items-center gap-4 justify-between">
+            <h2 className="font-clash-display text-xl font-bold text-[#092A31]">
+              Personal data
+            </h2>
+            <Button onClick={() => setEditDataOpen(true)} variant={"outline"} className="border-2 text-primary border-primary">Edit Data</Button>
+          </div>
           <dl className="mt-4 space-y-3 sm:gap-x-6 bg-[#F8FAFC] p-5 rounded-xl">
             {personalData.map(({ label, value, withFlag }) => (
               <div key={label}>
@@ -365,6 +409,13 @@ const PaymentDetails = ({
       >
         {isProcessingPayment ? "Processing…" : "Pay now"}
       </Button>
+
+      <EditUserData
+        open={editDataOpen}
+        onOpenChange={setEditDataOpen}
+        initialData={editInitialData}
+        onSave={handleSavePersonalData}
+      />
     </div>
   );
 };
