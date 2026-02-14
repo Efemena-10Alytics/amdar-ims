@@ -37,9 +37,8 @@ const ChoosePath = () => {
             {/* Subtitle */}
             <div>
               <p className="text-gray-600 text-base lg:text-lg leading-relaxed">
-                Each internship runs for 6 months, with 2 major projects
-                designed from real business challenges & a portfolio worth
-                $2000.
+                Each internship runs for 4 months, with 5 major projects
+                designed from real business challenges.
               </p>
             </div>
           </div>
@@ -84,8 +83,8 @@ const ChoosePath = () => {
                   <Link
                     href={
                       // user
-                        `/internship-program/${career.id}`
-                        // : `/auth/sign-in?program=${career.id}`
+                      `/internship-program/${career.id}`
+                      // : `/auth/sign-in?program=${career.id}`
                     }
                   >
                     <Button

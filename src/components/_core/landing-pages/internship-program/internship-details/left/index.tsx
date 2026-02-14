@@ -68,7 +68,7 @@ const Left = ({ program }: LeftProps) => {
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5">
               <UserFillSVG />
-              <span className="text-sm text-[#64748B]">DevOps consultant</span>
+              <span className="text-sm text-[#64748B] capitalize">{program?.role}</span>
             </div>
           </div>
           <div className="grid gap-2">
@@ -80,7 +80,7 @@ const Left = ({ program }: LeftProps) => {
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5">
               <TrensFillDvg />
-              <span className="text-sm text-[#64748B]">
+              <span className="text-sm text-[#64748B] capitalize">
                 {program?.level ? program.level : "Beginner - Intermediate"}
               </span>
             </div>

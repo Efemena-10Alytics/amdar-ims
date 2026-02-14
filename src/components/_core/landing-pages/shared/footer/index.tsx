@@ -94,7 +94,7 @@ const Footer = () => {
               At AMDARI, our goal is to get you closer to career success with
               our ready-made project solutions. Our end-to-end portfolio
               projects are designed to help you Increase your chances of landing
-              a Data Science job
+              your dream job
             </p>
             <div className="flex rounded-lg bg-[#0F4652] overflow-hidden mb-4 border-0">
               <input

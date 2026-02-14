@@ -10,6 +10,7 @@ import Image from "next/image";
 import Aos from "aos";
 import VerticalCarousel from "./vertical-carousel";
 import Slider from "../hero/slider";
+import Link from "next/link";
 
 const HERO_TOOLS = [
   {
@@ -78,7 +79,7 @@ export default function NewHero() {
       />
 
       {/* Main content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-36">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-40">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left content */}
           <div data-aos="fade-right" className="flex flex-col justify-center">
@@ -93,8 +94,8 @@ export default function NewHero() {
               Gain Real Work Experience Through
               <br />
               <h1 className="inline-block overflow-hidden h-[1.2em] relative align-middle">
-              <Slider />
-            </h1>
+                <Slider />
+              </h1>
             </h1>
 
             <p className="text-[#64748B] text-base lg:text-lg max-w-xl mb-8 leading-relaxed">
@@ -105,18 +106,20 @@ export default function NewHero() {
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row items-center justify-start gap-4 mb-8">
-              <Button
-                className={cn(
-                  "group bg-[#0F4652] text-white hover:bg-amdari-yellow hover:text-primary rounded-full py-6 h-12 text-base",
-                  "flex items-center gap-8 px-5",
-                  "transition-colors duration-300",
-                )}
-              >
-                Get started
-                <div className="flex h-5 w-5 rounded-full justify-center items-center bg-amdari-yellow group-hover:bg-primary text-primary group-hover:text-white">
-                  <ArrowUpRight className="w-3! h-3! text-current" />
-                </div>
-              </Button>
+              <Link href={"/internship-program"}>
+                <Button
+                  className={cn(
+                    "group bg-[#0F4652] text-white hover:bg-amdari-yellow hover:text-primary rounded-full py-6 h-12 text-base",
+                    "flex items-center gap-8 px-5",
+                    "transition-colors duration-300",
+                  )}
+                >
+                  Get started
+                  <div className="flex h-5 w-5 rounded-full justify-center items-center bg-amdari-yellow group-hover:bg-primary text-primary group-hover:text-white">
+                    <ArrowUpRight className="w-3! h-3! text-current" />
+                  </div>
+                </Button>
+              </Link>
               <Button
                 onClick={() => setShowPopUpVid(true)}
                 className={cn(
