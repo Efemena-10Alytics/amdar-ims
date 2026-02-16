@@ -15,7 +15,11 @@ import { useCheckoutSelectionsStorage } from "@/features/payment/use-checkout-st
 import { DEFAULT_PROMO_CODE } from "./coupon";
 import { PaymentSuccessModal } from "./payment-success-modal";
 
-const VALID_STEPS: PaymentStepId[] = ["checkout", "personal", "complete-profile"];
+const VALID_STEPS: PaymentStepId[] = [
+  "checkout",
+  "personal",
+  "complete-profile",
+];
 
 function stepFromParam(param: string | null): PaymentStepId {
   return param && VALID_STEPS.includes(param as PaymentStepId)
@@ -30,7 +34,11 @@ interface PaymentMainProps {
   paymentPageId?: string;
 }
 
-const PaymentMain = ({ program, checkoutData, paymentPageId }: PaymentMainProps) => {
+const PaymentMain = ({
+  program,
+  checkoutData,
+  paymentPageId,
+}: PaymentMainProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -43,7 +51,6 @@ const PaymentMain = ({ program, checkoutData, paymentPageId }: PaymentMainProps)
     (typeof window !== "undefined" &&
       (window.location.search.includes("status=success") ||
         window.location.search.includes("status=sucess")));
-  const sessionId = searchParams.get("session_id") ?? null;
   const [successModalDismissed, setSuccessModalDismissed] = useState(false);
   const [profileJustCompleted, setProfileJustCompleted] = useState(false);
   const showSuccessModal = profileJustCompleted && !successModalDismissed;
@@ -56,6 +63,8 @@ const PaymentMain = ({ program, checkoutData, paymentPageId }: PaymentMainProps)
     d.setDate(11);
     return d.toISOString().slice(0, 10);
   });
+
+  console.log("checkoutData", checkoutData);
 
   // When returning from Stripe with success: move to complete-profile step and clean URL (do not show modal yet)
   useEffect(() => {
@@ -72,20 +81,16 @@ const PaymentMain = ({ program, checkoutData, paymentPageId }: PaymentMainProps)
     setSuccessModalDismissed(false);
   }, []);
 
-  const handleSuccessModalOpenChange = useCallback(
-    (open: boolean) => {
-      if (!open) {
-        setSuccessModalDismissed(true);
-        setProfileJustCompleted(false);
-      }
-    },
-    [],
-  );
+  const handleSuccessModalOpenChange = useCallback((open: boolean) => {
+    if (!open) {
+      setSuccessModalDismissed(true);
+      setProfileJustCompleted(false);
+    }
+  }, []);
 
   const setActiveStep = useCallback(
     (value: React.SetStateAction<PaymentStepId>) => {
-      const step =
-        typeof value === "function" ? value(activeStep) : value;
+      const step = typeof value === "function" ? value(activeStep) : value;
       const next = new URLSearchParams(searchParams.toString());
       next.set("step", step);
       router.replace(`${pathname}?${next.toString()}`);
@@ -94,8 +99,7 @@ const PaymentMain = ({ program, checkoutData, paymentPageId }: PaymentMainProps)
   );
 
   const isInstallmentPlan =
-    checkoutSelections?.planId &&
-    checkoutSelections.planId !== "full";
+    checkoutSelections?.planId && checkoutSelections.planId !== "full";
   const nextPaymentDateForApi =
     isInstallmentPlan && nextPaymentDateYmd
       ? new Date(nextPaymentDateYmd + "T12:00:00")
@@ -145,16 +149,25 @@ const PaymentMain = ({ program, checkoutData, paymentPageId }: PaymentMainProps)
             onProceed={handlePayNow}
             isProcessingPayment={isProcessingPayment}
             paymentError={paymentError}
+            discount={
+              checkoutData?.promo_code_data?.discount_percentage as string
+            }
           />
         )}
         {activeStep === "complete-profile" && (
-            <CompleteProfile
-              programTitle={program?.title}
-              onProfileComplete={handleProfileComplete}
-            />
-          )}
+          <CompleteProfile
+            programTitle={program?.title}
+            onProfileComplete={handleProfileComplete}
+          />
+        )}
       </div>
-      {activeStep !== "complete-profile" && <Coupon />}
+      {activeStep !== "complete-profile" && (
+        <Coupon
+          discount={
+            checkoutData?.promo_code_data?.discount_percentage as string
+          }
+        />
+      )}
 
       <PaymentSuccessModal
         open={showSuccessModal}

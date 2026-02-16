@@ -83,6 +83,7 @@ interface PaymentDetailsProps {
   onProceed?: () => void;
   isProcessingPayment?: boolean;
   paymentError?: string | null;
+  discount?: string
 }
 
 const PaymentDetails = ({
@@ -92,6 +93,7 @@ const PaymentDetails = ({
   onProceed,
   isProcessingPayment = false,
   paymentError = null,
+  discount
 }: PaymentDetailsProps) => {
   const [confirmInfo, setConfirmInfo] = useState(false);
   const [confirmTerms, setConfirmTerms] = useState(false);
@@ -332,7 +334,7 @@ const PaymentDetails = ({
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-[#6b7280]">Coupon (Discount)</span>
-              <span className="font-medium text-[#092A31]">30%</span>
+              <span className="font-medium text-[#092A31]">{discount}%</span>
             </div>
             <div className="flex justify-between text-base">
               <span className="font-medium text-[#092A31]">Amount to pay</span>
