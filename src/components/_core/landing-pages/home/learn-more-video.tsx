@@ -13,7 +13,7 @@ interface LearnMoreVideoProps {
   setShowPopUpVid: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const VID_URL = "https://www.youtube.com/watch?v=kifEHRJmOKw";
+const VID_URL = "https://vimeo.com/1165333664?fl=ml&fe=ec";
 
 const LearnMoreVideo = ({ setShowPopUpVid, showPopUpVid }: LearnMoreVideoProps) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -27,11 +27,12 @@ const LearnMoreVideo = ({ setShowPopUpVid, showPopUpVid }: LearnMoreVideoProps) 
   return (
     <Dialog open={showPopUpVid} onOpenChange={setShowPopUpVid}>
       <DialogContent
-        className="max-w-[90vw] w-[90vw] max-h-[90vh] p-0 gap-0 overflow-hidden border-0 bg-transparent shadow-none"
+        className="max-h-[90vh] p-0 gap-0 overflow-hidden border-0 bg-transparent shadow-none max-w-[1280px] w-[min(1280px,95vw)]"
+        style={{ width: "min(1280px, 95vw)", maxWidth: "900px" }}
         showCloseButton={true}
       >
         <div className="flex items-center justify-center w-full h-full">
-          <div className="hidden lg:block w-full aspect-video max-h-[80vh] rounded-lg overflow-hidden relative">
+          <div className="hidden lg:block w-full aspect-video min-h-[400px] max-h-[80vh] rounded-lg overflow-hidden relative">
             {isLoading && (
               <div
                 className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 rounded-lg"
@@ -54,7 +55,7 @@ const LearnMoreVideo = ({ setShowPopUpVid, showPopUpVid }: LearnMoreVideoProps) 
               }}
             />
           </div>
-          <div className="lg:hidden w-full aspect-video max-h-[70vh] rounded-lg overflow-hidden relative">
+          <div className="lg:hidden w-full aspect-video min-h-[280px] max-h-[70vh] rounded-lg overflow-hidden relative">
             {isLoading && (
               <div
                 className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 rounded-lg"
