@@ -6,15 +6,19 @@ import { Play } from "lucide-react";
 import Mentors from "./mentors";
 import type { InternshipProgram } from "@/types/internship-program";
 import { getYoutubeThumbnail } from "../../../shared/youtube-video";
-import { YoutubeVideo } from "../../../shared/youtube-video";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { VideoPlayerModal } from "../../../shared/video-player-modal";
 
 interface RightProps {
   program?: InternshipProgram;
 }
 
+/** Fallback when video has no YouTube thumbnail (e.g. Vimeo) or image fails. */
+const DEFAULT_VIDEO_THUMBNAIL =
+  "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80";
+
 const Right = ({ program }: RightProps) => {
   const [videoOpen, setVideoOpen] = useState(false);
+  const [thumbnailError, setThumbnailError] = useState(false);
   const [countdown, setCountdown] = useState({
     days: 21,
     hours: 3,
@@ -23,8 +27,13 @@ const Right = ({ program }: RightProps) => {
   });
 
   const PROGRAM_VIDEO_URL =
-    program?.projects[0].project_video ??
+    program?.payment_url ??
     "https://www.youtube.com/watch?v=jY-j0xYXzpo&list=PLZNtzcTK9hBYzlV-VPg-JZjbRjl4PP52Z&index=12";
+
+  const videoThumbnail =
+    getYoutubeThumbnail(PROGRAM_VIDEO_URL) ||
+    (program as { image?: string } | undefined)?.image ||
+    DEFAULT_VIDEO_THUMBNAIL;
 
   const mentors =
     program?.mentors?.map((m) => ({
@@ -80,12 +89,17 @@ const Right = ({ program }: RightProps) => {
         }}
         aria-label="Play program video"
       >
-        <Image
-          src={getYoutubeThumbnail(PROGRAM_VIDEO_URL)}
-          alt="Video thumbnail"
-          fill
-          className="object-cover"
-        />
+        {videoThumbnail ? (
+          <Image
+            src={thumbnailError ? DEFAULT_VIDEO_THUMBNAIL : videoThumbnail}
+            alt="Video thumbnail"
+            fill
+            className="object-cover"
+            onError={() => setThumbnailError(true)}
+          />
+        ) : (
+          <div className="absolute inset-0 bg-[#E8EFF1]" />
+        )}
         <div className="absolute inset-0 flex items-end p-3 justify-start bg-black/40">
           <div className="flex items-center gap-2">
             <div className="border-2 border-gray-500 w-6 h-6 bg-primary rounded-full flex items-center justify-center pointer-events-none">
@@ -96,22 +110,12 @@ const Right = ({ program }: RightProps) => {
         </div>
       </div>
 
-      <Dialog open={videoOpen} onOpenChange={setVideoOpen}>
-        <DialogContent
-          className="p-0 gap-0 overflow-hidden border-0 max-w-7xl w-[min(1280px,95vw)]"
-          style={{ width: "min(1280px, 95vw)", maxWidth: "900px" }}
-        >
-          <DialogTitle className="sr-only">Program video</DialogTitle>
-          <div className="w-full aspect-video bg-black min-h-90">
-            <YoutubeVideo
-              videoUrl={PROGRAM_VIDEO_URL}
-              autoplay
-              title="Program overview"
-              className="w-full h-full"
-            />
-          </div>
-        </DialogContent>
-      </Dialog>
+      <VideoPlayerModal
+        open={videoOpen}
+        onOpenChange={setVideoOpen}
+        videoUrl={PROGRAM_VIDEO_URL}
+        title="Program video"
+      />
 
       {/* Secure Your Seat Section */}
       <div className="bg-[#F8FAFB] rounded-lg p-6">
