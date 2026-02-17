@@ -24,9 +24,7 @@ export default function SignInContent() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const redirectUrl = program
-      ? `/payment/${program}`
-      : redirectParam;
+    const redirectUrl = program ? `/payment/${program}` : redirectParam;
     login({ email, password }, redirectUrl);
   };
   const signUpHref = program
@@ -35,7 +33,7 @@ export default function SignInContent() {
 
   return (
     <main className="flex-1 w-full h-full overflow-y-auto flex flex-col">
-      <div className="flex justify-end pt-4 pr-4">
+      {/* <div className="flex justify-end pt-4 pr-4">
         <Link href={signUpHref}>
           <Button
             variant="outline"
@@ -44,9 +42,9 @@ export default function SignInContent() {
             Sign Up
           </Button>
         </Link>
-      </div>
+      </div> */}
 
-      <div className="w-full max-w-120 mx-auto md:mx-[unset]">
+      <div className="w-full max-w-120 mx-auto md:mx-[unset] mt-10">
         <div className="flex items-center gap-10 mb-2 px-6">
           <h1 className="text-2xl font-semibold text-[#092A31]">Login</h1>
           {errorMessage ? <ErrorAlert error={errorMessage} /> : null}
@@ -167,6 +165,10 @@ export default function SignInContent() {
               >
                 <LinkedInSvg />
               </button>
+            </div>
+
+            <div className="text-center text-[#334155] mt-2 text-sm">
+              Don’t have an account yet? <Link href={signUpHref} role="button" className="text-[#156374] cursor-pointer">Sign up</Link>
             </div>
           </div>
         </div>

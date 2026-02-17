@@ -5,6 +5,7 @@ import { AppleSvg, GoogleSvg, LinkedInSvg } from "@/components/_core/auth/svg";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { SignUpFormData } from "./types";
+import Link from "next/link";
 
 const inputBase = cn(
   "w-full rounded-lg bg-[#F8FAFC] text-sm placeholder:text-xs px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8] border border-transparent",
@@ -227,6 +228,17 @@ const PersonalInfo = ({
         >
           <LinkedInSvg />
         </button>
+      </div>
+
+      <div className="text-center text-[#334155] mt-2 pb-3 text-sm">
+        Already have have an account? {" "}
+        <Link
+          href={"/auth/sign-in"}
+          role="button"
+          className="text-[#156374] cursor-pointer"
+        >
+          Login
+        </Link>
       </div>
     </div>
   );
