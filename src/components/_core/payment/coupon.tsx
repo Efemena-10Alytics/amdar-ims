@@ -8,8 +8,11 @@ import { Button } from "@/components/ui/button";
 export const DEFAULT_PROMO_CODE = "WELCOME30";
 
 const CHECKOUT_QUERY_KEY_PREFIX = ["payment", "checkout"] as const;
+interface IProps {
+  discount?: string;
+}
 
-const Coupon = () => {
+const Coupon = ({ discount }: IProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -35,7 +38,7 @@ const Coupon = () => {
   };
 
   return (
-    <aside className="w-60 xl:w-80 shrink-0">
+    <aside className="lg:w-60 xl:w-80 shrink-0">
       <section>
         <h2 className="font-clash-display text-xl font-bold text-[#092A31]">
           Coupon/promo code
@@ -55,7 +58,9 @@ const Coupon = () => {
             </div>
             <div>
               <p className="text-sm text-[#6b7280]">Discount</p>
-              <p className="mt-1 font-medium text-[#092A31]">30%</p>
+              <p className="mt-1 font-medium text-[#092A31]">
+                {discount ? discount : "30"}%
+              </p>
             </div>
           </div>
           <Button

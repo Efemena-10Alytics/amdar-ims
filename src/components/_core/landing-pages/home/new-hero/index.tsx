@@ -64,6 +64,7 @@ export default function NewHero() {
   React.useEffect(() => {
     Aos.init();
   }, []);
+  
   return (
     <div className="relative w-full min-h-screen overflow-hidden -mt-25">
       {/* Section background – new-hero-bg */}

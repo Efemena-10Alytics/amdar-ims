@@ -96,7 +96,7 @@ export function EditUserData({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-[calc(100%-2rem)] sm:max-w-md rounded-2xl border border-gray-200/80 shadow-lg bg-white p-6"
+        className="sm:max-w-[calc(100%-2rem)] rounded-2xl border border-gray-200/80 shadow-lg bg-white p-6"
         showCloseButton={true}
       >
         <DialogHeader>
@@ -209,7 +209,7 @@ export function EditUserData({
                   setForm((prev) => ({ ...prev, countryCode: value }))
                 }
               >
-                <SelectTrigger className="w-[120px] shrink-0 rounded-none border-0 border-r border-gray-200 bg-[#F8FAFC] py-3 h-auto focus:ring-0">
+                <SelectTrigger className="w-30 shrink-0 rounded-none border-0 border-r border-gray-200 bg-[#F8FAFC] py-3 h-auto focus:ring-0">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

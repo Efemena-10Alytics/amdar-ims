@@ -97,14 +97,19 @@ const Right = ({ program }: RightProps) => {
       </div>
 
       <Dialog open={videoOpen} onOpenChange={setVideoOpen}>
-        <DialogContent className="max-w-4xl w-[calc(100%-2rem)] p-0 gap-0 overflow-hidden">
+        <DialogContent
+          className="p-0 gap-0 overflow-hidden border-0 max-w-7xl w-[min(1280px,95vw)]"
+          style={{ width: "min(1280px, 95vw)", maxWidth: "900px" }}
+        >
           <DialogTitle className="sr-only">Program video</DialogTitle>
-          <YoutubeVideo
-            videoUrl={PROGRAM_VIDEO_URL}
-            autoplay
-            title="Program overview"
-            className="w-full"
-          />
+          <div className="w-full aspect-video bg-black min-h-90">
+            <YoutubeVideo
+              videoUrl={PROGRAM_VIDEO_URL}
+              autoplay
+              title="Program overview"
+              className="w-full h-full"
+            />
+          </div>
         </DialogContent>
       </Dialog>
 
