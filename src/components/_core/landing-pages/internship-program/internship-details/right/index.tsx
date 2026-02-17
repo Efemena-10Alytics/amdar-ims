@@ -6,8 +6,7 @@ import { Play } from "lucide-react";
 import Mentors from "./mentors";
 import type { InternshipProgram } from "@/types/internship-program";
 import { getYoutubeThumbnail } from "../../../shared/youtube-video";
-import { YoutubeVideo } from "../../../shared/youtube-video";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { VideoPlayerModal } from "../../../shared/video-player-modal";
 
 interface RightProps {
   program?: InternshipProgram;
@@ -23,7 +22,7 @@ const Right = ({ program }: RightProps) => {
   });
 
   const PROGRAM_VIDEO_URL =
-    program?.projects[0].project_video ??
+    program?.payment_url ??
     "https://www.youtube.com/watch?v=jY-j0xYXzpo&list=PLZNtzcTK9hBYzlV-VPg-JZjbRjl4PP52Z&index=12";
 
   const mentors =
@@ -96,22 +95,12 @@ const Right = ({ program }: RightProps) => {
         </div>
       </div>
 
-      <Dialog open={videoOpen} onOpenChange={setVideoOpen}>
-        <DialogContent
-          className="p-0 gap-0 overflow-hidden border-0 max-w-7xl w-[min(1280px,95vw)]"
-          style={{ width: "min(1280px, 95vw)", maxWidth: "900px" }}
-        >
-          <DialogTitle className="sr-only">Program video</DialogTitle>
-          <div className="w-full aspect-video bg-black min-h-90">
-            <YoutubeVideo
-              videoUrl={PROGRAM_VIDEO_URL}
-              autoplay
-              title="Program overview"
-              className="w-full h-full"
-            />
-          </div>
-        </DialogContent>
-      </Dialog>
+      <VideoPlayerModal
+        open={videoOpen}
+        onOpenChange={setVideoOpen}
+        videoUrl={PROGRAM_VIDEO_URL}
+        title="Program video"
+      />
 
       {/* Secure Your Seat Section */}
       <div className="bg-[#F8FAFB] rounded-lg p-6">

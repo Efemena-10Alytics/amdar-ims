@@ -10,14 +10,9 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { ArrowLeftCurve, ArrowRightCurve } from "./svg";
-import { YoutubeVideo } from "../shared/youtube-video";
+import { VideoPlayerModal } from "../shared/video-player-modal";
 import { useYoutubeCaptions } from "../../../../features/youtube/use-youtube-caption";
 import Aos from "aos";
 
@@ -281,27 +276,12 @@ const WhatOurInternsSays = () => {
           </Carousel>
         </div>
 
-        <Dialog
+        <VideoPlayerModal
           open={!!playingVideoUrl}
           onOpenChange={(open) => !open && setPlayingVideoUrl(null)}
-        >
-          <DialogContent
-            className="p-0 gap-0 overflow-hidden border-0 max-w-[1280px] w-[min(1280px,95vw)]"
-            style={{ width: "min(1280px, 95vw)", maxWidth: "900px" }}
-          >
-            <DialogTitle className="sr-only">Play testimonial video</DialogTitle>
-            {playingVideoUrl && (
-              <div className="w-full aspect-video bg-black min-h-[360px]">
-                <YoutubeVideo
-                  videoUrl={playingVideoUrl}
-                  autoplay
-                  title="Intern testimonial"
-                  className="w-full h-full"
-                />
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
+          videoUrl={playingVideoUrl}
+          title="Play testimonial video"
+        />
       </div>
     </div>
   );
