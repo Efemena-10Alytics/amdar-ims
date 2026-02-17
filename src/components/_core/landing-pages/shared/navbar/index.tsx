@@ -16,6 +16,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { UserAvatar } from "../../internship-program/svg";
 
 export function TooltipDemo() {
   return (
@@ -133,11 +134,11 @@ const Navbr = () => {
                         href="https://www.amdari.io/dashboard"
                         className={cn(
                           "flex size-10 xl:size-11 items-center justify-center rounded-full transition-colors",
-                          "bg-pink-100 text-[#156374] hover:bg-pink-200",
+                          "bg-[#156374] hover:bg-[#156374]/80",
                         )}
                         aria-label="Profile"
                       >
-                        <User className="size-5 xl:size-6" />
+                        <UserAvatar />
                       </Link>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -149,13 +150,13 @@ const Navbr = () => {
                     onClick={() => setConfirmLogoutOpen(true)}
                     className={cn(
                       "group flex h-10 xl:h-11 w-10 xl:w-11 items-center justify-center gap-2 rounded-full overflow-hidden transition-[width,color] duration-200 hover:px-3",
-                      "bg-teal-100 text-[#0f4d5a] hover:bg-red-100",
+                      "bg-[#B6CFD4] text-[#0f4d5a] hover:bg-[#FAC5C5]",
                     )}
                     aria-label="Log out"
                   >
-                    <LogOut className="size-5 xl:size-6 shrink-0 group-hover:hidden" />
-                    <span className="hidden whitespace-nowrap text-[8px] font-medium group-hover:inline text-red-500">
-                      Log out
+                    <LogOut className="size-5 shrink-0 group-hover:hidden" />
+                    <span className="hidden whitespace-nowrap text-[8px] font-semibold group-hover:inline text-[#EF4444]">
+                      Logout
                     </span>
                   </button>
                 </>
