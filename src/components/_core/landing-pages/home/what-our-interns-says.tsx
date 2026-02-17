@@ -285,15 +285,20 @@ const WhatOurInternsSays = () => {
           open={!!playingVideoUrl}
           onOpenChange={(open) => !open && setPlayingVideoUrl(null)}
         >
-          <DialogContent className="max-w-4xl w-[calc(100%-2rem)] p-0 gap-0 overflow-hidden">
+          <DialogContent
+            className="p-0 gap-0 overflow-hidden border-0 max-w-[1280px] w-[min(1280px,95vw)]"
+            style={{ width: "min(1280px, 95vw)", maxWidth: "900px" }}
+          >
             <DialogTitle className="sr-only">Play testimonial video</DialogTitle>
             {playingVideoUrl && (
-              <YoutubeVideo
-                videoUrl={playingVideoUrl}
-                autoplay
-                title="Intern testimonial"
-                className="w-full"
-              />
+              <div className="w-full aspect-video bg-black min-h-[360px]">
+                <YoutubeVideo
+                  videoUrl={playingVideoUrl}
+                  autoplay
+                  title="Intern testimonial"
+                  className="w-full h-full"
+                />
+              </div>
             )}
           </DialogContent>
         </Dialog>
