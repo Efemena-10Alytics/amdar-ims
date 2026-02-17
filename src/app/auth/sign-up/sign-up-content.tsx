@@ -62,17 +62,17 @@ export default function SignUpContent() {
         ) : (
           <div />
         )}
-        <Link href="/auth/sign-in" className="cursor-pointer">
+        {/* <Link href="/auth/sign-in" className="cursor-pointer">
           <Button
             variant="outline"
             className="rounded-md bg-[#C8DDE3] border-[#C8DDE3] text-[#092A31] hover:bg-[#B8CDD3] hover:border-[#B8CDD3] px-6"
           >
             Login
           </Button>
-        </Link>
+        </Link> */}
       </div>
 
-      <div className="w-full max-w-152 flex-1 mx-auto md:mx-[unset]">
+      <div className="w-full max-w-152 flex-1 mx-auto md:mx-[unset] mt-5">
         <div className="flex items-center gap-10 mb-2 px-6">
           <h1 className="text-2xl font-semibold text-[#092A31]">Sign Up</h1>
           {errorMessage ? <ErrorAlert error={errorMessage} /> : null}

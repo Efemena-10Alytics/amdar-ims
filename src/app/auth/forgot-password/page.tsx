@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { PadlockInSvg } from "@/components/_core/auth/svg";
 import { useForgotPassword } from "@/features/auth/use-forgot-password";
+import { ArrowLeft } from "lucide-react";
 
 const inputBase = cn(
   "w-full rounded-lg bg-[#F8FAFC] px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8] border border-gray-200",
@@ -24,7 +25,7 @@ const ForgotPasswordPage = () => {
 
   return (
     <main className="flex flex-col">
-      <div className="flex justify-end p-6">
+      {/* <div className="flex justify-end p-6">
         <Link href="/sign-in" className="cursor-pointer">
           <Button
             variant="outline"
@@ -33,9 +34,13 @@ const ForgotPasswordPage = () => {
             Login
           </Button>
         </Link>
-      </div>
+      </div> */}
+      <Link href={"/auth/sign-in"} className="text-primary/60 flex items-center gap-2 mt-5">
+        <ArrowLeft className="w-4 h-4" />
+        <span>Back</span>
+      </Link>
 
-      <div className="flex-1 flex flex-col items-start justify-start px-6 pb-12">
+      <div className="flex-1 flex flex-col items-start justify-start px-6 pb-12 mt-5">
         <div className="mb-4 pl-1">
           <PadlockInSvg />
         </div>

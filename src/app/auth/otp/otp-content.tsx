@@ -66,13 +66,13 @@ export default function OtpContent() {
     });
   };
 
-  const signInHref = programParam
-    ? `/auth/sign-in?program=${programParam}`
-    : "/auth/sign-in";
+  // const signInHref = programParam
+  //   ? `/auth/sign-in?program=${programParam}`
+  //   : "/auth/sign-in";
 
   return (
     <main className="flex-1 w-full min-h-full overflow-y-auto flex flex-col">
-      <div className="flex justify-end p-6">
+      {/* <div className="flex justify-end p-6">
         <Link href={signInHref} className="cursor-pointer">
           <Button
             variant="outline"
@@ -81,9 +81,9 @@ export default function OtpContent() {
             Login
           </Button>
         </Link>
-      </div>
+      </div> */}
 
-      <div className="flex-1 flex flex-col items-start justify-start px-6 pb-12">
+      <div className="flex-1 flex flex-col items-start justify-start px-6 pb-12 mt-10">
         <div className="flex items-center gap-10 mb-2 px-6">
           <h1 className="text-2xl font-semibold text-[#092A31]">Sign Up</h1>
           {errorMessage ? (
@@ -97,7 +97,7 @@ export default function OtpContent() {
             Email verification
           </h1>
           <p className="mt-2 text-sm text-[#64748B] leading-relaxed">
-            Check your email, we sent a code to {email}. If this is not your
+            Check your <span className="font-semibold">email inbox</span> or <span className="font-semibold">spam</span>, we sent a code to  {email}. If this is not your
             mail,{" "}
             <button
               type="button"

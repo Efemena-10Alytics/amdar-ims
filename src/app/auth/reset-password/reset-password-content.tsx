@@ -73,7 +73,7 @@ export default function ResetPasswordContent() {
 
   return (
     <main className="flex-1 w-full h-full overflow-y-auto flex flex-col">
-      <div className="flex justify-end p-6">
+      {/* <div className="flex justify-end p-6">
         <Link href="/auth/sign-up">
           <Button
             variant="outline"
@@ -82,8 +82,8 @@ export default function ResetPasswordContent() {
             Sign Up
           </Button>
         </Link>
-      </div>
-      <div className="w-full max-w-120">
+      </div> */}
+      <div className="w-full max-w-120 mt-10">
         <div className="mb-4 pl-1">
           <PadlockInSvg />
         </div>
