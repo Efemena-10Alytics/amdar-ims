@@ -1,6 +1,6 @@
-import { imageStorageUrl } from "@/lib/utils";
+// import { imageStorageUrl } from "@/lib/utils";
 import { CareerOpportunity } from "@/types/internship-program";
-import Image from "next/image";
+import { CareerCheckSvg } from "../../svg";
 
 interface CareerOpporturnityProps {
   careerOpporturnity: CareerOpportunity[] | undefined;
@@ -9,7 +9,6 @@ interface CareerOpporturnityProps {
 const CareerOpporturnity = ({
   careerOpporturnity,
 }: CareerOpporturnityProps) => {
-
   return (
     <div className="space-y-8">
       <h2 className="text-2xl font-semibold text-[#092A31] mb-6">
@@ -20,9 +19,9 @@ const CareerOpporturnity = ({
         {careerOpporturnity?.map((item, index) => (
           <div
             key={item?.id ?? index}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-gray-200"
+            className="flex items-center gap-2 px-3 py-2 rounded-full bg-[#E8EFF1]"
           >
-            {item.icon ? (
+            {/* {item.icon ? (
               <Image
                 src={`${imageStorageUrl}/${item.icon}`}
                 alt={item.text ?? "Career opportunity"}
@@ -30,7 +29,8 @@ const CareerOpporturnity = ({
                 height={16}
                 className="object-contain"
               />
-            ) : null}
+            ) : null} */}
+            <CareerCheckSvg />
             <span className="text-sm text-[#092A31] font-medium">
               {item?.text}
             </span>
