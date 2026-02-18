@@ -16,12 +16,18 @@ export interface SignInModalProps {
   onOpenChange: (open: boolean) => void;
   /** Called when user clicks "Sign up" link – if provided, modal closes and this runs (e.g. open sign-up modal). */
   onSignUpClick?: () => void;
+  /** Called when sign-in succeeds (e.g. to skip OTP after profile complete). */
+  onSignInSuccess?: () => void;
+  /** When set, modal will remove this key from sessionStorage on sign-in success (e.g. so payment flow skips OTP). */
+  paymentShowOtpStorageKey?: string;
 }
 
 export function SignInModal({
   open,
   onOpenChange,
   onSignUpClick,
+  onSignInSuccess,
+  paymentShowOtpStorageKey,
 }: SignInModalProps) {
   const { login, isLoggingIn, errorMessage } = useLogin();
   const [email, setEmail] = useState("");
@@ -32,7 +38,13 @@ export function SignInModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const success = await login({ email, password }, undefined, true);
-    if (success) onOpenChange(false);
+    if (success) {
+      if (paymentShowOtpStorageKey && typeof sessionStorage !== "undefined") {
+        sessionStorage.removeItem(paymentShowOtpStorageKey);
+      }
+      onSignInSuccess?.();
+      onOpenChange(false);
+    }
   };
 
   const handleSignUpClick = (e: React.MouseEvent) => {

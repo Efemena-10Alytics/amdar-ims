@@ -24,6 +24,8 @@ const VALID_STEPS: PaymentStepId[] = [
   "complete-profile",
 ];
 
+const PAYMENT_SHOW_OTP_AFTER_PROFILE_KEY = "payment_show_otp_after_profile";
+
 function stepFromParam(param: string | null): PaymentStepId {
   return param && VALID_STEPS.includes(param as PaymentStepId)
     ? (param as PaymentStepId)
@@ -97,10 +99,22 @@ const PaymentMain = ({
   }, [activeStep, user]);
 
   const handleProfileComplete = useCallback(() => {
-    setOtpModalOpen(true);
+    const shouldShowOtp =
+      typeof window !== "undefined" &&
+      sessionStorage.getItem(PAYMENT_SHOW_OTP_AFTER_PROFILE_KEY) === "1";
+    if (shouldShowOtp) {
+      if (typeof window !== "undefined")
+        sessionStorage.removeItem(PAYMENT_SHOW_OTP_AFTER_PROFILE_KEY);
+      setOtpModalOpen(true);
+    } else {
+      setProfileJustCompleted(true);
+      setSuccessModalDismissed(false);
+    }
   }, []);
 
   const handleOtpVerifySuccess = useCallback(() => {
+    if (typeof window !== "undefined")
+      sessionStorage.removeItem(PAYMENT_SHOW_OTP_AFTER_PROFILE_KEY);
     setProfileJustCompleted(true);
     setSuccessModalDismissed(false);
   }, []);
@@ -209,6 +223,7 @@ const PaymentMain = ({
           setSignInOpen(false);
           setSignUpOpen(true);
         }}
+        paymentShowOtpStorageKey={PAYMENT_SHOW_OTP_AFTER_PROFILE_KEY}
       />
 
       <SignUpModal
@@ -218,6 +233,7 @@ const PaymentMain = ({
           setSignUpOpen(false);
           setSignInOpen(true);
         }}
+        paymentShowOtpStorageKey={PAYMENT_SHOW_OTP_AFTER_PROFILE_KEY}
       />
 
       <OtpModal

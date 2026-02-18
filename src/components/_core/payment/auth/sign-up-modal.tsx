@@ -64,12 +64,18 @@ export interface SignUpModalProps {
   onOpenChange: (open: boolean) => void;
   /** Called when user clicks "Login" link – if provided, modal closes and this runs (e.g. open sign-in modal). */
   onLoginClick?: () => void;
+  /** Called when sign-up succeeds (e.g. to show OTP after profile complete). */
+  onSignUpSuccess?: () => void;
+  /** When set, modal will write this key to sessionStorage on sign-up success (e.g. so payment flow can show OTP after profile). */
+  paymentShowOtpStorageKey?: string;
 }
 
 export function SignUpModal({
   open,
   onOpenChange,
   onLoginClick,
+  onSignUpSuccess,
+  paymentShowOtpStorageKey,
 }: SignUpModalProps) {
   const { signUp, isSigningUp, errorMessage, clearError } = useSignUp();
   const [formData, setFormData] = useState<SignUpFormData>(
@@ -124,6 +130,10 @@ export function SignUpModal({
         undefined,
         { skipRedirect: true }
       );
+      if (paymentShowOtpStorageKey && typeof sessionStorage !== "undefined") {
+        sessionStorage.setItem(paymentShowOtpStorageKey, "1");
+      }
+      onSignUpSuccess?.();
       onOpenChange(false);
     } catch {
       // errorMessage set by hook
