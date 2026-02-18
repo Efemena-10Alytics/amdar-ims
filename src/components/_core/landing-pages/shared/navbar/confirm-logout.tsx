@@ -32,15 +32,15 @@ export function ConfirmLogout({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-md rounded-2xl border border-gray-200/80 shadow-lg bg-white p-6 text-center"
+        className="sm:max-w-md rounded-xl border border-gray-200/80 shadow-lg bg-white p-6 text-center"
         showCloseButton={false}
       >
         <DialogHeader className="flex flex-col items-center gap-4">
           <div
-            className="flex size-12 items-center justify-center rounded-full border-8 border-gray-300 bg-red-500 text-white shrink-0"
+            className="flex size-12 items-center justify-center rounded-full border-8 border-[#FAC5C5] bg-[#AA3030] text-white shrink-0"
             aria-hidden
           >
-            <LogOut className="size-5" />
+            <LogOut className="size-4" />
           </div>
           <div className="space-y-2">
             <DialogTitle className="text-xl font-bold text-center text-[#092A31] font-clash-display">
@@ -58,14 +58,14 @@ export function ConfirmLogout({
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="rounded-lg flex-1 border-gray-300 bg-gray-50 text-[#092A31] hover:bg-gray-100 hover:text-[#092A31] px-6"
+            className="rounded-lg flex-1 h-10 border-[#B6CFD4] bg-[#E8EFF1] text-[#092A31] hover:bg-gray-100 hover:text-[#092A31] px-6"
           >
             Cancel
           </Button>
           <Button
             type="button"
             onClick={handleConfirm}
-            className="rounded-lg flex-1 bg-red-500 text-white hover:bg-red-600 px-6"
+            className="rounded-lg flex-1 h-10 bg-[#AA3030] text-white hover:bg-[#AA3030]/90 px-6"
           >
             Yes, logout
           </Button>
