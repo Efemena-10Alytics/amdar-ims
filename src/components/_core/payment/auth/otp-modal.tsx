@@ -103,7 +103,7 @@ export function OtpModal({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-[440px] w-[calc(100%-2rem)] p-0 gap-0 overflow-hidden border border-gray-200 rounded-2xl">
+        <DialogContent className="max-w-110 w-[calc(100%-2rem)] p-0 gap-0 overflow-hidden border border-gray-200 rounded-2xl">
           <DialogTitle className="sr-only">Email verification</DialogTitle>
           <div className="p-6">
             <div className="flex flex-col gap-2 mb-4">

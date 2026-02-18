@@ -29,9 +29,10 @@ export function SignInModal({
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    login({ email, password });
+    const success = await login({ email, password }, undefined, true);
+    if (success) onOpenChange(false);
   };
 
   const handleSignUpClick = (e: React.MouseEvent) => {
