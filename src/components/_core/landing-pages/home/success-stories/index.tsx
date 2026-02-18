@@ -91,7 +91,7 @@ Thank you Amdari`,
 
   return (
     <div data-aos="fade-up" className="bg-[#F8FAFB] py-12 lg:py-20">
-      <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="app-width">
         {/* Title Section */}
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] mb-4">
@@ -112,7 +112,7 @@ Thank you Amdari`,
 
         {/* Testimonial Content */}
         {testimonials[current] && (
-          <div data-aos="fade-up" className="text-center max-w-3xl mx-auto">
+          <div data-aos="fade-up" className="text-center max-w-6xl mx-auto">
             {/* Quote */}
             <p className="text-lg text-gray-800 font-medium mb-6 leading-relaxed">
               "{testimonials[current].quote}"

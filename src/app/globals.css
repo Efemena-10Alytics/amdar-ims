@@ -253,4 +253,8 @@
   h6 {
     @apply font-clash-display!;
   }
+
+  .app-width {
+    @apply max-w-400 w-full mx-auto px-4 sm:px-6 lg:px-16
+  }
 }

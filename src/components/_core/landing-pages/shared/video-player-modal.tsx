@@ -47,7 +47,7 @@ export function VideoPlayerModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="p-0 gap-0 overflow-hidden border-0 max-w-[1280px] w-[min(1280px,95vw)] max-h-[90vh]"
+        className="p-0 gap-0 overflow-hidden border-0 max-w-7xl w-[min(1280px,95vw)] max-h-[90vh]"
         style={{
           width: "min(1280px, 95vw)",
           maxWidth: "900px",
@@ -60,7 +60,7 @@ export function VideoPlayerModal({
       >
         <DialogTitle className="sr-only">{title}</DialogTitle>
         {videoUrl && (
-          <div className="relative w-full aspect-video bg-black min-h-[360px] rounded-lg overflow-hidden">
+          <div className="relative w-full aspect-video bg-black min-h-90 rounded-lg overflow-hidden">
             {loading && (
               <div
                 className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 rounded-lg"

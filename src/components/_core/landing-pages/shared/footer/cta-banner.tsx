@@ -10,7 +10,7 @@ const CTAbanner = () => {
     Aos.init({ duration: 600 });
   }, []);
   return (
-    <div data-aos="zoom-in" className="max-w-325  mx-auto px-4 sm:px-6 lg:px-8 pt-12 lg:pt-16 pb-8">
+    <div data-aos="zoom-in" className="app-width pt-12 lg:pt-16 pb-8">
       <div className="bg-[#156374] rounded-2xl p-8 lg:p-12 shadow-lg">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
           {/* Left Section - Headline & Tagline */}

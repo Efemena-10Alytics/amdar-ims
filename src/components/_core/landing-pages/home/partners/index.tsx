@@ -9,7 +9,7 @@ const Partners = () => {
     Aos.init();
   }, []);
   return (
-    <div data-aos="fade-up" className="bg-[#F8FAFB] min-h py-12 lg:py-20 relative overflow-hidden">
+    <div data-aos="fade-up" className="bg-[#F8FAFB] py-12 lg:py-20 relative overflow-hidden">
       {/* Ellipse Overlay */}
       <div
         className="absolute inset-0 z-1"
@@ -21,7 +21,7 @@ const Partners = () => {
         }}
       />
 
-      <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="app-width relative z-10">
         {/* Header Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
           {/* Heading */}

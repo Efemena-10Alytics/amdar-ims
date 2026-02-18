@@ -43,7 +43,7 @@ const CareerNeeds = () => {
         }}
       />
 
-      <div className="relative max-w-325 mx-auto px-4 sm:px-6 lg:px-8 z-10 min-w-0">
+      <div className="app-width relative z-10 min-w-0">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-32 lg:items-start min-w-0">
           {/* Left Column - Heading and CTA (sticky while right column scrolls) */}
           <div className="flex flex-col w-full justify-center lg:sticky lg:top-20 lg:self-start min-w-0 overflow-x-hidden">

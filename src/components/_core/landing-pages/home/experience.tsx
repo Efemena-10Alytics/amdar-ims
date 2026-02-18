@@ -20,7 +20,7 @@ const Experience = () => {
         }}
       />
 
-      <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="app-width relative z-10">
         {/* Headline Section */}
         <div data-aos="fade-up" className="text-center max-w-211 mx-auto">
           <h2 className="text-4xl lg:text-[52px] font-semibold text-[#092A31] leading-14 sm:leading-16">

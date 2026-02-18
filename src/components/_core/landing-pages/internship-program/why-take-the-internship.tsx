@@ -57,7 +57,7 @@ const WhyTakeTheInternship = () => {
 
   return (
     <div className="bg-[#FFE082] py-12 lg:py-20">
-      <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="app-width">
         {/* Header Section */}
         <div className="mb-12">
           {/* Top Left Tag */}

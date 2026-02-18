@@ -18,7 +18,7 @@ const Portfolio = () => {
         {/* Left Section - Promotional Content */}
 
         <div className="flex-1 bg-[#E8EFF1]">
-          <div className="flex flex-col w-full max-w-120 lg:mx-auto px-6 xl:px-0 py-10">
+          <div className="flex flex-col w-full max-w-146 lg:mx-auto px-6 xl:px-0 py-10">
             <h2
               data-aos="zoom-in"
               className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] mb-6 leading-tight"

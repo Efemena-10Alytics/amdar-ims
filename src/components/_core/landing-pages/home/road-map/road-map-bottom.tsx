@@ -17,7 +17,7 @@ const RoadMapBottom = () => {
     <div className="bg-[#092A31] py-12 lg:py-20 relative overflow-hidden">
       <div
         data-aos="fade-up"
-        className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8"
+        className="app-width"
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Left Side */}

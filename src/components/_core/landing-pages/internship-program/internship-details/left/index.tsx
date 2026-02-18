@@ -186,7 +186,7 @@ const Left = ({ program }: LeftProps) => {
         <h2 className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-white mb-4">
           Land Your First Job In Tech
         </h2>
-        <p className="text-gray-300 text-base lg:text-lg mb-8 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-gray-300 text-base lg:text-lg mb-8 leading-relaxed">
           Don't let the lack of real world experience hold you back. Join Amdari
           today and take a decisive step toward a successful career in tech.
         </p>
