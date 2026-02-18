@@ -13,7 +13,6 @@ import CareerOpporturnity from "./career-opporturnity";
 import ProgramStructure from "./program-structure";
 import Faq from "./faq";
 import Link from "next/link";
-import { useAuthStore } from "@/store/auth-store";
 import type { InternshipProgram } from "@/types/internship-program";
 
 const TOOLS_ICON_BASE = "https://api.amdari.io/tools/";
@@ -23,7 +22,6 @@ interface LeftProps {
 }
 
 const Left = ({ program }: LeftProps) => {
-  const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState("Overview");
 
   console.log("program:", program);
@@ -68,7 +66,9 @@ const Left = ({ program }: LeftProps) => {
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5">
               <UserFillSVG />
-              <span className="text-sm text-[#64748B] capitalize">{program?.role}</span>
+              <span className="text-sm text-[#64748B] capitalize">
+                {program?.role}
+              </span>
             </div>
           </div>
           <div className="grid gap-2">
@@ -128,13 +128,7 @@ const Left = ({ program }: LeftProps) => {
             GBP 390
           </div>
         </div>
-        <Link
-          href={
-            user
-              ? `/payment/${program?.id}`
-              : `/auth/sign-in?program=${program?.id}`
-          }
-        >
+        <Link href={`/payment/${program?.id}`}>
           <Button
             className={cn(
               "bg-primary text-white hover:bg-[#0f4d5a] rounded-full px-6 py-6 text-base font-medium",
@@ -190,13 +184,7 @@ const Left = ({ program }: LeftProps) => {
           Don't let the lack of real world experience hold you back. Join Amdari
           today and take a decisive step toward a successful career in tech.
         </p>
-        <Link
-          href={
-            user
-              ? `/payment/${program?.id}`
-              : `/auth/sign-in?program=${program?.id}`
-          }
-        >
+        <Link href={`/payment/${program?.id}`}>
           <Button
             className={cn(
               "bg-amdari-yellow text-[#092A31] hover:bg-amdari-yellow/90 rounded-full px-8 py-6 text-base font-medium",

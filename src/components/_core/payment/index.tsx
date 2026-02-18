@@ -9,11 +9,14 @@ import CompleteProfile from "./complete-profile";
 import Coupon from "./coupon";
 import type { InternshipProgram } from "@/types/internship-program";
 import type { CheckoutData } from "@/features/payment/use-get-checkout-data";
-import type { CheckoutSelections } from "@/types/payment";
 import { usePayNow } from "@/features/payment/use-pay-now";
 import { useCheckoutSelectionsStorage } from "@/features/payment/use-checkout-storage";
+import { useAuthStore } from "@/store/auth-store";
 import { DEFAULT_PROMO_CODE } from "./coupon";
 import { PaymentSuccessModal } from "./payment-success-modal";
+import { SignInModal } from "./auth/sign-in-modal";
+import { SignUpModal } from "./auth/sign-up-modal";
+import { OtpModal } from "./auth/otp-modal";
 
 const VALID_STEPS: PaymentStepId[] = [
   "checkout",
@@ -53,7 +56,17 @@ const PaymentMain = ({
         window.location.search.includes("status=sucess")));
   const [successModalDismissed, setSuccessModalDismissed] = useState(false);
   const [profileJustCompleted, setProfileJustCompleted] = useState(false);
+  const [signInOpen, setSignInOpen] = useState(false);
+  const [signUpOpen, setSignUpOpen] = useState(false);
+  const [otpModalOpen, setOtpModalOpen] = useState(false);
   const showSuccessModal = profileJustCompleted && !successModalDismissed;
+  const { user } = useAuthStore();
+  const userEmail =
+    typeof user === "object" && user !== null && "user" in user && user.user && typeof user.user === "object" && "email" in user.user
+      ? String((user.user as Record<string, unknown>).email)
+      : typeof user === "object" && user !== null && "email" in user
+        ? String(user.email)
+        : "";
   const [checkoutSelections, setCheckoutSelections] =
     useCheckoutSelectionsStorage(program?.id);
   const [paymentError, setPaymentError] = useState<string | null>(null);
@@ -76,7 +89,18 @@ const PaymentMain = ({
     router.replace(`${pathname}?${next.toString()}`);
   }, [statusSuccess, pathname, router, searchParams]);
 
+  // When on complete-profile step and user is not logged in, open sign-in modal
+  useEffect(() => {
+    if (activeStep === "personal" && user == null) {
+      setSignInOpen(true);
+    }
+  }, [activeStep, user]);
+
   const handleProfileComplete = useCallback(() => {
+    setOtpModalOpen(true);
+  }, []);
+
+  const handleOtpVerifySuccess = useCallback(() => {
     setProfileJustCompleted(true);
     setSuccessModalDismissed(false);
   }, []);
@@ -176,6 +200,32 @@ const PaymentMain = ({
         sessionId={null}
         profileCompleted={profileJustCompleted}
         setActiveStep={setActiveStep}
+      />
+
+      <SignInModal
+        open={signInOpen}
+        onOpenChange={setSignInOpen}
+        onSignUpClick={() => {
+          setSignInOpen(false);
+          setSignUpOpen(true);
+        }}
+      />
+
+      <SignUpModal
+        open={signUpOpen}
+        onOpenChange={setSignUpOpen}
+        onLoginClick={() => {
+          setSignUpOpen(false);
+          setSignInOpen(true);
+        }}
+      />
+
+      <OtpModal
+        open={otpModalOpen}
+        onOpenChange={setOtpModalOpen}
+        email={userEmail || undefined}
+        skipRedirect
+        onVerifySuccess={handleOtpVerifySuccess}
       />
     </div>
   );
