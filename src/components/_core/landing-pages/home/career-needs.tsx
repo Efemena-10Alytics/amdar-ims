@@ -44,9 +44,9 @@ const CareerNeeds = () => {
       />
 
       <div className="relative max-w-325 mx-auto px-4 sm:px-6 lg:px-8 z-10 min-w-0">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 lg:items-start min-w-0">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-32 lg:items-start min-w-0">
           {/* Left Column - Heading and CTA (sticky while right column scrolls) */}
-          <div className="flex flex-col justify-center lg:sticky lg:top-20 lg:self-start min-w-0 overflow-x-hidden">
+          <div className="flex flex-col items-end w-full justify-center lg:sticky lg:top-20 lg:self-start min-w-0 overflow-x-hidden">
             <h2
               data-aos="zoom-in"
               data-aos-duration="500"
