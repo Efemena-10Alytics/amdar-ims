@@ -89,7 +89,7 @@ const Navbr = () => {
             : "bg-transparent border-white/20",
         )}
       >
-        <div className="max-w-325 w-full mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="app-width">
           <div className="flex gap-2 items-center justify-between h-20">
             {/* Logo */}
             <Link href="/home" className="flex items-center gap-2">

@@ -160,7 +160,7 @@ const WhatOurInternsSays = () => {
 
   return (
     <div data-aos="fade-up" className="bg-white py-12 relative overflow-hidden">
-      <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="app-width">
         {/* Header Section */}
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] mb-4">

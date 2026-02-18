@@ -55,7 +55,7 @@ const WhatWeOffer = () => {
   return (
     <div
       data-aos="fade-up"
-      className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8 sm:mt-10 py-10"
+      className="app-width sm:mt-10 py-10"
     >
       <div className="flex flex-col md:flex-row md:items-end justify-between">
         <p className="text-sm text-gray-500 mb-4">Use switch tab</p>

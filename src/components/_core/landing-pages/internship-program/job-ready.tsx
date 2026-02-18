@@ -26,7 +26,7 @@ const JobReady = () => {
 
   return (
     <div className="bg-gray-100 pt-12 lg:pt-20">
-      <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="app-width">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Left Column - Assessment Form */}
           <div className="flex justify-center lg:justify-start">

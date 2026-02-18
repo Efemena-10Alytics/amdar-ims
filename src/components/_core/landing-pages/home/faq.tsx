@@ -58,7 +58,7 @@ const Faq = () => {
 
   return (
     <div data-aos="fade-up" className="bg-[#F8FAFB] py-12 lg:py-20">
-      <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="app-width">
         <h2 className="lg:max-w-105 text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] mb-8">
           Frequently Asked Questions
         </h2>

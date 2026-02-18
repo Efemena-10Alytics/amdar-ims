@@ -28,7 +28,7 @@ const RoadMap = () => {
           }}
         />
 
-        <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="app-width relative z-10">
           {/* Title Section */}
           <div data-aos="zoom-in" className="text-center mb-12 lg:mb-16">
             <h2 className="max-w-157.75 mx-auto text-3xl lg:text-4xl xl:text-5xl font-semibold text-white mb-2">
@@ -37,7 +37,7 @@ const RoadMap = () => {
           </div>
 
           {/* Roadmap Steps */}
-          <div className="relative max-w-5xl mx-auto">
+          <div className="relative max-w-6xl mx-auto">
             {/* Steps Grid Container - wrapper to ensure line spans full height */}
             <div className="relative">
               {/* Central Yellow Line - 4 broken segments */}

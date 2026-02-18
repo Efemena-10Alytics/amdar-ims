@@ -19,11 +19,11 @@ interface ProjectProps {
 const Project = ({ program }: ProjectProps) => {
   return (
     <div className="bg-[#F1F5F6] py-12 lg:py-20">
-      <div className="max-w-325 mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="app-width">
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-stretch">
           {/* Left: Image with overlay */}
           <div className="flex-1 flex justify-center">
-            <div className="bg-primary p-4 lg:p-6 max-w-130 w-full">
+            <div className="bg-primary p-4 lg:p-6 max-w-160 w-full">
               <div className="relative rounded-lg overflow-hidden bg-[#0F4652] aspect-4/3 min-h-70 lg:min-h-0">
                 <Image
                   src="/images/pngs/lady.png"
