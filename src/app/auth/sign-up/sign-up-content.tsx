@@ -44,7 +44,9 @@ export default function SignUpContent() {
       },
       redirect,
       program,
-    );
+    ).catch(() => {
+      // Error shown via errorMessage from hook
+    });
   };
 
   return (

@@ -8,6 +8,8 @@ export type VerifyEmailOptions = {
   newUser?: boolean;
   /** Program id to pass to success/next route (e.g. for payment). */
   program?: string;
+  /** When true, do not redirect after verification (e.g. for modal flow). */
+  skipRedirect?: boolean;
 };
 
 type VerifyEmailResponse = {
@@ -40,6 +42,7 @@ export function useVerifyEmail() {
         );
 
         if (res?.data?.success === true && typeof window !== "undefined") {
+          if (options.skipRedirect) return;
           const { redirect, newUser, program } = options;
           const params = new URLSearchParams();
           if (redirect) params.set("redirect", redirect);

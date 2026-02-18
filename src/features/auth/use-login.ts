@@ -8,12 +8,16 @@ export type LoginCredentials = {
   [key: string]: unknown;
 };
 
-const login = async (user: LoginCredentials, redirectURL?: string) => {
+const login = async (
+  user: LoginCredentials,
+  redirectURL?: string,
+  skipRedirect?: boolean,
+) => {
   try {
     const res = await axiosInstance.post<{ data: AuthUser }>("login", user);
     if (res.status === 200 && res.data?.data) {
       useAuthStore.getState().setUser(res.data.data);
-      if (typeof window !== "undefined") {
+      if (typeof window !== "undefined" && !skipRedirect) {
         window.location.replace(redirectURL ?? "/internship-program");
       }
     }
@@ -32,13 +36,19 @@ export function useLogin() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const userLogin = useCallback(
-    async (user: LoginCredentials, redirectURL?: string) => {
+    async (
+      user: LoginCredentials,
+      redirectURL?: string,
+      skipRedirect?: boolean,
+    ): Promise<boolean> => {
       setIsLoggingIn(true);
       setErrorMessage("");
       try {
-        await login(user, redirectURL);
+        await login(user, redirectURL, skipRedirect);
+        return true;
       } catch (error) {
         setErrorMessage(error instanceof Error ? error.message : "Login failed");
+        return false;
       } finally {
         setIsLoggingIn(false);
       }
