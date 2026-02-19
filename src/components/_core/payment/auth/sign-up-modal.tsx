@@ -128,7 +128,7 @@ export function SignUpModal({
         },
         undefined,
         undefined,
-        { skipRedirect: true }
+        { skipRedirect: true },
       );
       if (paymentShowOtpStorageKey && typeof sessionStorage !== "undefined") {
         sessionStorage.setItem(paymentShowOtpStorageKey, "1");
@@ -150,7 +150,7 @@ export function SignUpModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-110 w-[calc(100%-2rem)] p-0 gap-0 overflow-hidden border border-gray-200 rounded-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-116 w-[calc(100%-2rem)] p-0 gap-0 overflow-hidden border border-gray-200 rounded-2xl max-h-[90vh] overflow-y-auto">
         <DialogTitle className="sr-only">Create an account</DialogTitle>
         <div className="p-6">
           <div className="flex flex-col gap-2 mb-1">
@@ -333,7 +333,9 @@ export function SignUpModal({
               </div>
             </div>
 
-
+            <div className="text-sm text-[#64748B]">
+              8 character - special character - upper case - lower case
+            </div>
 
             <Button
               type="submit"
