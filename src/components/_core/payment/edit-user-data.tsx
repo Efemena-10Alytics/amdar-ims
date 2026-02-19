@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useUpdateUser } from "@/features/payment/use-update-user";
 
 const inputBase = cn(
   "w-full rounded-lg bg-[#F8FAFC] text-sm placeholder:text-xs px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8] border border-transparent",
@@ -38,6 +39,26 @@ function getCountryCodeForCountry(countryName: string): string {
   const option = COUNTRY_OPTIONS.find((c) => c.name === countryName);
   return option?.code ?? "+234";
 }
+
+/** Remove the country code from the start of phone if it matches (e.g. +2347069261508 → 7069261508). */
+export function stripCountryCodeFromPhone(
+  phone: string,
+  countryCode: string,
+): string {
+  if (!phone?.trim() || !countryCode?.trim()) return phone?.trim() ?? "";
+  const trimmed = phone.trim();
+  const codeWithPlus = countryCode.trim().startsWith("+")
+    ? countryCode.trim()
+    : `+${countryCode.trim()}`;
+  const codeWithoutPlus = codeWithPlus.slice(1);
+  if (trimmed.startsWith(codeWithPlus))
+    return trimmed.slice(codeWithPlus.length).trim();
+  if (trimmed.startsWith(codeWithoutPlus))
+    return trimmed.slice(codeWithoutPlus.length).trim();
+  return trimmed;
+}
+
+export { getCountryCodeForCountry };
 
 export type PersonalDataForm = {
   firstName: string;
@@ -64,32 +85,33 @@ interface EditUserDataProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   initialData?: Partial<PersonalDataForm> | null;
-  onSave?: (data: PersonalDataForm) => void;
 }
 
 export function EditUserData({
   open,
   onOpenChange,
   initialData,
-  onSave,
 }: EditUserDataProps) {
   const [form, setForm] = useState<FormState>({
     ...defaultForm,
     phoneCountry: "",
   });
+  const { updateUser, isUpdating, errorMessage } = useUpdateUser();
 
   useEffect(() => {
     if (open) {
       const location = initialData?.location ?? defaultForm.location;
       const countryCode =
         initialData?.countryCode ?? getCountryCodeForCountry(location);
+      const rawPhone = initialData?.phone ?? defaultForm.phone;
+      const phone = stripCountryCodeFromPhone(rawPhone, countryCode);
       setForm({
         firstName: initialData?.firstName ?? defaultForm.firstName,
         lastName: initialData?.lastName ?? defaultForm.lastName,
         email: initialData?.email ?? defaultForm.email,
         location,
         countryCode,
-        phone: initialData?.phone ?? defaultForm.phone,
+        phone,
         phoneCountry: location,
       });
     }
@@ -102,11 +124,15 @@ export function EditUserData({
     form.location.length > 0 &&
     form.phone.trim().length > 0;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const { phoneCountry: _, ...data } = form;
-    onSave?.(data);
-    onOpenChange(false);
+    try {
+      await updateUser(data);
+      onOpenChange(false);
+    } catch {
+      // errorMessage set by hook
+    }
   };
 
   return (
@@ -264,12 +290,17 @@ export function EditUserData({
             </div>
           </div>
 
+          {errorMessage && (
+            <p className="text-sm text-red-600" role="alert">
+              {errorMessage}
+            </p>
+          )}
           <Button
             type="submit"
-            disabled={!isFormComplete}
+            disabled={!isFormComplete || isUpdating}
             className="w-full h-12 text-base font-semibold rounded-lg bg-[#0F4652] hover:bg-[#0d3d47] text-white disabled:opacity-50 disabled:pointer-events-none mt-2"
           >
-            Continue
+            {isUpdating ? "Saving…" : "Continue"}
           </Button>
         </form>
       </DialogContent>

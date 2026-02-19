@@ -10,6 +10,8 @@ import type { CheckoutSelections } from "@/types/payment";
 import { ChangeDate } from "./change-date";
 import {
   EditUserData,
+  getCountryCodeForCountry,
+  stripCountryCodeFromPhone,
   type PersonalDataForm,
 } from "./edit-user-data";
 
@@ -69,6 +71,12 @@ function getPersonalDataFromUser(user: Record<string, unknown> | null): Array<{
     ) {
       raw = user.country;
     }
+    if (key === "phoneNumber" && raw != null && typeof raw === "string") {
+      const location =
+        (user.location as string) ?? (user.country as string) ?? "";
+      const countryCode = getCountryCodeForCountry(location);
+      raw = stripCountryCodeFromPhone(raw, countryCode);
+    }
     const value = raw != null && typeof raw === "string" ? raw : "—";
     return { label, value, ...(withFlag && { withFlag }) };
   });
@@ -126,35 +134,20 @@ const PaymentDetails = ({
     const firstName = (profile.firstName as string) ?? "";
     const lastName = (profile.lastName as string) ?? "";
     const email = (profile.email as string) ?? "";
-    const location = ((profile.location as string) || (profile.country as string)) ?? "";
-    const phoneNumber = (profile.phoneNumber as string) ?? "";
+    const location =
+      ((profile.location as string) || (profile.country as string)) ?? "";
+    const countryCode = getCountryCodeForCountry(location);
+    const rawPhone = (profile.phoneNumber as string) ?? "";
+    const phone = stripCountryCodeFromPhone(rawPhone, countryCode);
     return {
       firstName,
       lastName,
       email,
       location,
-      countryCode: "+234",
-      phone: phoneNumber,
+      countryCode,
+      phone,
     };
   }, [profile]);
-
-  const handleSavePersonalData = (data: PersonalDataForm) => {
-    if (!user || typeof user !== "object") return;
-    const phoneNumber = data.countryCode ? `${data.countryCode} ${data.phone}`.trim() : data.phone;
-    const payload = {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      location: data.location,
-      country: data.location,
-      phoneNumber,
-    };
-    const updatedUser =
-      "user" in user && user.user && typeof user.user === "object"
-        ? { ...user, user: { ...(user.user as Record<string, unknown>), ...payload } }
-        : { ...(user as Record<string, unknown>), ...payload };
-    setUser(updatedUser as AuthUser);
-  };
 
   const { originalPlanTotal, originalAmounts } = useMemo(() => {
     const pricing = checkoutSelections?.pricing;
@@ -416,7 +409,6 @@ const PaymentDetails = ({
         open={editDataOpen}
         onOpenChange={setEditDataOpen}
         initialData={editInitialData}
-        onSave={handleSavePersonalData}
       />
     </div>
   );
