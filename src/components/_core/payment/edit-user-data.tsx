@@ -96,7 +96,7 @@ export function EditUserData({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-[calc(100%-2rem)] rounded-2xl border border-gray-200/80 shadow-lg bg-white p-6"
+        className="sm:max-w-lg rounded-2xl border border-gray-200/80 shadow-lg bg-white p-6"
         showCloseButton={true}
       >
         <DialogHeader>

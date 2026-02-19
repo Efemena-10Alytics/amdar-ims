@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useCompleteProfile } from "@/features/payment/use-complete-profile";
 import {
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import ErrorAlert from "@/components/_core/auth/error-alert";
 import { cn } from "@/lib/utils";
+import { useGetUserInfo } from "@/features/auth/use-get-user-info";
 
 const inputBase = cn(
   "w-full rounded-lg bg-[#F8FAFC] px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8]",
@@ -89,6 +90,42 @@ const initialFormData: CompleteProfileFormData = {
   referralCode: "",
 };
 
+/** Get profile object from user info (nested user or top-level). */
+function getProfileFromUserInfo(
+  userInfo: Record<string, unknown> | null | undefined,
+): Record<string, unknown> | null {
+  if (!userInfo || typeof userInfo !== "object") return null;
+  if ("user" in userInfo && userInfo.user && typeof userInfo.user === "object")
+    return userInfo.user as Record<string, unknown>;
+  return userInfo;
+}
+
+/** Build prefill from user profile (nested user or top-level). */
+function getPrefillFromProfile(
+  profile: Record<string, unknown> | null | undefined,
+): Partial<CompleteProfileFormData> {
+  if (!profile || typeof profile !== "object") return {};
+  const prefill: Partial<CompleteProfileFormData> = {};
+  const skillLevel = profile.skillLevel ?? profile.skill_level;
+  if (skillLevel != null && String(skillLevel).trim() !== "")
+    prefill.skillLevel = String(skillLevel).trim();
+  if (profile.gender != null && String(profile.gender).trim() !== "")
+    prefill.gender = String(profile.gender).trim();
+  const findOut = profile.find_out;
+  if (findOut != null && String(findOut).trim() !== "")
+    prefill.howDidYouHear = String(findOut).trim();
+  const decisionInfluenced = profile.decision_influenced;
+  if (decisionInfluenced != null && String(decisionInfluenced).trim() !== "")
+    prefill.reasonForDecision = String(decisionInfluenced).trim();
+  const sessionInfluenced = profile.session_influenced;
+  if (sessionInfluenced != null && String(sessionInfluenced).trim() !== "")
+    prefill.sessionOfDecision = String(sessionInfluenced).trim();
+  const ref = profile.ref;
+  if (ref != null && String(ref).trim() !== "")
+    prefill.referralCode = String(ref).trim();
+  return prefill;
+}
+
 const REQUIRED_FIELDS: (keyof Omit<CompleteProfileFormData, "referralCode">)[] =
   [
     "skillLevel",
@@ -125,12 +162,44 @@ export default function CompleteProfile({
   programTitle,
   onProfileComplete,
 }: CompleteProfileProps) {
+  const { data: userInfo, isLoading: isLoadingUserInfo } = useGetUserInfo();
+  const profile = getProfileFromUserInfo(
+    userInfo as Record<string, unknown> | null | undefined,
+  );
+
   const [formData, setFormData] =
     useState<CompleteProfileFormData>(initialFormData);
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<keyof CompleteProfileFormData, string>>
   >({});
   const { updateUser, isUpdating, errorMessage } = useCompleteProfile();
+
+  // Prefill from user info when available; only fill fields that are still empty
+  useEffect(() => {
+    if (!profile) return;
+    const prefill = getPrefillFromProfile(profile);
+    if (Object.keys(prefill).length === 0) return;
+    setFormData((prev) => {
+      const next = { ...prev };
+      (Object.keys(prefill) as (keyof CompleteProfileFormData)[]).forEach(
+        (k) => {
+          const value = prefill[k];
+          if (
+            value != null &&
+            value !== "" &&
+            (prev[k] == null || prev[k] === "")
+          ) {
+            next[k] = value;
+          }
+        },
+      );
+      return next;
+    });
+  }, [profile]);
+
+  
+  console.log(formData);
+  console.log('profile info',profile);
 
   const valid = isFormValid(formData);
 
@@ -193,6 +262,9 @@ export default function CompleteProfile({
           <div className="mt-4">
             <ErrorAlert error={errorMessage} />
           </div>
+        ) : null}
+        {isLoadingUserInfo ? (
+          <p className="mt-4 text-sm text-[#64748B]">Loading your profile…</p>
         ) : null}
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-5 w-full">

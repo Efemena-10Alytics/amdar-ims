@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { InternshipProgram } from "@/types/internship-program";
-import { PaymentStepId } from "./side-nav";
 import {
   useCheckoutFormStorage,
   type PaymentPlanId,
@@ -114,14 +113,13 @@ function getPaymentPlansFromPricing(
 interface CheckoutProps {
   checkoutData?: CheckoutData;
   program?: InternshipProgram;
-  setActiveStep: React.Dispatch<React.SetStateAction<PaymentStepId>>;
+  /** Parent calls this with selections; parent is responsible for navigating to next step (or e.g. opening sign-in). */
   onProceed?: (selections: CheckoutSelections) => void;
 }
 
 const Checkout = ({
   checkoutData,
   program,
-  setActiveStep,
   onProceed,
 }: CheckoutProps) => {
   const firstCurrency = checkoutData?.pricings?.[0]?.currency ?? "USD";
@@ -135,11 +133,10 @@ const Checkout = ({
     persistSelections,
   } = useCheckoutFormStorage(program?.id, checkoutData, firstCurrency);
 
-  // Persist full selections when proceeding so parent can hydrate after refresh
+  // Persist selections and notify parent; parent controls navigation (e.g. may open sign-in if not logged in)
   const handleProceedWithPersist = (selections: CheckoutSelections) => {
-    onProceed?.(selections);
     persistSelections(selections);
-    setActiveStep("personal");
+    onProceed?.(selections);
   };
 
   const selectedPricing = useMemo(

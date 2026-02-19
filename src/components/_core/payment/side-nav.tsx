@@ -29,13 +29,18 @@ const SideNav = ({ activeStep, onStepChange }: SideNavProps) => {
           {STEPS.map((step, i) => {
             const isActive = activeStep === step.id;
             const isCompleted = i < activeIndex;
+            const isCompleteProfile = step.id === "complete-profile";
+            const canSelect = !isCompleteProfile || isActive;
             return (
               <li key={step.id}>
                 <button
                   type="button"
-                  onClick={() => onStepChange(step.id)}
+                  onClick={() => canSelect && onStepChange(step.id)}
+                  disabled={!canSelect}
+                  aria-disabled={!canSelect}
                   className={cn(
                     "whitespace-nowrap flex flex-col lg:flex-row w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors",
+                    !canSelect && "cursor-not-allowed opacity-70",
                     isActive
                       ? "font-semibold text-[#092A31]"
                       : isCompleted

@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { axiosInstance } from "@/lib/axios-instance";
+import { useAuthStore, type AuthUser } from "@/store/auth-store";
 
 export type UpdateUserPayload = {
   gender: string;
@@ -13,7 +14,7 @@ export type UpdateUserPayload = {
 
 type UpdateUserResponse = {
   success?: boolean;
-  data?: unknown;
+  data?: AuthUser;
 };
 
 function getErrorMessage(error: unknown): string {
@@ -41,6 +42,9 @@ export function useCompleteProfile() {
         setErrorMessage(getErrorMessage(new Error("Update failed")));
         return;
       }
+      // if (res?.data?.data) {
+      //   useAuthStore.getState().setUser(res.data.data);
+      // }
       return res.data;
     } catch (error) {
       const message = getErrorMessage(error);

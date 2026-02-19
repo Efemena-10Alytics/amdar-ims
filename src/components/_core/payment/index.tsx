@@ -91,13 +91,6 @@ const PaymentMain = ({
     router.replace(`${pathname}?${next.toString()}`);
   }, [statusSuccess, pathname, router, searchParams]);
 
-  // When on complete-profile step and user is not logged in, open sign-in modal
-  useEffect(() => {
-    if (activeStep === "personal" && user == null) {
-      setSignInOpen(true);
-    }
-  }, [activeStep, user]);
-
   const handleProfileComplete = useCallback(() => {
     const shouldShowOtp =
       typeof window !== "undefined" &&
@@ -167,16 +160,24 @@ const PaymentMain = ({
 
   return (
     <div className="flex flex-col gap-8 lg:flex-row">
-      <SideNav activeStep={activeStep} onStepChange={setActiveStep} />
+      <div className="lg:sticky lg:top-48 lg:self-start shrink-0">
+        <SideNav activeStep={activeStep} onStepChange={setActiveStep} />
+      </div>
 
-      {/* Right content – render based on active step */}
+      {/* Middle content – scrolls */}
       <div className="min-w-0 flex-1 w-full">
         {activeStep === "checkout" && (
           <Checkout
             checkoutData={checkoutData}
             program={program}
-            setActiveStep={setActiveStep}
-            onProceed={setCheckoutSelections}
+            onProceed={(selections) => {
+              setCheckoutSelections(selections);
+              if (user != null) {
+                setActiveStep("personal");
+              } else {
+                setSignInOpen(true);
+              }
+            }}
           />
         )}
         {activeStep === "personal" && (
@@ -184,7 +185,9 @@ const PaymentMain = ({
             checkoutSelections={checkoutSelections}
             nextPaymentDateYmd={nextPaymentDateYmd}
             onNextPaymentDateChange={setNextPaymentDateYmd}
-            onProceed={handlePayNow}
+            onProceed={
+              user != null ? handlePayNow : () => setSignInOpen(true)
+            }
             isProcessingPayment={isProcessingPayment}
             paymentError={paymentError}
             discount={
@@ -200,11 +203,13 @@ const PaymentMain = ({
         )}
       </div>
       {activeStep !== "complete-profile" && (
-        <Coupon
-          discount={
-            checkoutData?.promo_code_data?.discount_percentage as string
-          }
-        />
+        <div className="lg:sticky lg:top-48 lg:self-start shrink-0">
+          <Coupon
+            discount={
+              checkoutData?.promo_code_data?.discount_percentage as string
+            }
+          />
+        </div>
       )}
 
       <PaymentSuccessModal
@@ -223,6 +228,9 @@ const PaymentMain = ({
           setSignInOpen(false);
           setSignUpOpen(true);
         }}
+        onSignInSuccess={
+          activeStep === "checkout" ? () => setActiveStep("personal") : undefined
+        }
         paymentShowOtpStorageKey={PAYMENT_SHOW_OTP_AFTER_PROFILE_KEY}
       />
 
@@ -233,6 +241,9 @@ const PaymentMain = ({
           setSignUpOpen(false);
           setSignInOpen(true);
         }}
+        onSignUpSuccess={
+          activeStep === "checkout" ? () => setActiveStep("personal") : undefined
+        }
         paymentShowOtpStorageKey={PAYMENT_SHOW_OTP_AFTER_PROFILE_KEY}
       />
 

@@ -48,7 +48,7 @@ const STEPS: Array<{
     number: 6,
     title: "Reference Letter & Portfolio",
     description:
-      "Earn an official Amdari Reference Letter valid for two (2) years that validates your hands-on experience and strengthens your résumé, along with a polished portfolio showcasing your projects and skills.Upon completion, earn a certificate and develop a portfolio to showcase your skills to potential employers.",
+      "Earn an official Reference Letter valid for 2 years to validate your hands-on experience, plus a polished portfolio that showcases your projects and skills.",
     iconSrc: `${PROGRAM_STRUCTURE_ICONS_BASE}/certification-portfolio.svg`,
   },
 ];
@@ -60,11 +60,11 @@ const ProgramStructure = () => {
         Program Structure
       </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-5">
         {STEPS.map(({ number, title, description, iconSrc }) => (
           <div
             key={number}
-            className="relative rounded-2xl bg-[#E8EFF1] p-5 py-10 overflow-hidden min-h-40 flex flex-col"
+            className="relative rounded-2xl bg-[#E8EFF1] p-5 py-10 overflow-hidden min-h-40 flex flex-col justify-center items-center"
           >
             {/* Background icon from public folder */}
             <div
