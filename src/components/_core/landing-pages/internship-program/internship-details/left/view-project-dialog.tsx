@@ -2,37 +2,52 @@
 
 import React from "react";
 import Image from "next/image";
+import { ChevronRight } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { baseUrl, cn, imageUrl } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { baseUrl, cn } from "@/lib/utils";
 import { Project } from "@/types/internship-program";
 
 export type ViewProjectDialogProps = {
   open: boolean;
   onClose: () => void;
   project?: Project;
+  projects?: Project[];
+  onSelectProject?: (project: Project) => void;
 };
 
 const ViewProjectDialog = ({
   open,
   onClose,
   project,
+  projects = [],
+  onSelectProject,
 }: ViewProjectDialogProps) => {
+  const currentIndex = project
+    ? projects.findIndex((p) => p.id === project.id)
+    : -1;
+  const hasPrev = currentIndex > 0;
+  const hasNext = currentIndex >= 0 && currentIndex < projects.length - 1;
+  const prevProject = hasPrev ? projects[currentIndex - 1] : undefined;
+  const nextProject = hasNext ? projects[currentIndex + 1] : undefined;
+
   const imageSrc = project?.project_image
     ? `${baseUrl}${project.project_image}`
     : "/images/pngs/intern-project.png";
-  console.log("imageSrc", imageSrc);
+
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent
         className={cn(
-          "fixed top-[50%] left-auto right-10 translate-x-0 -translate-y-1/2 h-[98vh] max-w-120! 2xl:max-w-150 w-full rounded-md flex flex-col p-0 gap-0",
+          "h-[92vh] w-full max-w-[calc(100%-2rem)] rounded-md flex flex-col p-0 gap-0 sm:max-w-3xl",
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
-          "data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right",
+          "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+          "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
         )}
         showCloseButton={true}
       >
@@ -48,7 +63,7 @@ const ViewProjectDialog = ({
         </DialogHeader>
 
         {/* Content Sections - Stacked */}
-        <div className="flex-1 overflow-y-auto p-6 pt-0">
+        <div className="flex-1 overflow-y-auto w-full p-6 pt-0 min-h-0">
           <div className="text-[#64748B] text-sm leading-relaxed mb-3 text-left">
             {project?.description}
           </div>
@@ -90,6 +105,28 @@ const ViewProjectDialog = ({
               </div>
             )}
           </div>
+        </div>
+
+        {/* Fixed bottom: Back / Next Project */}
+        <div className="shrink-0 flex items-center border-t border-gray-200 bg-gray-100/80 rounded-b-lg">
+          <Button
+            type="button"
+            variant="outline"
+            disabled={!hasPrev || !prevProject}
+            onClick={() => prevProject && onSelectProject?.(prevProject)}
+            className="flex-1 rounded-bl-md! h-14 rounded-none border-gray-200 bg-white text-[#092A31] hover:bg-gray-50 font-medium"
+          >
+            Back
+          </Button>
+          <Button
+            type="button"
+            disabled={!hasNext || !nextProject}
+            onClick={() => nextProject && onSelectProject?.(nextProject)}
+            className="flex-1 rounded-br-md! h-14 rounded-none bg-[#0F4652] text-amdari-yellow hover:bg-[#0d3d47] font-medium gap-2"
+          >
+            Next Project
+            <ChevronRight className="size-4" />
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

@@ -71,6 +71,8 @@ const InternsProject = ({ projects = [] }: InternsProjectProps) => {
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         project={selectedProject ?? undefined}
+        projects={projects}
+        onSelectProject={setSelectedProject}
       />
     </div>
   );
