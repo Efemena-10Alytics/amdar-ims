@@ -13,8 +13,7 @@ const STEPS: Array<{
   {
     number: 1,
     title: "Registration",
-    description:
-      "Choose the career experience that aligns with your goals.",
+    description: "Choose the career experience that aligns with your goals.",
     iconSrc: `${PROGRAM_STRUCTURE_ICONS_BASE}/register.svg`,
   },
   {
@@ -47,9 +46,9 @@ const STEPS: Array<{
   },
   {
     number: 6,
-    title: "Certification and Portfolio",
+    title: "Reference Letter & Portfolio",
     description:
-      "Upon completion, earn a certificate and develop a portfolio to showcase your skills to potential employers.",
+      "Earn an official Amdari Reference Letter valid for two (2) years that validates your hands-on experience and strengthens your résumé, along with a polished portfolio showcasing your projects and skills.Upon completion, earn a certificate and develop a portfolio to showcase your skills to potential employers.",
     iconSrc: `${PROGRAM_STRUCTURE_ICONS_BASE}/certification-portfolio.svg`,
   },
 ];
