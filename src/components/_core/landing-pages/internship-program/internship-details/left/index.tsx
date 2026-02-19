@@ -32,7 +32,7 @@ const Left = ({ program }: LeftProps) => {
     "Career Opportunity",
     "Program Structure",
     "Faqs",
-    "Interns projects",
+    "Projects showcase",
   ];
 
   const tools =
@@ -163,7 +163,7 @@ const Left = ({ program }: LeftProps) => {
 
       {/* Content Section */}
       {activeTab === "Overview" && <Overview overview={program?.overview} />}
-      {activeTab === "Interns projects" && (
+      {activeTab === "Projects showcase" && (
         <InternsProject projects={program?.projects ?? []} />
       )}
       {activeTab === "What you'll gain" && <Gain gain={program?.gain} />}

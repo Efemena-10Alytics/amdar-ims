@@ -167,9 +167,11 @@ const PaymentMain = ({
 
   return (
     <div className="flex flex-col gap-8 lg:flex-row">
-      <SideNav activeStep={activeStep} onStepChange={setActiveStep} />
+      <div className="lg:sticky lg:top-48 lg:self-start shrink-0">
+        <SideNav activeStep={activeStep} onStepChange={setActiveStep} />
+      </div>
 
-      {/* Right content – render based on active step */}
+      {/* Middle content – scrolls */}
       <div className="min-w-0 flex-1 w-full">
         {activeStep === "checkout" && (
           <Checkout
@@ -200,11 +202,13 @@ const PaymentMain = ({
         )}
       </div>
       {activeStep !== "complete-profile" && (
-        <Coupon
-          discount={
-            checkoutData?.promo_code_data?.discount_percentage as string
-          }
-        />
+        <div className="lg:sticky lg:top-48 lg:self-start shrink-0">
+          <Coupon
+            discount={
+              checkoutData?.promo_code_data?.discount_percentage as string
+            }
+          />
+        </div>
       )}
 
       <PaymentSuccessModal

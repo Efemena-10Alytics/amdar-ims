@@ -48,7 +48,7 @@ const STEPS: Array<{
     number: 6,
     title: "Reference Letter & Portfolio",
     description:
-      "Earn an official Amdari Reference Letter valid for two (2) years that validates your hands-on experience and strengthens your résumé, along with a polished portfolio showcasing your projects and skills.Upon completion, earn a certificate and develop a portfolio to showcase your skills to potential employers.",
+      "Earn an official Reference Letter valid for 2 years to validate your hands-on experience, plus a polished portfolio that showcases your projects and skills.",
     iconSrc: `${PROGRAM_STRUCTURE_ICONS_BASE}/certification-portfolio.svg`,
   },
 ];
