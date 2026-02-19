@@ -50,7 +50,7 @@ const ViewProjectDialog = ({
           "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
           "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
         )}
-        showCloseButton={true}
+        showCloseButton={false}
       >
         {/* Header */}
         <DialogHeader className="shrink-0 p-6 pb-0! border-b border-gray-100">
