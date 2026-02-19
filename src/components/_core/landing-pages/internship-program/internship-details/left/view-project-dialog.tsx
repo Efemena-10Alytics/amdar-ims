@@ -2,12 +2,13 @@
 
 import React from "react";
 import Image from "next/image";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { baseUrl, cn } from "@/lib/utils";
@@ -44,7 +45,7 @@ const ViewProjectDialog = ({
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent
         className={cn(
-          "h-[92vh] w-full max-w-[calc(100%-2rem)] rounded-md flex flex-col p-0 gap-0 sm:max-w-3xl",
+          "h-[90vh] w-full max-w-[calc(100%-2rem)] rounded-md flex flex-col p-0 gap-0 sm:max-w-3xl",
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
           "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
           "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -53,7 +54,16 @@ const ViewProjectDialog = ({
       >
         {/* Header */}
         <DialogHeader className="shrink-0 p-6 pb-0! border-b border-gray-100">
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex-col items-start justify-between gap-4">
+            <DialogClose>
+              <div
+                role="button"
+                className="text-[#D93E3E] mb-2 flex items-center gap-1 cursor-pointer hover:scale-105 w-fit transition-all duration-300"
+              >
+                {" "}
+                <X className="size-5" /> Close
+              </div>
+            </DialogClose>
             <div className="flex-1 min-w-0">
               <DialogTitle className="text-xl font-semibold text-[#092A31] mb-2 text-left">
                 {project?.name}
@@ -108,7 +118,7 @@ const ViewProjectDialog = ({
         </div>
 
         {/* Fixed bottom: Back / Next Project */}
-        <div className="shrink-0 flex items-center border-t border-gray-200 bg-gray-100/80 rounded-b-lg">
+        <div className="shrink-0 flex items-center border-t border-[#F8FAFB] rounded-b-lg">
           <Button
             type="button"
             variant="outline"
