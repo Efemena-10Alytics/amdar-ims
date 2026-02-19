@@ -185,7 +185,9 @@ const PaymentMain = ({
             checkoutSelections={checkoutSelections}
             nextPaymentDateYmd={nextPaymentDateYmd}
             onNextPaymentDateChange={setNextPaymentDateYmd}
-            onProceed={handlePayNow}
+            onProceed={
+              user != null ? handlePayNow : () => setSignInOpen(true)
+            }
             isProcessingPayment={isProcessingPayment}
             paymentError={paymentError}
             discount={
