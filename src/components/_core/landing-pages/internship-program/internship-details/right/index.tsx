@@ -13,8 +13,7 @@ interface RightProps {
 }
 
 /** Fallback when video has no YouTube thumbnail (e.g. Vimeo) or image fails. */
-const DEFAULT_VIDEO_THUMBNAIL =
-  "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80";
+const DEFAULT_VIDEO_THUMBNAIL = "/images/pngs/video-thumbnail.jpeg";
 
 const Right = ({ program }: RightProps) => {
   const [videoOpen, setVideoOpen] = useState(false);
@@ -91,7 +90,7 @@ const Right = ({ program }: RightProps) => {
       >
         {videoThumbnail ? (
           <Image
-            src={thumbnailError ? DEFAULT_VIDEO_THUMBNAIL : videoThumbnail}
+            src={thumbnailError ? DEFAULT_VIDEO_THUMBNAIL : DEFAULT_VIDEO_THUMBNAIL}
             alt="Video thumbnail"
             fill
             className="object-cover"

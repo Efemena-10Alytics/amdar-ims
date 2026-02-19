@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useUpdateUser } from "@/features/payment/use-update-user";
 
 const inputBase = cn(
   "w-full rounded-lg bg-[#F8FAFC] text-sm placeholder:text-xs px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8] border border-transparent",
@@ -33,6 +34,31 @@ const COUNTRY_OPTIONS = [
   { name: "Canada", code: "+1", flag: "🇨🇦" },
   { name: "Other", code: "", flag: "🌐" },
 ] as const;
+
+function getCountryCodeForCountry(countryName: string): string {
+  const option = COUNTRY_OPTIONS.find((c) => c.name === countryName);
+  return option?.code ?? "+234";
+}
+
+/** Remove the country code from the start of phone if it matches (e.g. +2347069261508 → 7069261508). */
+export function stripCountryCodeFromPhone(
+  phone: string,
+  countryCode: string,
+): string {
+  if (!phone?.trim() || !countryCode?.trim()) return phone?.trim() ?? "";
+  const trimmed = phone.trim();
+  const codeWithPlus = countryCode.trim().startsWith("+")
+    ? countryCode.trim()
+    : `+${countryCode.trim()}`;
+  const codeWithoutPlus = codeWithPlus.slice(1);
+  if (trimmed.startsWith(codeWithPlus))
+    return trimmed.slice(codeWithPlus.length).trim();
+  if (trimmed.startsWith(codeWithoutPlus))
+    return trimmed.slice(codeWithoutPlus.length).trim();
+  return trimmed;
+}
+
+export { getCountryCodeForCountry };
 
 export type PersonalDataForm = {
   firstName: string;
@@ -52,30 +78,41 @@ const defaultForm: PersonalDataForm = {
   phone: "",
 };
 
+/** Phone country is stored by name so US and Canada both show uniquely (same +1 code). */
+type FormState = PersonalDataForm & { phoneCountry: string };
+
 interface EditUserDataProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   initialData?: Partial<PersonalDataForm> | null;
-  onSave?: (data: PersonalDataForm) => void;
 }
 
 export function EditUserData({
   open,
   onOpenChange,
   initialData,
-  onSave,
 }: EditUserDataProps) {
-  const [form, setForm] = useState<PersonalDataForm>(defaultForm);
+  const [form, setForm] = useState<FormState>({
+    ...defaultForm,
+    phoneCountry: "",
+  });
+  const { updateUser, isUpdating, errorMessage } = useUpdateUser();
 
   useEffect(() => {
     if (open) {
+      const location = initialData?.location ?? defaultForm.location;
+      const countryCode =
+        initialData?.countryCode ?? getCountryCodeForCountry(location);
+      const rawPhone = initialData?.phone ?? defaultForm.phone;
+      const phone = stripCountryCodeFromPhone(rawPhone, countryCode);
       setForm({
         firstName: initialData?.firstName ?? defaultForm.firstName,
         lastName: initialData?.lastName ?? defaultForm.lastName,
         email: initialData?.email ?? defaultForm.email,
-        location: initialData?.location ?? defaultForm.location,
-        countryCode: initialData?.countryCode ?? defaultForm.countryCode,
-        phone: initialData?.phone ?? defaultForm.phone,
+        location,
+        countryCode,
+        phone,
+        phoneCountry: location,
       });
     }
   }, [open, initialData]);
@@ -87,10 +124,15 @@ export function EditUserData({
     form.location.length > 0 &&
     form.phone.trim().length > 0;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave?.(form);
-    onOpenChange(false);
+    const { phoneCountry: _, ...data } = form;
+    try {
+      await updateUser(data);
+      onOpenChange(false);
+    } catch {
+      // errorMessage set by hook
+    }
   };
 
   return (
@@ -176,7 +218,12 @@ export function EditUserData({
             <Select
               value={form.location || undefined}
               onValueChange={(value) =>
-                setForm((prev) => ({ ...prev, location: value }))
+                setForm((prev) => ({
+                  ...prev,
+                  location: value,
+                  phoneCountry: value,
+                  countryCode: getCountryCodeForCountry(value),
+                }))
               }
             >
               <SelectTrigger
@@ -204,9 +251,13 @@ export function EditUserData({
             </label>
             <div className="flex rounded-lg overflow-hidden border border-transparent focus-within:ring-2 focus-within:ring-[#156374] focus-within:ring-offset-0 bg-[#F8FAFC]">
               <Select
-                value={form.countryCode}
+                value={form.phoneCountry || undefined}
                 onValueChange={(value) =>
-                  setForm((prev) => ({ ...prev, countryCode: value }))
+                  setForm((prev) => ({
+                    ...prev,
+                    phoneCountry: value,
+                    countryCode: getCountryCodeForCountry(value),
+                  }))
                 }
               >
                 <SelectTrigger className="w-30 shrink-0 rounded-none border-0 border-r border-gray-200 bg-[#F8FAFC] py-3 h-auto focus:ring-0">
@@ -214,7 +265,7 @@ export function EditUserData({
                 </SelectTrigger>
                 <SelectContent>
                   {COUNTRY_OPTIONS.map((c) => (
-                    <SelectItem key={c.name} value={c.code || c.name}>
+                    <SelectItem key={c.name} value={c.name}>
                       <span className="flex items-center gap-2">
                         <span aria-hidden>{c.flag}</span>
                         <span>{c.code || "—"}</span>
@@ -239,12 +290,17 @@ export function EditUserData({
             </div>
           </div>
 
+          {errorMessage && (
+            <p className="text-sm text-red-600" role="alert">
+              {errorMessage}
+            </p>
+          )}
           <Button
             type="submit"
-            disabled={!isFormComplete}
+            disabled={!isFormComplete || isUpdating}
             className="w-full h-12 text-base font-semibold rounded-lg bg-[#0F4652] hover:bg-[#0d3d47] text-white disabled:opacity-50 disabled:pointer-events-none mt-2"
           >
-            Continue
+            {isUpdating ? "Saving…" : "Continue"}
           </Button>
         </form>
       </DialogContent>
