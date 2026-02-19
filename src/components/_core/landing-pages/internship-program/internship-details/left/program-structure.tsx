@@ -60,11 +60,11 @@ const ProgramStructure = () => {
         Program Structure
       </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-5">
         {STEPS.map(({ number, title, description, iconSrc }) => (
           <div
             key={number}
-            className="relative rounded-2xl bg-[#E8EFF1] p-5 py-10 overflow-hidden min-h-40 flex flex-col"
+            className="relative rounded-2xl bg-[#E8EFF1] p-5 py-10 overflow-hidden min-h-40 flex flex-col justify-center items-center"
           >
             {/* Background icon from public folder */}
             <div

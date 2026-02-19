@@ -42,9 +42,9 @@ export function useCompleteProfile() {
         setErrorMessage(getErrorMessage(new Error("Update failed")));
         return;
       }
-      if (res?.data?.data) {
-        useAuthStore.getState().setUser(res.data.data);
-      }
+      // if (res?.data?.data) {
+      //   useAuthStore.getState().setUser(res.data.data);
+      // }
       return res.data;
     } catch (error) {
       const message = getErrorMessage(error);

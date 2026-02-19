@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import ErrorAlert from "@/components/_core/auth/error-alert";
 import { cn } from "@/lib/utils";
-import { useAuthStore } from "@/store/auth-store";
+import { useGetUserInfo } from "@/features/auth/use-get-user-info";
 
 const inputBase = cn(
   "w-full rounded-lg bg-[#F8FAFC] px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8]",
@@ -90,7 +90,17 @@ const initialFormData: CompleteProfileFormData = {
   referralCode: "",
 };
 
-/** Build prefill from auth user profile (nested user or top-level). */
+/** Get profile object from user info (nested user or top-level). */
+function getProfileFromUserInfo(
+  userInfo: Record<string, unknown> | null | undefined,
+): Record<string, unknown> | null {
+  if (!userInfo || typeof userInfo !== "object") return null;
+  if ("user" in userInfo && userInfo.user && typeof userInfo.user === "object")
+    return userInfo.user as Record<string, unknown>;
+  return userInfo;
+}
+
+/** Build prefill from user profile (nested user or top-level). */
 function getPrefillFromProfile(
   profile: Record<string, unknown> | null | undefined,
 ): Partial<CompleteProfileFormData> {
@@ -152,15 +162,10 @@ export default function CompleteProfile({
   programTitle,
   onProfileComplete,
 }: CompleteProfileProps) {
-  const { user } = useAuthStore();
-  const profile =
-    user &&
-    typeof user === "object" &&
-    "user" in user &&
-    user.user &&
-    typeof user.user === "object"
-      ? (user.user as Record<string, unknown>)
-      : (user as Record<string, unknown> | null);
+  const { data: userInfo, isLoading: isLoadingUserInfo } = useGetUserInfo();
+  const profile = getProfileFromUserInfo(
+    userInfo as Record<string, unknown> | null | undefined,
+  );
 
   const [formData, setFormData] =
     useState<CompleteProfileFormData>(initialFormData);
@@ -169,7 +174,7 @@ export default function CompleteProfile({
   >({});
   const { updateUser, isUpdating, errorMessage } = useCompleteProfile();
 
-  // Prefill from user data when available; only fill fields that are still empty
+  // Prefill from user info when available; only fill fields that are still empty
   useEffect(() => {
     if (!profile) return;
     const prefill = getPrefillFromProfile(profile);
@@ -257,6 +262,9 @@ export default function CompleteProfile({
           <div className="mt-4">
             <ErrorAlert error={errorMessage} />
           </div>
+        ) : null}
+        {isLoadingUserInfo ? (
+          <p className="mt-4 text-sm text-[#64748B]">Loading your profile…</p>
         ) : null}
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-5 w-full">
