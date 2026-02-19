@@ -34,6 +34,11 @@ const COUNTRY_OPTIONS = [
   { name: "Other", code: "", flag: "🌐" },
 ] as const;
 
+function getCountryCodeForCountry(countryName: string): string {
+  const option = COUNTRY_OPTIONS.find((c) => c.name === countryName);
+  return option?.code ?? "+234";
+}
+
 export type PersonalDataForm = {
   firstName: string;
   lastName: string;
@@ -52,6 +57,9 @@ const defaultForm: PersonalDataForm = {
   phone: "",
 };
 
+/** Phone country is stored by name so US and Canada both show uniquely (same +1 code). */
+type FormState = PersonalDataForm & { phoneCountry: string };
+
 interface EditUserDataProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -65,17 +73,24 @@ export function EditUserData({
   initialData,
   onSave,
 }: EditUserDataProps) {
-  const [form, setForm] = useState<PersonalDataForm>(defaultForm);
+  const [form, setForm] = useState<FormState>({
+    ...defaultForm,
+    phoneCountry: "",
+  });
 
   useEffect(() => {
     if (open) {
+      const location = initialData?.location ?? defaultForm.location;
+      const countryCode =
+        initialData?.countryCode ?? getCountryCodeForCountry(location);
       setForm({
         firstName: initialData?.firstName ?? defaultForm.firstName,
         lastName: initialData?.lastName ?? defaultForm.lastName,
         email: initialData?.email ?? defaultForm.email,
-        location: initialData?.location ?? defaultForm.location,
-        countryCode: initialData?.countryCode ?? defaultForm.countryCode,
+        location,
+        countryCode,
         phone: initialData?.phone ?? defaultForm.phone,
+        phoneCountry: location,
       });
     }
   }, [open, initialData]);
@@ -89,7 +104,8 @@ export function EditUserData({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave?.(form);
+    const { phoneCountry: _, ...data } = form;
+    onSave?.(data);
     onOpenChange(false);
   };
 
@@ -176,7 +192,12 @@ export function EditUserData({
             <Select
               value={form.location || undefined}
               onValueChange={(value) =>
-                setForm((prev) => ({ ...prev, location: value }))
+                setForm((prev) => ({
+                  ...prev,
+                  location: value,
+                  phoneCountry: value,
+                  countryCode: getCountryCodeForCountry(value),
+                }))
               }
             >
               <SelectTrigger
@@ -204,9 +225,13 @@ export function EditUserData({
             </label>
             <div className="flex rounded-lg overflow-hidden border border-transparent focus-within:ring-2 focus-within:ring-[#156374] focus-within:ring-offset-0 bg-[#F8FAFC]">
               <Select
-                value={form.countryCode}
+                value={form.phoneCountry || undefined}
                 onValueChange={(value) =>
-                  setForm((prev) => ({ ...prev, countryCode: value }))
+                  setForm((prev) => ({
+                    ...prev,
+                    phoneCountry: value,
+                    countryCode: getCountryCodeForCountry(value),
+                  }))
                 }
               >
                 <SelectTrigger className="w-30 shrink-0 rounded-none border-0 border-r border-gray-200 bg-[#F8FAFC] py-3 h-auto focus:ring-0">
@@ -214,7 +239,7 @@ export function EditUserData({
                 </SelectTrigger>
                 <SelectContent>
                   {COUNTRY_OPTIONS.map((c) => (
-                    <SelectItem key={c.name} value={c.code || c.name}>
+                    <SelectItem key={c.name} value={c.name}>
                       <span className="flex items-center gap-2">
                         <span aria-hidden>{c.flag}</span>
                         <span>{c.code || "—"}</span>
