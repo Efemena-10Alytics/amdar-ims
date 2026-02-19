@@ -91,13 +91,6 @@ const PaymentMain = ({
     router.replace(`${pathname}?${next.toString()}`);
   }, [statusSuccess, pathname, router, searchParams]);
 
-  // When on complete-profile step and user is not logged in, open sign-in modal
-  useEffect(() => {
-    if (activeStep === "personal" && user == null) {
-      setSignInOpen(true);
-    }
-  }, [activeStep, user]);
-
   const handleProfileComplete = useCallback(() => {
     const shouldShowOtp =
       typeof window !== "undefined" &&
@@ -177,8 +170,14 @@ const PaymentMain = ({
           <Checkout
             checkoutData={checkoutData}
             program={program}
-            setActiveStep={setActiveStep}
-            onProceed={setCheckoutSelections}
+            onProceed={(selections) => {
+              setCheckoutSelections(selections);
+              if (user != null) {
+                setActiveStep("personal");
+              } else {
+                setSignInOpen(true);
+              }
+            }}
           />
         )}
         {activeStep === "personal" && (
@@ -227,6 +226,9 @@ const PaymentMain = ({
           setSignInOpen(false);
           setSignUpOpen(true);
         }}
+        onSignInSuccess={
+          activeStep === "checkout" ? () => setActiveStep("personal") : undefined
+        }
         paymentShowOtpStorageKey={PAYMENT_SHOW_OTP_AFTER_PROFILE_KEY}
       />
 
@@ -237,6 +239,9 @@ const PaymentMain = ({
           setSignUpOpen(false);
           setSignInOpen(true);
         }}
+        onSignUpSuccess={
+          activeStep === "checkout" ? () => setActiveStep("personal") : undefined
+        }
         paymentShowOtpStorageKey={PAYMENT_SHOW_OTP_AFTER_PROFILE_KEY}
       />
 
