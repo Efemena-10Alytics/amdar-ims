@@ -35,15 +35,17 @@ const Footer = () => {
   ];
 
   const whatsappContacts = [
-    { name: "Emem", number: "+447878711494" },
+    { name: "Alexandra", number: "+447478036553" },
     { name: "Rita", number: "+447471551285" },
-    { name: "Ummi", number: "+447646 442409" },
+    { name: "Ummi", number: "+447646442409" },
+    { name: "Zuliah", number: "+447366485755 " },
   ];
 
   const callContacts = [
-    { name: "Emem", number: "+447446151822" },
-    { name: "Rita", number: "+447471551285" },
-    { name: "Ummi", number: "+447446 442409" },
+    { name: "Alexandra", number: "+447478036553" },
+    { name: "Rita", number: "+447427132271" },
+    { name: "Ummi", number: "+44 7700 101979" },
+    { name: "Zuliah", number: "⁠+447426460814" },
   ];
 
   const socialLinks = [
@@ -124,7 +126,7 @@ const Footer = () => {
 
           {/* Projects Links */}
           <div data-aos="fade-up">
-            <h3 className="text-base font-bold uppercase mb-4">PROJECTS</h3>
+            <h3 className="text-base font-bold uppercase mb-4">PROGRAMS</h3>
             <nav className="flex flex-col gap-3">
               {projectsLinks.map((link) => (
                 <Link
