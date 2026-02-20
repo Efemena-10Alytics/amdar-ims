@@ -13,42 +13,43 @@ const STEPS: Array<{
   {
     number: 1,
     title: "Registration",
-    description: "Choose the career experience that aligns with your goals.",
+    description:
+      "Choose your career track and secure your place in a structured internship program built to move you from job seeker to job-ready professional.",
     iconSrc: `${PROGRAM_STRUCTURE_ICONS_BASE}/register.svg`,
   },
   {
     number: 2,
-    title: "Skills Assessment",
+    title: "Structured Onboarding",
     description:
-      "Complete a tailored assessment to evaluate your current skills and identify areas for development.",
+      "Access guided onboarding resources that align you with real workplace standards, expectations, and performance benchmarks.",
     iconSrc: `${PROGRAM_STRUCTURE_ICONS_BASE}/skills-assessment.svg`,
   },
   {
     number: 3,
-    title: "Onboarding",
+    title: "Project Assignment",
     description:
-      "Access comprehensive onboarding materials to prepare you for the projects ahead.",
+      "Begin working on real business-focused projects with defined deliverables, deadlines, and accountability systems.",
     iconSrc: `${PROGRAM_STRUCTURE_ICONS_BASE}/onboarding.svg`,
   },
   {
     number: 4,
-    title: "Project Assignment",
+    title: "Mentorship and Feedback",
     description:
-      "Begin working on real-world simulated projects with guidance from mentors.",
+      "Receive continuous guidance, detailed project reviews, and direct feedback from experienced coaches to refine your execution.",
     iconSrc: `${PROGRAM_STRUCTURE_ICONS_BASE}/project-assesment.svg`,
   },
   {
     number: 5,
-    title: "Mentorship and Feedback",
+    title: "CV Revamp & Interview Preparation",
     description:
-      "Receive ongoing support and constructive feedback to enhance your learning experience.",
+      `Reposition your CV, optimize your LinkedIn, and undergo structured mock interviews to defend your projects and experience.`,
     iconSrc: `${PROGRAM_STRUCTURE_ICONS_BASE}/mentorship-feedback.svg`,
   },
   {
     number: 6,
-    title: "Reference Letter & Portfolio",
+    title: "Portfolio & 2-Year Work Reference",
     description:
-      "Earn an official Reference Letter valid for 2 years to validate your hands-on experience, plus a polished portfolio that showcases your projects and skills.",
+      "Graduate with recruiter-ready projects, documented impact, and an official reference letter validating your hands-on experience.",
     iconSrc: `${PROGRAM_STRUCTURE_ICONS_BASE}/certification-portfolio.svg`,
   },
 ];
@@ -68,7 +69,7 @@ const ProgramStructure = () => {
           >
             {/* Background icon from public folder */}
             <div
-              className="absolute right-2 top-4 -translate-y-1/2 w-20 h-20 opacity-10 pointer-events-none"
+              className="absolute right-2 top-4 -translate-y-1/2 w-20 h-20 pointer-events-none"
               aria-hidden
             >
               <Image
