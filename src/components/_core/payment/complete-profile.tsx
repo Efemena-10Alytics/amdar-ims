@@ -57,6 +57,7 @@ const SESSION_OPTIONS = [
   },
   { value: "Saturday Info Session", label: "Saturday Info Session" },
   { value: "Clarity Session", label: "Clarity Session" },
+  { value: "1 Week Free Internship", label: "1 Week Free Internship" },
   { value: "None of the above", label: "None of the above" },
 ];
 
