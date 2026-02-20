@@ -30,7 +30,9 @@ const SideNav = ({ activeStep, onStepChange }: SideNavProps) => {
             const isActive = activeStep === step.id;
             const isCompleted = i < activeIndex;
             const isCompleteProfile = step.id === "complete-profile";
-            const canSelect = !isCompleteProfile || isActive;
+            // Can only go to current step or back; cannot jump forward. Complete-profile is only selectable when active.
+            const canSelect =
+              (i <= activeIndex) && (step.id !== "complete-profile" || isActive);
             return (
               <li key={step.id}>
                 <button
