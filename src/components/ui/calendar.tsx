@@ -17,19 +17,26 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
+      navLayout="around"
       className={cn("p-3", className)}
       classNames={{
-        months: "flex flex-col sm:flex-row gap-2",
-        month: "flex flex-col gap-4",
-        month_caption: "flex justify-center pt-1 relative items-center w-full",
+        months: "flex flex-col gap-2",
+        month: cn(
+          "grid grid-cols-[auto_1fr_auto] grid-rows-[auto_1fr] gap-x-2 gap-y-4",
+          "[&>*:nth-child(1)]:col-start-1 [&>*:nth-child(1)]:row-start-1",
+          "[&>*:nth-child(2)]:col-start-2 [&>*:nth-child(2)]:row-start-1 [&>*:nth-child(2)]:justify-self-center",
+          "[&>*:nth-child(3)]:col-start-3 [&>*:nth-child(3)]:row-start-1 [&>*:nth-child(3)]:justify-self-end",
+          "[&>*:nth-child(4)]:col-span-3 [&>*:nth-child(4)]:row-start-2"
+        ),
+        month_caption: "flex justify-center pt-1 items-center",
         caption_label: "text-sm font-medium text-[#092A31]",
-        nav: "flex items-center gap-1",
+        nav: "hidden",
         button_previous: cn(
-          "absolute left-1 h-7 w-7 bg-transparent p-0 opacity-70 hover:opacity-100 rounded-md",
+          "z-10 h-8 w-8 shrink-0 p-0 opacity-70 hover:opacity-100 rounded-md",
           buttonVariants({ variant: "outline", size: "icon-sm" })
         ),
         button_next: cn(
-          "absolute right-1 h-7 w-7 bg-transparent p-0 opacity-70 hover:opacity-100 rounded-md",
+          "z-10 h-8 w-8 shrink-0 p-0 opacity-70 hover:opacity-100 rounded-md",
           buttonVariants({ variant: "outline", size: "icon-sm" })
         ),
         month_grid: "w-full border-collapse space-y-1",
