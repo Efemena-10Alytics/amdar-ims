@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useVerifyChangeEmail } from "@/features/auth/use-verify-change-email";
 
 const inputBase = cn(
   "w-full rounded-lg bg-[#F8FAFC] px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8] border border-gray-200",
@@ -29,16 +30,22 @@ const ChangeEmail = ({
   defaultEmail = "",
 }: ChangeEmailProps) => {
   const [email, setEmail] = useState(defaultEmail);
+  const { verifyChangeEmail, isVerifying, errorMessage } =
+    useVerifyChangeEmail();
 
   useEffect(() => {
     if (open) setEmail(defaultEmail);
   }, [open, defaultEmail]);
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     const trimmed = email.trim();
-    if (trimmed) {
+    if (!trimmed) return;
+    try {
+      await verifyChangeEmail(trimmed);
       onContinue?.(trimmed);
       onOpenChange(false);
+    } catch {
+      // errorMessage set by hook
     }
   };
 
@@ -73,13 +80,18 @@ const ChangeEmail = ({
             autoFocus
           />
         </div>
+        {errorMessage && (
+          <p className="text-sm text-red-600 mt-2" role="alert">
+            {errorMessage}
+          </p>
+        )}
         <Button
           type="button"
           onClick={handleContinue}
-          disabled={!email.trim()}
+          disabled={!email.trim() || isVerifying}
           className="mt-6 w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium disabled:opacity-50 disabled:pointer-events-none"
         >
-          Continue
+          {isVerifying ? "Verifying…" : "Continue"}
         </Button>
       </DialogContent>
     </Dialog>
