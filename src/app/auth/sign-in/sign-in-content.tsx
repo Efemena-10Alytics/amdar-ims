@@ -10,6 +10,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { AppleSvg, GoogleSvg, LinkedInSvg } from "@/components/_core/auth/svg";
 import ErrorAlert from "@/components/_core/auth/error-alert";
 import { useLogin } from "@/features/auth/use-login";
+import { buildExternalAuthRedirectUrl } from "@/utils/externalAuthLogic";
 
 export default function SignInContent() {
   const searchParams = useSearchParams();
@@ -22,10 +23,18 @@ export default function SignInContent() {
   const program = searchParams.get("program");
   const redirectParam = searchParams.get("redirect") ?? undefined;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const redirectUrl = program ? `/payment/${program}` : redirectParam;
-    login({ email, password }, redirectUrl);
+    const user = await login({ email, password }, undefined, true);
+    if (!user) return;
+
+    const token = typeof user.token === "string" ? user.token : undefined;
+
+    const redirectUrl = await buildExternalAuthRedirectUrl(
+      redirectParam,
+      token,
+    );
+    window.location.replace(redirectUrl);
   };
   const signUpHref = program
     ? `/auth/sign-up?program=${program}`
@@ -168,7 +177,14 @@ export default function SignInContent() {
             </div>
 
             <div className="text-center text-[#334155] mt-2 text-sm">
-              Don’t have an account yet? <Link href={signUpHref} role="button" className="text-[#156374] cursor-pointer">Sign up</Link>
+              Don’t have an account yet?{" "}
+              <Link
+                href={signUpHref}
+                role="button"
+                className="text-[#156374] cursor-pointer"
+              >
+                Sign up
+              </Link>
             </div>
           </div>
         </div>

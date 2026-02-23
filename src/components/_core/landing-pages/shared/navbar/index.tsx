@@ -69,10 +69,11 @@ const Navbr = () => {
   }, [isDrawerOpen]);
 
   const navLinks = [
-    { label: "About Us", href: "#" },
-    { label: "Real World Project", href: "#" },
+    { label: "About Us", href: "/about" },
+    { label: "Real World Project", href: "/projects" },
     { label: "Internship Program", href: "/internship-program" },
-    { label: "More Program", href: "#" },
+    { label: "Job Application", href: "/talent-loop" },
+    { label: "Hackathon", href: "/hackathon" },
   ];
 
   const closeDrawer = () => {
