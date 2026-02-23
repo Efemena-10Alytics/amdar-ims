@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
 
 const fallbackRedirect =
   process.env.NEXT_PUBLIC_REDIRECT_URL || "https://app.amdari.io";
@@ -17,20 +16,17 @@ function buildLegacyRedirectUrl(
 }
 
 export default function NotFound() {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
   useEffect(() => {
-    const query = searchParams.toString();
-    const queryString = query ? `?${query}` : "";
+    const pathname = window.location.pathname || "/";
+    const queryString = window.location.search || "";
     const redirectUrl = buildLegacyRedirectUrl(
       fallbackRedirect,
-      pathname || "/",
+      pathname,
       queryString,
     );
 
     window.location.replace(redirectUrl);
-  }, [pathname, searchParams]);
+  }, []);
 
   return (
     <main className="min-h-screen w-full flex items-center justify-center px-6">
