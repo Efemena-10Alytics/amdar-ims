@@ -1,5 +1,9 @@
 const externalRedirect =
   process.env.NEXT_PUBLIC_REDIRECT_URL || "https://app.amdari.io";
+const redirectAllowlist = (process.env.NEXT_PUBLIC_REDIRECT_ALLOWLIST || "")
+  .split(",")
+  .map((host) => host.trim().toLowerCase())
+  .filter(Boolean);
 const redirectTokenSalt =
   process.env.NEXT_PUBLIC_REDIRECT_TOKEN_SALT || "amdari-handoff-salt";
 const redirectTokenKey =
@@ -75,24 +79,47 @@ async function encryptTokenForRedirect(token: string): Promise<string | null> {
   return `${toBase64Url(iv)}.${toBase64Url(encryptedBuffer)}`;
 }
 
+function getFallbackRedirectUrl(): URL {
+  const base = externalRedirect.replace(/\/+$/, "");
+  return new URL(`${base}/dashboard`);
+}
+
+function resolveSafeRedirectUrl(redirectParam?: string): URL {
+  const fallback = getFallbackRedirectUrl();
+  if (!redirectParam) return fallback;
+
+  try {
+    const candidate = new URL(redirectParam);
+    const fallbackHost = fallback.host.toLowerCase();
+    const candidateHost = candidate.host.toLowerCase();
+
+    const isAllowedHost =
+      candidateHost === fallbackHost || redirectAllowlist.includes(candidateHost);
+    const isHttp = candidate.protocol === "http:" || candidate.protocol === "https:";
+
+    if (isHttp && isAllowedHost) {
+      return candidate;
+    }
+  } catch {
+    // Invalid absolute URL -> fallback.
+  }
+
+  return fallback;
+}
+
 export async function buildExternalAuthRedirectUrl(
   redirectParam?: string,
   providedToken?: string,
 ): Promise<string> {
-  const params = new URLSearchParams();
+  const redirectUrl = resolveSafeRedirectUrl(redirectParam);
   const token = providedToken || getAccessTokenFromStorage();
 
   if (token) {
     const encryptedToken = await encryptTokenForRedirect(token);
     if (encryptedToken) {
-      params.set("token", encryptedToken);
+      redirectUrl.searchParams.set("token", encryptedToken);
     }
   }
 
-  if (redirectParam) {
-    params.set("redirect", redirectParam);
-  }
-
-  const query = params.toString();
-  return query ? `${externalRedirect}/dashboard?${query}` : externalRedirect;
+  return redirectUrl.toString();
 }
