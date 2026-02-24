@@ -12,7 +12,7 @@ export function useGetInternshipProgram(id: string | number | undefined | null) 
     queryKey: INTERNSHIP_PROGRAM_QUERY_KEY(id ?? ""),
     queryFn: async (): Promise<InternshipProgram> => {
       const { data } = await axiosInstance.get<{ data: InternshipProgram }>(
-        `/internship/${id}`
+        `/internship-programs/${id}`
       );
       return data.data;
     },
