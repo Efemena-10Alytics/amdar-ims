@@ -107,7 +107,7 @@ export default function NewHero() {
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row items-center justify-start gap-4 mb-8">
-              <Link href={"/internship-program"}>
+              <Link href={"/internship"}>
                 <Button
                   className={cn(
                     "group bg-[#0F4652] text-white hover:bg-amdari-yellow hover:text-primary rounded-full py-6 h-12 text-base",

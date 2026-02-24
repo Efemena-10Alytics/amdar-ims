@@ -40,9 +40,9 @@ const Navbr = () => {
   const isLoggedIn = user != null;
   const isHomePageRoute = pathname === "/home";
   const isInternshipProgramRoute =
-    pathname === "/internship-program" ||
+    pathname === "/internship" ||
     pathname.startsWith("/payment") ||
-    pathname.startsWith("/internship-program");
+    pathname.startsWith("/internship");
 
   const showWhiteNav = isScrolled || !isHomePageRoute;
 
@@ -71,7 +71,7 @@ const Navbr = () => {
   const navLinks = [
     { label: "About Us", href: "/about" },
     { label: "Real World Project", href: "/projects" },
-    { label: "Internship Program", href: "/internship-program" },
+    { label: "Internship Program", href: "/internship" },
     { label: "Job Application", href: "/talent-loop" },
     { label: "Hackathon", href: "/hackathon" },
   ];
@@ -101,7 +101,7 @@ const Navbr = () => {
             <div className="hidden lg:flex items-center gap-4 xl:gap-8">
               {navLinks.map((link) => {
                 const isActive =
-                  link.href === "/internship-program"
+                  link.href === "/internship"
                     ? isInternshipProgramRoute
                     : link.href !== "#" && pathname.startsWith(link.href);
                 return (

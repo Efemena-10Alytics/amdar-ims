@@ -60,7 +60,7 @@ const Internship = () => {
             </p>
           </div>
 
-          <Link href="/internship-program">
+          <Link href="/internship">
             <CustomButton btnText="View more" />
           </Link>
         </div>
@@ -72,8 +72,8 @@ const Internship = () => {
               key={item.id}
               href={
                 programs?.length
-                  ? `/internship-program/${item.id}`
-                  : "/internship-program"
+                  ? `/internship/${item.id}`
+                  : "/internship"
               }
               className="group bg-white hover:bg-primary p-5 rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow block"
             >

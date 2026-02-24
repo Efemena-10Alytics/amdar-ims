@@ -6,7 +6,10 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { useGetInternshipPrograms } from "@/features/internship/use-get-all-internship-programs";
+import { getImageUrl } from "@/lib/utils";
 import { InternshipProgram } from "@/types/internship-program";
+
+const FALLBACK_IMAGE = "/images/pngs/internship.png";
 
 const ChoosePath = () => {
   const { data, isPending, isFetching } = useGetInternshipPrograms();
@@ -58,10 +61,11 @@ const ChoosePath = () => {
                 >
                   <div className="relative w-full h-48 bg-gray-200 rounded-md">
                     <Image
-                      src={career.image}
+                      src={getImageUrl(career.image) || FALLBACK_IMAGE}
                       alt={career.title}
                       fill
                       className="object-cover rounded-md"
+                      unoptimized={!!(career.image && !career.image.startsWith("/"))}
                     />
                   </div>
                   <div className="mt-4">
@@ -80,7 +84,7 @@ const ChoosePath = () => {
                           <div>GBP 390</div>
                         </span>
                       </div>
-                      <Link href={`/internship-program/${career.id}`}>
+                      <Link href={`/internship/${career.id}`}>
                         <Button
                           className={cn(
                             "bg-primary group-hover:bg-amdari-yellow group-hover:text-primary hover:text-primary hover:bg-amdari-yellow text-white rounded-full px-4 py-2 text-sm font-medium",

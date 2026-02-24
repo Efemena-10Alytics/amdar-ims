@@ -37,7 +37,7 @@ const RealWorldProject = () => {
               Real world projects you can work on.
             </p>
           </div>
-          <Link href="/internship-program">
+          <Link href="/internship">
             <CustomButton btnText="Work on projects" />
           </Link>
         </div>

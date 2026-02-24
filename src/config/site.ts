@@ -7,7 +7,7 @@ export const siteConfig = {
   mainNav: [
     {
       title: "Internship Program",
-      href: "/internship-program",
+      href: "/internship",
     },
   ],
   links: {
