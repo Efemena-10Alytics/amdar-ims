@@ -5,6 +5,7 @@ import { siteConfig } from "@/config/site";
 import "aos/dist/aos.css";
 import { Providers } from "./providers";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import NextTopLoader from "nextjs-toploader";
 
 const sora = Sora({
   variable: "--font-sora",
@@ -43,7 +44,10 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <TooltipProvider>
-          <Providers>{children}</Providers>
+          <Providers>
+            <NextTopLoader />
+            {children}
+          </Providers>
         </TooltipProvider>
       </body>
     </html>
