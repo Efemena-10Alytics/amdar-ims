@@ -7,6 +7,7 @@ import Mentors from "./mentors";
 import type { InternshipProgram } from "@/types/internship-program";
 import { getYoutubeThumbnail } from "../../../shared/youtube-video";
 import { VideoPlayerModal } from "../../../shared/video-player-modal";
+import { useGetNextCohort } from "@/features/internship/use-get-next-cohort";
 
 interface RightProps {
   program?: InternshipProgram;
@@ -15,15 +16,29 @@ interface RightProps {
 /** Fallback when video has no YouTube thumbnail (e.g. Vimeo) or image fails. */
 const DEFAULT_VIDEO_THUMBNAIL = "/images/pngs/video-thumbnail.jpeg";
 
+function getCountdownTo(targetDateStr: string | null): {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+} {
+  if (!targetDateStr) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+  const target = new Date(targetDateStr + "T00:00:00").getTime();
+  const now = Date.now();
+  const diff = Math.max(0, Math.floor((target - now) / 1000));
+  const days = Math.floor(diff / 86400);
+  const hours = Math.floor((diff % 86400) / 3600);
+  const minutes = Math.floor((diff % 3600) / 60);
+  const seconds = diff % 60;
+  return { days, hours, minutes, seconds };
+}
+
 const Right = ({ program }: RightProps) => {
   const [videoOpen, setVideoOpen] = useState(false);
   const [thumbnailError, setThumbnailError] = useState(false);
-  const [countdown, setCountdown] = useState({
-    days: 21,
-    hours: 3,
-    minutes: 50,
-    seconds: 48,
-  });
+  const { data: internshipStartDate } = useGetNextCohort();
+  const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
 
   const PROGRAM_VIDEO_URL =
     program?.payment_url ??
@@ -43,34 +58,18 @@ const Right = ({ program }: RightProps) => {
       linkedin: m.linkedin_url ?? "#",
     })) ?? [];
 
-  // Countdown timer effect
+  // Sync countdown when internshipStartDate loads
+  useEffect(() => {
+    setCountdown(getCountdownTo(internshipStartDate ?? null));
+  }, [internshipStartDate]);
+
+  // Countdown timer: recalculate every second from target date
   useEffect(() => {
     const interval = setInterval(() => {
-      setCountdown((prev) => {
-        let { days, hours, minutes, seconds } = prev;
-
-        if (seconds > 0) {
-          seconds--;
-        } else if (minutes > 0) {
-          minutes--;
-          seconds = 59;
-        } else if (hours > 0) {
-          hours--;
-          minutes = 59;
-          seconds = 59;
-        } else if (days > 0) {
-          days--;
-          hours = 23;
-          minutes = 59;
-          seconds = 59;
-        }
-
-        return { days, hours, minutes, seconds };
-      });
+      setCountdown(getCountdownTo(internshipStartDate ?? null));
     }, 1000);
-
     return () => clearInterval(interval);
-  }, []);
+  }, [internshipStartDate]);
 
   return (
     <div className="space-y-6 mt-20">
