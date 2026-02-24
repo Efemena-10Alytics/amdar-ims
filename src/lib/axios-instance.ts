@@ -1,6 +1,14 @@
 import axios, { type InternalAxiosRequestConfig } from "axios";
+import { useAuthStore } from "@/store/auth-store";
 
 const AUTH_STORAGE_KEY = "amdari_user";
+
+function clearAuthAndLogout() {
+  useAuthStore.getState().logout();
+  if (typeof window !== "undefined") {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+  }
+}
 
 export const apiBaseURL =
   process.env.NEXT_PUBLIC_REACT_APP_API_URL ?? "";
@@ -49,12 +57,13 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor
+// Response interceptor: on 401, log out and clear persisted auth
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Handle 401, 403, 500 etc. globally if needed
-    // if (error.response?.status === 401) { ... }
+    if (error.response?.status === 401) {
+      clearAuthAndLogout();
+    }
     return Promise.reject(error);
   }
 );
