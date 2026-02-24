@@ -12,7 +12,7 @@ const login = async (
   user: LoginCredentials,
   redirectURL?: string,
   skipRedirect?: boolean,
-) => {
+): Promise<AuthUser | null> => {
   try {
     const res = await axiosInstance.post<{ data: AuthUser }>("login", user);
     if (res.status === 200 && res.data?.data) {
@@ -20,11 +20,17 @@ const login = async (
       if (typeof window !== "undefined" && !skipRedirect) {
         window.location.replace(redirectURL ?? "/internship-program");
       }
+      return res.data.data;
     }
+    return null;
   } catch (error) {
     const message =
-      (error as { response?: { data?: { message?: string } }; message?: string })
-        ?.response?.data?.message ??
+      (
+        error as {
+          response?: { data?: { message?: string } };
+          message?: string;
+        }
+      )?.response?.data?.message ??
       (error as Error)?.message ??
       "Login failed";
     throw new Error(message);
@@ -32,7 +38,7 @@ const login = async (
 };
 
 export function useLogin() {
-  const { isLoggingIn, setIsLoggingIn } = useAuthStore()
+  const { isLoggingIn, setIsLoggingIn } = useAuthStore();
   const [errorMessage, setErrorMessage] = useState("");
 
   const userLogin = useCallback(
@@ -40,15 +46,17 @@ export function useLogin() {
       user: LoginCredentials,
       redirectURL?: string,
       skipRedirect?: boolean,
-    ): Promise<boolean> => {
+    ): Promise<AuthUser | null> => {
       setIsLoggingIn(true);
       setErrorMessage("");
       try {
-        await login(user, redirectURL, skipRedirect);
-        return true;
+        const authUser = await login(user, redirectURL, skipRedirect);
+        return authUser;
       } catch (error) {
-        setErrorMessage(error instanceof Error ? error.message : "Login failed");
-        return false;
+        setErrorMessage(
+          error instanceof Error ? error.message : "Login failed",
+        );
+        return null;
       } finally {
         setIsLoggingIn(false);
       }
