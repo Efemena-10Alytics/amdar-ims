@@ -6,7 +6,10 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { useGetInternshipPrograms } from "@/features/internship/use-get-all-internship-programs";
+import { getImageUrl } from "@/lib/utils";
 import { InternshipProgram } from "@/types/internship-program";
+
+const FALLBACK_IMAGE = "/images/pngs/internship.png";
 
 const ChoosePath = () => {
   const { data, isPending, isFetching } = useGetInternshipPrograms();
@@ -58,10 +61,11 @@ const ChoosePath = () => {
                 >
                   <div className="relative w-full h-48 bg-gray-200 rounded-md">
                     <Image
-                      src={career.image}
+                      src={getImageUrl(career.image) || FALLBACK_IMAGE}
                       alt={career.title}
                       fill
                       className="object-cover rounded-md"
+                      unoptimized={!!(career.image && !career.image.startsWith("/"))}
                     />
                   </div>
                   <div className="mt-4">
