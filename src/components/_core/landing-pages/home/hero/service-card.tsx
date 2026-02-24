@@ -28,7 +28,7 @@ const ServiceCard = ({
         <h3 className="text-xl lg:text-[22px] font-semibold mb-4">{title}</h3>
         <p className="mb-6 text-sm">{description}</p>
       </div>
-      <Link href="/internship-program">
+      <Link href="/internship">
         <Button
           // variant={"link"}
           className={cn(
