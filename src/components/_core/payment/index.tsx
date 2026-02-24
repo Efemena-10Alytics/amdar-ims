@@ -62,7 +62,8 @@ const PaymentMain = ({
   const [signUpOpen, setSignUpOpen] = useState(false);
   const [otpModalOpen, setOtpModalOpen] = useState(false);
   const showSuccessModal = profileJustCompleted && !successModalDismissed;
-  const { user } = useAuthStore();
+  const { user, showSignInModalDueTo401, setShowSignInModalDueTo401 } =
+    useAuthStore();
   const userEmail =
     typeof user === "object" && user !== null && "user" in user && user.user && typeof user.user === "object" && "email" in user.user
       ? String((user.user as Record<string, unknown>).email)
@@ -80,6 +81,14 @@ const PaymentMain = ({
   });
 
   console.log("checkoutData", checkoutData);
+
+  // When 401 on payment page, open sign-in modal
+  useEffect(() => {
+    if (showSignInModalDueTo401) {
+      setSignInOpen(true);
+      setShowSignInModalDueTo401(false);
+    }
+  }, [showSignInModalDueTo401, setShowSignInModalDueTo401]);
 
   // When returning from Stripe with success: move to complete-profile step and clean URL (do not show modal yet)
   useEffect(() => {

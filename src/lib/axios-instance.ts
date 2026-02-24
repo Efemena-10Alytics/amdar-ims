@@ -10,6 +10,20 @@ function clearAuthAndLogout() {
   }
 }
 
+function handle401() {
+  clearAuthAndLogout();
+  if (typeof window === "undefined") return;
+  const { pathname, search } = window.location;
+  const currentPath = pathname + search;
+  const isPaymentPage = pathname.startsWith("/payment/");
+  if (isPaymentPage) {
+    useAuthStore.getState().setShowSignInModalDueTo401(true);
+  } else {
+    const redirect = encodeURIComponent(currentPath);
+    window.location.replace(`/auth/sign-in?redirect=${redirect}`);
+  }
+}
+
 export const apiBaseURL =
   process.env.NEXT_PUBLIC_REACT_APP_API_URL ?? "";
 
@@ -62,7 +76,7 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      clearAuthAndLogout();
+      handle401();
     }
     return Promise.reject(error);
   }
