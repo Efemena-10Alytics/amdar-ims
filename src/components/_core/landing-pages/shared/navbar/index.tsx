@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Menu, User, LogOut } from "lucide-react";
@@ -17,6 +17,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { UserAvatar } from "../../internship-program/svg";
+import AboutBar from "../../about/AboutBar";
+import { ChevronDown } from "lucide-react";
 
 export function TooltipDemo() {
   return (
@@ -35,6 +37,23 @@ const Navbr = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
+  const aboutCloseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearAboutCloseTimeout = () => {
+    if (aboutCloseTimeoutRef.current) {
+      clearTimeout(aboutCloseTimeoutRef.current);
+      aboutCloseTimeoutRef.current = null;
+    }
+  };
+
+  const scheduleAboutClose = () => {
+    clearAboutCloseTimeout();
+    aboutCloseTimeoutRef.current = setTimeout(() => setAboutDropdownOpen(false), 120);
+  };
+
+  useEffect(() => () => clearAboutCloseTimeout(), []);
+
   const pathname = usePathname();
   const { user, logout } = useAuthStore();
   const isLoggedIn = user != null;
@@ -69,7 +88,6 @@ const Navbr = () => {
   }, [isDrawerOpen]);
 
   const navLinks = [
-    { label: "About Us", href: "/about" },
     { label: "Real World Project", href: "/projects" },
     { label: "Internship Program", href: "/internship" },
     { label: "Job Application", href: "/talent-loop" },
@@ -99,6 +117,40 @@ const Navbr = () => {
 
             {/* Navigation Links - Desktop */}
             <div className="hidden lg:flex items-center gap-4 xl:gap-8">
+              {/* About dropdown - pt-1 bridges gap so cursor stays inside wrapper when moving to panel */}
+              <div
+                className="relative"
+                onMouseEnter={() => {
+                  clearAboutCloseTimeout();
+                  setAboutDropdownOpen(true);
+                }}
+                onMouseLeave={scheduleAboutClose}
+              >
+                <button
+                  type="button"
+                  className={cn(
+                    "text-sm transition-colors relative pb-0.5 flex items-center gap-0.5",
+                    "after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-0.5 after:bg-current after:transition-[width] after:duration-300 after:ease-out",
+                    aboutDropdownOpen ? "after:w-full" : "after:w-0 hover:after:w-full",
+                    showWhiteNav
+                      ? "text-[#156374] hover:text-[#0f4d5a]"
+                      : "text-primary hover:text-[#0f4d5a]",
+                  )}
+                  aria-expanded={aboutDropdownOpen}
+                  aria-haspopup="true"
+                >
+                  About
+                  <ChevronDown
+                    className={cn("size-4 transition-transform", aboutDropdownOpen && "rotate-180")}
+                  />
+                </button>
+                {aboutDropdownOpen && (
+                  <AboutBar
+                    closeAboutBar={scheduleAboutClose}
+                    className="absolute top-full left-0 pt-4 z-50 w-max"
+                  />
+                )}
+              </div>
               {navLinks.map((link) => {
                 const isActive =
                   link.href === "/internship"
@@ -212,7 +264,7 @@ const Navbr = () => {
       <MobileDrawer
         isDrawerOpen={isDrawerOpen}
         onClose={closeDrawer}
-        navLinks={navLinks}
+        navLinks={[{ label: "About Us", href: "/about" }, ...navLinks]}
         isLoggedIn={isLoggedIn}
         onLogoutClick={() => {
           closeDrawer();

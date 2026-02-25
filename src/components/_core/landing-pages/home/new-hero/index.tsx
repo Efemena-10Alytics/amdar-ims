@@ -11,6 +11,7 @@ import Aos from "aos";
 import VerticalCarousel from "./vertical-carousel";
 import Slider from "../hero/slider";
 import Link from "next/link";
+import { IdeaSvg } from "../svg";
 
 const HERO_TOOLS = [
   {
@@ -64,7 +65,7 @@ export default function NewHero() {
   React.useEffect(() => {
     Aos.init();
   }, []);
-  
+
   return (
     <div className="relative w-full min-h-screen overflow-hidden -mt-25">
       {/* Section background – new-hero-bg */}
@@ -85,8 +86,10 @@ export default function NewHero() {
           {/* Left content */}
           <div data-aos="fade-right" className="flex flex-col justify-center">
             {/* Pill badge */}
-            <div className="inline-flex items-center gap-2 rounded-full bg-[#FEF9C3] text-[#092A31] px-4 py-2 text-sm font-medium w-fit mb-6">
-              <Lightbulb className="w-4 h-4 shrink-0" />
+            <div className="inline-flex items-center gap-2 rounded-full bg-[#FFF5D8] text-[#5A431B] px-4 py-2 text-sm font-medium w-fit mb-6">
+              <div className="flex p-1 bg-[#FFE082] rounded-full">
+                <IdeaSvg />
+              </div>
               <span>Get hired in high-demand Tech career</span>
             </div>
 
