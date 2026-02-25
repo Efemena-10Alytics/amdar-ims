@@ -13,13 +13,16 @@ function clearAuthAndLogout() {
 function handle401() {
   clearAuthAndLogout();
   if (typeof window === "undefined") return;
-  const { pathname, search } = window.location;
-  const currentPath = pathname + search;
+  const { pathname } = window.location;
+  const isAuthPage = pathname.startsWith("/auth/");
+  if (isAuthPage) {
+    return;
+  }
   const isPaymentPage = pathname.startsWith("/payment/");
   if (isPaymentPage) {
     useAuthStore.getState().setShowSignInModalDueTo401(true);
   } else {
-    const redirect = encodeURIComponent(currentPath);
+    const redirect = encodeURIComponent(pathname);
     window.location.replace(`/auth/sign-in?redirect=${redirect}`);
   }
 }
