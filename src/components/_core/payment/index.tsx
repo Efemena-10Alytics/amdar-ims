@@ -76,7 +76,6 @@ const PaymentMain = ({
   const [nextPaymentDateYmd, setNextPaymentDateYmd] = useState(() => {
     const d = new Date();
     d.setMonth(d.getMonth() + 1);
-    d.setDate(11);
     return d.toISOString().slice(0, 10);
   });
 

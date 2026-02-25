@@ -107,7 +107,7 @@ const PaymentDetails = ({
   const [confirmTerms, setConfirmTerms] = useState(false);
   const [editDataOpen, setEditDataOpen] = useState(false);
   const [localNextPaymentDateYmd, setLocalNextPaymentDateYmd] = useState(() =>
-    getNextPaymentDateYmd(1, 11),
+    getNextPaymentDateYmd(1),
   );
   const nextPaymentDateYmd = nextPaymentDateYmdProp ?? localNextPaymentDateYmd;
   const setNextPaymentDateYmd =
