@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +10,7 @@ import {
 } from "@/components/ui/input-otp";
 import ChangeEmail from "@/components/_core/auth/change-email";
 import ErrorAlert from "@/components/_core/auth/error-alert";
+import { PadlockInSvg } from "@/components/_core/auth/svg";
 import {
   useResendOtp,
   RESEND_COOLDOWN_SECONDS,
@@ -31,9 +31,11 @@ export default function OtpContent() {
   const programParam = searchParams.get("program") ?? "";
 
   const [otp, setOtp] = useState("");
-  const [email, setEmail] = useState(emailParam || "amberinc.io");
+  const [email, setEmail] = useState(emailParam || "");
   const [changeEmailOpen, setChangeEmailOpen] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(RESEND_COOLDOWN_SECONDS);
+
+  const displayEmail = email || "your email";
 
   const { verify, isVerifying, errorMessage } = useVerifyEmail();
   const { resend, isResending, resendErrorMessage } = useResendOtp({
@@ -72,37 +74,29 @@ export default function OtpContent() {
 
   return (
     <main className="flex-1 w-full min-h-full overflow-y-auto flex flex-col">
-      {/* <div className="flex justify-end p-6">
-        <Link href={signInHref} className="cursor-pointer">
-          <Button
-            variant="outline"
-            className="rounded-md bg-[#C8DDE3] border-[#C8DDE3] text-[#092A31] hover:bg-[#B8CDD3] hover:border-[#B8CDD3] px-6"
-          >
-            Login
-          </Button>
-        </Link>
-      </div> */}
-
       <div className="flex-1 flex flex-col items-start justify-start px-6 pb-12 mt-10">
-        <div className="flex items-center gap-10 mb-2 px-6">
-          <h1 className="text-2xl font-semibold text-[#092A31]">Sign Up</h1>
-          {errorMessage ? (
-            <ErrorAlert error={errorMessage} />
-          ) : resendErrorMessage ? (
-            <ErrorAlert error={resendErrorMessage} />
-          ) : null}
+        <div className="mb-4 pl-1">
+          <PadlockInSvg />
         </div>
-        <div className="w-full max-w-md rounded-2xl bg-white p-6 sm:p-8 border border-gray-100">
-          <h1 className="text-xl font-semibold text-[#092A31]">
-            Email verification
-          </h1>
+        <div className="w-full max-w-md rounded-2xl bg-white p-6 sm:p-8 border border-gray-100 shadow-sm">
+          <div className="flex flex-col gap-2 mb-2">
+            <h1 className="text-xl font-semibold text-[#092A31]">
+              Email verification
+            </h1>
+            {(errorMessage || resendErrorMessage) && (
+              <ErrorAlert
+                error={errorMessage || resendErrorMessage || ""}
+              />
+            )}
+          </div>
           <p className="mt-2 text-sm text-[#64748B] leading-relaxed">
-            Check your <span className="font-semibold">email inbox</span> or <span className="font-semibold">spam</span>, we sent a code to  {email}. If this is not your
-            mail,{" "}
+            Check your email, we sent a code to{" "}
+            <span className="font-medium text-[#092A31]">{displayEmail}</span>.
+            If this is not your mail,{" "}
             <button
               type="button"
               onClick={() => setChangeEmailOpen(true)}
-              className="text-primary font-medium underline hover:no-underline"
+              className="text-[#156374] font-medium hover:underline"
             >
               Change email
             </button>
@@ -119,7 +113,7 @@ export default function OtpContent() {
                 className={cn(
                   "gap-2",
                   "[&_div]:h-12 [&_div]:w-12 [&_div]:rounded-lg [&_div]:border [&_div]:border-gray-200 [&_div]:bg-[#F8FAFC] [&_div]:text-center [&_div]:text-lg",
-                  "[&_div[data-active=true]]:border-primary [&_div[data-active=true]]:ring-2 [&_div[data-active=true]]:ring-primary/20",
+                  "[&_div[data-active=true]]:border-[#156374] [&_div[data-active=true]]:ring-2 [&_div[data-active=true]]:ring-[#156374]/20",
                 )}
               >
                 <InputOTPSlot index={0} />
@@ -135,7 +129,7 @@ export default function OtpContent() {
             type="button"
             disabled={!canVerify || isVerifying}
             onClick={handleVerify}
-            className="mt-6 w-full rounded-xl bg-[#0F4652] hover:bg-[#0d3d47] text-white h-12 text-base font-medium disabled:opacity-50 disabled:pointer-events-none"
+            className="mt-6 w-full rounded-lg bg-[#0F4652] hover:bg-[#0d3d47] text-white h-11 text-base font-medium disabled:opacity-50 disabled:pointer-events-none"
           >
             {isVerifying ? "Verifying…" : "Verify"}
           </Button>
@@ -147,12 +141,12 @@ export default function OtpContent() {
                 type="button"
                 disabled={isResending}
                 onClick={handleResend}
-                className="text-primary font-medium hover:underline disabled:opacity-50"
+                className="text-[#156374] font-medium hover:underline disabled:opacity-50"
               >
                 {isResending ? "Sending…" : "Resend code"}
               </button>
             ) : (
-              <span className="text-primary font-medium">
+              <span className="text-[#156374] font-medium">
                 {formatTime(secondsLeft)}
               </span>
             )}

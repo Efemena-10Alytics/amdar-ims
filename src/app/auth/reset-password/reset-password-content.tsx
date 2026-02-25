@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { inputBase } from "@/components/_core/auth/sign-up/create-password";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -36,6 +37,9 @@ const REQUIREMENTS = [
 type Step = "otp" | "reset";
 
 export default function ResetPasswordContent() {
+  const searchParams = useSearchParams();
+  const emailParam = searchParams.get("email") ?? "";
+
   const [step, setStep] = useState<Step>("otp");
   const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
@@ -90,6 +94,8 @@ export default function ResetPasswordContent() {
         <div className="rounded-2xl bg-white p-6 border border-gray-100">
           {step === "otp" ? (
             <ResetPasswordOtpContent
+              email={emailParam}
+              errorMessage={errorMessage}
               otp={otp}
               onOtpChange={setOtp}
               onContinue={handleOtpContinue}

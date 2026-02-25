@@ -27,7 +27,9 @@ export function useForgotPassword(options: UseForgotPasswordOptions = {}) {
         await axiosInstance.post("forgot-password", { email });
         options.onSuccess?.();
         if (typeof window !== "undefined") {
-          window.location.replace("/auth/reset-password");
+          const params = new URLSearchParams();
+          params.set("email", email);
+          window.location.replace(`/auth/reset-password?${params.toString()}`);
         }
       } catch (error) {
         const message = getForgotPasswordErrorMessage(error);
