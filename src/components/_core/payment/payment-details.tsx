@@ -91,7 +91,7 @@ interface PaymentDetailsProps {
   onProceed?: () => void;
   isProcessingPayment?: boolean;
   paymentError?: string | null;
-  discount?: string
+  discount?: string;
 }
 
 const PaymentDetails = ({
@@ -101,7 +101,7 @@ const PaymentDetails = ({
   onProceed,
   isProcessingPayment = false,
   paymentError = null,
-  discount
+  discount,
 }: PaymentDetailsProps) => {
   const [confirmInfo, setConfirmInfo] = useState(false);
   const [confirmTerms, setConfirmTerms] = useState(false);
@@ -206,7 +206,13 @@ const PaymentDetails = ({
             <h2 className="font-clash-display text-xl font-bold text-[#092A31]">
               Personal data
             </h2>
-            <Button onClick={() => setEditDataOpen(true)} variant={"outline"} className="border-2 text-primary border-primary">Edit Data</Button>
+            <Button
+              onClick={() => setEditDataOpen(true)}
+              variant={"outline"}
+              className="border-2 text-primary border-primary"
+            >
+              Edit Data
+            </Button>
           </div>
           <dl className="mt-4 space-y-3 sm:gap-x-6 bg-[#F8FAFC] p-5 rounded-xl">
             {personalData.map(({ label, value, withFlag }) => (
@@ -322,15 +328,21 @@ const PaymentDetails = ({
             <div className="flex justify-between text-sm">
               <span className="text-[#6b7280]">Program fee</span>
               <span className="font-medium text-[#092A31]">
-                {checkoutSelections?.planTotal ?? "USD 500"}
+                {originalPlanTotal ??
+                  checkoutSelections?.planTotal ??
+                  "USD 500"}
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-[#6b7280]">Coupon (Discount)</span>
-              <span className="font-medium text-[#092A31]">{discount}%</span>
+              <span className="text-[#6b7280]">Discounted Fee</span>
+              {/* <span className="text-[#6b7280]">Coupon (Discount)</span> */}
+              {/* <span className="font-medium text-[#092A31]">{discount}%</span> */}
+              <span className="font-medium text-[#092A31]">
+                {checkoutSelections && checkoutSelections.planTotal}
+              </span>
             </div>
             <div className="flex justify-between text-base">
-              <span className="font-medium text-[#092A31]">Amount to pay</span>
+              <span className="font-medium text-[#092A31]">First payment</span>
               <span className="font-clash-display font-bold text-primary">
                 {checkoutSelections
                   ? (checkoutSelections.firstPaymentAmount ??
