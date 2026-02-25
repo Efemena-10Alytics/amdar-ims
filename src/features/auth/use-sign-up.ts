@@ -40,6 +40,7 @@ const signUp = async (
         const params = new URLSearchParams();
         if (redirect) params.set("redirect", redirect);
         if (program) params.set("program", program);
+        if (data.email) params.set("email", data.email);
         params.set("u-status", "new");
         const query = params.toString();
         window.location.replace(
