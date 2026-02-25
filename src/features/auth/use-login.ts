@@ -8,6 +8,29 @@ export type LoginCredentials = {
   [key: string]: unknown;
 };
 
+/** Extract a user-facing message from API error (422, 4xx, network, etc.). */
+function getLoginErrorMessage(error: unknown): string {
+  const err = error as {
+    response?: { data?: unknown; status?: number };
+    message?: string;
+  };
+  const data = err?.response?.data;
+  if (data && typeof data === "object") {
+    const d = data as Record<string, unknown>;
+    if (typeof d.message === "string" && d.message) return d.message;
+    if (typeof d.error === "string" && d.error) return d.error;
+    const errors = d.errors;
+    if (Array.isArray(errors) && errors.length > 0) {
+      const first = errors[0];
+      if (typeof first === "string") return first;
+      if (first && typeof first === "object" && typeof (first as { message?: string }).message === "string") {
+        return (first as { message: string }).message;
+      }
+    }
+  }
+  return err?.message && typeof err.message === "string" ? err.message : "Login failed";
+}
+
 const login = async (
   user: LoginCredentials,
   redirectURL?: string,
@@ -24,16 +47,7 @@ const login = async (
     }
     return null;
   } catch (error) {
-    const message =
-      (
-        error as {
-          response?: { data?: { message?: string } };
-          message?: string;
-        }
-      )?.response?.data?.message ??
-      (error as Error)?.message ??
-      "Login failed";
-    throw new Error(message);
+    throw new Error(getLoginErrorMessage(error));
   }
 };
 
@@ -54,7 +68,7 @@ export function useLogin() {
         return authUser;
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : "Login failed",
+          error instanceof Error ? error.message : getLoginErrorMessage(error),
         );
         return null;
       } finally {

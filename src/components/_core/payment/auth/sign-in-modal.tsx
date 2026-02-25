@@ -35,8 +35,7 @@ export function SignInModal({
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     const success = await login({ email, password }, undefined, true);
     if (success) {
       if (paymentShowOtpStorageKey && typeof sessionStorage !== "undefined") {
@@ -45,6 +44,11 @@ export function SignInModal({
       onSignInSuccess?.();
       onOpenChange(false);
     }
+  };
+
+  const onFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    void handleSubmit();
   };
 
   const handleSignUpClick = (e: React.MouseEvent) => {
@@ -70,7 +74,7 @@ export function SignInModal({
             Fill in your appropriate details below
           </p>
 
-          <form className="mt-4 space-y-3" onSubmit={handleSubmit}>
+          <form className="mt-4 space-y-3" onSubmit={onFormSubmit} noValidate>
             <div>
               <label
                 htmlFor="sign-in-modal-email"
