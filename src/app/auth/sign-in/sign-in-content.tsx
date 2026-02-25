@@ -24,7 +24,6 @@ export default function SignInContent() {
   const redirectParam = searchParams.get("redirect") ?? undefined;
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
     const user = await login({ email, password }, undefined, true);
     if (!user) return;
 
@@ -35,6 +34,11 @@ export default function SignInContent() {
       token,
     );
     window.location.replace(redirectUrl);
+  };
+
+  const onFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    void handleSubmit(e);
   };
   const signUpHref = program
     ? `/auth/sign-up?program=${program}`
@@ -65,7 +69,7 @@ export default function SignInContent() {
               Fill in your appropriate details below
             </p>
 
-            <form className="mt-4 space-y-3" onSubmit={handleSubmit}>
+            <form className="mt-4 space-y-3" onSubmit={onFormSubmit} noValidate>
               <div>
                 <label
                   htmlFor="email"

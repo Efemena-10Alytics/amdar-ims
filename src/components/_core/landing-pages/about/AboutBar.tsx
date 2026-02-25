@@ -40,10 +40,10 @@ const AboutBar = ({ closeAboutBar, className }: AboutBarProps) => {
 
   return (
     <div
-      className={className ?? "absolute top-20 -left-45"}
+      className={className ?? "absolute top-20 -left-45 z-10"}
       onMouseLeave={closeAboutBar}
     >
-      <div className="relative w-full h-full bg-whiterounded-[10px] shadow-sm shadow-[#18758A] p-5">
+      <div className="relative w-full h-full bg-white shadow-sm shadow-[#18758A] p-5">
         <div className="flex items-start justify-start gap-4 w-full">
           <div className="flex flex-col items-start gap-4 w-66">
             {navItems.map(({ href, label, Icon }) => {
