@@ -322,7 +322,7 @@ const PaymentDetails = ({
             <div className="flex justify-between text-sm">
               <span className="text-[#6b7280]">Program fee</span>
               <span className="font-medium text-[#092A31]">
-                {checkoutSelections?.planTotal ?? "USD 500"}
+                {originalPlanTotal ?? checkoutSelections?.planTotal ?? "USD 500"}
               </span>
             </div>
             <div className="flex justify-between text-sm">
