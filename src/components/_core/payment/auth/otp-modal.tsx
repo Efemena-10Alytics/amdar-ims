@@ -123,7 +123,10 @@ export function OtpModal({
               {email || "your email"}. If this is not your mail,{" "}
               <button
                 type="button"
-                onClick={() => setChangeEmailOpen(true)}
+                onClick={() => {
+                  onOpenChange(false);
+                  setTimeout(() => setChangeEmailOpen(true), 150);
+                }}
                 className="text-[#156374] font-medium underline hover:no-underline"
               >
                 Change email

@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { axiosInstance } from "@/lib/axios-instance";
 
-type VerifyChangeEmailResponse = {
+type InitiateChangeEmailResponse = {
   success?: boolean;
   data?: unknown;
 };
@@ -11,24 +11,24 @@ function getErrorMessage(error: unknown): string {
     (error as { response?: { data?: { message?: string } }; message?: string })
       ?.response?.data?.message ??
     (error as Error)?.message ??
-    "Verification failed"
+    "Failed to initiate email change"
   );
 }
 
-export function useVerifyChangeEmail() {
-  const [isVerifying, setIsVerifying] = useState(false);
+export function useInitiateChangeEmail() {
+  const [isInitiating, setIsInitiating] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const verifyChangeEmail = useCallback(async (token: string) => {
-    setIsVerifying(true);
+  const initiateChangeEmail = useCallback(async (new_email: string) => {
+    setIsInitiating(true);
     setErrorMessage("");
     try {
-      const res = await axiosInstance.post<VerifyChangeEmailResponse>(
-        "change-email/verify",
-        { token },
+      const res = await axiosInstance.post<InitiateChangeEmailResponse>(
+        "change-email/initiate",
+        { new_email },
       );
       if (res?.data?.success !== true) {
-        setErrorMessage(getErrorMessage(new Error("Verification failed")));
+        setErrorMessage(getErrorMessage(new Error("Initiation failed")));
         return;
       }
       return res.data;
@@ -37,9 +37,9 @@ export function useVerifyChangeEmail() {
       setErrorMessage(message);
       throw new Error(message);
     } finally {
-      setIsVerifying(false);
+      setIsInitiating(false);
     }
   }, []);
 
-  return { verifyChangeEmail, isVerifying, errorMessage };
+  return { initiateChangeEmail, isInitiating, errorMessage };
 }
