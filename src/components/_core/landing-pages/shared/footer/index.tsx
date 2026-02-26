@@ -29,7 +29,7 @@ const Footer = () => {
     { label: "About Us", href: "/about" },
     { label: "FAQs", href: "/faqs" },
     { label: "Blog", href: "/blog" },
-    { label: "Success Story", href: "#" },
+    { label: "Success Story", href: "/home#success-stories" },
     { label: "Careers", href: "#" },
     { label: "Privacy Policy", href: "/privacy-policy" },
   ];
