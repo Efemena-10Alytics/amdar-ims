@@ -26,12 +26,12 @@ const Footer = () => {
   ];
 
   const companyLinks = [
-    { label: "About Us", href: "#" },
-    { label: "FAQs", href: "#" },
-    { label: "Blog", href: "#" },
+    { label: "About Us", href: "/about" },
+    { label: "FAQs", href: "/faqs" },
+    { label: "Blog", href: "/blog" },
     { label: "Success Story", href: "#" },
     { label: "Careers", href: "#" },
-    { label: "Privacy Policy", href: "#" },
+    { label: "Privacy Policy", href: "/privacy-policy" },
   ];
 
   const whatsappContacts = [
@@ -82,9 +82,9 @@ const Footer = () => {
       {/* Main Footer Content */}
       <div className="app-width relative z-10 py-12 lg:py-16">
         {/* Upper Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12 mb-12">
           {/* Company Information & Newsletter */}
-          <div data-aos="fade-down" className="lg:col-span-1">
+          <div data-aos="fade-down" className="lg:col-span-2 lg:max-w-[80%]">
             <Image
               src="/logo-white.svg"
               height={40}

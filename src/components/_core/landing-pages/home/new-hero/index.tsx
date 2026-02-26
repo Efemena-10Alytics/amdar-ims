@@ -94,8 +94,8 @@ export default function NewHero() {
             </div>
 
             {/* Headline */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-[52px] font-bold text-[#092A31] leading-tight mb-5">
-              Gain Real Work Experience Through
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#092A31] leading-tight mb-5">
+              Gain Real Work <br /> Experience Through
               <br />
               <h1 className="inline-block overflow-hidden h-[1.2em] relative align-middle">
                 <Slider />

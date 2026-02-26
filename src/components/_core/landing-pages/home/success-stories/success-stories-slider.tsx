@@ -176,7 +176,7 @@ const SuccessStoriesSlider = ({
           {testimonials.map((testimonial, index) => (
             <CarouselItem
               key={testimonial.id}
-              className="pl-2 md:pl-4 basis-1/3 md:basis-1/4 lg:basis-1/6"
+              className="pl-2 md:pl-4 basis-1/3 md:basis-1/4 lg:basis-1/5"
             >
               <div className="relative flex py-10 items-center justify-center">
                 <div
