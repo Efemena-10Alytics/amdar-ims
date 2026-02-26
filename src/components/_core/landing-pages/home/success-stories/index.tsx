@@ -90,7 +90,11 @@ Thank you Amdari`,
   }, [api]);
 
   return (
-    <div data-aos="fade-up" className="bg-[#F8FAFB] py-12 lg:py-20">
+    <section
+      id="success-stories"
+      data-aos="fade-up"
+      className="scroll-mt-20 bg-[#F8FAFB] py-12 lg:py-20"
+    >
       <div className="app-width">
         {/* Title Section */}
         <div className="text-center mb-12">
@@ -141,7 +145,7 @@ Thank you Amdari`,
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 };
 

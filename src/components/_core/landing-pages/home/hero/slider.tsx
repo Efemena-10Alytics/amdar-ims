@@ -22,11 +22,11 @@ const Slider = () => {
   }, []);
 
   const slidesItem = [
-    "Business Analytics",
-    "Cybersecurity",
-    "Project Management",
-    "DevOps",
-    "Data Engineer",
+    "Business Analytics Internship",
+    "Cybersecurity Internship",
+    "Project Management Internship",
+    "DevOps Internship",
+    "Data Engineer Internship",
   ];
 
   const [api, setApi] = React.useState<CarouselApi>();
