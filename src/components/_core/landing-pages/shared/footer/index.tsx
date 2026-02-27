@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -15,15 +15,42 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import CTAbanner from "./cta-banner";
 import Aos from "aos";
+import { useGetInternshipPrograms } from "@/features/internship/use-get-all-internship-programs";
+import type { InternshipProgram } from "@/types/internship-program";
+
+const PROGRAMS_LABELS = [
+  "Product Design",
+  "Project Mgt.",
+  "Data Analytics",
+  "Business Analysis",
+  "Data Science",
+  "Ethical Hacking",
+] as const;
+
+function findProgramForLabel(programs: InternshipProgram[], label: string): InternshipProgram | undefined {
+  const normalizedLabel = label
+    .toLowerCase()
+    .trim()
+    .replace(/\s*&\s*/g, " and ")
+    .replace(/\bmgt\.?/gi, "management");
+  return programs.find((program) => {
+    const title = program.title
+      .toLowerCase()
+      .replace(/\s*&\s*/g, " and ")
+      .replace(/\bmgt\.?/gi, "management");
+    return title.includes(normalizedLabel) || normalizedLabel.includes(title);
+  });
+}
 
 const Footer = () => {
-  const projectsLinks = [
-    { label: "Product Design & Mgt.", href: "#" },
-    { label: "Project Mgt.", href: "#" },
-    { label: "Data Analytics", href: "#" },
-    { label: "Business Analytics", href: "#" },
-    { label: "Cybersecurity", href: "#" },
-  ];
+  const { data } = useGetInternshipPrograms();
+  const programsLinks = useMemo(() => {
+    const programs = (Array.isArray(data) ? data : (data as { data?: InternshipProgram[] })?.data) ?? [];
+    return PROGRAMS_LABELS.map((label) => {
+      const program = findProgramForLabel(programs, label);
+      return program ? { label, href: `/internship/${program.id}` } : null;
+    }).filter((link): link is { label: (typeof PROGRAMS_LABELS)[number]; href: string } => link !== null);
+  }, [data]);
 
   const companyLinks = [
     { label: "About Us", href: "/about" },
@@ -124,11 +151,11 @@ const Footer = () => {
             </label>
           </div>
 
-          {/* Projects Links */}
+          {/* Programs Links */}
           <div data-aos="fade-up">
-            <h3 className="text-base font-bold uppercase mb-4">PROGRAMS</h3>
+            <h3 className="text-base font-semibold uppercase mb-4">PROGRAMS</h3>
             <nav className="flex flex-col gap-3">
-              {projectsLinks.map((link) => (
+              {programsLinks.map((link) => (
                 <Link
                   key={link.label}
                   href={link.href}
@@ -142,7 +169,7 @@ const Footer = () => {
 
           {/* Company Links */}
           <div data-aos="fade-up">
-            <h3 className="text-base font-bold uppercase mb-4">COMPANY</h3>
+            <h3 className="text-base font-semibold uppercase mb-4">COMPANY</h3>
             <nav className="flex flex-col gap-3">
               {companyLinks.map((link) => (
                 <Link
@@ -158,7 +185,7 @@ const Footer = () => {
 
           {/* Contact Us */}
           <div data-aos="fade-down">
-            <h3 className="text-base font-bold uppercase mb-4">CONTACT US</h3>
+            <h3 className="text-base font-semibold uppercase mb-4">CONTACT US</h3>
 
             {/* WhatsApp Contacts */}
             <div className="mb-6">
