@@ -38,7 +38,7 @@ export function WhatsAppWidget({
     <DialogContent
       showCloseButton={true}
       overlayClassName="bg-transparent"
-      className="!left-auto !translate-x-0 fixed right-[40px] top-1/2 -translate-y-1/2 w-[320px] sm:w-[360px] max-w-[calc(100vw-2rem)] max-h-[calc(100vh-2rem)] h-auto rounded-xl  border  border-white/10 bg-[#15535E] text-white shadow-xl overflow-y-auto p-0 gap-0 data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right [&_[data-slot=dialog-close]]:text-white [&_[data-slot=dialog-close]]:opacity-90 [&_[data-slot=dialog-close]]:hover:bg-white/20 [&_[data-slot=dialog-close]]:hover:opacity-100"
+      className="left-auto! translate-x-0! fixed right-10 top-1/2 -translate-y-1/2 w-[320px] sm:w-90 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-2rem)] h-auto rounded-xl  border  border-white/10 bg-[#15535E] text-white shadow-xl overflow-y-auto p-0 gap-0 data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right **:data-[slot=dialog-close]:text-white **:data-[slot=dialog-close]:opacity-90 **:data-[slot=dialog-close]:hover:bg-white/20 **:data-[slot=dialog-close]:hover:opacity-100"
     >
       <DialogTitle className="sr-only">Chat with us on WhatsApp</DialogTitle>
       {/* Header */}
