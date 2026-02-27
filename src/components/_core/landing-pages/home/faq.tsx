@@ -3,9 +3,11 @@
 import React, { useState } from "react";
 import { Plus, Minus, ArrowRight, MessageCircle } from "lucide-react";
 import Aos from "aos";
+import { WhatsAppWidget } from "@/components/_core/landing-pages/shared/whatsapp-widget";
 
 const Faq = () => {
   const [openItems, setOpenItems] = useState<number[]>([]);
+  const [whatsappOpen, setWhatsappOpen] = useState(false);
   React.useEffect(() => {
     Aos.init();
   }, []);
@@ -115,29 +117,33 @@ const Faq = () => {
               <h2 className="text-2xl lg:text-3xl font-semibold text-[#092A31] mb-6">
                 Need To Talk To Us?
               </h2>
-              <div className="bg-[#15535E] rounded-lg p-6 flex items-center gap-4 cursor-pointer hover:bg-[#124a54] transition-colors">
-                {/* Chat Icon */}
-                <div className="shrink-0 relative">
-                  <div className="w-12 h-12 rounded-full bg-amdari-yellow flex items-center justify-center border-2 border-[#15535E]">
-                    <MessageCircle className="w-6 h-6 text-[#092A31]" />
-                  </div>
-                </div>
-
-                {/* Text */}
-                <div className="flex-1">
-                  <p className="text-white/90 text-sm mb-1">
-                    Couldn't find an answer?
-                  </p>
-                  <p className="text-white font-semibold text-base">
-                    Chat with us
-                  </p>
-                </div>
-
-                {/* Arrow */}
-                <div className="shrink-0">
-                  <ArrowRight className="w-5 h-5 text-white" />
-                </div>
-              </div>
+              <WhatsAppWidget
+                open={whatsappOpen}
+                onOpenChange={setWhatsappOpen}
+                trigger={
+                  <button
+                    type="button"
+                    className="w-full bg-[#15535E] rounded-lg p-6 flex items-center gap-4 cursor-pointer hover:bg-[#124a54] transition-colors text-left"
+                  >
+                    <div className="shrink-0 relative">
+                      <div className="w-12 h-12 rounded-full bg-amdari-yellow flex items-center justify-center border-2 border-[#15535E]">
+                        <MessageCircle className="w-6 h-6 text-[#092A31]" />
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-white/90 text-sm mb-1">
+                        Couldn&apos;t find an answer?
+                      </p>
+                      <p className="text-white font-semibold text-base">
+                        Chat with us
+                      </p>
+                    </div>
+                    <div className="shrink-0">
+                      <ArrowRight className="w-5 h-5 text-white" />
+                    </div>
+                  </button>
+                }
+              />
             </div>
           </div>
         </div>
