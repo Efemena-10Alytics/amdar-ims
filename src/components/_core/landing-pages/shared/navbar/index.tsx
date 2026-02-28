@@ -10,6 +10,7 @@ import Image from "next/image";
 import MobileDrawer from "./mobile-drawer";
 import { ConfirmLogout } from "./confirm-logout";
 import { useAuthStore } from "@/store/auth-store";
+import { useGetUserInfo, getAvatarUrlFromUser } from "@/features/auth/use-get-user-info";
 
 import {
   Tooltip,
@@ -56,6 +57,10 @@ const Navbr = () => {
 
   const pathname = usePathname();
   const { user, logout } = useAuthStore();
+  const { data: userInfo } = useGetUserInfo();
+  const avatarUrl = getAvatarUrlFromUser(userInfo ?? null);
+
+  console.log(avatarUrl);
   const isLoggedIn = user != null;
   const isHomePageRoute = pathname === "/home";
   const isInternshipProgramRoute =
@@ -186,12 +191,23 @@ const Navbr = () => {
                       <Link
                         href="https://www.amdari.io/dashboard"
                         className={cn(
-                          "flex size-10 xl:size-11 items-center justify-center rounded-full transition-colors",
+                          "flex size-10 xl:size-11 items-center justify-center rounded-full overflow-hidden transition-colors",
                           "bg-[#156374] hover:bg-[#156374]/80",
                         )}
                         aria-label="Profile"
                       >
-                        <UserAvatar />
+                        {avatarUrl ? (
+                          <Image
+                            src={avatarUrl}
+                            alt="Profile"
+                            width={44}
+                            height={44}
+                            className="size-full object-cover"
+                            unoptimized={avatarUrl.startsWith("http")}
+                          />
+                        ) : (
+                          <UserAvatar />
+                        )}
                       </Link>
                     </TooltipTrigger>
                     <TooltipContent>

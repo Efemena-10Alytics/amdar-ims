@@ -14,13 +14,14 @@ const DashboardLayout = ({
         {
           "--sidebar-width": "calc(var(--spacing) * 72)",
           "--header-height": "calc(var(--spacing) * 12)",
+          "--sidebar": "#fff",
         } as React.CSSProperties
       }
     >
       <AppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
-        <div className="flex flex-1 flex-col">{children}</div>
+        <div className="flex flex-1 flex-col p-4 md:p-6 shadow rounded-2xl">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );
