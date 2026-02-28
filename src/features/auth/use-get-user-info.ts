@@ -1,7 +1,35 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
+import { imageUrl } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
 import type { AuthUser } from "@/store/auth-store";
+
+const AVATAR_KEYS = [
+  "avatar",
+  "image",
+  "profile_image",
+  "picture",
+  "profile_picture",
+  "avatar_url",
+] as const;
+
+/** Returns a displayable avatar URL from user info, or null if none. */
+export function getAvatarUrlFromUser(
+  user: AuthUser | null | undefined
+): string | null {
+  if (!user || typeof user !== "object") return null;
+  const u = user as Record<string, unknown>;
+  for (const key of AVATAR_KEYS) {
+    const val = u[key];
+    if (typeof val === "string" && val.trim()) {
+      if (val.startsWith("http")) return val;
+      const base = imageUrl.replace(/\/$/, "");
+      const path = val.replace(/^\//, "");
+      return base ? `${base}/${path}` : val;
+    }
+  }
+  return null;
+}
 
 const USER_INFO_QUERY_KEY = (userId: string | number) =>
   ["user-info", String(userId)] as const;
