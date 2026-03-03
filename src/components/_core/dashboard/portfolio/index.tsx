@@ -5,12 +5,11 @@ import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PersonalInfo from "./personal-info";
 import { YourSocial } from "./your-social";
+import { YourBio } from "./your-bio";
 import Aside, { STEPS } from "./aside";
+import { portfolioInputStyle } from "./portfolio-styles";
 
-export const portfolioInputStyle = [
-  "w-full rounded-lg bg-[#F8FAFC] px-4 py-3 h-10 text-sm text-[#092A31] placeholder:text-[#94A3B8] border border-transparent",
-  "focus:outline-none focus:ring-2 focus:ring-[#156374] focus:ring-offset-0",
-].join(" ");
+export { portfolioInputStyle };
 
 export function CreatePortfolioForm() {
   const [step, setStep] = useState(1);
@@ -22,6 +21,12 @@ export function CreatePortfolioForm() {
     phone: "",
   });
   const [socialData, setSocialData] = useState({ linkedIn: "", twitter: "" });
+  const [bioData, setBioData] = useState({
+    jobTitle: "",
+    yearsOfExperience: "",
+    lifeProjectsCount: "",
+    bio: "",
+  });
 
   const isFirstStep = step === 1;
   const isLastStep = step === STEPS.length;
@@ -51,7 +56,10 @@ export function CreatePortfolioForm() {
             {step === 2 && (
               <YourSocial value={socialData} onChange={setSocialData} />
             )}
-            {step > 2 && (
+            {step === 3 && (
+              <YourBio value={bioData} onChange={setBioData} />
+            )}
+            {step > 3 && (
               <div>
                 <h2 className="text-lg font-semibold text-zinc-900">
                   {STEPS[step - 1].label}
