@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PersonalInfo from "./personal-info";
+import { YourSocial } from "./your-social";
 import Aside, { STEPS } from "./aside";
 
 export const portfolioInputStyle = [
@@ -20,6 +21,7 @@ export function CreatePortfolioForm() {
     countryCode: "",
     phone: "",
   });
+  const [socialData, setSocialData] = useState({ linkedIn: "", twitter: "" });
 
   const isFirstStep = step === 1;
   const isLastStep = step === STEPS.length;
@@ -46,7 +48,10 @@ export function CreatePortfolioForm() {
             {step === 1 && (
               <PersonalInfo value={personalInfo} onChange={setPersonalInfo} />
             )}
-            {step > 1 && (
+            {step === 2 && (
+              <YourSocial value={socialData} onChange={setSocialData} />
+            )}
+            {step > 2 && (
               <div>
                 <h2 className="text-lg font-semibold text-zinc-900">
                   {STEPS[step - 1].label}
