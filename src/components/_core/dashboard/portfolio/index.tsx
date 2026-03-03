@@ -17,7 +17,7 @@ export function CreatePortfolioForm() {
     firstName: "",
     lastName: "",
     email: "",
-    country: "",
+    countryCode: "",
     phone: "",
   });
 

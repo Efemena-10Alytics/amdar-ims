@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -8,25 +11,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { portfolioInputStyle } from ".";
+import { useCountries } from "@/features/portfolio/use-countries";
 
 export type PersonalInfoData = {
   firstName: string;
   lastName: string;
   email: string;
-  country: string;
+  countryCode: string;
   phone: string;
 };
-
-const COUNTRY_OPTIONS = [
-  "Nigeria",
-  "Ghana",
-  "Kenya",
-  "South Africa",
-  "United States",
-  "United Kingdom",
-  "Canada",
-  "Other",
-];
 
 type PersonalInfoProps = {
   value: PersonalInfoData;
@@ -34,8 +27,12 @@ type PersonalInfoProps = {
 };
 
 const PersonalInfo = ({ value: personalInfo, onChange }: PersonalInfoProps) => {
+  const { data: countries = [], isLoading: countriesLoading } = useCountries();
   const setPersonalInfo = (fn: (prev: PersonalInfoData) => PersonalInfoData) =>
     onChange(fn(personalInfo));
+  const selectedCountry = countries.find(
+    (c) => c.code === personalInfo.countryCode
+  );
   return (
     <div className="max-w-md">
       <h2 className="text-lg font-semibold text-zinc-900">
@@ -106,18 +103,29 @@ const PersonalInfo = ({ value: personalInfo, onChange }: PersonalInfoProps) => {
           Location (Country)
         </label>
         <Select
-          value={personalInfo.country}
+          value={personalInfo.countryCode || undefined}
           onValueChange={(value) =>
-            setPersonalInfo((p) => ({ ...p, country: value }))
+            setPersonalInfo((p) => ({ ...p, countryCode: value }))
           }
+          disabled={countriesLoading}
         >
           <SelectTrigger id="location" className={portfolioInputStyle}>
-            <SelectValue placeholder="Select your location" />
+            <SelectValue placeholder={countriesLoading ? "Loading…" : "Select your location"} />
           </SelectTrigger>
           <SelectContent>
-            {COUNTRY_OPTIONS.map((c) => (
-              <SelectItem key={c} value={c}>
-                {c}
+            {countries.map((c) => (
+              <SelectItem key={c.code} value={c.code}>
+                <span className="flex items-center gap-2">
+                  <Image
+                    src={c.flag}
+                    alt=""
+                    width={20}
+                    height={20}
+                    className="shrink-0 h-5 w-5 rounded-full object-cover"
+                    unoptimized
+                  />
+                  {c.name} ({c.callingCode})
+                </span>
               </SelectItem>
             ))}
           </SelectContent>
@@ -128,8 +136,22 @@ const PersonalInfo = ({ value: personalInfo, onChange }: PersonalInfoProps) => {
           Phone number
         </label>
         <div className="flex rounded-lg border border-transparent bg-[#F8FAFC] overflow-hidden">
-          <span className="flex items-center px-3 py-2 text-sm text-zinc-500 border-r border-zinc-200">
-            +234 ()
+          <span className="flex items-center gap-1.5 px-3 py-2 text-sm text-zinc-600 border-r border-zinc-200">
+            {selectedCountry ? (
+              <>
+                {selectedCountry.callingCode}
+                <Image
+                  src={selectedCountry.flag}
+                  alt=""
+                  width={20}
+                  height={20}
+                  className="shrink-0 rounded-full h-5 w-5 object-cover"
+                  unoptimized
+                />
+              </>
+            ) : (
+              "+234"
+            )}
           </span>
           <Input
             id="phone"
