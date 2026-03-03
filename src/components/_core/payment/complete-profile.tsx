@@ -198,10 +198,6 @@ export default function CompleteProfile({
     });
   }, [profile]);
 
-  
-  console.log(formData);
-  console.log('profile info',profile);
-
   const valid = isFormValid(formData);
 
   const updateField = <K extends keyof CompleteProfileFormData>(
