@@ -47,6 +47,7 @@ const HOW_DID_YOU_HEAR_OPTIONS = [
   { value: "Solace", label: "Solace" },
   { value: "Amdari Email Campaign", label: "Amdari Email Campaign" },
   { value: "Tochi", label: "Tochi" },
+  { value: "Fireside chat", label: "Fireside Chat" },
 ];
 
 const REASON_OPTIONS = [
@@ -152,17 +153,19 @@ function mergePrefills(
 ): Partial<CompleteProfileFormData> {
   const merged: Partial<CompleteProfileFormData> = {};
   for (const prefill of prefills) {
-    (Object.keys(prefill) as (keyof CompleteProfileFormData)[]).forEach((key) => {
-      const value = prefill[key];
-      if (value == null || value === "") return;
-      if (key === "sessionOfDecision") {
-        merged[key] = value;
-        return;
-      }
-      if (merged[key] == null || merged[key] === "") {
-        merged[key] = value;
-      }
-    });
+    (Object.keys(prefill) as (keyof CompleteProfileFormData)[]).forEach(
+      (key) => {
+        const value = prefill[key];
+        if (value == null || value === "") return;
+        if (key === "sessionOfDecision") {
+          merged[key] = value;
+          return;
+        }
+        if (merged[key] == null || merged[key] === "") {
+          merged[key] = value;
+        }
+      },
+    );
   }
   return merged;
 }
