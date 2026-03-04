@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import ChoosePath from "@/components/_core/landing-pages/internship-program/choose-path";
 import WhyTakeTheInternship from "@/components/_core/landing-pages/internship-program/why-take-the-internship";
@@ -10,7 +10,7 @@ import {
   SESSION_INFLUENCED_STORAGE_KEY,
 } from "@/features/payment/session-options";
 
-const ChoosePathPage = () => {
+function SessionParamCapture() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -29,8 +29,15 @@ const ChoosePathPage = () => {
     router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname);
   }, [pathname, router, searchParams]);
 
+  return null;
+}
+
+const ChoosePathPage = () => {
   return (
     <div>
+      <Suspense fallback={null}>
+        <SessionParamCapture />
+      </Suspense>
       <ChoosePath />
       <WhyTakeTheInternship />
       <JobReady />
