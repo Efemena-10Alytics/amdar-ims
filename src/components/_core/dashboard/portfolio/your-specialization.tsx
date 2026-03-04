@@ -1,26 +1,50 @@
 "use client";
 
-import { Check, Square } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Check, ChevronDown, Search, Square } from "lucide-react";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { portfolioInputStyle } from "./portfolio-styles";
 import { cn } from "@/lib/utils";
 
 const CATEGORIES = [
-    "Product Design",
-    "Engineering",
-    "Marketing",
+    "Data Analytics",
+    "Data Engineering",
     "Data Science",
-    "Writing",
-    "Other",
+    "Ethical Hacking",
+    "Product Design",
+    "Project management",
 ] as const;
 
 const SPECIALIZATIONS_BY_CATEGORY: Record<string, string[]> = {
+    "Data Analytics": [
+        "Business intelligence",
+        "Reporting",
+        "Statistical analysis",
+        "Dashboard design",
+    ],
+    "Data Engineering": [
+        "ETL",
+        "Data pipelines",
+        "Data warehousing",
+        "Big data",
+    ],
+    "Data Science": [
+        "Machine learning",
+        "Analytics",
+        "Data engineering",
+        "Visualization",
+    ],
+    "Ethical Hacking": [
+        "Penetration testing",
+        "Security auditing",
+        "Vulnerability assessment",
+    ],
     "Product Design": [
         "Graphics design",
         "Product design",
@@ -32,29 +56,12 @@ const SPECIALIZATIONS_BY_CATEGORY: Record<string, string[]> = {
         "Interaction design",
         "Design systems",
     ],
-    Engineering: [
-        "Frontend",
-        "Backend",
-        "Full stack",
-        "DevOps",
-        "Mobile",
-        "Cloud",
+    "Project management": [
+        "Agile",
+        "Scrum",
+        "Stakeholder management",
+        "Resource planning",
     ],
-    Marketing: [
-        "Digital marketing",
-        "Content marketing",
-        "SEO",
-        "Social media",
-        "Growth",
-    ],
-    "Data Science": [
-        "Machine learning",
-        "Analytics",
-        "Data engineering",
-        "Visualization",
-    ],
-    Writing: ["Technical writing", "Copywriting", "Content strategy"],
-    Other: ["Other"],
 };
 
 export type YourSpecializationData = {
@@ -68,10 +75,26 @@ type YourSpecializationProps = {
 };
 
 export function YourSpecialization({ value, onChange }: YourSpecializationProps) {
-    const specializations =
-        SPECIALIZATIONS_BY_CATEGORY[value.category] ??
-        SPECIALIZATIONS_BY_CATEGORY.Other;
+    const [categoryOpen, setCategoryOpen] = useState(false);
+    const [categorySearch, setCategorySearch] = useState("");
+    const [addMoreOpen, setAddMoreOpen] = useState(false);
+    const [addTitle, setAddTitle] = useState("");
+    const baseSpecializations =
+        SPECIALIZATIONS_BY_CATEGORY[value.category] ?? [];
+    const displayedSpecializations = useMemo(() => {
+        const base = SPECIALIZATIONS_BY_CATEGORY[value.category] ?? [];
+        const custom = value.selectedSpecializations.filter(
+            (s) => !base.includes(s),
+        );
+        return [...base, ...custom];
+    }, [value.category, value.selectedSpecializations]);
     const count = value.selectedSpecializations.length;
+
+    const filteredCategories = useMemo(() => {
+        const q = categorySearch.trim().toLowerCase();
+        if (!q) return [...CATEGORIES];
+        return CATEGORIES.filter((c) => c.toLowerCase().includes(q));
+    }, [categorySearch]);
 
     const toggle = (name: string) => {
         const next = value.selectedSpecializations.includes(name)
@@ -85,6 +108,23 @@ export function YourSpecialization({ value, onChange }: YourSpecializationProps)
             category,
             selectedSpecializations: [],
         });
+        setCategoryOpen(false);
+        setCategorySearch("");
+    };
+
+    const handleAddDone = () => {
+        const title = addTitle.trim();
+        if (!title) return;
+        if (value.selectedSpecializations.includes(title)) {
+            setAddMoreOpen(false);
+            return;
+        }
+        onChange({
+            ...value,
+            selectedSpecializations: [...value.selectedSpecializations, title],
+        });
+        setAddTitle("");
+        setAddMoreOpen(false);
     };
 
     return (
@@ -103,40 +143,131 @@ export function YourSpecialization({ value, onChange }: YourSpecializationProps)
                     >
                         Category
                     </label>
-                    <Select
-                        value={value.category || undefined}
-                        onValueChange={handleCategoryChange}
-                    >
-                        <SelectTrigger
-                            id="specialization-category"
-                            className={portfolioInputStyle}
+                    <Popover open={categoryOpen} onOpenChange={(open) => {
+                        setCategoryOpen(open);
+                        if (!open) setCategorySearch("");
+                    }}>
+                        <PopoverTrigger asChild>
+                            <button
+                                id="specialization-category"
+                                type="button"
+                                className={cn(
+                                    portfolioInputStyle,
+                                    "flex w-full items-center justify-between text-left",
+                                )}
+                            >
+                                <span className={value.category ? "text-[#092A31]" : "text-[#94A3B8]"}>
+                                    {value.category || "Select category"}
+                                </span>
+                                <ChevronDown className="size-4 shrink-0 text-zinc-500" />
+                            </button>
+                        </PopoverTrigger>
+                        <PopoverContent
+                            align="start"
+                            className="w-[var(--radix-popover-trigger-width)] rounded-lg border border-zinc-200 bg-white p-0 shadow-md"
                         >
-                            <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {CATEGORIES.map((c) => (
-                                <SelectItem key={c} value={c}>
-                                    {c}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                            <div className="p-2">
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-400" />
+                                    <Input
+                                        placeholder="Search"
+                                        value={categorySearch}
+                                        onChange={(e) => setCategorySearch(e.target.value)}
+                                        className="h-9 rounded-md bg-[#F8FAFC] border-0 pl-9 pr-3 text-sm placeholder:text-zinc-400 focus-visible:ring-2 focus-visible:ring-[#156374]"
+                                    />
+                                </div>
+                            </div>
+                            <ul className="max-h-60 overflow-auto border-t border-zinc-100 py-1">
+                                {filteredCategories.length === 0 ? (
+                                    <li className="px-3 py-2 text-sm text-zinc-500">No results</li>
+                                ) : (
+                                    filteredCategories.map((c) => (
+                                        <li key={c}>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleCategoryChange(c)}
+                                                className={cn(
+                                                    "w-full px-3 py-2 text-left text-sm text-zinc-900 hover:bg-zinc-100",
+                                                    value.category === c && "bg-primary/5 text-primary font-medium",
+                                                )}
+                                            >
+                                                {c}
+                                            </button>
+                                        </li>
+                                    ))
+                                )}
+                            </ul>
+                        </PopoverContent>
+                    </Popover>
                 </div>
 
                 <div className="flex items-center justify-between">
                     <span className="text-sm text-zinc-500">
                         {count} selected
                     </span>
-                    <button
-                        type="button"
-                        className="text-sm text-[#3B82F6] hover:underline focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:ring-offset-1 rounded"
+                    <Popover
+                        open={addMoreOpen}
+                        onOpenChange={(open) => {
+                            setAddMoreOpen(open);
+                            if (!open) setAddTitle("");
+                        }}
                     >
-                        Add more
-                    </button>
+                        <PopoverTrigger asChild>
+                            <button
+                                type="button"
+                                className="text-sm text-[#3B82F6] hover:underline focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:ring-offset-1 rounded"
+                            >
+                                Add more
+                            </button>
+                        </PopoverTrigger>
+                        <PopoverContent
+                            align="end"
+                            side="bottom"
+                            sideOffset={8}
+                            className="w-80 rounded-xl border border-zinc-200 bg-white p-6 shadow-lg"
+                        >
+                            <h3 className="text-lg font-semibold text-zinc-900 mb-4">
+                                Add specialization
+                            </h3>
+                            <div className="space-y-2">
+                                <label
+                                    htmlFor="add-specialization-title"
+                                    className="text-sm font-medium text-zinc-900 block"
+                                >
+                                    Specialization title
+                                </label>
+                                <Input
+                                    id="add-specialization-title"
+                                    value={addTitle}
+                                    onChange={(e) => setAddTitle(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            e.preventDefault();
+                                            handleAddDone();
+                                        }
+                                    }}
+                                    placeholder="Enter title"
+                                    className={cn(
+                                        portfolioInputStyle,
+                                        "rounded-lg border-zinc-200",
+                                    )}
+                                />
+                            </div>
+                            <div className="pt-4">
+                                <Button
+                                    type="button"
+                                    onClick={handleAddDone}
+                                    className="w-full rounded-lg bg-primary text-white hover:bg-primary/90 h-10 font-medium"
+                                >
+                                    Done
+                                </Button>
+                            </div>
+                        </PopoverContent>
+                    </Popover>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                    {specializations.map((name) => {
+                    {displayedSpecializations.map((name) => {
                         const selected = value.selectedSpecializations.includes(name);
                         return (
                             <button
@@ -157,7 +288,7 @@ export function YourSpecialization({ value, onChange }: YourSpecializationProps)
                                         <Check className="size-3 text-primary" strokeWidth={3} />
                                     </span>
                                 ) : (
-                                    <Square className="size-4 shrink-0 rounded border border-current text-zinc-400 opacity-0 transition-opacity group-hover:opacity-100" />
+                                    <Square className="size-4 shrink-0 rounded-md text-zinc-400 opacity-0 transition-opacity group-hover:opacity-100" />
                                 )}
                             </button>
                         );
