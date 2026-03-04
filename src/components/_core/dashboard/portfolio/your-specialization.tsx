@@ -8,7 +8,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { AddMorePopover } from "./add-more-popover";
 import { portfolioInputStyle } from "./portfolio-styles";
 import { cn } from "@/lib/utils";
 
@@ -205,65 +205,26 @@ export function YourSpecialization({ value, onChange }: YourSpecializationProps)
                     <span className="text-sm text-zinc-500">
                         {count} selected
                     </span>
-                    <Popover
+                    <AddMorePopover
                         open={addMoreOpen}
                         onOpenChange={(open) => {
                             setAddMoreOpen(open);
                             if (!open) setAddTitle("");
                         }}
+                        title="Add specialization"
+                        inputLabel="Specialization title"
+                        inputId="add-specialization-title"
+                        value={addTitle}
+                        onChange={setAddTitle}
+                        onDone={handleAddDone}
                     >
-                        <PopoverTrigger asChild>
-                            <button
-                                type="button"
-                                className="text-sm text-[#3B82F6] hover:underline focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:ring-offset-1 rounded"
-                            >
-                                Add more
-                            </button>
-                        </PopoverTrigger>
-                        <PopoverContent
-                            align="end"
-                            side="bottom"
-                            sideOffset={8}
-                            className="w-80 rounded-xl border border-zinc-200 bg-white p-6 shadow-lg"
+                        <button
+                            type="button"
+                            className="text-sm text-[#3B82F6] hover:underline focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:ring-offset-1 rounded"
                         >
-                            <h3 className="text-lg font-semibold text-zinc-900 mb-4">
-                                Add specialization
-                            </h3>
-                            <div className="space-y-2">
-                                <label
-                                    htmlFor="add-specialization-title"
-                                    className="text-sm font-medium text-zinc-900 block"
-                                >
-                                    Specialization title
-                                </label>
-                                <Input
-                                    id="add-specialization-title"
-                                    value={addTitle}
-                                    onChange={(e) => setAddTitle(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter") {
-                                            e.preventDefault();
-                                            handleAddDone();
-                                        }
-                                    }}
-                                    placeholder="Enter title"
-                                    className={cn(
-                                        portfolioInputStyle,
-                                        "rounded-lg border-zinc-200",
-                                    )}
-                                />
-                            </div>
-                            <div className="pt-4">
-                                <Button
-                                    type="button"
-                                    onClick={handleAddDone}
-                                    className="w-full rounded-lg bg-primary text-white hover:bg-primary/90 h-10 font-medium"
-                                >
-                                    Done
-                                </Button>
-                            </div>
-                        </PopoverContent>
-                    </Popover>
+                            Add more
+                        </button>
+                    </AddMorePopover>
                 </div>
 
                 <div className="flex flex-wrap gap-2">

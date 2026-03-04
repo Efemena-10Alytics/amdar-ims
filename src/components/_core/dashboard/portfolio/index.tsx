@@ -7,6 +7,8 @@ import PersonalInfo from "./personal-info";
 import { YourSocial } from "./your-social";
 import { YourBio } from "./your-bio";
 import { YourSpecialization } from "./your-specialization";
+import { YourSkills } from "./your-skills";
+import { YourTools } from "./your-tools";
 import Aside, { STEPS } from "./aside";
 import { portfolioInputStyle } from "./portfolio-styles";
 
@@ -31,6 +33,12 @@ export function CreatePortfolioForm() {
   const [specializationData, setSpecializationData] = useState({
     category: "",
     selectedSpecializations: [] as string[],
+  });
+  const [skillsData, setSkillsData] = useState({
+    selectedSkills: [] as string[],
+  });
+  const [toolsData, setToolsData] = useState({
+    selectedTools: [] as string[],
   });
 
   const isFirstStep = step === 1;
@@ -70,7 +78,19 @@ export function CreatePortfolioForm() {
                 onChange={setSpecializationData}
               />
             )}
-            {step > 4 && (
+            {step === 5 && (
+              <YourSkills
+                value={skillsData}
+                onChange={setSkillsData}
+              />
+            )}
+            {step === 6 && (
+              <YourTools
+                value={toolsData}
+                onChange={setToolsData}
+              />
+            )}
+            {step > 6 && (
               <div>
                 <h2 className="text-lg font-semibold text-zinc-900">
                   {STEPS[step - 1].label}
