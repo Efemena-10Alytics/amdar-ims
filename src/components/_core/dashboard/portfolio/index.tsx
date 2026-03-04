@@ -9,6 +9,7 @@ import { YourBio } from "./your-bio";
 import { YourSpecialization } from "./your-specialization";
 import { YourSkills } from "./your-skills";
 import { YourTools } from "./your-tools";
+import { WorkExperience } from "./work-experience";
 import Aside, { STEPS } from "./aside";
 import { portfolioInputStyle } from "./portfolio-styles";
 
@@ -39,6 +40,19 @@ export function CreatePortfolioForm() {
   });
   const [toolsData, setToolsData] = useState({
     selectedTools: [] as string[],
+  });
+  const [workExperienceData, setWorkExperienceData] = useState({
+    entries: [
+      {
+        companyName: "",
+        jobTitle: "",
+        industry: "",
+        jobDescription: "",
+        startDate: "",
+        endDate: "",
+        currentlyWorkHere: false,
+      },
+    ],
   });
 
   const isFirstStep = step === 1;
@@ -90,7 +104,13 @@ export function CreatePortfolioForm() {
                 onChange={setToolsData}
               />
             )}
-            {step > 6 && (
+            {step === 7 && (
+              <WorkExperience
+                value={workExperienceData}
+                onChange={setWorkExperienceData}
+              />
+            )}
+            {step > 7 && (
               <div>
                 <h2 className="text-lg font-semibold text-zinc-900">
                   {STEPS[step - 1].label}
