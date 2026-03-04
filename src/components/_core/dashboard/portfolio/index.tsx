@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import PersonalInfo from "./personal-info";
 import { YourSocial } from "./your-social";
 import { YourBio } from "./your-bio";
+import { YourSpecialization } from "./your-specialization";
 import Aside, { STEPS } from "./aside";
 import { portfolioInputStyle } from "./portfolio-styles";
 
@@ -26,6 +27,10 @@ export function CreatePortfolioForm() {
     yearsOfExperience: "",
     lifeProjectsCount: "",
     bio: "",
+  });
+  const [specializationData, setSpecializationData] = useState({
+    category: "",
+    selectedSpecializations: [] as string[],
   });
 
   const isFirstStep = step === 1;
@@ -59,7 +64,13 @@ export function CreatePortfolioForm() {
             {step === 3 && (
               <YourBio value={bioData} onChange={setBioData} />
             )}
-            {step > 3 && (
+            {step === 4 && (
+              <YourSpecialization
+                value={specializationData}
+                onChange={setSpecializationData}
+              />
+            )}
+            {step > 4 && (
               <div>
                 <h2 className="text-lg font-semibold text-zinc-900">
                   {STEPS[step - 1].label}
