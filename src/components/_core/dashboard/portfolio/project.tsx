@@ -40,7 +40,7 @@ export function MyProjects({
     <section className="mt-10 relative" aria-label="My projects">
       <CardClipPathDef />
       <h2 className="text-sm font-medium text-zinc-500 mb-4">My projects</h2>
-      <div className="grid gap-4 pb-2" style={{ gridTemplateColumns: "repeat(3, minmax(0, 1fr))" }}>
+      <div className="grid xl:grid-cols-3 gap-4 pb-2">
         {projects.map((project, index) => (
           <div key={project.id ?? index} className="min-w-0 w-full">
             <ProjectCard
@@ -67,26 +67,28 @@ function ProjectCard({
 }) {
   return (
     <article className="relative block w-full min-w-0 overflow-visible">
-      <div
-        className="relative h-60 w-full min-w-0 overflow-hidden bg-zinc-900 shadow-sm"
-        style={{ clipPath: `url(#${CARD_CLIP_PATH_ID})` }}
-      >
-        {project.imageUrl ? (
-          <img
-            src={project.imageUrl}
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        ) : (
-          <div className="absolute inset-0 bg-zinc-800 flex items-center justify-center text-zinc-500 text-sm">
-            No image
-          </div>
-        )}
-        {/* Action: bottom right, circular teal, overlapping the card edge */}
+      <div className="relative h-60 w-full min-w-0">
+        <div
+          className="absolute inset-0 overflow-hidden bg-zinc-900 shadow-sm"
+          style={{ clipPath: `url(#${CARD_CLIP_PATH_ID})` }}
+        >
+          {project.imageUrl ? (
+            <img
+              src={project.imageUrl}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-zinc-800 flex items-center justify-center text-zinc-500 text-sm">
+              No image
+            </div>
+          )}
+        </div>
+        {/* Action: bottom right, outside clip so it always shows */}
         <button
           type="button"
           onClick={onClick}
-          className="absolute -bottom-1 -right-1 flex size-9 items-center justify-center rounded-full bg-primary text-white shadow-md transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 z-10"
+          className="absolute bottom-2 right-2 flex size-9 items-center justify-center rounded-full bg-primary text-white shadow-md transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 z-20"
           aria-label={`View ${project.title}`}
         >
           <ArrowUpRight className="size-4" aria-hidden />
@@ -95,7 +97,7 @@ function ProjectCard({
       {/* Tags: top right, outside clip so they always show */}
       {project.tags && project.tags.length > 0 && (
         <div className="absolute top-2 right-2 flex flex-wrap gap-1.5 justify-end z-20 pointer-events-none">
-          {project.tags.map((tag) => (
+          {project.tags.slice(0,2).map((tag) => (
             <span
               key={tag}
               className="rounded-full bg-[#E8EFF1] px-2.5 py-1 text-xs font-medium text-primary shadow-sm"

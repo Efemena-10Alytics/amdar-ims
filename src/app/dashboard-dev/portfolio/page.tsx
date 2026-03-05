@@ -130,7 +130,7 @@ export default function PortfolioPage() {
 
       <section className="py-6" aria-label="Portfolio template">
         <div className="overflow-x-auto overflow-y-hidden pb-2 -mx-1 px-1">
-          <div className="flex flex-wrap gap-4 min-w-max">
+          <div className="flex gap-4">
             {TEMPLATES.map((t) => (
               <TemplatePreview
                 key={t.id}
@@ -157,7 +157,7 @@ export default function PortfolioPage() {
       <MyProjects
         projects={[
           { title: "Mango", tags: ["Branding", "Graphics"], imageUrl: "/images/pngs/template/bold.png" },
-          { title: "IPADPRO", tags: ["Website"],  imageUrl: "/images/pngs/template/whole.png" },
+          { title: "IPADPRO", tags: ["Website", "Figma", "Hello"],  imageUrl: "/images/pngs/template/whole.png" },
         ]}
         onAddProject={() => {}}
       />
