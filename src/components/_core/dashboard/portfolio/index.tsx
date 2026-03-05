@@ -10,6 +10,7 @@ import { YourSpecialization } from "./your-specialization";
 import { YourSkills } from "./your-skills";
 import { YourTools } from "./your-tools";
 import { WorkExperience } from "./work-experience";
+import { EducationBackground } from "./education-background";
 import Aside, { STEPS } from "./aside";
 import { portfolioInputStyle } from "./portfolio-styles";
 
@@ -53,6 +54,9 @@ export function CreatePortfolioForm() {
         currentlyWorkHere: false,
       },
     ],
+  });
+  const [educationData, setEducationData] = useState({
+    entries: [{ schoolName: "", qualification: "" }],
   });
 
   const isFirstStep = step === 1;
@@ -110,15 +114,11 @@ export function CreatePortfolioForm() {
                 onChange={setWorkExperienceData}
               />
             )}
-            {step > 7 && (
-              <div>
-                <h2 className="text-lg font-semibold text-zinc-900">
-                  {STEPS[step - 1].label}
-                </h2>
-                <p className="mt-1 text-sm text-zinc-500 mb-6">
-                  This section is coming soon.
-                </p>
-              </div>
+            {step === 8 && (
+              <EducationBackground
+                value={educationData}
+                onChange={setEducationData}
+              />
             )}
           </div>
 
@@ -136,10 +136,10 @@ export function CreatePortfolioForm() {
             <Button
               type="button"
               onClick={() => setStep((s) => Math.min(STEPS.length, s + 1))}
-              disabled={isLastStep}
+              // disabled={isLastStep}
               className="flex-1 h-10 rounded-lg bg-primary text-white hover:bg-primary/90"
             >
-              Next <ChevronRight className="size-4 ml-1" />
+              {isLastStep ? "Create Portfolio" : <>Next <ChevronRight className="size-4 ml-1" /></>}
             </Button>
           </div>
         </div>
