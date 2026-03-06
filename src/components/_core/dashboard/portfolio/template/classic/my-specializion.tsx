@@ -22,7 +22,7 @@ export function MySpecialization({
               className="shrink-0 size-1.5 rounded-full bg-primary"
               aria-hidden
             />
-            <span className="text-sm font-semibold text-[#092A31]">{item}</span>
+            <h3 className="text-sm font-semibold text-[#092A31] font-clash-display">{item}</h3>
           </li>
         ))}
       </ul>

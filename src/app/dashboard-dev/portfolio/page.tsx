@@ -10,9 +10,10 @@ import {
 } from "@/components/_core/dashboard/svg";
 import { cn } from "@/lib/utils";
 import { PortfolioHero } from "@/components/_core/dashboard/portfolio/template/classic/portfolio-hero";
-import { MyProjects } from "@/components/_core/dashboard/portfolio/template/classic/project";
+import { MyProjects } from "@/components/_core/dashboard/portfolio/template/classic/my-project";
 import { MyWorkExperience } from "@/components/_core/dashboard/portfolio/template/classic/my-work-experince";
 import { MySpecialization } from "@/components/_core/dashboard/portfolio/template/classic/my-specializion";
+import { MyTools } from "@/components/_core/dashboard/portfolio/template/classic/my-tools";
 
 const TEMPLATES = [
   { id: "classic", label: "Classic" },
@@ -194,6 +195,15 @@ export default function PortfolioPage() {
           "Brain storming",
           "Mood board",
         ]}
+      />
+      <MyTools
+        tools={[
+          { name: "Figma", percentage: 80 },
+          { name: "Trello", percentage: 80 },
+          { name: "Photoshop", percentage: 80 },
+          { name: "Adobe Illustrator", percentage: 80 },
+        ]}
+        title="Product Designer"
       />
       <div className="flex-1 min-h-0" />
     </div>

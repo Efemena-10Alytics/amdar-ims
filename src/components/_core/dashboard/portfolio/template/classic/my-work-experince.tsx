@@ -22,9 +22,9 @@ export function MyWorkExperience({
 }: MyWorkExperienceProps) {
   return (
     <section className="mt-20" aria-label="My work experience">
-      <h2 className="text-sm font-semibold text-[#A1A8B1] mb-4">
+      <span className="text-sm font-semibold text-[#A1A8B1] mb-4">
         My Work Experience
-      </h2>
+      </span>
       <ul className="divide- divide-zinc-200">
         {items.map((item, index) => (
           <li key={item.id ?? index}>
@@ -36,8 +36,8 @@ export function MyWorkExperience({
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-bold text-[#092A31]">{item.company}</span>
-                  <span className="text-sm text-[#B6CFD4] font-semibold">{item.category}</span>
+                  <h2 className="font-bold text-[#092A31]">{item.company}</h2>
+                  <h3 className="text-sm text-[#B6CFD4] font-semibold">{item.category}</h3>
                 </div>
                 <p className="mt-0.5 text-sm text-[#64748B]">
                   {item.role}
