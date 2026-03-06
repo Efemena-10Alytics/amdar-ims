@@ -39,7 +39,7 @@ export function MyProjects({
   return (
     <section className="mt-20 relative" aria-label="My projects">
       <CardClipPathDef />
-      <h2 className="text-sm font-medium text-[#A1A8B1] mb-4">My projects</h2>
+      <span className="text-xl font-semibold text-[#A1A8B1] mb-4">My projects</span>
       <div className="grid xl:grid-cols-3 gap-4 pb-2">
         {projects.map((project, index) => (
           <div key={project.id ?? index} className="min-w-0 w-full">

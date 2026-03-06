@@ -29,7 +29,7 @@ export function MyTools({
 
   return (
     <div>
-      <h2 className="text-sm font-medium text-zinc-900 mb-4">My Tools</h2>
+     <span className="text-xl font-semibold text-[#A1A8B1] mb-4">My Tools</span>
       <section
         className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-20 items-center"
         aria-label="My tools"

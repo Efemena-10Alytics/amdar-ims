@@ -14,6 +14,8 @@ import { MyProjects } from "@/components/_core/dashboard/portfolio/template/clas
 import { MyWorkExperience } from "@/components/_core/dashboard/portfolio/template/classic/my-work-experince";
 import { MySpecialization } from "@/components/_core/dashboard/portfolio/template/classic/my-specializion";
 import { MyTools } from "@/components/_core/dashboard/portfolio/template/classic/my-tools";
+import { MyEducationBackground } from "@/components/_core/dashboard/portfolio/template/classic/my-education-background";
+import { Footer } from "@/components/_core/dashboard/portfolio/template/classic/footer";
 
 const TEMPLATES = [
   { id: "classic", label: "Classic" },
@@ -205,6 +207,13 @@ export default function PortfolioPage() {
         ]}
         title="Product Designer"
       />
+      <MyEducationBackground
+        entries={[
+          { institution: "Salzburg University", degree: "Master's Degree" },
+          { institution: "School of Design", degree: "Bachelor's Degree" },
+        ]}
+      />
+      <Footer />
       <div className="flex-1 min-h-0" />
     </div>
   );

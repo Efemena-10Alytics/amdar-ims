@@ -12,9 +12,9 @@ export function MySpecialization({
   return (
     <section className="mt-10" aria-label="Specialization and skills">
       {/* My Specialization */}
-      <h2 className="text-sm font-medium text-zinc-500 mb-4">
+      <span className="text-xl font-semibold text-[#A1A8B1] mb-4">
         My Specialization
-      </h2>
+      </span>
       <ul className="grid max-w-6xl mx-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-10 list-none">
         {specializations.map((item, index) => (
           <li key={index} className="flex items-center justify-center gap-2">

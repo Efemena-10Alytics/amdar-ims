@@ -22,7 +22,7 @@ export function MyWorkExperience({
 }: MyWorkExperienceProps) {
   return (
     <section className="mt-20" aria-label="My work experience">
-      <span className="text-sm font-semibold text-[#A1A8B1] mb-4">
+      <span className="text-xl font-semibold text-[#A1A8B1] mb-4">
         My Work Experience
       </span>
       <ul className="divide- divide-zinc-200">
