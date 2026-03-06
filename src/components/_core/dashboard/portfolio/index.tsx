@@ -13,8 +13,6 @@ import { WorkExperience } from "./work-experience";
 import { EducationBackground } from "./education-background";
 import Aside, { STEPS } from "./aside";
 
-export { portfolioInputStyle } from "./portfolio-styles";
-
 export function CreatePortfolioForm() {
   const [step, setStep] = useState(1);
   const [personalInfo, setPersonalInfo] = useState({
