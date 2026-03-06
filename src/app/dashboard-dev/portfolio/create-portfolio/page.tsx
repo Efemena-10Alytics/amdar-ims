@@ -1,4 +1,4 @@
-import { CreatePortfolioForm } from "@/components/_core/dashboard/portfolio";
+import { CreatePortfolioForm } from "@/components/_core/dashboard/portfolio/create-portfolio-form";
 
 const CreatePortfolio = () => {
   return (
