@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useCompleteProfile } from "@/features/payment/use-complete-profile";
 import {
@@ -13,6 +13,12 @@ import {
 import ErrorAlert from "@/components/_core/auth/error-alert";
 import { cn } from "@/lib/utils";
 import { useGetUserInfo } from "@/features/auth/use-get-user-info";
+import { useAuthStore } from "@/store/auth-store";
+import {
+  getSessionValueFromStoredValue,
+  SESSION_INFLUENCED_STORAGE_KEY,
+  SESSION_OPTIONS,
+} from "@/features/payment/session-options";
 
 const inputBase = cn(
   "w-full rounded-lg bg-[#F8FAFC] px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8]",
@@ -41,6 +47,7 @@ const HOW_DID_YOU_HEAR_OPTIONS = [
   { value: "Solace", label: "Solace" },
   { value: "Amdari Email Campaign", label: "Amdari Email Campaign" },
   { value: "Tochi", label: "Tochi" },
+  { value: "Fireside chat", label: "Fireside Chat" },
 ];
 
 const REASON_OPTIONS = [
@@ -48,17 +55,6 @@ const REASON_OPTIONS = [
   { value: "skills", label: "Learn new skills" },
   { value: "industry", label: "Industry exposure" },
   { value: "other", label: "Other" },
-];
-
-const SESSION_OPTIONS = [
-  {
-    value: "Thursday & Friday Career Session",
-    label: "Thursday & Friday Career Session",
-  },
-  { value: "Saturday Info Session", label: "Saturday Info Session" },
-  { value: "Clarity Session", label: "Clarity Session" },
-  { value: "1 Week Free Internship", label: "1 Week Free Internship" },
-  { value: "None of the above", label: "None of the above" },
 ];
 
 const SKILL_LEVEL_OPTIONS = [
@@ -72,6 +68,23 @@ const GENDER_OPTIONS = [
   { value: "Female", label: "Female" },
   { value: "Others", label: "Others" },
 ];
+
+function getNormalizedOptionValue(
+  value: unknown,
+  options: ReadonlyArray<{ value: string }>,
+): string | null {
+  if (value == null) return null;
+  const normalized = String(value).trim();
+  if (!normalized) return null;
+
+  const exactMatch = options.find((option) => option.value === normalized);
+  if (exactMatch) return exactMatch.value;
+
+  const lowerCaseMatch = options.find(
+    (option) => option.value.toLowerCase() === normalized.toLowerCase(),
+  );
+  return lowerCaseMatch?.value ?? normalized;
+}
 
 interface CompleteProfileFormData {
   skillLevel: string;
@@ -108,10 +121,16 @@ function getPrefillFromProfile(
   if (!profile || typeof profile !== "object") return {};
   const prefill: Partial<CompleteProfileFormData> = {};
   const skillLevel = profile.skillLevel ?? profile.skill_level;
-  if (skillLevel != null && String(skillLevel).trim() !== "")
-    prefill.skillLevel = String(skillLevel).trim();
-  if (profile.gender != null && String(profile.gender).trim() !== "")
-    prefill.gender = String(profile.gender).trim();
+  const normalizedSkillLevel = getNormalizedOptionValue(
+    skillLevel,
+    SKILL_LEVEL_OPTIONS,
+  );
+  if (normalizedSkillLevel != null) prefill.skillLevel = normalizedSkillLevel;
+  const normalizedGender = getNormalizedOptionValue(
+    profile.gender,
+    GENDER_OPTIONS,
+  );
+  if (normalizedGender != null) prefill.gender = normalizedGender;
   const findOut = profile.find_out;
   if (findOut != null && String(findOut).trim() !== "")
     prefill.howDidYouHear = String(findOut).trim();
@@ -119,12 +138,45 @@ function getPrefillFromProfile(
   if (decisionInfluenced != null && String(decisionInfluenced).trim() !== "")
     prefill.reasonForDecision = String(decisionInfluenced).trim();
   const sessionInfluenced = profile.session_influenced;
-  if (sessionInfluenced != null && String(sessionInfluenced).trim() !== "")
-    prefill.sessionOfDecision = String(sessionInfluenced).trim();
+  const sessionValue = getSessionValueFromStoredValue(
+    sessionInfluenced != null ? String(sessionInfluenced) : null,
+  );
+  if (sessionValue != null) prefill.sessionOfDecision = sessionValue;
   const ref = profile.ref;
   if (ref != null && String(ref).trim() !== "")
     prefill.referralCode = String(ref).trim();
   return prefill;
+}
+
+function mergePrefills(
+  ...prefills: Array<Partial<CompleteProfileFormData>>
+): Partial<CompleteProfileFormData> {
+  const merged: Partial<CompleteProfileFormData> = {};
+  for (const prefill of prefills) {
+    (Object.keys(prefill) as (keyof CompleteProfileFormData)[]).forEach(
+      (key) => {
+        const value = prefill[key];
+        if (value == null || value === "") return;
+        if (key === "sessionOfDecision") {
+          merged[key] = value;
+          return;
+        }
+        if (merged[key] == null || merged[key] === "") {
+          merged[key] = value;
+        }
+      },
+    );
+  }
+  return merged;
+}
+
+function getStoredSessionPrefill(): Partial<CompleteProfileFormData> {
+  if (typeof window === "undefined") return {};
+  const storedSession = window.localStorage.getItem(
+    SESSION_INFLUENCED_STORAGE_KEY,
+  );
+  const sessionValue = getSessionValueFromStoredValue(storedSession);
+  return sessionValue ? { sessionOfDecision: sessionValue } : {};
 }
 
 const REQUIRED_FIELDS: (keyof Omit<CompleteProfileFormData, "referralCode">)[] =
@@ -163,40 +215,41 @@ export default function CompleteProfile({
   programTitle,
   onProfileComplete,
 }: CompleteProfileProps) {
+  const authUser = useAuthStore((state) => state.user);
   const { data: userInfo, isLoading: isLoadingUserInfo } = useGetUserInfo();
-  const profile = getProfileFromUserInfo(
+  const profileFromUserInfo = getProfileFromUserInfo(
     userInfo as Record<string, unknown> | null | undefined,
   );
+  const profileFromAuthStore = getProfileFromUserInfo(
+    authUser as Record<string, unknown> | null | undefined,
+  );
 
-  const [formData, setFormData] =
-    useState<CompleteProfileFormData>(initialFormData);
+  const [formOverrides, setFormOverrides] = useState<
+    Partial<CompleteProfileFormData>
+  >({});
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<keyof CompleteProfileFormData, string>>
   >({});
   const { updateUser, isUpdating, errorMessage } = useCompleteProfile();
 
-  // Prefill from user info when available; only fill fields that are still empty
-  useEffect(() => {
-    if (!profile) return;
-    const prefill = getPrefillFromProfile(profile);
-    if (Object.keys(prefill).length === 0) return;
-    setFormData((prev) => {
-      const next = { ...prev };
-      (Object.keys(prefill) as (keyof CompleteProfileFormData)[]).forEach(
-        (k) => {
-          const value = prefill[k];
-          if (
-            value != null &&
-            value !== "" &&
-            (prev[k] == null || prev[k] === "")
-          ) {
-            next[k] = value;
-          }
-        },
-      );
-      return next;
-    });
-  }, [profile]);
+  const basePrefill = useMemo(
+    () =>
+      mergePrefills(
+        getPrefillFromProfile(profileFromUserInfo),
+        getPrefillFromProfile(profileFromAuthStore),
+        getStoredSessionPrefill(),
+      ),
+    [profileFromAuthStore, profileFromUserInfo],
+  );
+
+  const formData = useMemo(
+    () => ({
+      ...initialFormData,
+      ...basePrefill,
+      ...formOverrides,
+    }),
+    [basePrefill, formOverrides],
+  );
 
   const valid = isFormValid(formData);
 
@@ -204,7 +257,7 @@ export default function CompleteProfile({
     field: K,
     value: CompleteProfileFormData[K],
   ) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormOverrides((prev) => ({ ...prev, [field]: value }));
     if (fieldErrors[field]) {
       setFieldErrors((prev) => {
         const next = { ...prev };

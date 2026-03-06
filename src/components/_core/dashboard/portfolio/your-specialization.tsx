@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { AddMorePopover } from "./add-more-popover";
 import { cn } from "@/lib/utils";
-import { portfolioInputStyle } from ".";
+import { portfolioInputStyle } from "./portfolio-styles";
 
 const CATEGORIES = [
     "Data Analytics",
