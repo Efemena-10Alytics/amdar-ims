@@ -2,7 +2,7 @@
 
 import { Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { portfolioInputStyle } from "./portfolio-styles";
+import { portfolioInputStyle } from ".";
 
 export type EducationEntry = {
   schoolName: string;

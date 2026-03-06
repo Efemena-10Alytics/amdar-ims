@@ -37,9 +37,9 @@ export function MyProjects({
   onProjectClick,
 }: MyProjectsProps) {
   return (
-    <section className="mt-10 relative" aria-label="My projects">
+    <section className="mt-20 relative" aria-label="My projects">
       <CardClipPathDef />
-      <h2 className="text-sm font-medium text-zinc-500 mb-4">My projects</h2>
+      <h2 className="text-sm font-medium text-[#A1A8B1] mb-4">My projects</h2>
       <div className="grid xl:grid-cols-3 gap-4 pb-2">
         {projects.map((project, index) => (
           <div key={project.id ?? index} className="min-w-0 w-full">
@@ -69,7 +69,7 @@ function ProjectCard({
     <article className="relative block w-full min-w-0 overflow-visible">
       <div className="relative h-60 w-full min-w-0">
         <div
-          className="absolute inset-0 overflow-hidden bg-zinc-900 shadow-sm"
+          className="absolute inset-0 overflow-hidden bg-[#E8EFF1] hover:scale-95 transition-all shadow-sm"
           style={{ clipPath: `url(#${CARD_CLIP_PATH_ID})` }}
         >
           {project.imageUrl ? (
@@ -123,17 +123,20 @@ function AddProjectCard({ onAdd }: { onAdd?: () => void }) {
       className="relative block w-full min-w-0 overflow-visible text-left focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 group"
       aria-label="Add project"
     >
-      {/* Same shape as ProjectCard: clip-path, 150×200, dark bg */}
-      <div
-        className="relative h-60 w-full overflow-hidden bg-zinc-900 shadow-sm flex flex-col items-center justify-center text-zinc-400 hover:bg-zinc-800 hover:text-zinc-300 transition-colors"
-        style={{ clipPath: `url(#${CARD_CLIP_PATH_ID})` }}
-      >
-        <span className="absolute -top-10 right-10 rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-900 shadow-sm group-hover:bg-primary/10 group-hover:text-primary">
-          Your project
+      <div className="relative h-60 w-full">
+        <div
+          className="absolute inset-0 overflow-hidden  bg-[#E8EFF1] shadow-sm flex flex-col items-center justify-center text-zinc-400 hover:scale-95 hover:text-zinc-300 transition-all"
+          style={{ clipPath: `url(#${CARD_CLIP_PATH_ID})` }}
+        >
+          <span className="text-sm font-medium">Add project here</span>
+        </div>
+        {/* Action button: bottom right, outside clip so it always shows */}
+        <span className="absolute bottom-2 right-2 z-20 flex size-9 items-center justify-center rounded-full bg-primary text-white shadow-md pointer-events-none" aria-hidden>
+          <Plus className="size-4" />
         </span>
-        <span className="text-sm font-medium">Add project here</span>
-        <span className="absolute bottom-2 right-2 flex size-9 items-center justify-center rounded-full bg-primary text-white shadow-md transition-opacity group-hover:opacity-90">
-          <Plus className="size-4" aria-hidden />
+        {/* Top right tag, outside clip so it always shows */}
+        <span className="absolute top-2 right-2 z-20 rounded-full bg-[#E8EFF1] px-2.5 py-1 text-xs font-medium text-primary shadow-sm pointer-events-none">
+          Your project
         </span>
       </div>
       {/* Spacer so height matches ProjectCard (title area) */}

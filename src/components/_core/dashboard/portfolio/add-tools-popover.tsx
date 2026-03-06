@@ -9,8 +9,8 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { portfolioInputStyle } from "./portfolio-styles";
 import { cn } from "@/lib/utils";
+import { portfolioInputStyle } from ".";
 
 const MAX_FILE_SIZE_MB = 5;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;

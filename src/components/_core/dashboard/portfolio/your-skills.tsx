@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import { Check, Square } from "lucide-react";
 import { AddMorePopover } from "./add-more-popover";
-import { portfolioInputStyle } from "./portfolio-styles";
 import { cn } from "@/lib/utils";
 
 const SKILLS = [

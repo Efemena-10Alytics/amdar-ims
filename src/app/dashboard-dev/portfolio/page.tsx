@@ -9,8 +9,10 @@ import {
   ShareFilledIcon,
 } from "@/components/_core/dashboard/svg";
 import { cn } from "@/lib/utils";
-import { PortfolioHero } from "@/components/_core/dashboard/portfolio/portfolio-hero";
-import { MyProjects } from "@/components/_core/dashboard/portfolio/project";
+import { PortfolioHero } from "@/components/_core/dashboard/portfolio/template/classic/portfolio-hero";
+import { MyProjects } from "@/components/_core/dashboard/portfolio/template/classic/project";
+import { MyWorkExperience } from "@/components/_core/dashboard/portfolio/template/classic/my-work-experince";
+import { MySpecialization } from "@/components/_core/dashboard/portfolio/template/classic/my-specializion";
 
 const TEMPLATES = [
   { id: "classic", label: "Classic" },
@@ -143,6 +145,7 @@ export default function PortfolioPage() {
           </div>
         </div>
       </section>
+      
       <PortfolioHero
         value={{
           name: "Oluwajuwonlo",
@@ -160,6 +163,37 @@ export default function PortfolioPage() {
           { title: "IPADPRO", tags: ["Website", "Figma", "Hello"],  imageUrl: "/images/pngs/template/whole.png" },
         ]}
         onAddProject={() => {}}
+      />
+      <MyWorkExperience
+        items={[
+          { company: "Nigerian Army", category: "Security", role: "Product Designer", duration: "2023-2024" },
+          { company: "Nigerian Army", category: "Security", role: "Product Designer", duration: "2023-2024" },
+          { company: "Nigerian Army", category: "Security", role: "Product Designer", duration: "2023-2024" },
+        ]}
+        onItemClick={() => {}}
+      />
+      <MySpecialization
+        specializations={[
+          "Product design",
+          "Foundational design",
+          "Filers",
+          "Architectural",
+          "Branding",
+          "Graphics",
+        ]}
+        softSkills={[
+          "Prototyping",
+          "Interface design",
+          "User research",
+          "Quantitative research",
+          "Qualitative research",
+          "Wireframing",
+          "Presentations",
+          "Slides",
+          "Animation",
+          "Brain storming",
+          "Mood board",
+        ]}
       />
       <div className="flex-1 min-h-0" />
     </div>

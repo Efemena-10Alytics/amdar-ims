@@ -10,9 +10,9 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { portfolioInputStyle } from "./portfolio-styles";
 import { cn } from "@/lib/utils";
 import { FillCalendaSvg } from "../../landing-pages/internship-program/svg";
+import { portfolioInputStyle } from ".";
 
 function formatDateDisplay(ymd: string): string {
     if (!ymd) return "";

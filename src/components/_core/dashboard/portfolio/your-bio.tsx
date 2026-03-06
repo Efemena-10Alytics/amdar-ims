@@ -1,8 +1,8 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { portfolioInputStyle } from "./portfolio-styles";
 import { cn } from "@/lib/utils";
+import { portfolioInputStyle } from ".";
 
 const BIO_MAX_LENGTH = 280;
 

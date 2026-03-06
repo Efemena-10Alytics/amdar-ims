@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { portfolioInputStyle } from "./portfolio-styles";
 import { useCountries } from "@/features/portfolio/use-countries";
+import { portfolioInputStyle } from ".";
 
 export type PersonalInfoData = {
   firstName: string;

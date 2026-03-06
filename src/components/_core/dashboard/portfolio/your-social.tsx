@@ -1,9 +1,9 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { portfolioInputStyle } from "./portfolio-styles";
 import { Link2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { portfolioInputStyle } from ".";
 
 export type YourSocialData = {
   linkedIn: string;

@@ -7,8 +7,8 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { portfolioInputStyle } from "./portfolio-styles";
 import { cn } from "@/lib/utils";
+import { portfolioInputStyle } from ".";
 
 type AddMorePopoverProps = {
     open: boolean;

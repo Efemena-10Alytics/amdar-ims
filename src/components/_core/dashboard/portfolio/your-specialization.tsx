@@ -9,8 +9,8 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { AddMorePopover } from "./add-more-popover";
-import { portfolioInputStyle } from "./portfolio-styles";
 import { cn } from "@/lib/utils";
+import { portfolioInputStyle } from ".";
 
 const CATEGORIES = [
     "Data Analytics",
@@ -164,7 +164,7 @@ export function YourSpecialization({ value, onChange }: YourSpecializationProps)
                         </PopoverTrigger>
                         <PopoverContent
                             align="start"
-                            className="w-[var(--radix-popover-trigger-width)] rounded-lg border border-zinc-200 bg-white p-0 shadow-md"
+                            className="w-(--radix-popover-trigger-width) rounded-lg border border-zinc-200 bg-white p-0 shadow-md"
                         >
                             <div className="p-2">
                                 <div className="relative">
