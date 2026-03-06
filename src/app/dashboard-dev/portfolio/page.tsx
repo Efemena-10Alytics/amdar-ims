@@ -10,6 +10,7 @@ import {
 } from "@/components/_core/dashboard/svg";
 import { cn } from "@/lib/utils";
 import { PortfolioHero } from "@/components/_core/dashboard/portfolio/template/classic/portfolio-hero";
+import { PortfolioSettingsModal } from "@/components/_core/dashboard/portfolio/portfolio-settings-modal";
 import { MyProjects } from "@/components/_core/dashboard/portfolio/template/classic/my-project";
 import { MyWorkExperience } from "@/components/_core/dashboard/portfolio/template/classic/my-work-experince";
 import { MySpecialization } from "@/components/_core/dashboard/portfolio/template/classic/my-specializion";
@@ -92,6 +93,7 @@ function TemplatePreview({
 
 export default function PortfolioPage() {
   const [selectedTemplate, setSelectedTemplate] = useState<string>("classic");
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
     <div className="h-full flex flex-col">
@@ -127,11 +129,14 @@ export default function PortfolioPage() {
             size="icon"
             className="rounded-full bg-[#F1F5F9] text-zinc-700 hover:bg-zinc-200 border-0 size-9"
             aria-label="Settings"
+            onClick={() => setSettingsOpen(true)}
           >
             <Settings className="size-4" aria-hidden />
           </Button>
         </div>
       </header>
+
+      <PortfolioSettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
 
       <section className="py-6" aria-label="Portfolio template">
         <div className="overflow-x-auto overflow-y-hidden pb-2 -mx-1 px-1">
