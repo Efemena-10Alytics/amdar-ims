@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCountries } from "@/features/portfolio/use-countries";
-import { portfolioInputStyle } from ".";
+import { portfolioInputStyle } from "./portfolio-styles";
 
 export type PersonalInfoData = {
   firstName: string;

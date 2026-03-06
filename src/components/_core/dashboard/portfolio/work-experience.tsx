@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { FillCalendaSvg } from "../../landing-pages/internship-program/svg";
-import { portfolioInputStyle } from ".";
+import { portfolioInputStyle } from "./portfolio-styles";
 
 function formatDateDisplay(ymd: string): string {
     if (!ymd) return "";
