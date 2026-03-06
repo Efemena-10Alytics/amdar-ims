@@ -2,7 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { portfolioInputStyle } from "./portfolio-styles";
+import { portfolioInputStyle } from ".";
 
 const BIO_MAX_LENGTH = 280;
 
