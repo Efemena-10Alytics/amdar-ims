@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -15,6 +16,7 @@ import {
 import { AppleSvg, GoogleSvg, LinkedInSvg } from "@/components/_core/auth/svg";
 import ErrorAlert from "@/components/_core/auth/error-alert";
 import { useSignUp } from "@/features/auth/use-sign-up";
+import { useCountries } from "@/features/portfolio/use-countries";
 import {
   defaultSignUpFormData,
   type SignUpFormData,
@@ -24,17 +26,6 @@ const inputBase = cn(
   "w-full rounded-lg bg-[#F8FAFC] text-sm placeholder:text-[#94A3B8] px-4 py-3 text-[#092A31] border border-transparent",
   "focus:outline-none focus:ring-2 focus:ring-[#156374] focus:ring-offset-0",
 );
-
-const COUNTRY_OPTIONS = [
-  { name: "Nigeria", code: "+234", flag: "🇳🇬" },
-  { name: "Ghana", code: "+233", flag: "🇬🇭" },
-  { name: "Kenya", code: "+254", flag: "🇰🇪" },
-  { name: "South Africa", code: "+27", flag: "🇿🇦" },
-  { name: "United Kingdom", code: "+44", flag: "🇬🇧" },
-  { name: "United States", code: "+1", flag: "🇺🇸" },
-  { name: "Canada", code: "+1", flag: "🇨🇦" },
-  { name: "Other", code: "", flag: "🌐" },
-] as const;
 
 const PASSWORD_REQUIREMENTS = [
   {
@@ -81,9 +72,9 @@ export function SignUpModal({
   const [formData, setFormData] = useState<SignUpFormData>(
     defaultSignUpFormData,
   );
-
-  const selectedCountry = COUNTRY_OPTIONS.find(
-    (c) => c.name === formData.selectedCountryName,
+  const { data: countries = [], isLoading: countriesLoading } = useCountries();
+  const selectedCountry = countries.find(
+    (c) => c.code === formData.countryCode,
   );
   const passwordsMatch =
     formData.confirmPassword === "" ||
@@ -104,7 +95,7 @@ export function SignUpModal({
     formData.firstName.trim().length > 0 &&
     formData.lastName.trim().length > 0 &&
     formData.email.trim().length > 0 &&
-    formData.selectedCountryName.length > 0 &&
+    formData.countryCode.length > 0 &&
     formData.phone.trim().length > 0;
   const canSubmit =
     isPersonalComplete &&
@@ -234,21 +225,38 @@ export function SignUpModal({
                 Location (Country)
               </label>
               <Select
-                value={formData.selectedCountryName || undefined}
-                onValueChange={(value) =>
+                value={formData.countryCode || undefined}
+                onValueChange={(value) => {
+                  const country = countries.find((c) => c.code === value);
                   setFormData((prev) => ({
                     ...prev,
-                    selectedCountryName: value,
-                  }))
-                }
+                    countryCode: value,
+                    selectedCountryName: country?.name ?? "",
+                  }));
+                }}
+                disabled={countriesLoading}
               >
                 <SelectTrigger className={cn(inputBase, "h-auto py-3")}>
-                  <SelectValue placeholder="Select your location" />
+                  <SelectValue
+                    placeholder={
+                      countriesLoading ? "Loading…" : "Select your location"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  {COUNTRY_OPTIONS.map((c) => (
-                    <SelectItem key={c.name} value={c.name}>
-                      {c.name}
+                  {countries.map((c) => (
+                    <SelectItem key={c.code} value={c.code}>
+                      <span className="flex items-center gap-2">
+                        <Image
+                          src={c.flag}
+                          alt=""
+                          width={20}
+                          height={14}
+                          className="shrink-0 rounded object-cover"
+                          unoptimized
+                        />
+                        {c.name} ({c.callingCode})
+                      </span>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -263,16 +271,21 @@ export function SignUpModal({
                 Phone number
               </label>
               <div className="flex rounded-lg overflow-hidden border border-transparent focus-within:ring-2 focus-within:ring-[#156374] focus-within:ring-offset-0 bg-[#F8FAFC]">
-                <div className="flex items-center gap-2 px-4 py-3 bg-[#F8FAFC] border-r border-gray-200 text-[#092A31] text-sm shrink-0">
+                <div className="flex items-center gap-1.5 px-4 py-3 bg-[#F8FAFC] border-r border-gray-200 text-[#092A31] text-sm shrink-0">
                   {selectedCountry ? (
                     <>
-                      <span className="text-base" aria-hidden>
-                        {selectedCountry.flag}
-                      </span>
-                      <span>{selectedCountry.code || "—"}</span>
+                      <span>{selectedCountry.callingCode}</span>
+                      <Image
+                        src={selectedCountry.flag}
+                        alt=""
+                        width={20}
+                        height={14}
+                        className="shrink-0 rounded object-cover"
+                        unoptimized
+                      />
                     </>
                   ) : (
-                    <span className="text-[#94A3B8]">—</span>
+                    <span className="text-[#94A3B8]">+</span>
                   )}
                 </div>
                 <input

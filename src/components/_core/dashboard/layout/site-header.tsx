@@ -10,6 +10,7 @@ import { UserAvatar } from "../../landing-pages/internship-program/svg";
 const pathToTitle: Record<string, string> = {
   "/dashboard-dev": "Dashboard",
   "/dashboard-dev/internship": "Internship Program",
+  "/dashboard-dev/portfolio": "Portfolio",
 };
 
 function getHeaderTitle(pathname: string): string {

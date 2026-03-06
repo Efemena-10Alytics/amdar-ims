@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
-import { Check, Calendar, ChevronDown } from "lucide-react";
+import { useEffect, useMemo } from "react";
+import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CheckoutData } from "@/features/payment/use-get-checkout-data";
 import type { CheckoutPricing, CheckoutSelections } from "@/types/payment";
@@ -117,11 +117,7 @@ interface CheckoutProps {
   onProceed?: (selections: CheckoutSelections) => void;
 }
 
-const Checkout = ({
-  checkoutData,
-  program,
-  onProceed,
-}: CheckoutProps) => {
+const Checkout = ({ checkoutData, program, onProceed }: CheckoutProps) => {
   const firstCurrency = checkoutData?.pricings?.[0]?.currency ?? "USD";
   const {
     selectedCohort,

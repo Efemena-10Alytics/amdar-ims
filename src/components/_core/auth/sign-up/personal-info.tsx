@@ -1,9 +1,17 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import Image from "next/image";
 import { AppleSvg, GoogleSvg, LinkedInSvg } from "@/components/_core/auth/svg";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { useCountries } from "@/features/portfolio/use-countries";
 import type { SignUpFormData } from "./types";
 import Link from "next/link";
 
@@ -11,17 +19,6 @@ const inputBase = cn(
   "w-full rounded-lg bg-[#F8FAFC] text-sm placeholder:text-xs px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8] border border-transparent",
   "focus:outline-none focus:ring-2 focus:ring-[#156374] focus:ring-offset-0 focus:border-transparent",
 );
-
-const COUNTRY_OPTIONS = [
-  { name: "Nigeria", code: "+234", flag: "🇳🇬" },
-  { name: "Ghana", code: "+233", flag: "🇬🇭" },
-  { name: "Kenya", code: "+254", flag: "🇰🇪" },
-  { name: "South Africa", code: "+27", flag: "🇿🇦" },
-  { name: "United Kingdom", code: "+44", flag: "🇬🇧" },
-  { name: "United States", code: "+1", flag: "🇺🇸" },
-  { name: "Canada", code: "+1", flag: "🇨🇦" },
-  { name: "Other", code: "", flag: "🌐" },
-] as const;
 
 export interface PersonalInfoProps {
   formData: SignUpFormData;
@@ -34,16 +31,15 @@ const PersonalInfo = ({
   setFormData,
   onContinue,
 }: PersonalInfoProps) => {
-  const { firstName, lastName, email, phone, selectedCountryName } = formData;
-  const selectedCountry = COUNTRY_OPTIONS.find(
-    (c) => c.name === selectedCountryName,
-  );
+  const { firstName, lastName, email, phone, countryCode } = formData;
+  const { data: countries = [], isLoading: countriesLoading } = useCountries();
+  const selectedCountry = countries.find((c) => c.code === countryCode);
 
   const isFormComplete =
     firstName.trim().length > 0 &&
     lastName.trim().length > 0 &&
     email.trim().length > 0 &&
-    selectedCountryName.length > 0 &&
+    countryCode.length > 0 &&
     phone.trim().length > 0;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -127,36 +123,46 @@ const PersonalInfo = ({
             >
               Location (Country)
             </label>
-            <div className="relative">
-              <select
+            <Select
+              value={countryCode || undefined}
+              onValueChange={(value) => {
+                const country = countries.find((c) => c.code === value);
+                setFormData((prev) => ({
+                  ...prev,
+                  countryCode: value,
+                  selectedCountryName: country?.name ?? "",
+                }));
+              }}
+              disabled={countriesLoading}
+            >
+              <SelectTrigger
                 id="location"
-                className={cn(
-                  inputBase,
-                  "appearance-none pr-10 cursor-pointer tex-xs",
-                  "bg-[#F8FAFC]",
-                )}
-                value={selectedCountryName}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    selectedCountryName: e.target.value,
-                  }))
-                }
+                className={cn(inputBase, "pr-10")}
               >
-                <option value="" disabled>
-                  Select your location
-                </option>
-                {COUNTRY_OPTIONS.map((c) => (
-                  <option key={c.name} value={c.name} className="text-sm">
-                    {c.name}
-                  </option>
+                <SelectValue
+                  placeholder={
+                    countriesLoading ? "Loading…" : "Select your location"
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {countries.map((c) => (
+                  <SelectItem key={c.code} value={c.code}>
+                    <span className="flex items-center gap-2">
+                      <Image
+                        src={c.flag}
+                        alt=""
+                        width={20}
+                        height={14}
+                        className="shrink-0 rounded object-cover"
+                        unoptimized
+                      />
+                      {c.name} ({c.callingCode})
+                    </span>
+                  </SelectItem>
                 ))}
-              </select>
-              <ChevronDown
-                className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#64748B] pointer-events-none"
-                aria-hidden
-              />
-            </div>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -168,16 +174,21 @@ const PersonalInfo = ({
             Phone number
           </label>
           <div className="flex rounded-lg overflow-hidden border border-transparent focus-within:ring-2 focus-within:ring-[#156374] focus-within:ring-offset-0 bg-[#F8FAFC]">
-            <div className="flex items-center gap-2 px-4 py-3 bg-[#F8FAFC] border-r border-gray-200 text-[#092A31] text-sm">
+            <div className="flex items-center gap-1.5 px-4 py-3 bg-[#F8FAFC] border-r border-gray-200 text-[#092A31] text-sm">
               {selectedCountry ? (
                 <>
-                  <span className="text-base" aria-hidden>
-                    {selectedCountry.flag}
-                  </span>
-                  <span>{selectedCountry.code || "—"}</span>
+                  <span>{selectedCountry.callingCode}</span>
+                  <Image
+                    src={selectedCountry.flag}
+                    alt=""
+                    width={20}
+                    height={14}
+                    className="shrink-0 rounded object-cover"
+                    unoptimized
+                  />
                 </>
               ) : (
-                <span className="text-[#94A3B8] text-sm"></span>
+                <span className="text-[#94A3B8] text-sm">+</span>
               )}
             </div>
             <input
