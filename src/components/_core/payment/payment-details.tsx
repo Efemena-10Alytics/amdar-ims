@@ -7,6 +7,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { useAuthStore, type AuthUser } from "@/store/auth-store";
 import type { CheckoutSelections } from "@/types/payment";
+import {
+  INTERNSHIP_FALLBACK_PLAN_TOTAL,
+  INTERNSHIP_FALLBACK_FIRST_PAYMENT,
+} from "@/constants/internship-pricing";
 import { ChangeDate } from "./change-date";
 import {
   EditUserData,
@@ -330,7 +334,7 @@ const PaymentDetails = ({
               <span className="font-medium text-[#092A31]">
                 {originalPlanTotal ??
                   checkoutSelections?.planTotal ??
-                  "USD 500"}
+                  INTERNSHIP_FALLBACK_PLAN_TOTAL}
               </span>
             </div>
             <div className="flex justify-between text-sm">
@@ -347,7 +351,7 @@ const PaymentDetails = ({
                 {checkoutSelections
                   ? (checkoutSelections.firstPaymentAmount ??
                     checkoutSelections.planTotal)
-                  : "USD 390"}
+                  : INTERNSHIP_FALLBACK_FIRST_PAYMENT}
               </span>
             </div>
           </div>

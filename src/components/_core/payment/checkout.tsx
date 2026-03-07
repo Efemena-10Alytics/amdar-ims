@@ -141,10 +141,12 @@ const Checkout = ({ checkoutData, program, onProceed }: CheckoutProps) => {
       checkoutData?.pricings?.[0],
     [checkoutData?.pricings, currency],
   );
-  const paymentPlans = useMemo(
-    () => (selectedPricing ? getPaymentPlansFromPricing(selectedPricing) : []),
-    [selectedPricing],
-  );
+  const paymentPlans = useMemo(() => {
+    const plans = selectedPricing
+      ? getPaymentPlansFromPricing(selectedPricing)
+      : [];
+    return plans.filter((p) => p.id !== "2-installments");
+  }, [selectedPricing]);
 
   useEffect(() => {
     const currencies = checkoutData?.pricings?.map((p) => p.currency) ?? [];
@@ -152,6 +154,17 @@ const Checkout = ({ checkoutData, program, onProceed }: CheckoutProps) => {
       setCurrency(currencies[0]);
     }
   }, [checkoutData?.pricings, currency]);
+
+  // If 2-installments is hidden but was selected, switch to first available plan
+  useEffect(() => {
+    if (
+      selectedPlan === "2-installments" &&
+      paymentPlans.length > 0 &&
+      !paymentPlans.some((p) => p.id === "2-installments")
+    ) {
+      setSelectedPlan(paymentPlans[0].id);
+    }
+  }, [paymentPlans, selectedPlan, setSelectedPlan]);
 
   const canProceed =
     selectedCohort !== null && !!selectedPricing && !!selectedPlan;

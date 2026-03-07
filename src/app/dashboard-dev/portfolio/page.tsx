@@ -11,6 +11,7 @@ import {
 import { cn } from "@/lib/utils";
 import { PortfolioHero } from "@/components/_core/dashboard/portfolio/template/classic/portfolio-hero";
 import { PortfolioSettingsModal } from "@/components/_core/dashboard/portfolio/portfolio-settings-modal";
+import { ViewLinkModal } from "@/components/_core/dashboard/portfolio/view-link-modal";
 import { MyProjects } from "@/components/_core/dashboard/portfolio/template/classic/my-project";
 import { MyWorkExperience } from "@/components/_core/dashboard/portfolio/template/classic/my-work-experince";
 import { MySpecialization } from "@/components/_core/dashboard/portfolio/template/classic/my-specializion";
@@ -94,6 +95,7 @@ function TemplatePreview({
 export default function PortfolioPage() {
   const [selectedTemplate, setSelectedTemplate] = useState<string>("classic");
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [viewLinkOpen, setViewLinkOpen] = useState(false);
 
   return (
     <div className="h-full flex flex-col">
@@ -119,6 +121,7 @@ export default function PortfolioPage() {
           <Button
             type="button"
             className="rounded-lg bg-primary text-white hover:bg-primary/90"
+            onClick={() => setViewLinkOpen(true)}
           >
             Share portfolio
             <ShareFilledIcon />
@@ -137,6 +140,14 @@ export default function PortfolioPage() {
       </header>
 
       <PortfolioSettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
+      <ViewLinkModal
+        open={viewLinkOpen}
+        onOpenChange={setViewLinkOpen}
+        onContinue={() => {
+          const url = typeof window !== "undefined" ? window.location.href : "#";
+          window.open(url, "_blank", "noopener,noreferrer");
+        }}
+      />
 
       <section className="py-6" aria-label="Portfolio template">
         <div className="overflow-x-auto overflow-y-hidden pb-2 -mx-1 px-1">
