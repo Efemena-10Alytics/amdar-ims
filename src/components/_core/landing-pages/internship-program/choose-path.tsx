@@ -8,6 +8,10 @@ import { Loader2 } from "lucide-react";
 import { useGetInternshipPrograms } from "@/features/internship/use-get-all-internship-programs";
 import { getImageUrl } from "@/lib/utils";
 import { InternshipProgram } from "@/types/internship-program";
+import {
+  INTERNSHIP_ORIGINAL_PRICE_LABEL,
+  INTERNSHIP_DISCOUNTED_PRICE_LABEL,
+} from "@/constants/internship-pricing";
 
 const FALLBACK_IMAGE = "/images/pngs/internship.png";
 
@@ -79,9 +83,9 @@ const ChoosePath = () => {
                       <div>
                         <span className="text-lg font-semibold group-hover:text-white text-[#092A31]">
                           <div className="text-[#64748B] group-hover:text-white line-through text-sm font-normal">
-                            GBP 500
+                            {INTERNSHIP_ORIGINAL_PRICE_LABEL}
                           </div>
-                          <div>GBP 390</div>
+                          <div>{INTERNSHIP_DISCOUNTED_PRICE_LABEL}</div>
                         </span>
                       </div>
                       <Link href={`/internship/${career.id}`}>

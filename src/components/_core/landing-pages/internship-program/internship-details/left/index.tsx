@@ -14,6 +14,10 @@ import ProgramStructure from "./program-structure";
 import Faq from "./faq";
 import Link from "next/link";
 import type { InternshipProgram } from "@/types/internship-program";
+import {
+  INTERNSHIP_ORIGINAL_PRICE_LABEL,
+  INTERNSHIP_DISCOUNTED_PRICE_LABEL,
+} from "@/constants/internship-pricing";
 
 const TOOLS_ICON_BASE = "https://api.amdari.io/tools/";
 
@@ -123,9 +127,9 @@ const Left = ({ program }: LeftProps) => {
         }}
       >
         <div className="flex flex-col gap-2">
-          <div className="text-[#64748B] line-through text-lg">GBP 500</div>
+          <div className="text-[#64748B] line-through text-lg">{INTERNSHIP_ORIGINAL_PRICE_LABEL}</div>
           <div className="text-2xl lg:text-3xl font-semibold text-[#092A31]">
-            GBP 390
+            {INTERNSHIP_DISCOUNTED_PRICE_LABEL}
           </div>
         </div>
         <Link href={`/payment/${program?.id}`}>
