@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Pencil, Trash2, Link2 } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2, Link2, LinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export type ViewProjectData = {
@@ -74,20 +74,20 @@ export function ViewProjectContent({
       </header>
 
       {/* Hero banner */}
-      <div className="relative w-full aspect-21/9 min-h-50 bg-zinc-800 overflow-hidden">
+      <div className="relative w-full aspect-21/9 min-h-50 bg-[#E8EFF1] rounded-2xl overflow-hidden">
         {project.coverImageUrl ? (
           <img
             src={project.coverImageUrl}
             alt=""
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full rounded-2xl object-cover"
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-zinc-500">
+          <div className="absolute inset-0 flex items-center justify-center rounded-2xl text-zinc-500">
             No cover image
           </div>
         )}
         <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/70 to-transparent p-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-white">
+          <h1 className="text-2xl md:text-3xl font-semibold text-white">
             {project.title}
           </h1>
           {project.tags && project.tags.length > 0 && (
@@ -95,7 +95,7 @@ export function ViewProjectContent({
               {project.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-full bg-primary/80 px-3 py-1 text-sm font-medium text-white"
+                  className="rounded-full bg-[#E8EFF1] px-3 py-1 text-sm text-center flex justify-center items-center font-medium text-primary h-10"
                 >
                   {tag}
                 </span>
@@ -111,7 +111,7 @@ export function ViewProjectContent({
         <div className="space-y-8">
           {project.overview && (
             <section>
-              <h2 className="text-lg font-bold text-zinc-900 mb-3">Overview</h2>
+              <h2 className="text-lg font-semibold text-[#092A31] mb-3">Overview</h2>
               <p className="text-sm text-zinc-600 leading-relaxed">
                 {project.overview}
               </p>
@@ -147,7 +147,7 @@ export function ViewProjectContent({
 
           {project.rationale && (
             <section>
-              <h2 className="text-lg font-bold text-zinc-900 mb-3">
+              <h2 className="text-lg font-semibold text-[#092A31] mb-3">
                 Project rationale
               </h2>
               <p className="text-sm text-zinc-600 leading-relaxed">
@@ -158,7 +158,7 @@ export function ViewProjectContent({
 
           {project.aim && (
             <section>
-              <h2 className="text-lg font-bold text-zinc-900 mb-3">
+              <h2 className="text-lg font-semibold text-[#092A31] mb-3">
                 Aim of project
               </h2>
               <p className="text-sm text-zinc-600 leading-relaxed">
@@ -171,12 +171,12 @@ export function ViewProjectContent({
         {/* Right column - Additional link */}
         <aside className="lg:pt-0">
           <section>
-            <h2 className="text-lg font-bold text-zinc-900 mb-4">
+            <h2 className="text-lg font-semibold text-[#092A31] mb-4">
               Additional link
             </h2>
             <div className="space-y-3">
               <div className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-center justify-between gap-3">
-                <span className="text-sm font-medium text-zinc-900">
+                <span className="text-sm font-medium text-[#092A31]">
                   Solution URL
                 </span>
                 {project.solutionUrl ? (
@@ -184,19 +184,19 @@ export function ViewProjectContent({
                     href={project.solutionUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex size-9 shrink-0 items-center justify-center rounded-full text-primary hover:bg-primary/10 transition-colors"
+                    className="flex size-9 shrink-0 items-center justify-center rounded-full text-primary bg-[#EBF3FE] border border-[#C2D8FC] transition-colors"
                     aria-label="Open solution URL"
                   >
-                    <Link2 className="size-4" />
+                    <LinkIcon className="size-4" />
                   </a>
                 ) : (
                   <span className="flex size-9 shrink-0 items-center justify-center rounded-full text-zinc-400">
-                    <Link2 className="size-4" />
+                    <LinkIcon className="size-4" />
                   </span>
                 )}
               </div>
               <div className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-center justify-between gap-3">
-                <span className="text-sm font-medium text-zinc-900">
+                <span className="text-sm font-medium text-[#092A31]">
                   Media link
                 </span>
                 {project.mediaLink ? (
@@ -204,14 +204,14 @@ export function ViewProjectContent({
                     href={project.mediaLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex size-9 shrink-0 items-center justify-center rounded-full text-primary hover:bg-primary/10 transition-colors"
+                    className="flex size-9 shrink-0 items-center justify-center rounded-full text-primary bg-[#EBF3FE] border border-[#C2D8FC] transition-colors"
                     aria-label="Open media link"
                   >
-                    <Link2 className="size-4" />
+                    <LinkIcon className="size-4" />
                   </a>
                 ) : (
                   <span className="flex size-9 shrink-0 items-center justify-center rounded-full text-zinc-400">
-                    <Link2 className="size-4" />
+                    <LinkIcon className="size-4" />
                   </span>
                 )}
               </div>
