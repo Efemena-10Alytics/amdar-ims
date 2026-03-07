@@ -28,10 +28,10 @@ export function MyTools({
   const restLine = lines.slice(1).join(" ");
 
   return (
-    <div>
-     <span className="text-xl font-semibold text-[#A1A8B1] mb-4">My Tools</span>
+    <div className="mt-20">
+     <div className="text-xl font-semibold text-[#A1A8B1] mb-4">My Tools</div>
       <section
-        className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-20 items-center"
+        className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-20 items-center"
         aria-label="My tools"
       >
         {/* Left: My Tools list */}

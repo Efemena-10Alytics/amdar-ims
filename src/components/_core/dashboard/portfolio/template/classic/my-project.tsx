@@ -30,19 +30,21 @@ type MyProjectsProps = {
   projects?: ProjectItem[];
   onAddProject?: () => void;
   onProjectClick?: (project: ProjectItem) => void;
+  showAddProject?: boolean;
 };
 
 export function MyProjects({
   projects = [],
   onAddProject,
   onProjectClick,
+  showAddProject = false,
 }: MyProjectsProps) {
   return (
     <section className="mt-20 relative" aria-label="My projects">
       <CardClipPathDef />
-      <span className="text-xl font-semibold text-[#A1A8B1] mb-4">
+      <div className="text-xl font-semibold text-[#A1A8B1] b mb-4">
         My projects
-      </span>
+      </div>
       <div className="grid xl:grid-cols-3 gap-4 pb-2">
         {projects.map((project, index) => (
           <div key={project.id ?? index} className="min-w-0 w-full">
@@ -52,9 +54,11 @@ export function MyProjects({
             />
           </div>
         ))}
-        <div className="min-w-0 w-full">
-          <AddProjectCard onAdd={onAddProject} />
-        </div>
+        {showAddProject && (
+          <div className="min-w-0 w-full">
+            <AddProjectCard onAdd={onAddProject} />
+          </div>
+        )}
       </div>
     </section>
   );
@@ -64,9 +68,11 @@ export function MyProjects({
 function ProjectCard({
   project,
   onClick,
+  showAddProject = false,
 }: {
   project: ProjectItem;
   onClick?: () => void;
+  showAddProject?: boolean;
 }) {
   return (
     <article className="relative block w-full min-w-0 overflow-visible">
@@ -88,7 +94,7 @@ function ProjectCard({
           )}
         </div>
         {/* Action: bottom right, outside clip so it always shows */}
-        <Link href={`portfolio/add-project/${"id"}`}>
+        <Link href={showAddProject ? `portfolio/add-project/${"id"}` : "#"}>
           <button
             type="button"
             onClick={onClick}
@@ -120,9 +126,15 @@ function ProjectCard({
   );
 }
 
-function AddProjectCard({ onAdd }: { onAdd?: () => void }) {
+function AddProjectCard({
+  onAdd,
+  showAddProject = false,
+}: {
+  onAdd?: () => void;
+  showAddProject?: boolean;
+}) {
   return (
-    <Link href={"portfolio/add-project"}>
+    <Link href={showAddProject ? "portfolio/add-project" : "#"}>
       <button
         type="button"
         onClick={onAdd}
