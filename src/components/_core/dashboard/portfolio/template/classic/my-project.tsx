@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowUpRight, Plus } from "lucide-react";
+import Link from "next/link";
 
 /** Clip-path for card shape (folder-style). Uses objectBoundingBox so it scales with element width/height. */
 const CARD_CLIP_PATH_ID = "project-card-clip";
@@ -39,7 +40,9 @@ export function MyProjects({
   return (
     <section className="mt-20 relative" aria-label="My projects">
       <CardClipPathDef />
-      <span className="text-xl font-semibold text-[#A1A8B1] mb-4">My projects</span>
+      <span className="text-xl font-semibold text-[#A1A8B1] mb-4">
+        My projects
+      </span>
       <div className="grid xl:grid-cols-3 gap-4 pb-2">
         {projects.map((project, index) => (
           <div key={project.id ?? index} className="min-w-0 w-full">
@@ -85,19 +88,21 @@ function ProjectCard({
           )}
         </div>
         {/* Action: bottom right, outside clip so it always shows */}
-        <button
-          type="button"
-          onClick={onClick}
-          className="absolute bottom-2 right-2 flex size-9 items-center justify-center rounded-full bg-primary text-white shadow-md transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 z-20"
-          aria-label={`View ${project.title}`}
-        >
-          <ArrowUpRight className="size-4" aria-hidden />
-        </button>
+        <Link href={`portfolio/add-project/${"id"}`}>
+          <button
+            type="button"
+            onClick={onClick}
+            className="absolute bottom-2 right-2 flex size-9 items-center justify-center rounded-full bg-primary text-white shadow-md transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 z-20"
+            aria-label={`View ${project.title}`}
+          >
+            <ArrowUpRight className="size-4" aria-hidden />
+          </button>
+        </Link>
       </div>
       {/* Tags: top right, outside clip so they always show */}
       {project.tags && project.tags.length > 0 && (
         <div className="absolute top-2 right-2 flex flex-wrap gap-1.5 justify-end z-20 pointer-events-none">
-          {project.tags.slice(0,2).map((tag) => (
+          {project.tags.slice(0, 2).map((tag) => (
             <span
               key={tag}
               className="rounded-full bg-[#E8EFF1] px-2.5 py-1 text-xs font-medium text-primary shadow-sm"
@@ -117,32 +122,37 @@ function ProjectCard({
 
 function AddProjectCard({ onAdd }: { onAdd?: () => void }) {
   return (
-    <button
-      type="button"
-      onClick={onAdd}
-      className="relative block w-full min-w-0 overflow-visible text-left focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 group"
-      aria-label="Add project"
-    >
-      <div className="relative h-60 w-full">
-        <div
-          className="absolute inset-0 overflow-hidden  bg-[#E8EFF1] shadow-sm flex flex-col items-center justify-center text-zinc-400 hover:scale-95 hover:text-zinc-300 transition-all"
-          style={{ clipPath: `url(#${CARD_CLIP_PATH_ID})` }}
-        >
-          <span className="text-sm font-medium">Add project here</span>
+    <Link href={"portfolio/add-project"}>
+      <button
+        type="button"
+        onClick={onAdd}
+        className="relative block w-full min-w-0 overflow-visible text-left focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 group"
+        aria-label="Add project"
+      >
+        <div className="relative h-60 w-full">
+          <div
+            className="absolute inset-0 overflow-hidden  bg-[#E8EFF1] shadow-sm flex flex-col items-center justify-center text-zinc-400 hover:scale-95 hover:text-zinc-300 transition-all"
+            style={{ clipPath: `url(#${CARD_CLIP_PATH_ID})` }}
+          >
+            <span className="text-sm font-medium">Add project here</span>
+          </div>
+          {/* Action button: bottom right, outside clip so it always shows */}
+          <span
+            className="absolute bottom-2 right-2 z-20 flex size-9 items-center justify-center rounded-full bg-primary text-white shadow-md pointer-events-none"
+            aria-hidden
+          >
+            <Plus className="size-4" />
+          </span>
+          {/* Top right tag, outside clip so it always shows */}
+          <span className="absolute top-2 right-2 z-20 rounded-full bg-[#E8EFF1] px-2.5 py-1 text-xs font-medium text-primary shadow-sm pointer-events-none">
+            Your project
+          </span>
         </div>
-        {/* Action button: bottom right, outside clip so it always shows */}
-        <span className="absolute bottom-2 right-2 z-20 flex size-9 items-center justify-center rounded-full bg-primary text-white shadow-md pointer-events-none" aria-hidden>
-          <Plus className="size-4" />
+        {/* Spacer so height matches ProjectCard (title area) */}
+        <span className="mt-2 block h-5 text-transparent text-sm" aria-hidden>
+          —
         </span>
-        {/* Top right tag, outside clip so it always shows */}
-        <span className="absolute top-2 right-2 z-20 rounded-full bg-[#E8EFF1] px-2.5 py-1 text-xs font-medium text-primary shadow-sm pointer-events-none">
-          Your project
-        </span>
-      </div>
-      {/* Spacer so height matches ProjectCard (title area) */}
-      <span className="mt-2 block h-5 text-transparent text-sm" aria-hidden>
-        —
-      </span>
-    </button>
+      </button>
+    </Link>
   );
 }
