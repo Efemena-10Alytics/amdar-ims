@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 
-export const DEFAULT_PROMO_CODE = "WELCOME30";
+export const DEFAULT_PROMO_CODE = "IWD40";
 
 const CHECKOUT_QUERY_KEY_PREFIX = ["payment", "checkout"] as const;
 interface IProps {
