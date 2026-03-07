@@ -3,6 +3,7 @@ export interface SignUpFormData {
   lastName: string;
   email: string;
   phone: string;
+  countryCode: string;
   selectedCountryName: string;
   password: string;
   confirmPassword: string;
@@ -15,7 +16,8 @@ export const defaultSignUpFormData: SignUpFormData = {
   lastName: "",
   email: "",
   phone: "",
-  selectedCountryName: "Nigeria",
+  countryCode: "",
+  selectedCountryName: "",
   password: "",
   confirmPassword: "",
   showPassword: false,

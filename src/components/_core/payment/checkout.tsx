@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
-import { Check, Calendar, ChevronDown } from "lucide-react";
+import { useEffect, useMemo } from "react";
+import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CheckoutData } from "@/features/payment/use-get-checkout-data";
 import type { CheckoutPricing, CheckoutSelections } from "@/types/payment";
@@ -117,11 +117,7 @@ interface CheckoutProps {
   onProceed?: (selections: CheckoutSelections) => void;
 }
 
-const Checkout = ({
-  checkoutData,
-  program,
-  onProceed,
-}: CheckoutProps) => {
+const Checkout = ({ checkoutData, program, onProceed }: CheckoutProps) => {
   const firstCurrency = checkoutData?.pricings?.[0]?.currency ?? "USD";
   const {
     selectedCohort,
@@ -145,10 +141,12 @@ const Checkout = ({
       checkoutData?.pricings?.[0],
     [checkoutData?.pricings, currency],
   );
-  const paymentPlans = useMemo(
-    () => (selectedPricing ? getPaymentPlansFromPricing(selectedPricing) : []),
-    [selectedPricing],
-  );
+  const paymentPlans = useMemo(() => {
+    const plans = selectedPricing
+      ? getPaymentPlansFromPricing(selectedPricing)
+      : [];
+    return plans.filter((p) => p.id !== "2-installments");
+  }, [selectedPricing]);
 
   useEffect(() => {
     const currencies = checkoutData?.pricings?.map((p) => p.currency) ?? [];
@@ -156,6 +154,17 @@ const Checkout = ({
       setCurrency(currencies[0]);
     }
   }, [checkoutData?.pricings, currency]);
+
+  // If 2-installments is hidden but was selected, switch to first available plan
+  useEffect(() => {
+    if (
+      selectedPlan === "2-installments" &&
+      paymentPlans.length > 0 &&
+      !paymentPlans.some((p) => p.id === "2-installments")
+    ) {
+      setSelectedPlan(paymentPlans[0].id);
+    }
+  }, [paymentPlans, selectedPlan, setSelectedPlan]);
 
   const canProceed =
     selectedCohort !== null && !!selectedPricing && !!selectedPlan;

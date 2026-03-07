@@ -33,7 +33,7 @@ const navMain = [
   { title: "Internship program", url: "#", icon: InternshipProgramIcon },
   { title: "Project vault", url: "#", icon: ProjectVaultIcon },
   { title: "Interview prep", url: "#", icon: InterviewPrepIcon },
-  { title: "Portfolio", url: "#", icon: PortfolioIcon },
+  { title: "Portfolio", url: "/dashboard-dev/portfolio", icon: PortfolioIcon },
   { title: "Hackathons", url: "#", icon: HackathonIcon },
   { title: "Learn", url: "#", icon: LearnIcon },
   { title: "Blog", url: "#", icon: BlogIcon },
