@@ -20,6 +20,7 @@ import {
 import { UserAvatar } from "../../internship-program/svg";
 import AboutBar from "../../about/AboutBar";
 import { ChevronDown } from "lucide-react";
+import { SalesBanner } from "./sales-banner";
 
 export function TooltipDemo() {
   return (
@@ -60,7 +61,6 @@ const Navbr = () => {
   const { data: userInfo } = useGetUserInfo();
   const avatarUrl = getAvatarUrlFromUser(userInfo ?? null);
 
-  console.log(avatarUrl);
   const isLoggedIn = user != null;
   const isHomePageRoute = pathname === "/home";
   const isInternshipProgramRoute =
@@ -105,6 +105,7 @@ const Navbr = () => {
   const logoImg = isHomePageRoute ? "/logo.svg" : "/logo.svg";
   return (
     <>
+      <SalesBanner />
       <nav
         className={cn(
           "fixed top-0 left-0 right-0 w-full z-50 transition-colors duration-300",

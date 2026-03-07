@@ -262,3 +262,12 @@ html {
     @apply max-w-400 w-full mx-auto px-4 sm:px-6 lg:px-16
   }
 }
+
+@keyframes scroll-strip {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}

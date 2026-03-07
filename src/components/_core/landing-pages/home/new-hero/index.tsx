@@ -67,7 +67,7 @@ export default function NewHero() {
   }, []);
 
   return (
-    <div className="relative w-full min-h-screen overflow-hidden -mt-25">
+    <div className="relative w-full min-h-screen overflow-hidden -mt-20">
       {/* Section background – new-hero-bg */}
       <div
         className="absolute inset-0 z-0 "
