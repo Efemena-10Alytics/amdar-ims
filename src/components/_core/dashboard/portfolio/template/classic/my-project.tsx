@@ -37,7 +37,7 @@ export function MyProjects({
   projects = [],
   onAddProject,
   onProjectClick,
-  showAddProject = false,
+  showAddProject,
 }: MyProjectsProps) {
   return (
     <section className="mt-20 relative" aria-label="My projects">
@@ -51,6 +51,7 @@ export function MyProjects({
             <ProjectCard
               project={project}
               onClick={() => onProjectClick?.(project)}
+              showAddProject={showAddProject}
             />
           </div>
         ))}
@@ -68,7 +69,7 @@ export function MyProjects({
 function ProjectCard({
   project,
   onClick,
-  showAddProject = false,
+  showAddProject,
 }: {
   project: ProjectItem;
   onClick?: () => void;
@@ -126,15 +127,9 @@ function ProjectCard({
   );
 }
 
-function AddProjectCard({
-  onAdd,
-  showAddProject = false,
-}: {
-  onAdd?: () => void;
-  showAddProject?: boolean;
-}) {
+function AddProjectCard({ onAdd }: { onAdd?: () => void }) {
   return (
-    <Link href={showAddProject ? "portfolio/add-project" : "#"}>
+    <Link href={"portfolio/add-project"}>
       <button
         type="button"
         onClick={onAdd}
