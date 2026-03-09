@@ -11,36 +11,59 @@ import { cn } from "@/lib/utils";
 
 const SALES_BANNER_STORAGE_KEY = "amdari-sales-banner-dismissed";
 
-/** End of offer: 14th March, end of day (local time). */
-function getOfferEndDate(): Date {
+const FORTY_EIGHT_HOURS_MS = 48 * 60 * 60 * 1000;
+
+/** First 48h cycle starts March 7 00:00 local; campaign ends April 4 23:59:59 local. */
+function getCurrentCountdownEnd(): Date | null {
   const now = new Date();
   const year = now.getFullYear();
-  // March 14 at 23:59:59.999 local time
-  const end = new Date(year, 2, 14, 23, 59, 59, 999); // month 2 = March
-  if (end.getTime() <= now.getTime()) {
-    end.setFullYear(year + 1);
+  const campaignStart = new Date(year, 2, 7, 0, 0, 0, 0); // March 7
+  const campaignEnd = new Date(year, 3, 4, 23, 59, 59, 999); // April 4
+
+  if (now.getTime() >= campaignEnd.getTime()) return null;
+  if (now.getTime() < campaignStart.getTime()) return campaignStart;
+
+  const elapsed = now.getTime() - campaignStart.getTime();
+  const cycleIndex = Math.floor(elapsed / FORTY_EIGHT_HOURS_MS);
+  const currentCycleEnd = new Date(
+    campaignStart.getTime() + (cycleIndex + 1) * FORTY_EIGHT_HOURS_MS,
+  );
+
+  if (currentCycleEnd.getTime() > campaignEnd.getTime()) {
+    return campaignEnd;
   }
-  return end;
+  return currentCycleEnd;
 }
 
-function useCountdown(endDate: Date) {
-  const [diff, setDiff] = useState(() =>
-    Math.max(0, Math.floor((endDate.getTime() - Date.now()) / 1000)),
-  );
+function useCountdown(getEndDate: () => Date | null) {
+  const [diff, setDiff] = useState(() => {
+    const end = getEndDate();
+    if (!end) return -1;
+    return Math.max(0, Math.floor((end.getTime() - Date.now()) / 1000));
+  });
 
   useEffect(() => {
     const tick = () => {
-      setDiff((d) => Math.max(0, d - 1));
+      const end = getEndDate();
+      if (!end) {
+        setDiff(-1);
+        return;
+      }
+      const d = Math.max(0, Math.floor((end.getTime() - Date.now()) / 1000));
+      setDiff(d);
     };
+    tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [getEndDate]);
 
-  const days = Math.floor(diff / 86400);
-  const hrs = Math.floor((diff % 86400) / 3600);
+  if (diff < 0) {
+    return { hrs: 0, mins: 0, secs: 0, ended: true as const };
+  }
+  const hrs = Math.floor(diff / 3600);
   const mins = Math.floor((diff % 3600) / 60);
   const secs = diff % 60;
-  return { days, hrs, mins, secs };
+  return { hrs, mins, secs, ended: false as const };
 }
 
 /** Format "GBP 500" -> "£500" for display. */
@@ -52,8 +75,7 @@ const HASHTAG_STRIP = "#International Woman Day.";
 
 export function SalesBanner() {
   const [dismissed, setDismissed] = useState(false);
-  const endDate = getOfferEndDate();
-  const { days, hrs, mins, secs } = useCountdown(endDate);
+  const { hrs, mins, secs, ended } = useCountdown(getCurrentCountdownEnd);
 
   useEffect(() => {
     try {
@@ -121,33 +143,32 @@ export function SalesBanner() {
           <span className="ml-1 text-base">off</span>
         </div>
         <div className="flex items-center gap-1.5 sm:gap-2 font-mono text-lg sm:text-xl font-semibold tabular-nums">
-          <span className="flex flex-col items-center">
-            <span>{String(days).padStart(2, "0")}</span>
-            <span className="text-[10px] sm:text-xs font-normal uppercase tracking-wider text-[#64748B]">
-              Days
-            </span>
-          </span>
-          <span className="text-[#64748B]">:</span>
-          <span className="flex flex-col items-center">
-            <span>{String(hrs).padStart(2, "0")}</span>
-            <span className="text-[10px] sm:text-xs font-normal uppercase tracking-wider text-[#64748B]">
-              Hrs
-            </span>
-          </span>
-          <span className="text-[#64748B]">:</span>
-          <span className="flex flex-col items-center">
-            <span>{String(mins).padStart(2, "0")}</span>
-            <span className="text-[10px] sm:text-xs font-normal uppercase tracking-wider text-[#64748B]">
-              Mins
-            </span>
-          </span>
-          <span className="text-[#64748B]">:</span>
-          <span className="flex flex-col items-center">
-            <span>{String(secs).padStart(2, "0")}</span>
-            <span className="text-[10px] sm:text-xs font-normal uppercase tracking-wider text-[#64748B]">
-              Secs
-            </span>
-          </span>
+          {ended ? (
+            <span className="text-[#092A31]">Ended</span>
+          ) : (
+            <>
+              <span className="flex flex-col items-center">
+                <span>{String(hrs).padStart(2, "0")}</span>
+                <span className="text-[10px] sm:text-xs font-normal uppercase tracking-wider text-[#64748B]">
+                  Hrs
+                </span>
+              </span>
+              <span className="text-[#64748B]">:</span>
+              <span className="flex flex-col items-center">
+                <span>{String(mins).padStart(2, "0")}</span>
+                <span className="text-[10px] sm:text-xs font-normal uppercase tracking-wider text-[#64748B]">
+                  Mins
+                </span>
+              </span>
+              <span className="text-[#64748B]">:</span>
+              <span className="flex flex-col items-center">
+                <span>{String(secs).padStart(2, "0")}</span>
+                <span className="text-[10px] sm:text-xs font-normal uppercase tracking-wider text-[#64748B]">
+                  Secs
+                </span>
+              </span>
+            </>
+          )}
         </div>
         <button
           type="button"
