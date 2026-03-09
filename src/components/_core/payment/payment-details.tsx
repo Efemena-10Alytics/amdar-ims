@@ -4,6 +4,12 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useAuthStore, type AuthUser } from "@/store/auth-store";
 import type { CheckoutSelections } from "@/types/payment";
@@ -110,6 +116,7 @@ const PaymentDetails = ({
   const [confirmInfo, setConfirmInfo] = useState(false);
   const [confirmTerms, setConfirmTerms] = useState(false);
   const [editDataOpen, setEditDataOpen] = useState(false);
+  const [iwdPdfModalOpen, setIwdPdfModalOpen] = useState(false);
   const [localNextPaymentDateYmd, setLocalNextPaymentDateYmd] = useState(() =>
     getNextPaymentDateYmd(1),
   );
@@ -382,7 +389,18 @@ const PaymentDetails = ({
                 className="font-medium text-primary underline underline-offset-2 hover:text-primary/90"
               >
                 Amdari Terms & Conditions
-              </Link>{" "}
+              </Link>{" "} and the {" "}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIwdPdfModalOpen(true);
+                }}
+                className="font-medium text-primary underline underline-offset-2 hover:text-primary/90 cursor-pointer bg-transparent border-0 p-0 align-baseline"
+              >
+                IWD Terms
+              </button>{" "}
               attached above and I agree.
             </span>
           </label>
@@ -426,6 +444,23 @@ const PaymentDetails = ({
         onOpenChange={setEditDataOpen}
         initialData={editInitialData}
       />
+
+      <Dialog open={iwdPdfModalOpen} onOpenChange={setIwdPdfModalOpen}>
+        <DialogContent className="max-w-[95vw] w-full max-h-[95vh] flex flex-col p-0 gap-0">
+          <DialogHeader className="shrink-0 px-4 py-3 border-b border-gray-200">
+            <DialogTitle className="text-lg font-semibold text-[#092A31]">
+              IWD Terms
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 min-h-0 p-4">
+            <iframe
+              src="/docs/IWD%202026.pdf"
+              title="IWD Terms PDF"
+              className="w-full h-[82vh] rounded border border-gray-200 bg-gray-100"
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
