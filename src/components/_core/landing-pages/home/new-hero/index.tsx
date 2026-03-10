@@ -70,7 +70,7 @@ export default function NewHero() {
     <div className="relative w-full min-h-screen overflow-hidden -mt-20">
       {/* Section background – new-hero-bg */}
       <div
-        className="absolute inset-0 z-0 "
+        className="absolute inset-0 z-0"
         style={{
           backgroundImage: "url(/images/new-hero/new-hero-bg.svg)",
           backgroundPosition: "center",
@@ -81,7 +81,7 @@ export default function NewHero() {
       />
 
       {/* Main content */}
-      <div className="relative z-10 app-width pt-40">
+      <div className="relative z-10 app-width pt-10 md:pt-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left content */}
           <div data-aos="fade-right" className="flex flex-col justify-center">

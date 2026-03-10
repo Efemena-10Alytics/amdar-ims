@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { X } from "lucide-react";
+import { ArrowUpRight, X, XCircle } from "lucide-react";
 import {
   INTERNSHIP_ORIGINAL_PRICE_LABEL,
   INTERNSHIP_DISCOUNTED_PRICE_LABEL,
 } from "@/constants/internship-pricing";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const SALES_BANNER_STORAGE_KEY = "amdari-sales-banner-dismissed";
 
@@ -71,7 +72,7 @@ function toPoundLabel(label: string): string {
   return label.replace(/^GBP\s+/i, "£");
 }
 
-const HASHTAG_STRIP = "#International Woman Day.";
+const HASHTAG_STRIP = "#International Women's Day.";
 
 export function SalesBanner() {
   const [dismissed, setDismissed] = useState(false);
@@ -102,7 +103,7 @@ export function SalesBanner() {
 
   return (
     <div
-      className="w-full mt-20 z-10"
+      className="w-full z-50"
       style={{
         backgroundColor: "#FFE082",
         backgroundImage: `url("/images/sales-banner-noise.png")`,
@@ -116,15 +117,27 @@ export function SalesBanner() {
           "text-[#092A31]",
         )}
       >
-        <p className="text-sm sm:text-base lg:text-[28px] font-semibold">
-          IWD Exclusive Offer, from{" "}
-          <span className="line-through text-red-600">{originalLabel}</span> to{" "}
-          <span className="font-semibold">{discountedLabel}</span>
-        </p>
-        <span className="inline-flex items-center rounded-full bg-[#4ADE80] px-3 py-1 text-sm lg:text-lg font-medium text-[#092A31]">
-          7th – 14th, March
-        </span>
-        <span className="hidden sm:block relative h-10 w-auto shrink-0" aria-hidden>
+        <div className="flex justify-between flex-1">
+          <p className="text-sm sm:text-base lg:text-[28px] font-semibold text-primary flex-1 w-full">
+            IWD Exclusive Offer, from{" "} <br className="md:hidden" />
+            <span className="line-through text-red-600">{originalLabel}</span>{" "}
+            to <span className="font-semibold">{discountedLabel}</span>
+          </p>
+
+          <div
+            className="flex items-center justify-center sm:-rotate-12 rounded-md px-2 sm:px-4 py-2 h-fit sm:py-2 text-white text-sm font-bold shadow-sm"
+            style={{
+              background: "linear-gradient(135deg, #dc2626 0%, #9333ea 100%)",
+            }}
+          >
+            <span className="text-xs md:text-xl lg:text-2xl leading-none py-0.5!">40%</span>
+            <span className="ml-1 text-xs sm:text-base">off</span>
+          </div>
+        </div>
+        <span
+          className="hidden sm:block relative h-10 w-auto shrink-0"
+          aria-hidden
+        >
           <Image
             src="/sales-banner.svg"
             alt=""
@@ -133,42 +146,47 @@ export function SalesBanner() {
             className="h-full w-auto object-contain"
           />
         </span>
-        <div
-          className="flex items-center justify-center -rotate-12 rounded-md px-4 py-2 text-white text-sm font-bold shadow-sm"
-          style={{
-            background: "linear-gradient(135deg, #dc2626 0%, #9333ea 100%)",
-          }}
-        >
-          <span className="text-2xl leading-none">40%</span>
-          <span className="ml-1 text-base">off</span>
-        </div>
-        <div className="flex items-center gap-1.5 sm:gap-2 font-mono text-lg sm:text-xl font-semibold tabular-nums">
+
+        <div className="text-[#0C3640] flex items-center gap-1.5 sm:gap-2 font-mono text-lg sm:text-xl font-semibold tabular-nums">
           {ended ? (
             <span className="text-[#092A31]">Ended</span>
           ) : (
             <>
               <span className="flex flex-col items-center">
-                <span>{String(hrs).padStart(2, "0")}</span>
+                <span className="font-semibold lg:text-3xl">
+                  {String(hrs).padStart(2, "0")}
+                </span>
                 <span className="text-[10px] sm:text-xs font-normal uppercase tracking-wider text-[#64748B]">
                   Hrs
                 </span>
               </span>
               <span className="text-[#64748B]">:</span>
               <span className="flex flex-col items-center">
-                <span>{String(mins).padStart(2, "0")}</span>
+                <span className="font-semibold lg:text-3xl">
+                  {String(mins).padStart(2, "0")}
+                </span>
                 <span className="text-[10px] sm:text-xs font-normal uppercase tracking-wider text-[#64748B]">
                   Mins
                 </span>
               </span>
               <span className="text-[#64748B]">:</span>
               <span className="flex flex-col items-center">
-                <span>{String(secs).padStart(2, "0")}</span>
+                <span className="font-semibold lg:text-3xl">
+                  {String(secs).padStart(2, "0")}
+                </span>
                 <span className="text-[10px] sm:text-xs font-normal uppercase tracking-wider text-[#64748B]">
                   Secs
                 </span>
               </span>
             </>
           )}
+
+          <Button className="rounded-full h-12 md:px-6!">
+            Get Started here{" "}
+            <div className="flex p-2 bg-amdari-yellow rounded-full">
+              <ArrowUpRight />
+            </div>
+          </Button>
         </div>
         <button
           type="button"
@@ -176,13 +194,13 @@ export function SalesBanner() {
           className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-full text-[#64748B] hover:bg-black/5 hover:text-[#092A31] transition-colors"
           aria-label="Dismiss banner"
         >
-          <X className="w-4 h-4" />
+          <XCircle className="w-4 h-4" />
         </button>
       </div>
       {/* Lower: teal strip with hashtag */}
       <div className="bg-primary overflow-x-hidden flex items-center py-3">
         <div
-          className="flex gap-6 whitespace-nowrap text-white text-sm font-medium shrink-0"
+          className="flex gap-6 whitespace-nowrap text-sm font-medium shrink-0 text-amdari-yellow"
           style={{ animation: "scroll-strip 25s linear infinite" }}
           aria-hidden
         >

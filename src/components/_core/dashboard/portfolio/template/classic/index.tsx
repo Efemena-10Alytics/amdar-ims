@@ -1,4 +1,3 @@
-import React from "react";
 import { MyTools } from "./my-tools";
 import { MyEducationBackground } from "./my-education-background";
 import { Footer } from "./footer";

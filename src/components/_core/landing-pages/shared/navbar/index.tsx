@@ -106,15 +106,14 @@ const Navbr = () => {
   return (
     <>
       <SalesBanner />
-      <nav
-        className={cn(
-          "fixed top-0 left-0 right-0 w-full z-50 transition-colors duration-300",
-          showWhiteNav
-            ? "bg-white border-gray-200 border-b"
-            : "bg-transparent border-white/20",
-        )}
-      >
-        <div className="app-width">
+      <div className="sticky top-0 left-0 right-0 z-50 bg-linear-to-r from-white to-[#E8EFF1]">
+        <nav
+          className={cn(
+            "w-full border-b transition-colors duration-300",
+            showWhiteNav ? "border-gray-200" : "border-white/20 bg-transparent",
+          )}
+        >
+          <div className="app-width">
           <div className="flex gap-2 items-center justify-between h-20">
             {/* Logo */}
             <Link href="/home" className="flex items-center gap-2">
@@ -276,7 +275,8 @@ const Navbr = () => {
             </button>
           </div>
         </div>
-      </nav>
+        </nav>
+      </div>
 
       <MobileDrawer
         isDrawerOpen={isDrawerOpen}

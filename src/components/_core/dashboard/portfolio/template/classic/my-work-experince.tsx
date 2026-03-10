@@ -36,8 +36,8 @@ export function MyWorkExperience({
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="font-bold text-[#092A31]">{item.company}</h2>
-                  <h3 className="text-sm text-[#B6CFD4] font-semibold">{item.category}</h3>
+                  <h2 className="font-semibold text-[#092A31] text-2xl">{item.company}</h2>
+                  <h3 className="text-sm md:text-base text-[#B6CFD4] font-semibold">{item.category}</h3>
                 </div>
                 <p className="mt-0.5 text-sm text-[#64748B]">
                   {item.role}

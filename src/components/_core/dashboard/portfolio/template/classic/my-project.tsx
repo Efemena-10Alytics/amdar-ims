@@ -120,9 +120,9 @@ function ProjectCard({
         </div>
       )}
       {/* Title: below the image container, left-aligned, bold dark */}
-      <h3 className="mt-2 text-left font-bold text-zinc-900 text-sm truncate">
+      <span className="mt-2 text-left font-semibold block text-[#092A31] text-sm truncate">
         {project.title}
-      </h3>
+      </span>
     </article>
   );
 }
