@@ -27,14 +27,14 @@ export function PortfolioHero({ value }: PortfolioHeroProps) {
 
   return (
     <section className="text-center mt-16">
-      <h1 className="text-2xl md:text-4xl font-semibold text-[#092A31] tracking-tight">
+      <h1 className="text-2xl md:text-6xl font-semibold text-[#092A31] tracking-tight">
         Hello, I&apos;m {value.name || "—"}
       </h1>
 
       <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
         {value.toolBadge && toolIcon && (
           <span
-            className="inline-flex items-center gap-1.5 rounded-full bg-[#E8EFF1] px-2.5 py-1 text-sm text-[#092A31] shadow-sm"
+            className="inline-flex items-center gap-1.5 rounded-full bg-[#E8EFF1] px-4 py-3 text-xs text-[#092A31] shadow-sm"
             aria-hidden
           >
             <div className="bg-white p-2 rounded-full h-6 w-6 flex items-center justify-center">
@@ -49,9 +49,9 @@ export function PortfolioHero({ value }: PortfolioHeroProps) {
             <span>{value.toolBadge}</span>
           </span>
         )}
-        <span className="text-2xl md:text-4xl font-semibold text-[#092A31]">
+        <h1 className="text-2xl md:text-6xl font-semibold text-[#092A31]">
           A {value.jobTitle || "Professional"}
-        </span>
+        </h1>
       </div>
 
       {value.bio && (
@@ -65,17 +65,17 @@ export function PortfolioHero({ value }: PortfolioHeroProps) {
           <>
             {value.projectsCount && (
               <div className="text-left">
-                <div className="text-lg md:text-xl font-semibold text-[#092A31]">
+                <h2 className="text-lg md:text-xl font-semibold text-[#092A31]">
                   {value.projectsCount}+
-                </div>
+                </h2>
                 <div className="text-sm text-[#64748B] mt-0.5">Projects</div>
               </div>
             )}
             {value.yearsExperience && (
               <div className="text-left">
-                <div className="text-lg md:text-xl font-semibold text-[#092A31]">
+                <h2 className="text-lg md:text-xl font-semibold text-[#092A31]">
                   {value.yearsExperience}+
-                </div>
+                </h2>
                 <div className="text-sm text-[#64748B] mt-0.5">Years</div>
               </div>
             )}
