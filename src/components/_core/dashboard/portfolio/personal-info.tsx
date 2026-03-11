@@ -107,6 +107,25 @@ const PersonalInfo = () => {
     }));
   }, [userInfo, countries]);
 
+  // Resolve location name → countryCode when countries load after initial prefill
+  useEffect(() => {
+    if (!userInfo || countries.length === 0) return;
+    const prefill = getPersonalInfoFromUser(
+      userInfo as Record<string, unknown>,
+    );
+    if (!prefill.locationName) return;
+    setPersonalInfo((prev) => {
+      if (prev.countryCode) return prev;
+      const byName = countries.find(
+        (c) =>
+          c.name === prefill.locationName ||
+          c.name.localeCompare(prefill.locationName!, undefined, { sensitivity: "accent" }) === 0,
+      );
+      if (!byName) return prev;
+      return { ...prev, countryCode: byName.code };
+    });
+  }, [userInfo, countries]);
+
   const handleSave = async () => {
     const location = selectedCountry?.name ?? personalInfo.countryCode ?? "";
     try {
