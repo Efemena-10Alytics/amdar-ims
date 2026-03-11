@@ -1,19 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import {
   INTERNSHIP_ORIGINAL_PRICE_LABEL,
   INTERNSHIP_DISCOUNTED_PRICE_LABEL,
 } from "@/constants/internship-pricing";
+import { useGetPromoUrgency } from "@/features/payment/use-get-promo-time";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 const FORTY_EIGHT_HOURS_MS = 48 * 60 * 60 * 1000;
 const HASHTAG_STRIP = "💐 INTERNATIONAL WOMEN'S DAY OFFER";
 
-function getCurrentCountdownEnd(): Date | null {
+function getDefaultCountdownEnd(): Date | null {
   const now = new Date();
   const year = now.getFullYear();
   const campaignStart = new Date(year, 2, 7, 0, 0, 0, 0);
@@ -32,6 +33,11 @@ function getCurrentCountdownEnd(): Date | null {
     return campaignEnd;
   }
   return currentCycleEnd;
+}
+
+function parseEndDate(endDate: string): Date | null {
+  const d = new Date(endDate + "T23:59:59");
+  return isNaN(d.getTime()) ? null : d;
 }
 
 function useCountdown(getEndDate: () => Date | null) {
@@ -86,7 +92,27 @@ export default function IWDPayment({
   claimHref = "/internship",
   offersHref = "/internship",
 }: IWDPaymentProps) {
-  const { days, hrs, mins, secs, ended } = useCountdown(getCurrentCountdownEnd);
+  const { data: promoUrgency } = useGetPromoUrgency();
+
+  const countdownEnd = useCallback(() => {
+    if (promoUrgency?.end_date) {
+      const parsed = parseEndDate(promoUrgency.end_date);
+      if (parsed && parsed.getTime() > Date.now()) return parsed;
+    }
+    return getDefaultCountdownEnd();
+  }, [promoUrgency?.end_date]);
+  const { days, hrs, mins, secs, ended } = useCountdown(countdownEnd);
+
+  const slotsLeftDisplay =
+    typeof promoUrgency?.slots_left === "number" ? promoUrgency.slots_left : slotsLeft;
+  const registeredDisplay =
+    typeof promoUrgency?.registered === "number" ? promoUrgency.registered : registeredCount;
+  const viewingDisplay =
+    typeof promoUrgency?.viewing === "number" ? promoUrgency.viewing : viewingNow;
+  const registeredIntervalHours =
+    typeof promoUrgency?.registered_interval_hours === "number"
+      ? promoUrgency.registered_interval_hours
+      : 2;
 
   const originalLabel = toPoundLabel(INTERNSHIP_ORIGINAL_PRICE_LABEL);
   const discountedLabel = toPoundLabel(INTERNSHIP_DISCOUNTED_PRICE_LABEL);
@@ -150,7 +176,7 @@ export default function IWDPayment({
                 className="mt-2 inline-block rounded-lg px-5 py-2.5 font-bold text-[#0F4652] bg-[#FFE082] text-base"
                 aria-live="polite"
               >
-                {slotsLeft} Slots Left!
+                {slotsLeftDisplay} Slots Left!
               </div>
             </div>
 
@@ -180,8 +206,11 @@ export default function IWDPayment({
 
           {/* Social proof */}
           <div className="flex flex-wrap justify-center gap-3 text-xs text-[#334155]">
-            <span>🔥 {registeredCount} Registered in past 2 hour</span>
-            <span>👀 {viewingNow} viewing now</span>
+            <span>
+              🔥 {registeredDisplay} Registered in past {registeredIntervalHours} hour
+              {registeredIntervalHours !== 1 ? "s" : ""}
+            </span>
+            <span>👀 {viewingDisplay} viewing now</span>
           </div>
 
           {/* CTAs */}
