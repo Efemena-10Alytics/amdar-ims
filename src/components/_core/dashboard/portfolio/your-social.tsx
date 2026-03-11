@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Link2 } from "lucide-react";
+import { useGetUserDetails } from "@/features/user/use-get-user-details";
 import { cn } from "@/lib/utils";
 import { portfolioInputStyle } from "./portfolio-styles";
 
@@ -29,7 +31,32 @@ type YourSocialProps = {
 
 const LINK_ERROR = "Please enter a valid link (e.g. https://...)";
 
+function getSocialFromUserDetails(
+  details: Record<string, unknown> | null | undefined
+): Partial<YourSocialData> {
+  if (!details || typeof details !== "object") return {};
+  const linkedIn =
+    details.linkedIn ?? details.linkedin ?? details.linked_in ?? "";
+  const twitter =
+    details.twitter ?? details.x ?? details.x_twitter ?? "";
+  return {
+    linkedIn: typeof linkedIn === "string" ? linkedIn : "",
+    twitter: typeof twitter === "string" ? twitter : "",
+  };
+}
+
 export function YourSocial({ value, onChange }: YourSocialProps) {
+  const { data: userDetails } = useGetUserDetails();
+console.log('userDetails', userDetails)
+  useEffect(() => {
+    if (!userDetails) return;
+    const isEmpty = !value.linkedIn.trim() && !value.twitter.trim();
+    if (!isEmpty) return;
+    const prefill = getSocialFromUserDetails(userDetails);
+    if (!prefill.linkedIn && !prefill.twitter) return;
+    onChange({ ...value, ...prefill });
+  }, [userDetails]);
+
   const linkedInInvalid = value.linkedIn.trim() !== "" && !isValidUrl(value.linkedIn);
   const twitterInvalid = value.twitter.trim() !== "" && !isValidUrl(value.twitter);
   const linkedInVerified = value.linkedIn.trim() !== "" && isValidUrl(value.linkedIn);

@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useUpdateUser } from "@/features/payment/use-update-user";
+import { useUpdateUser } from "@/features/user/use-update-user-details";
 
 const inputBase = cn(
   "w-full rounded-lg bg-[#F8FAFC] text-sm placeholder:text-xs px-4 py-3 text-[#092A31] placeholder:text-[#94A3B8] border border-transparent",

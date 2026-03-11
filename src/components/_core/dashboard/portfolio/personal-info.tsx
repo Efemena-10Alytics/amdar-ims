@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useCountries } from "@/features/portfolio/use-countries";
 import { useGetUserInfo } from "@/features/auth/use-get-user-info";
-import { useUpdateUser } from "@/features/payment/use-update-user";
+import { useUpdateUser } from "@/features/user/use-update-user-details";
 import { portfolioInputStyle } from "./portfolio-styles";
 
 export type PersonalInfoData = {
