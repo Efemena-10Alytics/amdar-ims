@@ -53,11 +53,22 @@ const TESTIMONIALS = [
   },
 ];
 
+const LG_MIN_WIDTH = 1024; // Tailwind lg breakpoint
+
 const Aside = () => {
   const [api, setApi] = useState<CarouselApi | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [volume, setVolume] = useState(0.5); // Volume state (0 to 1)
   const [videoPlaying, setVideoPlaying] = useState(true);
+  const [asideVisible, setAsideVisible] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia(`(min-width: ${LG_MIN_WIDTH}px)`);
+    const update = () => setAsideVisible(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   const onSelect = useCallback((carouselApi: CarouselApi | undefined) => {
     if (carouselApi) setSelectedIndex(carouselApi.selectedScrollSnap());
@@ -98,7 +109,7 @@ const Aside = () => {
           >
             <ReactPlayer
               src="https://vimeo.com/1123856639"
-              playing={videoPlaying}
+              playing={videoPlaying && asideVisible}
               loop={true}
               volume={volume}
               width="100%"
