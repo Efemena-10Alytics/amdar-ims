@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,7 +10,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { useCountries } from "@/features/portfolio/use-countries";
+import { useGetUserInfo } from "@/features/auth/use-get-user-info";
+import { useUpdateUser } from "@/features/payment/use-update-user";
 import { portfolioInputStyle } from "./portfolio-styles";
 
 export type PersonalInfoData = {
@@ -21,18 +24,105 @@ export type PersonalInfoData = {
   phone: string;
 };
 
-type PersonalInfoProps = {
-  value: PersonalInfoData;
-  onChange: (data: PersonalInfoData) => void;
+export const defaultPersonalInfo: PersonalInfoData = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  countryCode: "",
+  phone: "",
 };
 
-const PersonalInfo = ({ value: personalInfo, onChange }: PersonalInfoProps) => {
+type PrefillFromUser = Partial<PersonalInfoData> & {
+  /** API often returns country as a name (e.g. "United States"); we resolve to code when we have countries. */
+  locationName?: string;
+};
+
+function getPersonalInfoFromUser(
+  user: Record<string, unknown> | null | undefined,
+): PrefillFromUser {
+  if (!user || typeof user !== "object") return {};
+  const profile =
+    "user" in user && user.user && typeof user.user === "object"
+      ? (user.user as Record<string, unknown>)
+      : user;
+  const first = profile.firstName ?? profile.first_name ?? "";
+  const last = profile.lastName ?? profile.last_name ?? "";
+  const email = profile.email ?? "";
+  const phone =
+    profile.phone ?? profile.phone_number ?? profile.phoneNumber ?? "";
+  const countryCode =
+    profile.countryCode ?? profile.country_code ?? "";
+  const locationName =
+    profile.location ?? profile.country ?? "";
+  return {
+    firstName: typeof first === "string" ? first : "",
+    lastName: typeof last === "string" ? last : "",
+    email: typeof email === "string" ? email : "",
+    countryCode: typeof countryCode === "string" ? countryCode : "",
+    phone: typeof phone === "string" ? phone : "",
+    locationName:
+      typeof locationName === "string" ? locationName : undefined,
+  };
+}
+
+const PersonalInfo = () => {
+  const [personalInfo, setPersonalInfo] = useState<PersonalInfoData>(
+    defaultPersonalInfo,
+  );
   const { data: countries = [], isLoading: countriesLoading } = useCountries();
-  const setPersonalInfo = (fn: (prev: PersonalInfoData) => PersonalInfoData) =>
-    onChange(fn(personalInfo));
+  const { data: userInfo } = useGetUserInfo();
+  const { updateUser, isUpdating, errorMessage } = useUpdateUser();
   const selectedCountry = countries.find(
     (c) => c.code === personalInfo.countryCode
   );
+
+  useEffect(() => {
+    if (!userInfo) return;
+    const isEmpty =
+      !personalInfo.firstName &&
+      !personalInfo.lastName &&
+      !personalInfo.email &&
+      !personalInfo.phone &&
+      !personalInfo.countryCode;
+    if (!isEmpty) return;
+    const prefill = getPersonalInfoFromUser(
+      userInfo as Record<string, unknown>,
+    );
+    let countryCode = prefill.countryCode ?? "";
+    if (!countryCode && prefill.locationName && countries.length > 0) {
+      const byName = countries.find(
+        (c) =>
+          c.name === prefill.locationName ||
+          c.name.localeCompare(prefill.locationName!, undefined, { sensitivity: "accent" }) === 0,
+      );
+      if (byName) countryCode = byName.code;
+    }
+    setPersonalInfo((prev) => ({
+      ...prev,
+      firstName: prefill.firstName ?? prev.firstName,
+      lastName: prefill.lastName ?? prev.lastName,
+      email: prefill.email ?? prev.email,
+      phone: prefill.phone ?? prev.phone,
+      countryCode: countryCode || prev.countryCode,
+    }));
+  }, [userInfo, countries]);
+
+  const handleSave = async () => {
+    const location = selectedCountry?.name ?? personalInfo.countryCode ?? "";
+    try {
+      await updateUser({
+        firstName: personalInfo.firstName,
+        lastName: personalInfo.lastName,
+        email: personalInfo.email,
+        location,
+        countryCode: personalInfo.countryCode,
+        phone: personalInfo.phone,
+      });
+    } catch {
+      // errorMessage set by hook
+    }
+  };
+
   return (
     <div className="max-w-md">
       <h2 className="text-lg font-semibold text-zinc-900">
@@ -124,7 +214,7 @@ const PersonalInfo = ({ value: personalInfo, onChange }: PersonalInfoProps) => {
                     className="shrink-0 h-5 w-5 rounded-full object-cover"
                     unoptimized
                   />
-                  {c.name} ({c.callingCode})
+                  {c.name} 
                 </span>
               </SelectItem>
             ))}
@@ -168,6 +258,20 @@ const PersonalInfo = ({ value: personalInfo, onChange }: PersonalInfoProps) => {
           />
         </div>
       </div>
+
+      {errorMessage && (
+        <p className="mt-4 text-sm text-red-600" role="alert">
+          {errorMessage}
+        </p>
+      )}
+      <Button
+        type="button"
+        onClick={handleSave}
+        disabled={isUpdating}
+        className="mt-6 rounded-lg bg-primary text-white hover:bg-primary/90 disabled:opacity-60"
+      >
+        {isUpdating ? "Saving…" : "Save"}
+      </Button>
     </div>
   );
 };

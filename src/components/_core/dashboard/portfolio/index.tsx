@@ -15,13 +15,6 @@ import Aside, { STEPS } from "./aside";
 
 export function CreatePortfolioForm() {
   const [step, setStep] = useState(1);
-  const [personalInfo, setPersonalInfo] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    countryCode: "",
-    phone: "",
-  });
   const [socialData, setSocialData] = useState({ linkedIn: "", twitter: "" });
   const [bioData, setBioData] = useState({
     jobTitle: "",
@@ -76,7 +69,7 @@ export function CreatePortfolioForm() {
         <div className="flex-1 min-w-0 flex flex-col">
           <div className="flex-1">
             {step === 1 && (
-              <PersonalInfo value={personalInfo} onChange={setPersonalInfo} />
+              <PersonalInfo />
             )}
             {step === 2 && (
               <YourSocial value={socialData} onChange={setSocialData} />

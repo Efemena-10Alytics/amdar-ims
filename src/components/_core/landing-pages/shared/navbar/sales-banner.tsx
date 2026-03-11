@@ -113,14 +113,16 @@ export function SalesBanner() {
       {/* Upper: offer + countdown */}
       <div
         className={cn(
-          "app-width relative flex flex-wrap items-center justify-between gap-4 sm:gap-6 py-3 min-h-15",
+          "app-width relative flex-1 flex flex-wrap items-center justify-between gap-4 sm:gap-6 py-3 min-h-15",
           "text-[#092A31]",
         )}
       >
-        <div className="flex justify-between flex-1">
+        <div className="flex justify-between w-full lg:w-[56%] mt-3 md:mt-0">
           <p className="text-sm sm:text-base lg:text-[28px] font-semibold text-primary flex-1 w-full">
-            IWD Exclusive Offer, from{" "} <br className="md:hidden" />
-            <span className="line-through text-red-600">{originalLabel}</span>{" "}
+            IWD Exclusive Offer, from <br className="md:hidden" />
+            <span className="line-through text-red-600">
+              {originalLabel}
+            </span>{" "}
             to <span className="font-semibold">{discountedLabel}</span>
           </p>
 
@@ -130,7 +132,9 @@ export function SalesBanner() {
               background: "linear-gradient(135deg, #dc2626 0%, #9333ea 100%)",
             }}
           >
-            <span className="text-xs md:text-xl lg:text-2xl leading-none py-0.5!">40%</span>
+            <span className="text-xs md:text-xl lg:text-2xl leading-none py-0.5!">
+              40%
+            </span>
             <span className="ml-1 text-xs sm:text-base">off</span>
           </div>
         </div>
@@ -147,43 +151,45 @@ export function SalesBanner() {
           />
         </span>
 
-        <div className="text-[#0C3640] flex items-center gap-1.5 sm:gap-2 font-mono text-lg sm:text-xl font-semibold tabular-nums">
-          {ended ? (
-            <span className="text-[#092A31]">Ended</span>
-          ) : (
-            <>
-              <span className="flex flex-col items-center">
-                <span className="font-semibold lg:text-3xl">
-                  {String(hrs).padStart(2, "0")}
+        <div className="text-[#0C3640] flex-1 flex items-center justify-between lg:justify-end gap-1.5 sm:gap-2 lg:gap-10 font-mono text-lg sm:text-xl font-semibold tabular-nums">
+          <div className="flex gap-4">
+            {ended ? (
+              <span className="text-[#092A31]">Ended</span>
+            ) : (
+              <>
+                <span className="flex flex-col items-center">
+                  <span className="font-semibold lg:text-3xl">
+                    {String(hrs).padStart(2, "0")}
+                  </span>
+                  <span className="text-[10px] sm:text-xs font-normal uppercase tracking-wider text-[#64748B]">
+                    Hrs
+                  </span>
                 </span>
-                <span className="text-[10px] sm:text-xs font-normal uppercase tracking-wider text-[#64748B]">
-                  Hrs
+                <span className="text-[#64748B]">:</span>
+                <span className="flex flex-col items-center">
+                  <span className="font-semibold lg:text-3xl">
+                    {String(mins).padStart(2, "0")}
+                  </span>
+                  <span className="text-[10px] sm:text-xs font-normal uppercase tracking-wider text-[#64748B]">
+                    Mins
+                  </span>
                 </span>
-              </span>
-              <span className="text-[#64748B]">:</span>
-              <span className="flex flex-col items-center">
-                <span className="font-semibold lg:text-3xl">
-                  {String(mins).padStart(2, "0")}
+                <span className="text-[#64748B]">:</span>
+                <span className="flex flex-col items-center">
+                  <span className="font-semibold lg:text-3xl">
+                    {String(secs).padStart(2, "0")}
+                  </span>
+                  <span className="text-[10px] sm:text-xs font-normal uppercase tracking-wider text-[#64748B]">
+                    Secs
+                  </span>
                 </span>
-                <span className="text-[10px] sm:text-xs font-normal uppercase tracking-wider text-[#64748B]">
-                  Mins
-                </span>
-              </span>
-              <span className="text-[#64748B]">:</span>
-              <span className="flex flex-col items-center">
-                <span className="font-semibold lg:text-3xl">
-                  {String(secs).padStart(2, "0")}
-                </span>
-                <span className="text-[10px] sm:text-xs font-normal uppercase tracking-wider text-[#64748B]">
-                  Secs
-                </span>
-              </span>
-            </>
-          )}
+              </>
+            )}
+          </div>
 
           <Button className="rounded-full h-12 md:px-6!">
             Get Started here{" "}
-            <div className="flex p-2 bg-amdari-yellow rounded-full">
+            <div className="flex p-2 bg-amdari-yellow rounded-full text-primary">
               <ArrowUpRight />
             </div>
           </Button>
@@ -191,7 +197,7 @@ export function SalesBanner() {
         <button
           type="button"
           onClick={handleDismiss}
-          className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-full text-[#64748B] hover:bg-black/5 hover:text-[#092A31] transition-colors"
+          className="absolute right-0.5 top-3 lg:top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-full text-[#64748B] hover:bg-black/5 hover:text-[#092A31] transition-colors"
           aria-label="Dismiss banner"
         >
           <XCircle className="w-4 h-4" />
