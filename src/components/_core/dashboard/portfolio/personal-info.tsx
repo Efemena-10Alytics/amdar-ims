@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useCountries } from "@/features/portfolio/use-countries";
 import { useGetUserInfo } from "@/features/auth/use-get-user-info";
-import { useUpdateUser } from "@/features/payment/use-update-user";
+import { useUpdateUser } from "@/features/user/use-update-user-details";
 import { portfolioInputStyle } from "./portfolio-styles";
 
 export type PersonalInfoData = {
@@ -105,6 +105,25 @@ const PersonalInfo = () => {
       phone: prefill.phone ?? prev.phone,
       countryCode: countryCode || prev.countryCode,
     }));
+  }, [userInfo, countries]);
+
+  // Resolve location name → countryCode when countries load after initial prefill
+  useEffect(() => {
+    if (!userInfo || countries.length === 0) return;
+    const prefill = getPersonalInfoFromUser(
+      userInfo as Record<string, unknown>,
+    );
+    if (!prefill.locationName) return;
+    setPersonalInfo((prev) => {
+      if (prev.countryCode) return prev;
+      const byName = countries.find(
+        (c) =>
+          c.name === prefill.locationName ||
+          c.name.localeCompare(prefill.locationName!, undefined, { sensitivity: "accent" }) === 0,
+      );
+      if (!byName) return prev;
+      return { ...prev, countryCode: byName.code };
+    });
   }, [userInfo, countries]);
 
   const handleSave = async () => {

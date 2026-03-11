@@ -40,9 +40,7 @@ export function useUpdateUser() {
         email: payload.email,
         location: payload.location,
         country: payload.location,
-        phoneNumber: payload.countryCode
-          ? `${payload.countryCode} ${payload.phone}`.trim()
-          : payload.phone,
+        phoneNumber: payload.phone.trim(),
       };
       try {
         const res = await axiosInstance.post<UpdateUserResponse>(
@@ -53,9 +51,9 @@ export function useUpdateUser() {
           setErrorMessage(getErrorMessage(new Error("Update failed")));
           return;
         }
-        if (res?.data?.data) {
-          setUser(res.data.data);
-        }
+        // if (res?.data?.data) {
+        //   setUser(res.data.data);
+        // }
         return res.data;
       } catch (error) {
         const message = getErrorMessage(error);
