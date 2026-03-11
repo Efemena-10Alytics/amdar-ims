@@ -18,6 +18,7 @@ import {
   INTERNSHIP_ORIGINAL_PRICE_LABEL,
   INTERNSHIP_DISCOUNTED_PRICE_LABEL,
 } from "@/constants/internship-pricing";
+import IWDPayment from "../../../shared/iwd-banner/iwd-payment";
 
 const TOOLS_ICON_BASE = "https://api.amdari.io/tools/";
 
@@ -46,10 +47,11 @@ const Left = ({ program }: LeftProps) => {
       icon: t.icon ? TOOLS_ICON_BASE + t.icon : "",
     })) ?? [];
 
-  console.log("tools:", tools);
-
   return (
-    <div className="py-12">
+    <div className="pb-12">
+      <div className="lg:hidden mb-4">
+        <IWDPayment claimHref="/internship" offersHref="/internship" />
+      </div>
       {/* Header Section */}
       <div className="mb-8">
         <h1 className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] mb-4">
@@ -127,7 +129,9 @@ const Left = ({ program }: LeftProps) => {
         }}
       >
         <div className="flex flex-col gap-2">
-          <div className="text-[#64748B] line-through text-lg">{INTERNSHIP_ORIGINAL_PRICE_LABEL}</div>
+          <div className="text-[#64748B] line-through text-lg">
+            {INTERNSHIP_ORIGINAL_PRICE_LABEL}
+          </div>
           <div className="text-2xl lg:text-3xl font-semibold text-[#092A31]">
             {INTERNSHIP_DISCOUNTED_PRICE_LABEL}
           </div>

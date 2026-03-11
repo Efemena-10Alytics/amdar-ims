@@ -259,7 +259,7 @@ html {
   }
 
   .app-width {
-    @apply max-w-400 w-full mx-auto px-4 sm:px-6 lg:px-16
+    @apply max-w-400 w-full mx-auto px-4 sm:px-6 xl:px-16
   }
 }
 

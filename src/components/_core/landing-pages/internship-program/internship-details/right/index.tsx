@@ -8,6 +8,7 @@ import type { InternshipProgram } from "@/types/internship-program";
 import { getYoutubeThumbnail } from "../../../shared/youtube-video";
 import { VideoPlayerModal } from "../../../shared/video-player-modal";
 import { useGetNextCohort } from "@/features/internship/use-get-next-cohort";
+import IWDPayment from "../../../shared/iwd-banner/iwd-payment";
 
 interface RightProps {
   program?: InternshipProgram;
@@ -37,8 +38,12 @@ const Right = ({ program }: RightProps) => {
   const [videoOpen, setVideoOpen] = useState(false);
   const [thumbnailError, setThumbnailError] = useState(false);
   const { data: internshipStartDate } = useGetNextCohort();
-  const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-
+  const [countdown, setCountdown] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
 
   const PROGRAM_VIDEO_URL =
     program?.payment_url ??
@@ -89,7 +94,9 @@ const Right = ({ program }: RightProps) => {
       >
         {videoThumbnail ? (
           <Image
-            src={thumbnailError ? DEFAULT_VIDEO_THUMBNAIL : DEFAULT_VIDEO_THUMBNAIL}
+            src={
+              thumbnailError ? DEFAULT_VIDEO_THUMBNAIL : DEFAULT_VIDEO_THUMBNAIL
+            }
             alt="Video thumbnail"
             fill
             className="object-cover"
@@ -114,6 +121,10 @@ const Right = ({ program }: RightProps) => {
         videoUrl={PROGRAM_VIDEO_URL}
         title="Program video"
       />
+
+      <div className="hidden lg:block">
+        <IWDPayment claimHref="/internship" offersHref="/internship" />
+      </div>
 
       {/* Secure Your Seat Section */}
       <div className="bg-[#F8FAFB] rounded-lg p-6">

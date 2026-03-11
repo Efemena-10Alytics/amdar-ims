@@ -37,11 +37,11 @@ export default function InternshipProgramDetails() {
   return (
     <div className="bg-white">
       <div className="app-width">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-20">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-8 gap-8 lg:gap-12">
+          <div className="lg:col-span-5">
             <Left program={program} />
           </div>
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-3">
             <Right program={program} />
           </div>
         </div>

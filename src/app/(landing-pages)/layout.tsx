@@ -9,7 +9,7 @@ const LandingPageLayout = ({
   return (
     <div>
       <Navbr />
-      <div className="pt-20">{children}</div>
+      <div className="pt-10">{children}</div>
       <Faq />
       <Footer />
     </div>
