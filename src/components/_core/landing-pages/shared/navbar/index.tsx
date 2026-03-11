@@ -68,6 +68,8 @@ const Navbr = () => {
     pathname.startsWith("/payment") ||
     pathname.startsWith("/internship");
 
+  const showSalesBanner =
+    !pathname.startsWith("/internship/") && !pathname.startsWith("/payment");
   const showWhiteNav = isScrolled || !isHomePageRoute;
 
   // Track scroll to add white bg on home when user scrolls
@@ -105,7 +107,7 @@ const Navbr = () => {
   const logoImg = isHomePageRoute ? "/logo.svg" : "/logo.svg";
   return (
     <>
-      <SalesBanner />
+      {showSalesBanner && <SalesBanner />}
       <div className="sticky top-0 left-0 right-0 z-50">
         <nav
           className={cn(

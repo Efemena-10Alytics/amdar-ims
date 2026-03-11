@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 const FORTY_EIGHT_HOURS_MS = 48 * 60 * 60 * 1000;
+const HASHTAG_STRIP = "💐 INTERNATIONAL WOMEN'S DAY OFFER";
 
 function getCurrentCountdownEnd(): Date | null {
   const now = new Date();
@@ -91,7 +92,18 @@ export default function IWDPayment({
   const discountedLabel = toPoundLabel(INTERNSHIP_DISCOUNTED_PRICE_LABEL);
 
   return (
-    <div className="bg-[#E8EFF1] flex items-center justify-center p-2 rounded-xl">
+    <div className="bg-[#E8EFF1] p-2 rounded-xl">
+      <div className="overflow-x-hidden flex items-center py-1">
+        <div
+          className="flex gap-6 whitespace-nowrap font-medium shrink-0 text-primary text-xs"
+          style={{ animation: "scroll-strip 25s linear infinite" }}
+          aria-hidden
+        >
+          {Array.from({ length: 24 }).map((_, i) => (
+            <span key={i}>{HASHTAG_STRIP}</span>
+          ))}
+        </div>
+      </div>
       <div
         className={cn("w-full rounded-2xl overflow-hidden", "bg-[#FFE082]")}
         style={{
