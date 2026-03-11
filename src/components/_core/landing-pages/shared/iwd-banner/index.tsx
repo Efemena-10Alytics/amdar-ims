@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { X, AlarmClock } from "lucide-react";
 import {
   INTERNSHIP_ORIGINAL_PRICE_LABEL,
   INTERNSHIP_DISCOUNTED_PRICE_LABEL,
 } from "@/constants/internship-pricing";
+import { useGetPromoUrgency } from "@/features/payment/use-get-promo-time";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
@@ -14,7 +15,7 @@ const IWD_BANNER_STORAGE_KEY = "amdari-iwd-banner-dismissed";
 
 const FORTY_EIGHT_HOURS_MS = 48 * 60 * 60 * 1000;
 
-function getCurrentCountdownEnd(): Date | null {
+function getDefaultCountdownEnd(): Date | null {
   const now = new Date();
   const year = now.getFullYear();
   const campaignStart = new Date(year, 2, 7, 0, 0, 0, 0);
@@ -33,6 +34,12 @@ function getCurrentCountdownEnd(): Date | null {
     return campaignEnd;
   }
   return currentCycleEnd;
+}
+
+/** Parse "YYYY-MM-DD" as end of day (23:59:59). */
+function parseEndDate(endDate: string): Date | null {
+  const d = new Date(endDate + "T23:59:59");
+  return isNaN(d.getTime()) ? null : d;
 }
 
 function useCountdown(getEndDate: () => Date | null) {
@@ -91,7 +98,7 @@ export const IWDMiddleComp = ({
   discountedLabel: string;
 }) => (
   <div className="flex-1 rounded-xl  text-white text-center">
-    <div className="w-fit flex gap-4 rounded-xl items-center justify-between bg-[#0C3640] px-4 py-3">
+    <div className="w-fit flex mx-auto gap-4 rounded-xl items-center justify-between bg-[#0C3640] px-4 py-3">
       <div className="flex-1">
         <div className="w-fit">
           <p className="text-sm font-semibold text-white">
@@ -133,7 +140,27 @@ export default function IWDBanner({
   offersHref = "/internship",
 }: IWDBannerProps) {
   const [dismissed, setDismissed] = useState(false);
-  const { days, hrs, mins, secs, ended } = useCountdown(getCurrentCountdownEnd);
+  const { data: promoUrgency } = useGetPromoUrgency();
+
+  const countdownEnd = useCallback(() => {
+    if (promoUrgency?.end_date) {
+      const parsed = parseEndDate(promoUrgency.end_date);
+      if (parsed && parsed.getTime() > Date.now()) return parsed;
+    }
+    return getDefaultCountdownEnd();
+  }, [promoUrgency?.end_date]);
+  const { days, hrs, mins, secs, ended } = useCountdown(countdownEnd);
+
+  const slotsLeftDisplay =
+    typeof promoUrgency?.slots_left === "number" ? promoUrgency.slots_left : slotsLeft;
+  const registeredDisplay =
+    typeof promoUrgency?.registered === "number" ? promoUrgency.registered : registeredCount;
+  const viewingDisplay =
+    typeof promoUrgency?.viewing === "number" ? promoUrgency.viewing : viewingNow;
+  const registeredIntervalHours =
+    typeof promoUrgency?.registered_interval_hours === "number"
+      ? promoUrgency.registered_interval_hours
+      : 2;
 
   useEffect(() => {
     try {
@@ -210,7 +237,7 @@ export default function IWDBanner({
         <IWDMiddleComp
           discountedLabel={discountedLabel}
           originalLabel={originalLabel}
-          slotsLeft={slotsLeft}
+          slotsLeft={slotsLeftDisplay}
         />
 
         {/* Right: CTA */}

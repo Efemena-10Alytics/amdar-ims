@@ -35,7 +35,7 @@ export default function InternshipProgramDetails() {
   }
 
   return (
-    <div className="bg-white">
+    <div className="bg-white mt-10">
       <div className="app-width">
         <div className="grid grid-cols-1 lg:grid-cols-8 gap-8 lg:gap-12">
           <div className="lg:col-span-5">
