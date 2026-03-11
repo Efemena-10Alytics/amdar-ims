@@ -49,7 +49,7 @@ const Left = ({ program }: LeftProps) => {
   console.log("tools:", tools);
 
   return (
-    <div className="py-12 lg:py-20">
+    <div className="py-12">
       {/* Header Section */}
       <div className="mb-8">
         <h1 className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] mb-4">

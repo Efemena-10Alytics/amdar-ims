@@ -20,7 +20,7 @@ const ChoosePath = () => {
   const internshipPrograms = (Array.isArray(data) ? data : (data as { data?: InternshipProgram[] })?.data) ?? [];
 
   return (
-    <div className="bg-white py-12 lg:py-20">
+    <div className="bg-white py-12">
       <div className="app-width">
         {/* Header Section */}
         <div className="mb-12">

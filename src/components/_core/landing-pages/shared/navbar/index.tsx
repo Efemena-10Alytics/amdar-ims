@@ -106,11 +106,11 @@ const Navbr = () => {
   return (
     <>
       <SalesBanner />
-      <div className="sticky top-0 left-0 right-0 z-50 bg-linear-to-r from-white to-[#E8EFF1]">
+      <div className="sticky top-0 left-0 right-0 z-50">
         <nav
           className={cn(
             "w-full border-b transition-colors duration-300",
-            showWhiteNav ? "border-gray-200" : "border-white/20 bg-transparent",
+            showWhiteNav ? "border-gray-200 bg-white" : "border-white/20 bg-transparent bg-gradient-to-r from-white to-primary/20",
           )}
         >
           <div className="app-width">
