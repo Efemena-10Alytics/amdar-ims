@@ -17,12 +17,12 @@ export const SESSION_OPTIONS = [
     label: "1 Week Free Internship",
     key: "one-week",
   },
-  { value: "None of the above", label: "None of the above", key: "none" },
   {
     value: "IWD Conferencechat",
     label: "IWD ConferenceChat",
     key: "iwd-conference",
   },
+  { value: "None of the above", label: "None of the above", key: "none" },
 ] as const;
 
 export type SessionOption = (typeof SESSION_OPTIONS)[number];
