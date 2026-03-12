@@ -104,11 +104,17 @@ export default function IWDPayment({
   const { days, hrs, mins, secs, ended } = useCountdown(countdownEnd);
 
   const slotsLeftDisplay =
-    typeof promoUrgency?.slots_left === "number" ? promoUrgency.slots_left : slotsLeft;
+    typeof promoUrgency?.slots_left === "number"
+      ? promoUrgency.slots_left
+      : slotsLeft;
   const registeredDisplay =
-    typeof promoUrgency?.registered === "number" ? promoUrgency.registered : registeredCount;
+    typeof promoUrgency?.registered === "number"
+      ? promoUrgency.registered
+      : registeredCount;
   const viewingDisplay =
-    typeof promoUrgency?.viewing === "number" ? promoUrgency.viewing : viewingNow;
+    typeof promoUrgency?.viewing === "number"
+      ? promoUrgency.viewing
+      : viewingNow;
   const registeredIntervalHours =
     typeof promoUrgency?.registered_interval_hours === "number"
       ? promoUrgency.registered_interval_hours
@@ -207,7 +213,8 @@ export default function IWDPayment({
           {/* Social proof */}
           <div className="flex flex-wrap justify-center gap-3 text-xs text-[#334155]">
             <span>
-              🔥 {registeredDisplay} Registered in past {registeredIntervalHours} hour
+              🔥 {registeredDisplay} Registered in past{" "}
+              {registeredIntervalHours} hour
               {registeredIntervalHours !== 1 ? "s" : ""}
             </span>
             <span>👀 {viewingDisplay} viewing now</span>
@@ -218,13 +225,15 @@ export default function IWDPayment({
             <Link
               href={claimHref}
               className={cn(
-                "inline-flex items-center justify-center gap-2 rounded-xl px-8 py-4 w-full sm:w-auto",
+                "inline-flex items-center justify-center gap-2 rounded-full px-8 py-4 w-full sm:w-4/5 mx-auto text-xs!",
                 "font-semibold text-white text-center",
                 "bg-[#0F4652] hover:bg-[#0C3640] transition-colors",
               )}
             >
               Claim your spot now!
-              <ArrowUpRight className="w-5 h-5 shrink-0" />
+              <div className="flex justify-center items-center rounded-full bg-amdari-yellow h-5 w-5">
+                <ArrowUpRight className="w-3 h-3 shrink-0" />
+              </div>
             </Link>
             <Link
               href={offersHref}
