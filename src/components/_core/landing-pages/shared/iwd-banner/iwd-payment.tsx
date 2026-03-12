@@ -10,6 +10,7 @@ import {
 import { useGetPromoUrgency } from "@/features/payment/use-get-promo-time";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { OfferDialog } from "./offer";
 
 const FORTY_EIGHT_HOURS_MS = 48 * 60 * 60 * 1000;
 const HASHTAG_STRIP = "💐 INTERNATIONAL WOMEN'S DAY OFFER";
@@ -94,6 +95,7 @@ export default function IWDPayment({
   claimHref = id != null ? `/payment/${id}` : "/internship",
   offersHref = "/internship",
 }: IWDPaymentProps) {
+  const [offerOpen, setOfferOpen] = useState(false);
   const { data: promoUrgency } = useGetPromoUrgency();
 
   // console.log("promoUrgency", promoUrgency);
@@ -129,6 +131,12 @@ export default function IWDPayment({
 
   return (
     <div className="bg-[#E8EFF1] p-2 rounded-xl">
+      <OfferDialog
+        open={offerOpen}
+        onOpenChange={setOfferOpen}
+        secureSpotHref="/internship"
+        imageSrc="/images/offers-hands.jpg"
+      />
       <div className="overflow-x-hidden flex items-center py-1">
         <div
           className="flex gap-6 whitespace-nowrap font-medium shrink-0 text-primary text-xs"
@@ -239,12 +247,12 @@ export default function IWDPayment({
                 <ArrowUpRight className="w-3 h-3 text-primary shrink-0" />
               </div>
             </Link>
-            <Link
-              href={offersHref}
+            <button
+              onClick={() => setOfferOpen(true)}
               className="text-sm font-medium text-[#334155] underline underline-offset-2 hover:text-[#0F4652] transition-colors"
             >
               See offers here
-            </Link>
+            </button>
           </div>
         </div>
       </div>
