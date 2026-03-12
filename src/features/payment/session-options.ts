@@ -18,6 +18,11 @@ export const SESSION_OPTIONS = [
     key: "one-week",
   },
   { value: "None of the above", label: "None of the above", key: "none" },
+  {
+    value: "IWD Conferencechat",
+    label: "IWD ConferenceChat",
+    key: "iwd-conference",
+  },
 ] as const;
 
 export type SessionOption = (typeof SESSION_OPTIONS)[number];

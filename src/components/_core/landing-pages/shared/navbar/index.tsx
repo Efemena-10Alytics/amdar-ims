@@ -104,8 +104,8 @@ const Navbr = () => {
   }, [isDrawerOpen]);
 
   const navLinks = [
-    { label: "Real World Project", href: "/projects" },
     { label: "Internship Program", href: "/internship" },
+    { label: "Real World Project", href: "/projects" },
     // { label: "Job Application", href: "/talent-loop" },
   ];
 
