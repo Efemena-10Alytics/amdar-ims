@@ -271,3 +271,37 @@ html {
     transform: translateX(-50%);
   }
 }
+
+@keyframes vibrate {
+  0%,
+  100% {
+    transform: translateX(0) translateY(0);
+  }
+  25% {
+    transform: translateX(-1px) translateY(1px);
+  }
+  50% {
+    transform: translateX(1px) translateY(-1px);
+  }
+  75% {
+    transform: translateX(1px) translateY(1px);
+  }
+}
+
+.animate-vibrate {
+  animation: vibrate 0.15s ease-in-out infinite;
+}
+
+@keyframes countdown-pulse-color {
+  0%,
+  100% {
+    color: #334155;
+  }
+  50% {
+    color: #ef4444;
+  }
+}
+
+.animate-countdown-pulse-color {
+  animation: countdown-pulse-color 1.5s ease-in-out infinite;
+}

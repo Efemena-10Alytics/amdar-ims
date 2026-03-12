@@ -128,7 +128,7 @@ export default function IWDPayment({
       <div className="overflow-x-hidden flex items-center py-1">
         <div
           className="flex gap-6 whitespace-nowrap font-medium shrink-0 text-primary text-xs"
-          style={{ animation: "scroll-strip 25s linear infinite" }}
+          style={{ animation: "scroll-strip 35s linear infinite" }}
           aria-hidden
         >
           {Array.from({ length: 24 }).map((_, i) => (
@@ -151,6 +151,7 @@ export default function IWDPayment({
               width={32}
               height={32}
               alt="time"
+              className="animate-vibrate"
             />
             <div className="min-w-0">
               <h1 className="text-lg sm:text-xl font-bold text-[#0F4652]">
@@ -161,7 +162,7 @@ export default function IWDPayment({
                 {ended ? (
                   "Ended"
                 ) : (
-                  <span className="font-mono font-semibold tabular-nums text-[#334155]">
+                  <span className="font-mono font-semibold tabular-nums text-[#334155] animate-countdown-pulse-color">
                     {String(days).padStart(2, "0")} :{" "}
                     {String(hrs).padStart(2, "0")} :{" "}
                     {String(mins).padStart(2, "0")} :{" "}
@@ -179,7 +180,7 @@ export default function IWDPayment({
                 Slot Getting Sold Out
               </p>
               <div
-                className="mt-2 inline-block rounded-lg px-5 py-2.5 font-bold text-[#0F4652] bg-[#FFE082] text-base"
+                className="mt-2 inline-block rounded-lg px-5 py-2.5 font-bold text-[#0F4652] bg-[#FFE082] animate-countdown-pulse-color text-base"
                 aria-live="polite"
               >
                 {slotsLeftDisplay} Slots Left!

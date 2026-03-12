@@ -13,6 +13,14 @@ import Image from "next/image";
 
 const IWD_BANNER_STORAGE_KEY = "amdari-iwd-banner-dismissed";
 
+/** Fallback when promo-urgency API is not yet loaded or returns no data. */
+const DUMMY_PROMO_URGENCY = {
+  slots_left: 21,
+  registered: 5,
+  registered_interval_hours: 3,
+  viewing: 40,
+} as const;
+
 const FORTY_EIGHT_HOURS_MS = 48 * 60 * 60 * 1000;
 
 function getDefaultCountdownEnd(): Date | null {
@@ -105,7 +113,7 @@ export const IWDMiddleComp = ({
             Slot Getting Sold Out
           </p>
           <div
-            className="mt-2 rounded-lg px-4 py-2 font-bold text-[#0F4652] bg-[#FFE082] text-sm sm:text-base"
+            className="mt-2 rounded-lg px-4 py-2 font-bold text-[#0F4652] animate-countdown-pulse-color bg-[#FFE082] text-sm sm:text-base"
             aria-live="polite"
           >
             {slotsLeft} Slots Left!
@@ -149,19 +157,28 @@ export default function IWDBanner({
     }
     return getDefaultCountdownEnd();
   }, [promoUrgency?.end_date]);
-  const { days, hrs, mins, secs, ended } = useCountdown(countdownEnd);
+  const { mins, secs, ended } = useCountdown(countdownEnd);
 
   const slotsLeftDisplay =
-    typeof promoUrgency?.slots_left === "number" ? promoUrgency.slots_left : slotsLeft;
+    typeof promoUrgency?.slots_left === "number"
+      ? promoUrgency.slots_left
+      : DUMMY_PROMO_URGENCY.slots_left;
   const registeredDisplay =
-    typeof promoUrgency?.registered === "number" ? promoUrgency.registered : registeredCount;
+    typeof promoUrgency?.registered === "number"
+      ? promoUrgency.registered
+      : DUMMY_PROMO_URGENCY.registered;
   const viewingDisplay =
-    typeof promoUrgency?.viewing === "number" ? promoUrgency.viewing : viewingNow;
+    typeof promoUrgency?.viewing === "number"
+      ? promoUrgency.viewing
+      : DUMMY_PROMO_URGENCY.viewing;
   const registeredIntervalHours =
     typeof promoUrgency?.registered_interval_hours === "number"
       ? promoUrgency.registered_interval_hours
-      : 2;
-
+      : DUMMY_PROMO_URGENCY.registered_interval_hours;
+  console.log("registeredIntervalHours", registeredIntervalHours);
+  console.log("registeredDisplay", registeredDisplay);
+  console.log("viewingDisplay", viewingDisplay);
+  console.log("promoUrgency", promoUrgency);
   useEffect(() => {
     try {
       if (sessionStorage.getItem(IWD_BANNER_STORAGE_KEY) === "true") {
@@ -203,6 +220,7 @@ export default function IWDBanner({
               width={32}
               height={32}
               alt="time"
+              className="animate-vibrate"
             />
             <div className="min-w-0">
               <p className="text-base sm:text-lg font-extrabold text-primary">
@@ -213,11 +231,10 @@ export default function IWDBanner({
                 {ended ? (
                   "Ended"
                 ) : (
-                  <span className="font-mono font-semibold tabular-nums text-[#334155]">
-                    {String(days).padStart(2, "0")} :{" "}
-                    {String(hrs).padStart(2, "0")} :{" "}
-                    {String(mins).padStart(2, "0")} :{" "}
-                    {String(secs).padStart(2, "0")}
+                  <span className="font-mono font-semibold tabular-nums text-[#334155] animate-countdown-pulse-color">
+                    {/* {String(days).padStart(2, "0")} :{" "} */}
+                    {registeredIntervalHours} : {String(mins).padStart(2, "0")}{" "}
+                    : {String(secs).padStart(2, "0")}
                   </span>
                 )}
               </p>
@@ -225,10 +242,10 @@ export default function IWDBanner({
           </div>
           <div className="flex text-[#334155]">
             <div className="rounded-full bg-[#E8CC76] px-3 py-2.5 space-y-1 text-xs">
-              <p>🔥 {registeredCount} Registered in past 2 hour</p>
+              <p>🔥 {registeredDisplay} Registered in past 2 hour</p>
             </div>
             <div className="rounded-full bg-[#E8CC76] px-3 py-2.5 space-y-1 text-xs">
-              <p>👀 {viewingNow} viewing now</p>
+              <p>👀 {viewingDisplay} viewing now</p>
             </div>
           </div>
         </div>
