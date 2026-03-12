@@ -98,10 +98,10 @@ export const IWDMiddleComp = ({
   discountedLabel: string;
 }) => (
   <div className="flex-1 rounded-xl  text-white text-center">
-    <div className="w-fit flex mx-auto gap-4 rounded-xl items-center justify-between bg-[#0C3640] px-4 py-3">
+    <div className="w-fit flex mx-auto gap-4 rounded-xl items-center justify-between bg-[#0C3640] px-4 py-1.5">
       <div className="flex-1">
         <div className="w-fit">
-          <p className="text-sm font-semibold text-white">
+          <p className="text-sm font-semibold text-white md:whitespace-nowrap">
             Slot Getting Sold Out
           </p>
           <div
