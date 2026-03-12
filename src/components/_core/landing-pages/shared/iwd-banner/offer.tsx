@@ -36,7 +36,7 @@ export function OfferDialog({
       <DialogContent
         showCloseButton={false}
         className={cn(
-          "max-w-4xl! w-[min(100%-2rem,700px)] p-0 gap-0 overflow-hidden",
+          "max-w-4xl! w-[min(100%-2rem,700px)] max-h-[96vh] p-0! rounded-2xl gap-0 overflow-auto sm:overflow-hidden bg-primary",
           "grid grid-cols-1 md:grid-cols-2",
         )}
       >
@@ -50,12 +50,12 @@ export function OfferDialog({
         </button>
 
         {/* Left: image */}
-        <div className="relative aspect-4/3 md:aspect-auto md:min-h-80 bg-gray-200">
+        <div className="relative aspect-4/3 md:aspect-auto md:min-h-80 bg-gray-2">
           <Image
             src={"/iwd/offer.png"}
             alt="Team collaboration"
             fill
-            className="object-cover"
+            className="object-cove p-6 rounded-2xl"
             sizes="(max-width: 768px) 100vw, 450px"
           />
         </div>
@@ -63,7 +63,7 @@ export function OfferDialog({
         {/* Right: teal panel */}
         <div
           className="flex flex-col p-6 md:p-8 text-white"
-          style={{ backgroundColor: "#0F4652" }}
+          // style={{ backgroundColor: "#0F4652" }}
         >
           <DialogTitle className="text-xl font-semibold text-amdari-yellow mb-6 pr-8">
             Offers you get!
