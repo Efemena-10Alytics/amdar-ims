@@ -10,7 +10,10 @@ import Image from "next/image";
 import MobileDrawer from "./mobile-drawer";
 import { ConfirmLogout } from "./confirm-logout";
 import { useAuthStore } from "@/store/auth-store";
-import { useGetUserInfo, getAvatarUrlFromUser } from "@/features/auth/use-get-user-info";
+import {
+  useGetUserInfo,
+  getAvatarUrlFromUser,
+} from "@/features/auth/use-get-user-info";
 
 import {
   Tooltip,
@@ -21,6 +24,7 @@ import { UserAvatar } from "../../internship-program/svg";
 import AboutBar from "../../about/AboutBar";
 import { ChevronDown } from "lucide-react";
 import { SalesBanner } from "./sales-banner";
+import { MoreDropdown } from "./more-dropdown";
 
 export function TooltipDemo() {
   return (
@@ -40,7 +44,9 @@ const Navbr = () => {
   const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
-  const aboutCloseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const aboutCloseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
 
   const clearAboutCloseTimeout = () => {
     if (aboutCloseTimeoutRef.current) {
@@ -51,7 +57,10 @@ const Navbr = () => {
 
   const scheduleAboutClose = () => {
     clearAboutCloseTimeout();
-    aboutCloseTimeoutRef.current = setTimeout(() => setAboutDropdownOpen(false), 120);
+    aboutCloseTimeoutRef.current = setTimeout(
+      () => setAboutDropdownOpen(false),
+      120,
+    );
   };
 
   useEffect(() => () => clearAboutCloseTimeout(), []);
@@ -97,8 +106,7 @@ const Navbr = () => {
   const navLinks = [
     { label: "Real World Project", href: "/projects" },
     { label: "Internship Program", href: "/internship" },
-    { label: "Job Application", href: "/talent-loop" },
-    { label: "Hackathon", href: "/hackathon" },
+    // { label: "Job Application", href: "/talent-loop" },
   ];
 
   const closeDrawer = () => {
@@ -112,171 +120,179 @@ const Navbr = () => {
         <nav
           className={cn(
             "w-full border-b transition-colors duration-300",
-            showWhiteNav ? "border-gray-200 bg-white" : "border-white/20 bg-transparent bg-gradient-to-r from-white to-primary/20",
+            showWhiteNav
+              ? "border-gray-200 bg-white"
+              : "border-white/20 bg-transparent bg-linear-to-r from-white to-primary/20",
           )}
         >
           <div className="app-width">
-          <div className="flex gap-2 items-center justify-between h-20">
-            {/* Logo */}
-            <Link href="/home" className="flex items-center gap-2">
-              <Image src={logoImg} height={22} width={154} alt="amdari" />
-            </Link>
+            <div className="flex gap-2 items-center justify-between h-20">
+              {/* Logo */}
+              <Link href="/home" className="flex items-center gap-2">
+                <Image src={logoImg} height={22} width={154} alt="amdari" />
+              </Link>
 
-            {/* Navigation Links - Desktop */}
-            <div className="hidden lg:flex items-center gap-4 xl:gap-8">
-              {/* About dropdown - pt-1 bridges gap so cursor stays inside wrapper when moving to panel */}
-              <div
-                className="relative"
-                onMouseEnter={() => {
-                  clearAboutCloseTimeout();
-                  setAboutDropdownOpen(true);
-                }}
-                onMouseLeave={scheduleAboutClose}
-              >
-                <button
-                  type="button"
-                  className={cn(
-                    "text-sm transition-colors relative pb-0.5 flex items-center gap-0.5",
-                    "after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-0.5 after:bg-current after:transition-[width] after:duration-300 after:ease-out",
-                    aboutDropdownOpen ? "after:w-full" : "after:w-0 hover:after:w-full",
-                    showWhiteNav
-                      ? "text-[#156374] hover:text-[#0f4d5a]"
-                      : "text-primary hover:text-[#0f4d5a]",
-                  )}
-                  aria-expanded={aboutDropdownOpen}
-                  aria-haspopup="true"
+              {/* Navigation Links - Desktop */}
+              <div className="hidden lg:flex items-center gap-4 xl:gap-8">
+                {/* About dropdown - pt-1 bridges gap so cursor stays inside wrapper when moving to panel */}
+                <div
+                  className="relative"
+                  onMouseEnter={() => {
+                    clearAboutCloseTimeout();
+                    setAboutDropdownOpen(true);
+                  }}
+                  onMouseLeave={scheduleAboutClose}
                 >
-                  About
-                  <ChevronDown
-                    className={cn("size-4 transition-transform", aboutDropdownOpen && "rotate-180")}
-                  />
-                </button>
-                {aboutDropdownOpen && (
-                  <AboutBar
-                    closeAboutBar={scheduleAboutClose}
-                    className="absolute top-full left-0 pt-4 z-50 w-max"
-                  />
-                )}
-              </div>
-              {navLinks.map((link) => {
-                const isActive =
-                  link.href === "/internship"
-                    ? isInternshipProgramRoute
-                    : link.href !== "#" && pathname.startsWith(link.href);
-                return (
-                  <Link
-                    key={link.label}
-                    href={link.href}
+                  <button
+                    type="button"
                     className={cn(
-                      "text-sm transition-colors relative pb-0.5",
+                      "text-sm transition-colors relative pb-0.5 flex items-center gap-0.5",
                       "after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-0.5 after:bg-current after:transition-[width] after:duration-300 after:ease-out",
-                      isActive
+                      aboutDropdownOpen
                         ? "after:w-full"
                         : "after:w-0 hover:after:w-full",
                       showWhiteNav
                         ? "text-[#156374] hover:text-[#0f4d5a]"
                         : "text-primary hover:text-[#0f4d5a]",
                     )}
+                    aria-expanded={aboutDropdownOpen}
+                    aria-haspopup="true"
                   >
-                    {link.label}
-                  </Link>
-                );
-              })}
-            </div>
-
-            {/* Action Buttons - Desktop */}
-            <div className="hidden lg:flex items-center gap-3 shrink-0">
-              {isLoggedIn ? (
-                <>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Link
-                        href="https://www.amdari.io/dashboard"
-                        className={cn(
-                          "flex size-10 xl:size-11 items-center justify-center rounded-full overflow-hidden transition-colors",
-                          "bg-[#156374] hover:bg-[#156374]/80",
-                        )}
-                        aria-label="Profile"
-                      >
-                        {avatarUrl ? (
-                          <Image
-                            src={avatarUrl}
-                            alt="Profile"
-                            width={44}
-                            height={44}
-                            className="size-full object-cover"
-                            unoptimized={avatarUrl.startsWith("http")}
-                          />
-                        ) : (
-                          <UserAvatar />
-                        )}
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Go to Dashboard</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  <button
-                    type="button"
-                    onClick={() => setConfirmLogoutOpen(true)}
-                    className={cn(
-                      "group flex h-10 xl:h-11 w-10 xl:w-11 items-center justify-center gap-2 rounded-full overflow-hidden transition-[width,color] duration-200 hover:px-3",
-                      "bg-[#B6CFD4] text-[#0f4d5a] hover:bg-[#FAC5C5]",
-                    )}
-                    aria-label="Log out"
-                  >
-                    <LogOut className="size-5 shrink-0 group-hover:hidden" />
-                    <span className="hidden whitespace-nowrap text-[8px] font-semibold group-hover:inline text-[#EF4444]">
-                      Logout
-                    </span>
+                    About
+                    <ChevronDown
+                      className={cn(
+                        "size-4 transition-transform",
+                        aboutDropdownOpen && "rotate-180",
+                      )}
+                    />
                   </button>
-                </>
-              ) : (
-                <>
-                  <Link href="/auth/sign-in">
-                    <Button
-                      variant="outline"
+                  {aboutDropdownOpen && (
+                    <AboutBar
+                      closeAboutBar={scheduleAboutClose}
+                      className="absolute top-full left-0 pt-4 z-50 w-max"
+                    />
+                  )}
+                </div>
+                {navLinks.map((link) => {
+                  const isActive =
+                    link.href === "/internship"
+                      ? isInternshipProgramRoute
+                      : link.href !== "#" && pathname.startsWith(link.href);
+                  return (
+                    <Link
+                      key={link.label}
+                      href={link.href}
                       className={cn(
-                        "rounded-full whitespace-nowrap px-10 xl:px-14 xl:h-12",
+                        "text-sm transition-colors relative pb-0.5",
+                        "after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-0.5 after:bg-current after:transition-[width] after:duration-300 after:ease-out",
+                        isActive
+                          ? "after:w-full"
+                          : "after:w-0 hover:after:w-full",
                         showWhiteNav
-                          ? "border-[#156374] text-[#156374] bg-white hover:bg-[#156374]/5 hover:border-[#0f4d5a] hover:text-[#0f4d5a]"
-                          : "border-primary text-primary bg-transparent hover:border-amdari-yellow",
+                          ? "text-[#156374] hover:text-[#0f4d5a]"
+                          : "text-primary hover:text-[#0f4d5a]",
                       )}
                     >
-                      Login
-                    </Button>
-                  </Link>
-                  <Link href="/auth/sign-up">
-                    <Button
-                      className={cn(
-                        "rounded-full whitespace-nowrap px-10 border-0 xl:h-12",
-                        showWhiteNav
-                          ? "bg-[#156374] text-white hover:bg-amdari-yellow hover:text-primary"
-                          : "bg-white text-[#156374] hover:bg-amdari-yellow hover:text-primary",
-                      )}
-                    >
-                      Get Started
-                    </Button>
-                  </Link>
-                </>
-              )}
-            </div>
+                      {link.label}
+                    </Link>
+                  );
+                })}
+                <MoreDropdown showWhiteNav={showWhiteNav} />
+              </div>
 
-            {/* Hamburger Menu - Mobile */}
-            <button
-              onClick={() => setIsDrawerOpen(true)}
-              className={cn(
-                "lg:hidden p-2 transition-colors",
-                showWhiteNav
-                  ? "text-[#156374] hover:text-[#0f4d5a]"
-                  : "text-primary hover:text-white/80",
-              )}
-              aria-label="Open menu"
-            >
-              <Menu className="w-6 h-6" />
-            </button>
+              {/* Action Buttons - Desktop */}
+              <div className="hidden lg:flex items-center gap-3 shrink-0">
+                {isLoggedIn ? (
+                  <>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Link
+                          href="https://www.amdari.io/dashboard"
+                          className={cn(
+                            "flex size-10 xl:size-11 items-center justify-center rounded-full overflow-hidden transition-colors",
+                            "bg-[#156374] hover:bg-[#156374]/80",
+                          )}
+                          aria-label="Profile"
+                        >
+                          {avatarUrl ? (
+                            <Image
+                              src={avatarUrl}
+                              alt="Profile"
+                              width={44}
+                              height={44}
+                              className="size-full object-cover"
+                              unoptimized={avatarUrl.startsWith("http")}
+                            />
+                          ) : (
+                            <UserAvatar />
+                          )}
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Go to Dashboard</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmLogoutOpen(true)}
+                      className={cn(
+                        "group flex h-10 xl:h-11 w-10 xl:w-11 items-center justify-center gap-2 rounded-full overflow-hidden transition-[width,color] duration-200 hover:px-3",
+                        "bg-[#B6CFD4] text-[#0f4d5a] hover:bg-[#FAC5C5]",
+                      )}
+                      aria-label="Log out"
+                    >
+                      <LogOut className="size-5 shrink-0 group-hover:hidden" />
+                      <span className="hidden whitespace-nowrap text-[8px] font-semibold group-hover:inline text-[#EF4444]">
+                        Logout
+                      </span>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/auth/sign-in">
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "rounded-full whitespace-nowrap px-10 xl:px-14 xl:h-12",
+                          showWhiteNav
+                            ? "border-[#156374] text-[#156374] bg-white hover:bg-[#156374]/5 hover:border-[#0f4d5a] hover:text-[#0f4d5a]"
+                            : "border-primary text-primary bg-transparent hover:border-amdari-yellow",
+                        )}
+                      >
+                        Login
+                      </Button>
+                    </Link>
+                    <Link href="/auth/sign-up">
+                      <Button
+                        className={cn(
+                          "rounded-full whitespace-nowrap px-10 border-0 xl:h-12",
+                          showWhiteNav
+                            ? "bg-[#156374] text-white hover:bg-amdari-yellow hover:text-primary"
+                            : "bg-white text-[#156374] hover:bg-amdari-yellow hover:text-primary",
+                        )}
+                      >
+                        Get Started
+                      </Button>
+                    </Link>
+                  </>
+                )}
+              </div>
+
+              {/* Hamburger Menu - Mobile */}
+              <button
+                onClick={() => setIsDrawerOpen(true)}
+                className={cn(
+                  "lg:hidden p-2 transition-colors",
+                  showWhiteNav
+                    ? "text-[#156374] hover:text-[#0f4d5a]"
+                    : "text-primary hover:text-white/80",
+                )}
+                aria-label="Open menu"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+            </div>
           </div>
-        </div>
         </nav>
       </div>
 
