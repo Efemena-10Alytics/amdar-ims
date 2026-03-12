@@ -83,16 +83,20 @@ export type IWDPaymentProps = {
   claimHref?: string;
   /** Link for "See offers here" text link */
   offersHref?: string;
+  id?: number;
 };
 
 export default function IWDPayment({
   registeredCount = 24,
   viewingNow = 87,
   slotsLeft = 6,
-  claimHref = "/internship",
+  id,
+  claimHref = id != null ? `/payment/${id}` : "/internship",
   offersHref = "/internship",
 }: IWDPaymentProps) {
   const { data: promoUrgency } = useGetPromoUrgency();
+
+  // console.log("promoUrgency", promoUrgency);
 
   const countdownEnd = useCallback(() => {
     if (promoUrgency?.end_date) {
@@ -101,7 +105,7 @@ export default function IWDPayment({
     }
     return getDefaultCountdownEnd();
   }, [promoUrgency?.end_date]);
-  const { days, hrs, mins, secs, ended } = useCountdown(countdownEnd);
+  const { mins, secs, ended } = useCountdown(countdownEnd);
 
   const slotsLeftDisplay =
     typeof promoUrgency?.slots_left === "number"
@@ -128,7 +132,7 @@ export default function IWDPayment({
       <div className="overflow-x-hidden flex items-center py-1">
         <div
           className="flex gap-6 whitespace-nowrap font-medium shrink-0 text-primary text-xs"
-          style={{ animation: "scroll-strip 25s linear infinite" }}
+          style={{ animation: "scroll-strip 35s linear infinite" }}
           aria-hidden
         >
           {Array.from({ length: 24 }).map((_, i) => (
@@ -151,6 +155,7 @@ export default function IWDPayment({
               width={32}
               height={32}
               alt="time"
+              className="animate-vibrate"
             />
             <div className="min-w-0">
               <h1 className="text-lg sm:text-xl font-bold text-[#0F4652]">
@@ -161,11 +166,10 @@ export default function IWDPayment({
                 {ended ? (
                   "Ended"
                 ) : (
-                  <span className="font-mono font-semibold tabular-nums text-[#334155]">
-                    {String(days).padStart(2, "0")} :{" "}
-                    {String(hrs).padStart(2, "0")} :{" "}
-                    {String(mins).padStart(2, "0")} :{" "}
-                    {String(secs).padStart(2, "0")}
+                  <span className="font-mono font-semibold tabular-nums text-[#334155] animate-countdown-pulse-color">
+                    {/* {String(days).padStart(2, "0")} :{" "} */}
+                    {registeredIntervalHours} : {String(mins).padStart(2, "0")}{" "}
+                    : {String(secs).padStart(2, "0")}
                   </span>
                 )}
               </p>
@@ -179,7 +183,7 @@ export default function IWDPayment({
                 Slot Getting Sold Out
               </p>
               <div
-                className="mt-2 inline-block rounded-lg px-5 py-2.5 font-bold text-[#0F4652] bg-[#FFE082] text-base"
+                className="mt-2 inline-block rounded-lg px-5 py-2.5 font-bold text-[#0F4652] bg-[#FFE082] animate-countdown-pulse-color text-base"
                 aria-live="polite"
               >
                 {slotsLeftDisplay} Slots Left!
