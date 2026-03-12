@@ -83,16 +83,20 @@ export type IWDPaymentProps = {
   claimHref?: string;
   /** Link for "See offers here" text link */
   offersHref?: string;
+  id?: number;
 };
 
 export default function IWDPayment({
   registeredCount = 24,
   viewingNow = 87,
   slotsLeft = 6,
-  claimHref = "/internship",
+  id,
+  claimHref = id != null ? `/payment/${id}` : "/internship",
   offersHref = "/internship",
 }: IWDPaymentProps) {
   const { data: promoUrgency } = useGetPromoUrgency();
+
+  // console.log("promoUrgency", promoUrgency);
 
   const countdownEnd = useCallback(() => {
     if (promoUrgency?.end_date) {
@@ -101,7 +105,7 @@ export default function IWDPayment({
     }
     return getDefaultCountdownEnd();
   }, [promoUrgency?.end_date]);
-  const { days, hrs, mins, secs, ended } = useCountdown(countdownEnd);
+  const { mins, secs, ended } = useCountdown(countdownEnd);
 
   const slotsLeftDisplay =
     typeof promoUrgency?.slots_left === "number"
@@ -163,10 +167,9 @@ export default function IWDPayment({
                   "Ended"
                 ) : (
                   <span className="font-mono font-semibold tabular-nums text-[#334155] animate-countdown-pulse-color">
-                    {String(days).padStart(2, "0")} :{" "}
-                    {String(hrs).padStart(2, "0")} :{" "}
-                    {String(mins).padStart(2, "0")} :{" "}
-                    {String(secs).padStart(2, "0")}
+                    {/* {String(days).padStart(2, "0")} :{" "} */}
+                    {registeredIntervalHours} : {String(mins).padStart(2, "0")}{" "}
+                    : {String(secs).padStart(2, "0")}
                   </span>
                 )}
               </p>

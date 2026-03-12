@@ -123,7 +123,7 @@ const Right = ({ program }: RightProps) => {
       />
 
       <div className="hidden lg:block">
-        <IWDPayment claimHref="/internship" offersHref="/internship" />
+        <IWDPayment claimHref={`/payment/${program?.id}` }offersHref="/internship" />
       </div>
 
       {/* Secure Your Seat Section */}

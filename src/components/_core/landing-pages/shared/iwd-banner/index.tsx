@@ -142,9 +142,6 @@ export const IWDMiddleComp = ({
 );
 
 export default function IWDBanner({
-  registeredCount = 24,
-  viewingNow = 87,
-  slotsLeft = 6,
   offersHref = "/internship",
 }: IWDBannerProps) {
   const [dismissed, setDismissed] = useState(false);
@@ -175,10 +172,7 @@ export default function IWDBanner({
     typeof promoUrgency?.registered_interval_hours === "number"
       ? promoUrgency.registered_interval_hours
       : DUMMY_PROMO_URGENCY.registered_interval_hours;
-  console.log("registeredIntervalHours", registeredIntervalHours);
-  console.log("registeredDisplay", registeredDisplay);
-  console.log("viewingDisplay", viewingDisplay);
-  console.log("promoUrgency", promoUrgency);
+
   useEffect(() => {
     try {
       if (sessionStorage.getItem(IWD_BANNER_STORAGE_KEY) === "true") {

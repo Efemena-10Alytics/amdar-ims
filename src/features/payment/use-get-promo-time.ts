@@ -28,5 +28,6 @@ export function useGetPromoUrgency() {
         : {};
     },
     enabled: !!apiBaseURL,
+    staleTime: 2 * 60 * 1000, // 2 minutes – avoid refetching on every countdown re-render
   });
 }
