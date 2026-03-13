@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import PaymentMain from "@/components/_core/payment";
 import { useGetInternshipProgram } from "@/features/internship/use-get-internship-program";
@@ -11,6 +12,11 @@ export default function PaymentPage() {
   const searchParams = useSearchParams();
   const id = params?.id as string | undefined;
   const promoCode = searchParams.get("promo_code") ?? DEFAULT_PROMO_CODE;
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  }, []);
 
   const { data: program, isLoading, error } = useGetInternshipProgram(id);
   const {

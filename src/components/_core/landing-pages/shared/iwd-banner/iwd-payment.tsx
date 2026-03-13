@@ -93,7 +93,6 @@ export default function IWDPayment({
   slotsLeft = 6,
   id,
   claimHref = id != null ? `/payment/${id}` : "/internship",
-  offersHref = "/internship",
 }: IWDPaymentProps) {
   const [offerOpen, setOfferOpen] = useState(false);
   const { data: promoUrgency } = useGetPromoUrgency();
@@ -155,7 +154,7 @@ export default function IWDPayment({
           backgroundSize: "200px auto",
         }}
       >
-        <div className="p-4 flex flex-col gap-6">
+        <div className="p-4 flex flex-col gap-2">
           {/* Top: LIMITED SLOT + countdown */}
           <div className="flex items-center justify-center gap-3 mt-1">
             <Image
@@ -185,7 +184,7 @@ export default function IWDPayment({
           </div>
 
           {/* Mid: Dark teal offer card */}
-          <div className="rounded-xl bg-[#0F4652] text-white p-5 sm:p-6 flex lg:flex-col xl:flex-row items-center gap-4 sm:gap-6">
+          <div className="rounded-xl bg-[#0F4652] text-white p-5 sm:p-3 flex lg:flex-col xl:flex-row items-center gap-4 sm:gap-6">
             <div className="flex-1 text-center sm:text-left">
               <p className="text-xs font-semibold text-white/90">
                 Slot Getting Sold Out
