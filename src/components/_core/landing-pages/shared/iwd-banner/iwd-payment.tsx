@@ -77,7 +77,7 @@ export default function IWDPayment({
       <OfferDialog
         open={offerOpen}
         onOpenChange={setOfferOpen}
-        secureSpotHref="/internship"
+        secureSpotHref={claimHref}
         imageSrc="/images/offers-hands.jpg"
       />
       <div className="overflow-x-hidden flex items-center py-1">

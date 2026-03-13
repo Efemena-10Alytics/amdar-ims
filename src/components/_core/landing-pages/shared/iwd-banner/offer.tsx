@@ -7,14 +7,14 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
 const OFFERS = [
-  "Interview prep session",
-  "CV revamp",
-  "Mentorship session",
+  "CV Review and Revamp",
   "LinkedIn optimization",
-  "Career coaching",
-  "Reference letter",
-  "Lifetime Career Support",
+  "Navigating the Job Market",
+  "Interview prep session",
+  "Mentorship and Career coaching",
+  "UK/ US/ CAD Reference letter",
   "On the job support",
+  "Lifetime Career Support",
 ];
 
 export type OfferDialogProps = {

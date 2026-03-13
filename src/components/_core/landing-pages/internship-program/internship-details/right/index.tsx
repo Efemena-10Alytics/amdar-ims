@@ -79,6 +79,12 @@ const Right = ({ program }: RightProps) => {
   return (
     <div className="space-y-6">
       {/* Video Player Section */}
+      <div className="hidden lg:block">
+        <IWDPayment
+          claimHref={`/payment/${program?.id}`}
+          offersHref="/internship"
+        />
+      </div>
       <div
         role="button"
         tabIndex={0}
@@ -122,16 +128,12 @@ const Right = ({ program }: RightProps) => {
         title="Program video"
       />
 
-      <div className="hidden lg:block">
-        <IWDPayment claimHref={`/payment/${program?.id}` }offersHref="/internship" />
-      </div>
-
       {/* Secure Your Seat Section */}
       {/* <div className="bg-[#F8FAFB] rounded-lg p-6"> */}
-        <h3 className="font-semibold text-[#092A31] mb-4">Secure your seat</h3>
+      <h3 className="font-semibold text-[#092A31] mb-4">Secure your seat</h3>
 
-        {/* Countdown Timer */}
-        {/* <div className="flex gap-2 mb-3">
+      {/* Countdown Timer */}
+      {/* <div className="flex gap-2 mb-3">
           <div className="text-center">
             <div className="text-lg font-semibold text-[#092A31] mb-1">
               {String(countdown.days).padStart(2, "0")} :
@@ -158,7 +160,7 @@ const Right = ({ program }: RightProps) => {
           </div>
         </div> */}
 
-        {/* <a
+      {/* <a
           href={`/payment/${program?.id}`}
           className="text-primary underline text-sm font-medium"
         >
