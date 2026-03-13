@@ -29,7 +29,7 @@ export type OfferDialogProps = {
 export function OfferDialog({
   open,
   onOpenChange,
-  secureSpotHref = "/internship",
+  secureSpotHref
 }: OfferDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -87,7 +87,7 @@ export function OfferDialog({
           </ul>
 
           <Link
-            href={secureSpotHref}
+            href={secureSpotHref ?? "/internship"}
             onClick={() => onOpenChange(false)}
             className={cn(
               "mt-6 w-full rounded-full py-3.5 text-center text-[#0F4652]",
