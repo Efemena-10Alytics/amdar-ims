@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { X, AlarmClock } from "lucide-react";
+import { X } from "lucide-react";
 import {
   INTERNSHIP_ORIGINAL_PRICE_LABEL,
   INTERNSHIP_DISCOUNTED_PRICE_LABEL,
@@ -10,6 +10,11 @@ import {
 import { useGetPromoUrgency } from "@/features/payment/use-get-promo-time";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import {
+  getDefaultCountdownEnd,
+  parseEndDate,
+  useCountdown,
+} from "./use-countdown";
 
 const IWD_BANNER_STORAGE_KEY = "amdari-iwd-banner-dismissed";
 
@@ -20,66 +25,6 @@ const DUMMY_PROMO_URGENCY = {
   registered_interval_hours: 3,
   viewing: 40,
 } as const;
-
-const FORTY_EIGHT_HOURS_MS = 48 * 60 * 60 * 1000;
-
-function getDefaultCountdownEnd(): Date | null {
-  const now = new Date();
-  const year = now.getFullYear();
-  const campaignStart = new Date(year, 2, 7, 0, 0, 0, 0);
-  const campaignEnd = new Date(year, 3, 4, 23, 59, 59, 999);
-
-  if (now.getTime() >= campaignEnd.getTime()) return null;
-  if (now.getTime() < campaignStart.getTime()) return campaignStart;
-
-  const elapsed = now.getTime() - campaignStart.getTime();
-  const cycleIndex = Math.floor(elapsed / FORTY_EIGHT_HOURS_MS);
-  const currentCycleEnd = new Date(
-    campaignStart.getTime() + (cycleIndex + 1) * FORTY_EIGHT_HOURS_MS,
-  );
-
-  if (currentCycleEnd.getTime() > campaignEnd.getTime()) {
-    return campaignEnd;
-  }
-  return currentCycleEnd;
-}
-
-/** Parse "YYYY-MM-DD" as end of day (23:59:59). */
-function parseEndDate(endDate: string): Date | null {
-  const d = new Date(endDate + "T23:59:59");
-  return isNaN(d.getTime()) ? null : d;
-}
-
-function useCountdown(getEndDate: () => Date | null) {
-  const [diff, setDiff] = useState(() => {
-    const end = getEndDate();
-    if (!end) return -1;
-    return Math.max(0, Math.floor((end.getTime() - Date.now()) / 1000));
-  });
-
-  useEffect(() => {
-    const tick = () => {
-      const end = getEndDate();
-      if (!end) {
-        setDiff(-1);
-        return;
-      }
-      setDiff(Math.max(0, Math.floor((end.getTime() - Date.now()) / 1000)));
-    };
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, [getEndDate]);
-
-  if (diff < 0) {
-    return { days: 0, hrs: 0, mins: 0, secs: 0, ended: true as const };
-  }
-  const days = Math.floor(diff / 86400);
-  const hrs = Math.floor((diff % 86400) / 3600);
-  const mins = Math.floor((diff % 3600) / 60);
-  const secs = diff % 60;
-  return { days, hrs, mins, secs, ended: false as const };
-}
 
 function toPoundLabel(label: string): string {
   return label.replace(/^GBP\s+/i, "£");
@@ -154,7 +99,7 @@ export default function IWDBanner({
     }
     return getDefaultCountdownEnd();
   }, [promoUrgency?.end_date]);
-  const { mins, secs, ended } = useCountdown(countdownEnd);
+  const { hrs, mins, secs, ended } = useCountdown(countdownEnd);
 
   const slotsLeftDisplay =
     typeof promoUrgency?.slots_left === "number"
@@ -168,10 +113,7 @@ export default function IWDBanner({
     typeof promoUrgency?.viewing === "number"
       ? promoUrgency.viewing
       : DUMMY_PROMO_URGENCY.viewing;
-  const registeredIntervalHours =
-    typeof promoUrgency?.registered_interval_hours === "number"
-      ? promoUrgency.registered_interval_hours
-      : DUMMY_PROMO_URGENCY.registered_interval_hours;
+
 
   useEffect(() => {
     try {
@@ -227,7 +169,7 @@ export default function IWDBanner({
                 ) : (
                   <span className="font-mono font-semibold tabular-nums text-[#334155] animate-countdown-pulse-color">
                     {/* {String(days).padStart(2, "0")} :{" "} */}
-                    {registeredIntervalHours} : {String(mins).padStart(2, "0")}{" "}
+                    {String(hrs).padStart(2, "0")} : {String(mins).padStart(2, "0")}{" "}
                     : {String(secs).padStart(2, "0")}
                   </span>
                 )}
