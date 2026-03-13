@@ -7,65 +7,14 @@ import {
   INTERNSHIP_ORIGINAL_PRICE_LABEL,
   INTERNSHIP_DISCOUNTED_PRICE_LABEL,
 } from "@/constants/internship-pricing";
+import {
+  getDefaultCountdownEnd,
+  useCountdown,
+} from "@/components/_core/landing-pages/shared/iwd-banner/use-countdown";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const SALES_BANNER_STORAGE_KEY = "amdari-sales-banner-dismissed";
-
-const FORTY_EIGHT_HOURS_MS = 48 * 60 * 60 * 1000;
-
-/** First 48h cycle starts March 7 00:00 local; campaign ends April 4 23:59:59 local. */
-function getCurrentCountdownEnd(): Date | null {
-  const now = new Date();
-  const year = now.getFullYear();
-  const campaignStart = new Date(year, 2, 7, 0, 0, 0, 0); // March 7
-  const campaignEnd = new Date(year, 3, 4, 23, 59, 59, 999); // April 4
-
-  if (now.getTime() >= campaignEnd.getTime()) return null;
-  if (now.getTime() < campaignStart.getTime()) return campaignStart;
-
-  const elapsed = now.getTime() - campaignStart.getTime();
-  const cycleIndex = Math.floor(elapsed / FORTY_EIGHT_HOURS_MS);
-  const currentCycleEnd = new Date(
-    campaignStart.getTime() + (cycleIndex + 1) * FORTY_EIGHT_HOURS_MS,
-  );
-
-  if (currentCycleEnd.getTime() > campaignEnd.getTime()) {
-    return campaignEnd;
-  }
-  return currentCycleEnd;
-}
-
-function useCountdown(getEndDate: () => Date | null) {
-  const [diff, setDiff] = useState(() => {
-    const end = getEndDate();
-    if (!end) return -1;
-    return Math.max(0, Math.floor((end.getTime() - Date.now()) / 1000));
-  });
-
-  useEffect(() => {
-    const tick = () => {
-      const end = getEndDate();
-      if (!end) {
-        setDiff(-1);
-        return;
-      }
-      const d = Math.max(0, Math.floor((end.getTime() - Date.now()) / 1000));
-      setDiff(d);
-    };
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, [getEndDate]);
-
-  if (diff < 0) {
-    return { hrs: 0, mins: 0, secs: 0, ended: true as const };
-  }
-  const hrs = Math.floor(diff / 3600);
-  const mins = Math.floor((diff % 3600) / 60);
-  const secs = diff % 60;
-  return { hrs, mins, secs, ended: false as const };
-}
 
 /** Format "GBP 500" -> "£500" for display. */
 function toPoundLabel(label: string): string {
@@ -76,7 +25,7 @@ const HASHTAG_STRIP = "#International Women's Day.";
 
 export function SalesBanner() {
   const [dismissed, setDismissed] = useState(false);
-  const { hrs, mins, secs, ended } = useCountdown(getCurrentCountdownEnd);
+  const { hrs, mins, secs, ended } = useCountdown(getDefaultCountdownEnd);
 
   useEffect(() => {
     try {
