@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 
-const FORTY_EIGHT_HOURS_MS = 48 * 60 * 60 * 1000;
+const TEN_HOURS_MS = 10 * 60 * 60 * 1000;
 
 /**
- * Default IWD campaign countdown: 48h cycles from March 7 00:00, campaign ends April 4 23:59:59.
+ * Default IWD campaign countdown: 10h cycles from March 7 00:00, campaign ends April 4 23:59:59.
  * Returns the next cycle end date, or null if campaign has ended.
  */
 export function getDefaultCountdownEnd(): Date | null {
@@ -18,9 +18,9 @@ export function getDefaultCountdownEnd(): Date | null {
   if (now.getTime() < campaignStart.getTime()) return campaignStart;
 
   const elapsed = now.getTime() - campaignStart.getTime();
-  const cycleIndex = Math.floor(elapsed / FORTY_EIGHT_HOURS_MS);
+  const cycleIndex = Math.floor(elapsed / TEN_HOURS_MS);
   const currentCycleEnd = new Date(
-    campaignStart.getTime() + (cycleIndex + 1) * FORTY_EIGHT_HOURS_MS,
+    campaignStart.getTime() + (cycleIndex + 1) * TEN_HOURS_MS,
   );
 
   if (currentCycleEnd.getTime() > campaignEnd.getTime()) {

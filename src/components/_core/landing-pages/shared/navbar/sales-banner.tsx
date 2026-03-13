@@ -13,6 +13,7 @@ import {
 } from "@/components/_core/landing-pages/shared/iwd-banner/use-countdown";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const SALES_BANNER_STORAGE_KEY = "amdari-sales-banner-dismissed";
 
@@ -136,17 +137,19 @@ export function SalesBanner() {
             )}
           </div>
 
-          <Button className="rounded-full h-12 md:px-6!">
-            Get Started here{" "}
-            <div className="flex p-2 bg-amdari-yellow rounded-full text-primary">
-              <ArrowUpRight />
-            </div>
-          </Button>
+          <Link href={"/internship"}>
+            <Button className="rounded-full h-12 md:px-6! cursor-pointer">
+              Get Started here{" "}
+              <div className="flex p-2 bg-amdari-yellow rounded-full text-primary">
+                <ArrowUpRight />
+              </div>
+            </Button>
+          </Link>
         </div>
         <button
           type="button"
           onClick={handleDismiss}
-          className="absolute right-0.5 top-3 lg:top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-full text-[#64748B] hover:bg-black/5 hover:text-[#092A31] transition-colors"
+          className="absolute cursor-pointer right-0.5 top-3 lg:top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-full text-[#64748B] hover:bg-black/5 hover:text-[#092A31] transition-colors"
           aria-label="Dismiss banner"
         >
           <XCircle className="w-4 h-4" />
