@@ -205,7 +205,7 @@ export default function IWDBanner({
         backgroundSize: "200px auto",
       }}
     >
-      <div className="app-width flex flex-col lg:flex-row items-center gap-4 sm:gap-6 p-4 sm:p-5">
+      <div className="app-width flex flex-col lg:flex-row items-center gap-4 sm:gap-6 py-4 sm:py-5">
         {/* Left: limited slot + countdown + activity */}
         <div className="flex flex-1 flex-col  gap-3 min-w-0">
           <div className="flex items-start gap-3">

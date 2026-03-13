@@ -77,7 +77,7 @@ const Right = ({ program }: RightProps) => {
   }, [internshipStartDate]);
 
   return (
-    <div className="space-y-6 mt-12">
+    <div className="space-y-6">
       {/* Video Player Section */}
       <div
         role="button"

@@ -14,7 +14,7 @@ const LandingPageLayout = ({
         slotsLeft={6}
         offersHref="/internship"
       />
-      <div className="pt-20">{children}</div>
+      <div className="pt-10">{children}</div>
     </div>
   );
 };
