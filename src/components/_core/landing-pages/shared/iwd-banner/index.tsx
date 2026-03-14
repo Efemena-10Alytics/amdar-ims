@@ -22,7 +22,7 @@ const IWD_BANNER_STORAGE_KEY = "amdari-iwd-banner-dismissed";
 const DUMMY_PROMO_URGENCY = {
   slots_left: 21,
   registered: 5,
-  registered_interval_hours: 3,
+  registered_interval_hours: 1,
   viewing: 40,
 } as const;
 
@@ -109,11 +109,14 @@ export default function IWDBanner({
     typeof promoUrgency?.registered === "number"
       ? promoUrgency.registered
       : DUMMY_PROMO_URGENCY.registered;
+  const registeredIntervalDisplay =
+    typeof promoUrgency?.registered_interval_hours === "number"
+      ? promoUrgency.registered_interval_hours
+      : DUMMY_PROMO_URGENCY.registered_interval_hours;
   const viewingDisplay =
     typeof promoUrgency?.viewing === "number"
       ? promoUrgency.viewing
       : DUMMY_PROMO_URGENCY.viewing;
-
 
   useEffect(() => {
     try {
@@ -169,8 +172,9 @@ export default function IWDBanner({
                 ) : (
                   <span className="font-mono font-semibold tabular-nums text-[#334155] animate-countdown-pulse-color">
                     {/* {String(days).padStart(2, "0")} :{" "} */}
-                    {String(hrs).padStart(2, "0")} : {String(mins).padStart(2, "0")}{" "}
-                    : {String(secs).padStart(2, "0")}
+                    {String(hrs).padStart(2, "0")} :{" "}
+                    {String(mins).padStart(2, "0")} :{" "}
+                    {String(secs).padStart(2, "0")}
                   </span>
                 )}
               </p>
@@ -178,7 +182,10 @@ export default function IWDBanner({
           </div>
           <div className="flex text-[#334155]">
             <div className="rounded-full bg-[#E8CC76] px-3 py-2.5 space-y-1 text-xs">
-              <p>🔥 {registeredDisplay} Registered in past 2 hour</p>
+              <p>
+                🔥 {registeredDisplay} Registered in past{" "}
+                {registeredIntervalDisplay} hour
+              </p>
             </div>
             <div className="rounded-full bg-[#E8CC76] px-3 py-2.5 space-y-1 text-xs">
               <p>👀 {viewingDisplay} viewing now</p>
