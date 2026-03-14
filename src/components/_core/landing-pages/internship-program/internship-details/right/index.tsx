@@ -130,7 +130,7 @@ const Right = ({ program }: RightProps) => {
 
       {/* Secure Your Seat Section */}
       {/* <div className="bg-[#F8FAFB] rounded-lg p-6"> */}
-      <h3 className="font-semibold text-[#092A31] mb-4">Secure your seat</h3>
+      {/* <h3 className="font-semibold text-[#092A31] mb-4">Secure your seat</h3> */}
 
       {/* Countdown Timer */}
       {/* <div className="flex gap-2 mb-3">
