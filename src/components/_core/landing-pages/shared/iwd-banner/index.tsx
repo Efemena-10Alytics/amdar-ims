@@ -184,7 +184,7 @@ export default function IWDBanner({ offersHref = "#"}: IWDBannerProps) {
           </div>
           <div className="flex text-[#334155]">
             <div className="rounded-full bg-[#E8CC76] px-3 py-2.5 space-y-1 text-xs">
-              <p>🔥 {registeredDisplay} Registered in past 2 hour</p>
+              <p>🔥 {registeredDisplay} Registered in past 1 hour</p>
             </div>
             <div className="rounded-full bg-[#E8CC76] px-3 py-2.5 space-y-1 text-xs">
               <p>👀 {viewingDisplay} viewing now</p>

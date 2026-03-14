@@ -168,7 +168,7 @@ export default function IWDPayment({
           {/* Social proof */}
           <div className="flex justify-center text-[#092A31]">
             <div className="rounded-full bg-[#E8CC76] px-3 py-2.5 space-y-1 text-xs">
-              <p>🔥<span className="font-semibold">{registeredDisplay}</span>  Registered in past 2 hour</p>
+              <p>🔥<span className="font-semibold">{registeredDisplay}</span>  Registered in past 1 hour</p>
             </div>
             <div className="rounded-full bg-[#E8CC76] px-3 py-2.5 space-y-1 text-xs">
               <p>👀 <span className="font-semibold">{viewingDisplay}</span> viewing now</p>
