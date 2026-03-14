@@ -15,6 +15,7 @@ import {
   parseEndDate,
   useCountdown,
 } from "./use-countdown";
+import { OfferDialog } from "./offer";
 
 const IWD_BANNER_STORAGE_KEY = "amdari-iwd-banner-dismissed";
 
@@ -86,10 +87,9 @@ export const IWDMiddleComp = ({
   </div>
 );
 
-export default function IWDBanner({
-  offersHref = "/internship",
-}: IWDBannerProps) {
+export default function IWDBanner({ offersHref = "#"}: IWDBannerProps) {
   const [dismissed, setDismissed] = useState(false);
+  const [offerOpen, setOfferOpen] = useState(false);
   const { data: promoUrgency } = useGetPromoUrgency();
 
   const countdownEnd = useCallback(() => {
@@ -150,6 +150,12 @@ export default function IWDBanner({
         backgroundSize: "200px auto",
       }}
     >
+      <OfferDialog
+        open={offerOpen}
+        onOpenChange={setOfferOpen}
+        secureSpotHref={"#"}
+        imageSrc="/images/offers-hands.jpg"
+      />
       <div className="app-width flex flex-col lg:flex-row items-center gap-4 sm:gap-6 py-4 sm:py-5">
         {/* Left: limited slot + countdown + activity */}
         <div className="flex flex-1 flex-col  gap-3 min-w-0">
@@ -202,16 +208,17 @@ export default function IWDBanner({
 
         {/* Right: CTA */}
         <div className="flex-1 flex items-center justify-center sm:justify-end">
-          <Link
-            href={offersHref}
+          <div
+            onClick={() => setOfferOpen(true)}
+            // href={offersHref}
             className={cn(
-              "inline-flex items-center justify-center rounded-full px-6 py-3.5",
+              "cursor-pointer inline-flex items-center justify-center rounded-full px-6 py-3.5",
               "font-semibold text-white text-center",
               "bg-[#6B5E37] hover:bg-[#4E342E] transition-colors",
             )}
           >
             See offers here
-          </Link>
+          </div>
         </div>
       </div>
 

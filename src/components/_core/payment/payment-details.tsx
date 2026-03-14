@@ -446,7 +446,7 @@ const PaymentDetails = ({
       />
 
       <Dialog open={iwdPdfModalOpen} onOpenChange={setIwdPdfModalOpen}>
-        <DialogContent className="max-w-[95vw] w-full max-h-[95vh] flex flex-col p-0 gap-0">
+        <DialogContent className="max-w-5xl! w-full max-h-[95vh] flex flex-col p-0 gap-0">
           <DialogHeader className="shrink-0 px-4 py-3 border-b border-gray-200">
             <DialogTitle className="text-lg font-semibold text-[#092A31]">
               IWD Terms
