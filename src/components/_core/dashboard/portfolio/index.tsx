@@ -9,11 +9,17 @@ import { YourBio } from "./your-bio";
 import { YourSpecialization } from "./your-specialization";
 import { YourSkills } from "./your-skills";
 import { YourTools } from "./your-tools";
-import { WorkExperience } from "./work-experience";
+import {
+    getInitialWorkExperienceData,
+    WorkExperience,
+    workExperienceToPayload,
+} from "./work-experience";
 import { EducationBackground } from "./education-background";
 import Aside, { STEPS } from "./aside";
+import { useUpdateProject } from "@/features/portfolio/use-update-portfolio";
 
 export function CreatePortfolioForm() {
+  const { updateProject, isUpdating, errorMessage } = useUpdateProject();
   const [step, setStep] = useState(1);
   const [socialData, setSocialData] = useState({ linkedIn: "", twitter: "" });
   const [bioData, setBioData] = useState({
@@ -32,25 +38,30 @@ export function CreatePortfolioForm() {
   const [toolsData, setToolsData] = useState({
     selectedTools: [] as string[],
   });
-  const [workExperienceData, setWorkExperienceData] = useState({
-    entries: [
-      {
-        companyName: "",
-        jobTitle: "",
-        industry: "",
-        jobDescription: "",
-        startDate: "",
-        endDate: "",
-        currentlyWorkHere: false,
-      },
-    ],
-  });
+  const [workExperienceData, setWorkExperienceData] = useState(
+    getInitialWorkExperienceData,
+  );
   const [educationData, setEducationData] = useState({
     entries: [{ schoolName: "", qualification: "" }],
   });
 
   const isFirstStep = step === 1;
   const isLastStep = step === STEPS.length;
+
+  const saveWorkExperience = async (data: Parameters<typeof workExperienceToPayload>[0]) => {
+    const payload = workExperienceToPayload(data);
+    const formData = new FormData();
+    formData.append("work_experience", JSON.stringify(payload.work_experience));
+    try {
+      await updateProject(formData);
+    } catch {
+      // errorMessage set by useUpdateProject
+    }
+  };
+
+  const handleCreatePortfolio = async () => {
+    await saveWorkExperience(workExperienceData);
+  };
 
   return (
     <div className="flex flex-col h-full min-h-0">
@@ -63,7 +74,7 @@ export function CreatePortfolioForm() {
         </span>
       </div>
 
-      <div className="flex flex-1 min-h-0 gap-6 md:gap-10">
+      <div className="flex flex-col lg:flex-row flex-1 min-h-0 gap-6 md:gap-10">
         <Aside step={step} onStepChange={setStep} />
 
         <div className="flex-1 min-w-0 flex flex-col">
@@ -91,6 +102,9 @@ export function CreatePortfolioForm() {
               <WorkExperience
                 value={workExperienceData}
                 onChange={setWorkExperienceData}
+                onSave={saveWorkExperience}
+                isSaving={isUpdating}
+                saveError={errorMessage}
               />
             )}
             {step === 8 && (
@@ -113,11 +127,16 @@ export function CreatePortfolioForm() {
             </Button>
             <Button
               type="button"
-              onClick={() => setStep((s) => Math.min(STEPS.length, s + 1))}
+              onClick={
+                isLastStep
+                  ? handleCreatePortfolio
+                  : () => setStep((s) => Math.min(STEPS.length, s + 1))
+              }
+              disabled={isLastStep && isUpdating}
               className="flex-1 h-10 rounded-lg bg-primary text-white hover:bg-primary/90"
             >
               {isLastStep ? (
-                "Create Portfolio"
+                isUpdating ? "Creating…" : "Create Portfolio"
               ) : (
                 <>
                   Next <ChevronRight className="size-4 ml-1" />
@@ -125,6 +144,11 @@ export function CreatePortfolioForm() {
               )}
             </Button>
           </div>
+          {errorMessage && (
+            <p className="mt-3 text-sm text-red-600" role="alert">
+              {errorMessage}
+            </p>
+          )}
         </div>
       </div>
     </div>

@@ -11,6 +11,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import { FillCalendaSvg } from "../../landing-pages/internship-program/svg";
 import { portfolioInputStyle } from "./portfolio-styles";
 
@@ -92,6 +93,84 @@ export type WorkExperienceData = {
     entries: WorkExperienceEntry[];
 };
 
+/** API payload item (snake_case). Omit end_date when currently_work_there is true. */
+export type WorkExperiencePayloadItem = {
+    company_name: string;
+    job_title: string;
+    industry: string;
+    job_description: string;
+    start_date: string;
+    end_date?: string;
+    currently_work_there: boolean;
+};
+
+export type WorkExperiencePayload = {
+    work_experience: WorkExperiencePayloadItem[];
+};
+
+/** Normalize date to YYYY-MM for API (accepts YYYY-MM or YYYY-MM-DD). */
+function toYearMonth(date: string): string {
+    if (!date) return "";
+    return date.length >= 7 ? date.slice(0, 7) : date;
+}
+
+/** Convert form data to API payload format. */
+export function workExperienceToPayload(
+    data: WorkExperienceData,
+): WorkExperiencePayload {
+    const work_experience: WorkExperiencePayloadItem[] = data.entries
+        .filter(
+            (e) =>
+                e.companyName.trim() ||
+                e.jobTitle.trim() ||
+                e.industry.trim() ||
+                e.jobDescription.trim() ||
+                e.startDate ||
+                e.endDate,
+        )
+        .map((entry) => {
+            const item: WorkExperiencePayloadItem = {
+                company_name: entry.companyName.trim(),
+                job_title: entry.jobTitle.trim(),
+                industry: entry.industry.trim(),
+                job_description: entry.jobDescription.trim(),
+                start_date: toYearMonth(entry.startDate),
+                currently_work_there: entry.currentlyWorkHere,
+            };
+            if (!entry.currentlyWorkHere && entry.endDate) {
+                item.end_date = toYearMonth(entry.endDate);
+            }
+            return item;
+        });
+    return { work_experience };
+}
+
+/** Parse API work_experience into form data (e.g. for prefilling). */
+export function payloadToWorkExperience(payload: {
+    work_experience?: Array<{
+        company_name?: string;
+        job_title?: string;
+        industry?: string;
+        job_description?: string;
+        start_date?: string;
+        end_date?: string;
+        currently_work_there?: boolean;
+    }>;
+}): WorkExperienceData {
+    const entries = (payload.work_experience ?? []).map((e) => ({
+        companyName: e.company_name ?? "",
+        jobTitle: e.job_title ?? "",
+        industry: e.industry ?? "",
+        jobDescription: e.job_description ?? "",
+        startDate: e.start_date ?? "",
+        endDate: e.end_date ?? "",
+        currentlyWorkHere: !!e.currently_work_there,
+    }));
+    return {
+        entries: entries.length > 0 ? entries : [{ ...defaultEntry }],
+    };
+}
+
 const defaultEntry: WorkExperienceEntry = {
     companyName: "",
     jobTitle: "",
@@ -102,12 +181,30 @@ const defaultEntry: WorkExperienceEntry = {
     currentlyWorkHere: false,
 };
 
+export const initialWorkExperienceData: WorkExperienceData = {
+    entries: [{ ...defaultEntry }],
+};
+
+/** Fresh initial state for useState (avoids shared reference). */
+export function getInitialWorkExperienceData(): WorkExperienceData {
+    return { entries: [{ ...defaultEntry }] };
+}
+
 type WorkExperienceProps = {
     value: WorkExperienceData;
     onChange: (data: WorkExperienceData) => void;
+    onSave?: (data: WorkExperienceData) => void | Promise<void>;
+    isSaving?: boolean;
+    saveError?: string;
 };
 
-export function WorkExperience({ value, onChange }: WorkExperienceProps) {
+export function WorkExperience({
+    value,
+    onChange,
+    onSave,
+    isSaving = false,
+    saveError,
+}: WorkExperienceProps) {
     const updateEntry = (index: number, updates: Partial<WorkExperienceEntry>) => {
         const next = value.entries.map((entry, i) =>
             i === index ? { ...entry, ...updates } : entry
@@ -293,6 +390,24 @@ export function WorkExperience({ value, onChange }: WorkExperienceProps) {
                 >
                     Add more
                 </button>
+
+                {onSave && (
+                    <div className="pt-4 flex flex-col gap-2">
+                        <Button
+                            type="button"
+                            onClick={() => onSave(value)}
+                            disabled={isSaving}
+                            className="h-10 rounded-lg bg-primary text-white hover:bg-primary/90"
+                        >
+                            {isSaving ? "Saving…" : "Save"}
+                        </Button>
+                        {saveError && (
+                            <p className="text-sm text-red-600" role="alert">
+                                {saveError}
+                            </p>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );
