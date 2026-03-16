@@ -59,8 +59,23 @@ export function CreatePortfolioForm() {
     }
   };
 
+  const handleNext = async () => {
+    if (step === 7) {
+      try {
+        await saveWorkExperience(workExperienceData);
+      } catch {
+        return;
+      }
+    }
+    setStep((s) => Math.min(STEPS.length, s + 1));
+  };
+
   const handleCreatePortfolio = async () => {
-    await saveWorkExperience(workExperienceData);
+    try {
+      await saveWorkExperience(workExperienceData);
+    } catch {
+      return;
+    }
   };
 
   return (
@@ -102,9 +117,6 @@ export function CreatePortfolioForm() {
               <WorkExperience
                 value={workExperienceData}
                 onChange={setWorkExperienceData}
-                onSave={saveWorkExperience}
-                isSaving={isUpdating}
-                saveError={errorMessage}
               />
             )}
             {step === 8 && (
@@ -130,17 +142,15 @@ export function CreatePortfolioForm() {
               onClick={
                 isLastStep
                   ? handleCreatePortfolio
-                  : () => setStep((s) => Math.min(STEPS.length, s + 1))
+                  : handleNext
               }
-              disabled={isLastStep && isUpdating}
+              disabled={isUpdating}
               className="flex-1 h-10 rounded-lg bg-primary text-white hover:bg-primary/90"
             >
               {isLastStep ? (
                 isUpdating ? "Creating…" : "Create Portfolio"
               ) : (
-                <>
-                  Next <ChevronRight className="size-4 ml-1" />
-                </>
+                isUpdating ? "Saving…" : "Save & continue"
               )}
             </Button>
           </div>

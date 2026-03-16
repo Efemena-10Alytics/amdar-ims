@@ -11,7 +11,6 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { FillCalendaSvg } from "../../landing-pages/internship-program/svg";
 import { portfolioInputStyle } from "./portfolio-styles";
 
@@ -193,18 +192,9 @@ export function getInitialWorkExperienceData(): WorkExperienceData {
 type WorkExperienceProps = {
     value: WorkExperienceData;
     onChange: (data: WorkExperienceData) => void;
-    onSave?: (data: WorkExperienceData) => void | Promise<void>;
-    isSaving?: boolean;
-    saveError?: string;
 };
 
-export function WorkExperience({
-    value,
-    onChange,
-    onSave,
-    isSaving = false,
-    saveError,
-}: WorkExperienceProps) {
+export function WorkExperience({ value, onChange }: WorkExperienceProps) {
     const updateEntry = (index: number, updates: Partial<WorkExperienceEntry>) => {
         const next = value.entries.map((entry, i) =>
             i === index ? { ...entry, ...updates } : entry
@@ -390,24 +380,6 @@ export function WorkExperience({
                 >
                     Add more
                 </button>
-
-                {onSave && (
-                    <div className="pt-4 flex flex-col gap-2">
-                        <Button
-                            type="button"
-                            onClick={() => onSave(value)}
-                            disabled={isSaving}
-                            className="h-10 rounded-lg bg-primary text-white hover:bg-primary/90"
-                        >
-                            {isSaving ? "Saving…" : "Save"}
-                        </Button>
-                        {saveError && (
-                            <p className="text-sm text-red-600" role="alert">
-                                {saveError}
-                            </p>
-                        )}
-                    </div>
-                )}
             </div>
         </div>
     );
