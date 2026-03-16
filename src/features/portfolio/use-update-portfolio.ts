@@ -23,7 +23,7 @@ export function useUpdateProject() {
     setIsUpdating(true);
     setErrorMessage("");
     try {
-      const res = await axiosInstance.post<ExternalPortfoliosResponse>(
+      const res = await axiosInstance.put<ExternalPortfoliosResponse>(
         "external-portfolios",
         formData,
         {
