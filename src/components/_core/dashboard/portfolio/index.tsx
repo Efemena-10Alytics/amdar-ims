@@ -9,8 +9,11 @@ import PersonalInfo, {
 } from "./personal-info";
 import { YourSocial, socialToPayload } from "./your-social";
 import { YourBio, bioToPayload } from "./your-bio";
-import { YourSpecialization } from "./your-specialization";
-import { YourSkills } from "./your-skills";
+import {
+  YourSpecialization,
+  categoryToPayload,
+} from "./your-specialization";
+import { YourSkills, skillsToPayload } from "./your-skills";
 import { YourTools } from "./your-tools";
 import {
   getInitialWorkExperienceData,
@@ -104,6 +107,34 @@ export function CreatePortfolioForm() {
     }
   };
 
+  const saveCategory = async (
+    data: Parameters<typeof categoryToPayload>[0],
+  ): Promise<boolean> => {
+    const payload = categoryToPayload(data);
+    try {
+      const result = await updateProject({
+        category: payload.category,
+      });
+      return result !== undefined;
+    } catch {
+      return false;
+    }
+  };
+
+  const saveSkills = async (
+    data: Parameters<typeof skillsToPayload>[0],
+  ): Promise<boolean> => {
+    const payload = skillsToPayload(data);
+    try {
+      const result = await updateProject({
+        category: payload.category,
+      });
+      return result !== undefined;
+    } catch {
+      return false;
+    }
+  };
+
   const saveSocial = async (
     data: Parameters<typeof socialToPayload>[0],
   ): Promise<boolean> => {
@@ -160,6 +191,14 @@ export function CreatePortfolioForm() {
     }
     if (step === 3) {
       const ok = await saveBio(bioData);
+      if (!ok) return;
+    }
+    if (step === 4) {
+      const ok = await saveCategory(specializationData);
+      if (!ok) return;
+    }
+    if (step === 5) {
+      const ok = await saveSkills(skillsData);
       if (!ok) return;
     }
     if (step === 7) {

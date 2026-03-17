@@ -69,6 +69,37 @@ export type YourSpecializationData = {
     selectedSpecializations: string[];
 };
 
+export type CategoryPayload = {
+    category: {
+        title: string | null;
+        specializationData: string[];
+    };
+};
+
+/** Convert form data to API payload format (camelCase). Only title and specializationData. */
+export function categoryToPayload(data: YourSpecializationData): CategoryPayload {
+    return {
+        category: {
+            title: data.category.trim() || null,
+            specializationData: data.selectedSpecializations,
+        },
+    };
+}
+
+/** Parse API category into form data (e.g. for prefilling). */
+export function payloadToCategory(payload: {
+    category?: {
+        title?: string | null;
+        specializationData?: string[];
+    };
+}): YourSpecializationData {
+    const c = payload.category;
+    return {
+        category: c?.title ?? "",
+        selectedSpecializations: c?.specializationData ?? [],
+    };
+}
+
 type YourSpecializationProps = {
     value: YourSpecializationData;
     onChange: (data: YourSpecializationData) => void;
@@ -79,8 +110,7 @@ export function YourSpecialization({ value, onChange }: YourSpecializationProps)
     const [categorySearch, setCategorySearch] = useState("");
     const [addMoreOpen, setAddMoreOpen] = useState(false);
     const [addTitle, setAddTitle] = useState("");
-    const baseSpecializations =
-        SPECIALIZATIONS_BY_CATEGORY[value.category] ?? [];
+
     const displayedSpecializations = useMemo(() => {
         const base = SPECIALIZATIONS_BY_CATEGORY[value.category] ?? [];
         const custom = value.selectedSpecializations.filter(
@@ -240,7 +270,7 @@ export function YourSpecialization({ value, onChange }: YourSpecializationProps)
                                     "bg-[#E8EFF1] border-[#E8EFF1] text-[#2c4652]",
                                     "hover:bg-[#dce4e8] hover:border-[#dce4e8]",
                                     selected &&
-                                        "bg-primary border-primary text-white hover:bg-primary hover:border-primary",
+                                    "bg-primary border-primary text-white hover:bg-primary hover:border-primary",
                                 )}
                             >
                                 <span>{name}</span>
