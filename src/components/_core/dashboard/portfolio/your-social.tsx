@@ -12,6 +12,37 @@ export type YourSocialData = {
   twitter: string;
 };
 
+export type SocialPayload = {
+  social: {
+    linkedIn: string | null;
+    twitter: string | null;
+  };
+};
+
+/** Convert form data to API payload format (camelCase). */
+export function socialToPayload(data: YourSocialData): SocialPayload {
+  return {
+    social: {
+      linkedIn: data.linkedIn.trim() || null,
+      twitter: data.twitter.trim() || null,
+    },
+  };
+}
+
+/** Parse API social into form data (e.g. for prefilling). */
+export function payloadToSocial(payload: {
+  social?: {
+    linkedIn?: string | null;
+    twitter?: string | null;
+  };
+}): YourSocialData {
+  const s = payload.social;
+  return {
+    linkedIn: s?.linkedIn ?? "",
+    twitter: s?.twitter ?? "",
+  };
+}
+
 /** Returns true if value is empty or a valid URL (http/https). */
 function isValidUrl(value: string): boolean {
   const trimmed = value.trim();
@@ -47,7 +78,6 @@ function getSocialFromUserDetails(
 
 export function YourSocial({ value, onChange }: YourSocialProps) {
   const { data: userDetails } = useGetUserDetails();
-console.log('userDetails', userDetails)
   useEffect(() => {
     if (!userDetails) return;
     const isEmpty = !value.linkedIn.trim() && !value.twitter.trim();

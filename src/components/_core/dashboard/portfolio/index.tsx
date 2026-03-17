@@ -7,7 +7,7 @@ import PersonalInfo, {
   defaultPersonalInfo,
   PersonalInfoData,
 } from "./personal-info";
-import { YourSocial } from "./your-social";
+import { YourSocial, socialToPayload } from "./your-social";
 import { YourBio } from "./your-bio";
 import { YourSpecialization } from "./your-specialization";
 import { YourSkills } from "./your-skills";
@@ -89,6 +89,21 @@ export function CreatePortfolioForm() {
       return false;
     }
   };
+  const saveSocial = async (
+    data: Parameters<typeof socialToPayload>[0],
+  ): Promise<boolean> => {
+    const payload = socialToPayload(data);
+    try {
+      const result = await updateProject({
+        social: payload.social,
+      });
+      return result !== undefined;
+    } catch {
+      // errorMessage set by useUpdateProject
+      return false;
+    }
+  };
+
   const saveWorkExperience = async (
     data: Parameters<typeof workExperienceToPayload>[0],
   ): Promise<boolean> => {
@@ -122,6 +137,10 @@ export function CreatePortfolioForm() {
   const handleNext = async () => {
     if (step === 1) {
       const ok = await savePersonalInfo();
+      if (!ok) return;
+    }
+    if (step === 2) {
+      const ok = await saveSocial(socialData);
       if (!ok) return;
     }
     if (step === 7) {
