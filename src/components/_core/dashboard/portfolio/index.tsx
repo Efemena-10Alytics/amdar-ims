@@ -8,7 +8,7 @@ import PersonalInfo, {
   PersonalInfoData,
 } from "./personal-info";
 import { YourSocial, socialToPayload } from "./your-social";
-import { YourBio } from "./your-bio";
+import { YourBio, bioToPayload } from "./your-bio";
 import { YourSpecialization } from "./your-specialization";
 import { YourSkills } from "./your-skills";
 import { YourTools } from "./your-tools";
@@ -89,6 +89,21 @@ export function CreatePortfolioForm() {
       return false;
     }
   };
+  const saveBio = async (
+    data: Parameters<typeof bioToPayload>[0],
+  ): Promise<boolean> => {
+    const payload = bioToPayload(data);
+    try {
+      const result = await updateProject({
+        bio: payload.bio,
+      });
+      return result !== undefined;
+    } catch {
+      // errorMessage set by useUpdateProject
+      return false;
+    }
+  };
+
   const saveSocial = async (
     data: Parameters<typeof socialToPayload>[0],
   ): Promise<boolean> => {
@@ -141,6 +156,10 @@ export function CreatePortfolioForm() {
     }
     if (step === 2) {
       const ok = await saveSocial(socialData);
+      if (!ok) return;
+    }
+    if (step === 3) {
+      const ok = await saveBio(bioData);
       if (!ok) return;
     }
     if (step === 7) {
