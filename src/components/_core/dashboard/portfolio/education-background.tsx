@@ -13,6 +13,45 @@ export type EducationBackgroundData = {
   entries: EducationEntry[];
 };
 
+export type EducationBackgroundPayloadItem = {
+  schoolName: string | null;
+  qualification: string | null;
+};
+
+export type EducationBackgroundPayload = {
+  educationalBackground: EducationBackgroundPayloadItem[];
+};
+
+/** Convert form data to API payload format (camelCase). */
+export function educationBackgroundToPayload(
+  data: EducationBackgroundData
+): EducationBackgroundPayload {
+  const educationalBackground: EducationBackgroundPayloadItem[] = data.entries
+    .filter((e) => e.schoolName.trim() || e.qualification.trim())
+    .map((entry) => ({
+      schoolName: entry.schoolName.trim() || null,
+      qualification: entry.qualification.trim() || null,
+    }));
+  return { educationalBackground };
+}
+
+/** Parse API educationalBackground into form data (e.g. for prefilling). */
+export function payloadToEducationBackground(payload: {
+  educationalBackground?: Array<{
+    schoolName?: string | null;
+    qualification?: string | null;
+  }>;
+}): EducationBackgroundData {
+  const raw = payload.educationalBackground ?? [];
+  const entries = raw.map((e) => ({
+    schoolName: e.schoolName ?? "",
+    qualification: e.qualification ?? "",
+  }));
+  return {
+    entries: entries.length > 0 ? entries : [{ ...defaultEntry }],
+  };
+}
+
 const defaultEntry: EducationEntry = {
   schoolName: "",
   qualification: "",

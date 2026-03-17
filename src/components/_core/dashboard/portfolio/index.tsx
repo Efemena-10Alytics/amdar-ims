@@ -17,7 +17,10 @@ import {
   WorkExperience,
   workExperienceToPayload,
 } from "./work-experience";
-import { EducationBackground } from "./education-background";
+import {
+  EducationBackground,
+  educationBackgroundToPayload,
+} from "./education-background";
 import Aside, { STEPS } from "./aside";
 import { useUpdateProject } from "@/features/portfolio/use-update-portfolio";
 import { useInitializePortfolio } from "@/features/portfolio/use-initialize-portfolio";
@@ -101,7 +104,20 @@ export function CreatePortfolioForm() {
     }
   };
 
-
+  const saveEducationBackground = async (
+    data: Parameters<typeof educationBackgroundToPayload>[0],
+  ): Promise<boolean> => {
+    const payload = educationBackgroundToPayload(data);
+    try {
+      const result = await updateProject({
+        educationalBackground: payload.educationalBackground,
+      });
+      return result !== undefined;
+    } catch {
+      // errorMessage set by useUpdateProject
+      return false;
+    }
+  };
 
   const handleNext = async () => {
     if (step === 1) {
@@ -112,12 +128,11 @@ export function CreatePortfolioForm() {
       const ok = await saveWorkExperience(workExperienceData);
       if (!ok) return;
     }
+    if (step === 8) {
+      const ok = await saveEducationBackground(educationData);
+      if (!ok) return;
+    }
     setStep((s) => Math.min(STEPS.length, s + 1));
-  };
-
-  const handleCreatePortfolio = async () => {
-    const ok = await saveWorkExperience(workExperienceData);
-    if (!ok) return;
   };
 
   return (
@@ -186,7 +201,7 @@ export function CreatePortfolioForm() {
             </Button>
             <Button
               type="button"
-              onClick={isLastStep ? handleCreatePortfolio : handleNext}
+              onClick={handleNext}
               disabled={isUpdating || isInitializing}
               className="flex-1 h-10 rounded-lg bg-primary text-white hover:bg-primary/90"
             >
