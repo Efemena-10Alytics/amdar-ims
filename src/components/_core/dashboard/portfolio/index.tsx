@@ -3,24 +3,38 @@
 import { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import PersonalInfo from "./personal-info";
+import PersonalInfo, {
+  defaultPersonalInfo,
+  PersonalInfoData,
+} from "./personal-info";
 import { YourSocial } from "./your-social";
 import { YourBio } from "./your-bio";
 import { YourSpecialization } from "./your-specialization";
 import { YourSkills } from "./your-skills";
 import { YourTools } from "./your-tools";
 import {
-    getInitialWorkExperienceData,
-    WorkExperience,
-    workExperienceToPayload,
+  getInitialWorkExperienceData,
+  WorkExperience,
+  workExperienceToPayload,
 } from "./work-experience";
 import { EducationBackground } from "./education-background";
 import Aside, { STEPS } from "./aside";
 import { useUpdateProject } from "@/features/portfolio/use-update-portfolio";
+import { useInitializePortfolio } from "@/features/portfolio/use-initialize-portfolio";
+import { useUpdateUser } from "@/features/user/use-update-user-details";
+import { useCountries } from "@/features/portfolio/use-countries";
+import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 
 export function CreatePortfolioForm() {
   const { updateProject, isUpdating, errorMessage } = useUpdateProject();
+  const { initializePortfolio, isInitializing, errorMessage: initErrorMessage } =
+    useInitializePortfolio();
+  const { updateUser, errorMessage: userDetailsErrMessage } = useUpdateUser();
+  const { data: countries = [] } = useCountries();
+  const { data: portfolioData } = useGetPortfolio()
   const [step, setStep] = useState(1);
+  const [personalInfo, setPersonalInfo] =
+    useState<PersonalInfoData>(defaultPersonalInfo);
   const [socialData, setSocialData] = useState({ linkedIn: "", twitter: "" });
   const [bioData, setBioData] = useState({
     jobTitle: "",
@@ -45,37 +59,65 @@ export function CreatePortfolioForm() {
     entries: [{ schoolName: "", qualification: "" }],
   });
 
+  const selectedCountry = countries.find(
+    (c) => c.code === personalInfo.countryCode,
+  );
+
   const isFirstStep = step === 1;
   const isLastStep = step === STEPS.length;
 
-  const saveWorkExperience = async (data: Parameters<typeof workExperienceToPayload>[0]) => {
-    const payload = workExperienceToPayload(data);
-    const formData = new FormData();
-    formData.append("work_experience", JSON.stringify(payload.work_experience));
+  const savePersonalInfo = async (): Promise<boolean> => {
+    const location = selectedCountry?.name ?? personalInfo.countryCode ?? "";
     try {
-      await updateProject(formData);
+      if (!portfolioData) {
+        await initializePortfolio();
+      }
+      const result = await updateUser({
+        firstName: personalInfo.firstName,
+        lastName: personalInfo.lastName,
+        email: personalInfo.email,
+        location,
+        countryCode: personalInfo.countryCode,
+        phone: personalInfo.phone,
+      });
+      return result !== undefined;
+    } catch {
+      // errorMessage set by hook
+      return false;
+    }
+  };
+  const saveWorkExperience = async (
+    data: Parameters<typeof workExperienceToPayload>[0],
+  ): Promise<boolean> => {
+    const payload = workExperienceToPayload(data);
+    try {
+      const result = await updateProject({
+        workExperience: payload.workExperience,
+      });
+      return result !== undefined;
     } catch {
       // errorMessage set by useUpdateProject
+      return false;
     }
   };
 
+
+
   const handleNext = async () => {
+    if (step === 1) {
+      const ok = await savePersonalInfo();
+      if (!ok) return;
+    }
     if (step === 7) {
-      try {
-        await saveWorkExperience(workExperienceData);
-      } catch {
-        return;
-      }
+      const ok = await saveWorkExperience(workExperienceData);
+      if (!ok) return;
     }
     setStep((s) => Math.min(STEPS.length, s + 1));
   };
 
   const handleCreatePortfolio = async () => {
-    try {
-      await saveWorkExperience(workExperienceData);
-    } catch {
-      return;
-    }
+    const ok = await saveWorkExperience(workExperienceData);
+    if (!ok) return;
   };
 
   return (
@@ -95,7 +137,12 @@ export function CreatePortfolioForm() {
         <div className="flex-1 min-w-0 flex flex-col">
           <div className="flex-1">
             {step === 1 && (
-              <PersonalInfo />
+              <PersonalInfo
+                personalInfo={personalInfo}
+                setPersonalInfo={setPersonalInfo}
+                errorMessage={userDetailsErrMessage}
+                selectedCountry={selectedCountry}
+              />
             )}
             {step === 2 && (
               <YourSocial value={socialData} onChange={setSocialData} />
@@ -139,24 +186,22 @@ export function CreatePortfolioForm() {
             </Button>
             <Button
               type="button"
-              onClick={
-                isLastStep
-                  ? handleCreatePortfolio
-                  : handleNext
-              }
-              disabled={isUpdating}
+              onClick={isLastStep ? handleCreatePortfolio : handleNext}
+              disabled={isUpdating || isInitializing}
               className="flex-1 h-10 rounded-lg bg-primary text-white hover:bg-primary/90"
             >
-              {isLastStep ? (
-                isUpdating ? "Creating…" : "Create Portfolio"
-              ) : (
-                isUpdating ? "Saving…" : "Save & continue"
-              )}
+              {isLastStep
+                ? isUpdating
+                  ? "Creating…"
+                  : "Create Portfolio"
+                : isUpdating || isInitializing
+                  ? "Saving…"
+                  : "Save & continue"}
             </Button>
           </div>
-          {errorMessage && (
+          {(errorMessage || initErrorMessage) && (
             <p className="mt-3 text-sm text-red-600" role="alert">
-              {errorMessage}
+              {errorMessage || initErrorMessage}
             </p>
           )}
         </div>

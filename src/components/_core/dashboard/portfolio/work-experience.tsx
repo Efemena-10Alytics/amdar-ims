@@ -92,19 +92,19 @@ export type WorkExperienceData = {
     entries: WorkExperienceEntry[];
 };
 
-/** API payload item (snake_case). Omit end_date when currently_work_there is true. */
+/** API payload item (camelCase). endDate is null when currentlyWorkThere is true. */
 export type WorkExperiencePayloadItem = {
-    company_name: string;
-    job_title: string;
+    companyName: string;
+    jobTitle: string;
     industry: string;
-    job_description: string;
-    start_date: string;
-    end_date?: string;
-    currently_work_there: boolean;
+    jobDescription: string;
+    startDate: string;
+    endDate: string | null;
+    currentlyWorkThere: boolean;
 };
 
 export type WorkExperiencePayload = {
-    work_experience: WorkExperiencePayloadItem[];
+    workExperience: WorkExperiencePayloadItem[];
 };
 
 /** Normalize date to YYYY-MM for API (accepts YYYY-MM or YYYY-MM-DD). */
@@ -113,11 +113,11 @@ function toYearMonth(date: string): string {
     return date.length >= 7 ? date.slice(0, 7) : date;
 }
 
-/** Convert form data to API payload format. */
+/** Convert form data to API payload format (camelCase). */
 export function workExperienceToPayload(
     data: WorkExperienceData,
 ): WorkExperiencePayload {
-    const work_experience: WorkExperiencePayloadItem[] = data.entries
+    const workExperience: WorkExperiencePayloadItem[] = data.entries
         .filter(
             (e) =>
                 e.companyName.trim() ||
@@ -127,43 +127,39 @@ export function workExperienceToPayload(
                 e.startDate ||
                 e.endDate,
         )
-        .map((entry) => {
-            const item: WorkExperiencePayloadItem = {
-                company_name: entry.companyName.trim(),
-                job_title: entry.jobTitle.trim(),
-                industry: entry.industry.trim(),
-                job_description: entry.jobDescription.trim(),
-                start_date: toYearMonth(entry.startDate),
-                currently_work_there: entry.currentlyWorkHere,
-            };
-            if (!entry.currentlyWorkHere && entry.endDate) {
-                item.end_date = toYearMonth(entry.endDate);
-            }
-            return item;
-        });
-    return { work_experience };
+        .map((entry) => ({
+            companyName: entry.companyName.trim(),
+            jobTitle: entry.jobTitle.trim(),
+            industry: entry.industry.trim(),
+            jobDescription: entry.jobDescription.trim(),
+            startDate: toYearMonth(entry.startDate),
+            endDate: entry.currentlyWorkHere ? null : toYearMonth(entry.endDate),
+            currentlyWorkThere: entry.currentlyWorkHere,
+        }));
+    return { workExperience };
 }
 
-/** Parse API work_experience into form data (e.g. for prefilling). */
+/** Parse API work experience into form data (e.g. for prefilling). */
 export function payloadToWorkExperience(payload: {
-    work_experience?: Array<{
-        company_name?: string;
-        job_title?: string;
-        industry?: string;
-        job_description?: string;
-        start_date?: string;
-        end_date?: string;
-        currently_work_there?: boolean;
+    workExperience?: Array<{
+        companyName?: string | null;
+        jobTitle?: string | null;
+        industry?: string | null;
+        jobDescription?: string | null;
+        startDate?: string | null;
+        endDate?: string | null;
+        currentlyWorkThere?: boolean;
     }>;
 }): WorkExperienceData {
-    const entries = (payload.work_experience ?? []).map((e) => ({
-        companyName: e.company_name ?? "",
-        jobTitle: e.job_title ?? "",
+    const raw = payload.workExperience ?? [];
+    const entries = raw.map((e) => ({
+        companyName: e.companyName ?? "",
+        jobTitle: e.jobTitle ?? "",
         industry: e.industry ?? "",
-        jobDescription: e.job_description ?? "",
-        startDate: e.start_date ?? "",
-        endDate: e.end_date ?? "",
-        currentlyWorkHere: !!e.currently_work_there,
+        jobDescription: e.jobDescription ?? "",
+        startDate: e.startDate ?? "",
+        endDate: e.endDate ?? "",
+        currentlyWorkHere: !!e.currentlyWorkThere,
     }));
     return {
         entries: entries.length > 0 ? entries : [{ ...defaultEntry }],

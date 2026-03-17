@@ -4,73 +4,79 @@ import { getUserId } from "@/lib/get-user-id";
 import { useAuthStore } from "@/store/auth-store";
 
 export const PORTFOLIO_QUERY_KEY = (userId: string | number) =>
-  ["external-portfolio", "user", String(userId)] as const;
+  ["user-portfolio", String(userId)] as const;
 
-export type WorkExperienceItem = {
-  company_name?: string;
-  job_title?: string;
-  industry?: string;
-  job_description?: string;
-  start_date?: string;
-  end_date?: string;
-  currently_work_there?: boolean;
+export type UserPortfolioPersonalInfo = {
+  firstName?: string | null;
+  lastName?: string | null;
+  email?: string;
+  phoneNumber?: string | null;
+  location?: string | null;
+  countryCode?: string | null;
 };
 
-export type EducationBackgroundItem = {
-  school_name?: string;
-  qualification?: string;
+export type UserPortfolioSocial = {
+  linkedIn?: string | null;
+  twitter?: string | null;
 };
 
-export type ProjectItem = {
-  cover_image?: string;
-  title?: string;
-  category?: string;
-  overview?: string;
-  rationale?: string;
-  aim?: string;
-  excerpt?: string;
-  solution_url?: string;
-  media_link?: string;
-  images?: string[];
+export type UserPortfolioBio = {
+  jobTitle?: string | null;
+  yearsOfExperience?: string | null;
+  projectCount?: string | null;
+  bio?: string | null;
 };
 
-export type PortfolioTool = {
-  id?: number;
+export type UserPortfolioCategory = {
+  title?: string | null;
+  specializationData?: unknown[];
+  skills?: unknown[];
+};
+
+export type UserPortfolioTool = {
   name?: string;
-  tool_image?: string;
-  external_portfolio_id?: number;
-  created_at?: string;
-  updated_at?: string;
+  image?: string | null;
+  url?: string | null;
 };
 
-export type ExternalPortfolioData = {
-  id?: number;
-  user_id?: number;
-  title?: string;
-  category?: string;
-  description?: string;
-  project_file?: string;
-  excerpt?: string;
-  embedded_media?: string | null;
-  solution_url?: string;
-  linkedin?: string;
-  twitter?: string;
-  skills?: string[];
-  education_background?: EducationBackgroundItem[];
-  work_experience?: WorkExperienceItem[];
-  project?: ProjectItem[];
-  additional_images?: string[];
-  duration?: string;
-  project_level?: string;
-  project_industry?: string;
-  project_overview?: string | null;
-  rationale_for_the_project?: string | null;
-  aim_of_the_project?: string | null;
-  detailed_description?: string | null;
-  project_scope?: string | null;
-  created_at?: string;
-  updated_at?: string;
-  tools?: PortfolioTool[];
+export type UserPortfolioWorkExperienceItem = {
+  companyName?: string | null;
+  jobTitle?: string | null;
+  industry?: string | null;
+  jobDescription?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
+  currentlyWorkThere?: boolean;
+};
+
+export type UserPortfolioEducationItem = {
+  schoolName?: string | null;
+  qualification?: string | null;
+};
+
+export type UserPortfolioProject = {
+  coverImage?: string | null;
+  title?: string | null;
+  category?: string | null;
+  overview?: string | null;
+  rationale?: string | null;
+  aim?: string | null;
+  scope?: string | null;
+  excerpt?: string | null;
+  solutionUrl?: string | null;
+  mediaLink?: string | null;
+  image?: string[];
+};
+
+export type UserPortfolioData = {
+  personalInfo?: UserPortfolioPersonalInfo;
+  social?: UserPortfolioSocial;
+  bio?: UserPortfolioBio;
+  category?: UserPortfolioCategory;
+  tools?: UserPortfolioTool[];
+  workExperience?: UserPortfolioWorkExperienceItem[];
+  educationalBackground?: UserPortfolioEducationItem[];
+  projects?: UserPortfolioProject[];
 };
 
 export function useGetPortfolio() {
@@ -79,13 +85,13 @@ export function useGetPortfolio() {
 
   return useQuery({
     queryKey: PORTFOLIO_QUERY_KEY(userId ?? ""),
-    queryFn: async (): Promise<ExternalPortfolioData | null> => {
-      const { data } = await axiosInstance.get<ExternalPortfolioData | { data: ExternalPortfolioData }>(
-        `external-portfolios/user/${userId}`,
-      );
+    queryFn: async (): Promise<UserPortfolioData | null> => {
+      const { data } = await axiosInstance.get<
+        UserPortfolioData | { data: UserPortfolioData }
+      >("user-portfolio");
       if (!data || typeof data !== "object") return null;
-      if ("data" in data && data.data != null) return data.data as ExternalPortfolioData;
-      return data as ExternalPortfolioData;
+      if ("data" in data && data.data != null) return data.data as UserPortfolioData;
+      return data as UserPortfolioData;
     },
     enabled: !!apiBaseURL && userId != null && userId !== "",
   });

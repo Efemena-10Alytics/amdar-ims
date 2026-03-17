@@ -19,16 +19,16 @@ export function useUpdateProject() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const updateProject = useCallback(async (formData: FormData) => {
+  const updateProject = useCallback(async (payload: Record<string, unknown>) => {
     setIsUpdating(true);
     setErrorMessage("");
     try {
-      const res = await axiosInstance.put<ExternalPortfoliosResponse>(
-        "external-portfolios",
-        formData,
+      const res = await axiosInstance.patch<ExternalPortfoliosResponse>(
+        "user-portfolio",
+        payload,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
           },
         },
       );
