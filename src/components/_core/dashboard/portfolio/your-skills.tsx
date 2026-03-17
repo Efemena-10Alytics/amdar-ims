@@ -27,6 +27,32 @@ export type YourSkillsData = {
   selectedSkills: string[];
 };
 
+export type CategorySkillsPayload = {
+  category: {
+    skills: string[];
+  };
+};
+
+/** Convert form data to API payload format (camelCase). Only skills. */
+export function skillsToPayload(data: YourSkillsData): CategorySkillsPayload {
+  return {
+    category: {
+      skills: data.selectedSkills,
+    },
+  };
+}
+
+/** Parse API category.skills into form data (e.g. for prefilling). */
+export function payloadToSkills(payload: {
+  category?: {
+    skills?: string[];
+  };
+}): YourSkillsData {
+  return {
+    selectedSkills: payload.category?.skills ?? [],
+  };
+}
+
 type YourSkillsProps = {
   value: YourSkillsData;
   onChange: (data: YourSkillsData) => void;

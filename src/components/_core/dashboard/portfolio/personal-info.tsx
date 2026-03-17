@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { useCountries } from "@/features/portfolio/use-countries";
+import { CountryItem, useCountries } from "@/features/portfolio/use-countries";
 import { useGetUserInfo } from "@/features/auth/use-get-user-info";
 import { useUpdateUser } from "@/features/user/use-update-user-details";
 import { portfolioInputStyle } from "./portfolio-styles";
@@ -37,7 +37,7 @@ type PrefillFromUser = Partial<PersonalInfoData> & {
   locationName?: string;
 };
 
-function getPersonalInfoFromUser(
+export function getPersonalInfoFromUser(
   user: Record<string, unknown> | null | undefined,
 ): PrefillFromUser {
   if (!user || typeof user !== "object") return {};
@@ -50,31 +50,33 @@ function getPersonalInfoFromUser(
   const email = profile.email ?? "";
   const phone =
     profile.phone ?? profile.phone_number ?? profile.phoneNumber ?? "";
-  const countryCode =
-    profile.countryCode ?? profile.country_code ?? "";
-  const locationName =
-    profile.location ?? profile.country ?? "";
+  const countryCode = profile.countryCode ?? profile.country_code ?? "";
+  const locationName = profile.location ?? profile.country ?? "";
   return {
     firstName: typeof first === "string" ? first : "",
     lastName: typeof last === "string" ? last : "",
     email: typeof email === "string" ? email : "",
     countryCode: typeof countryCode === "string" ? countryCode : "",
     phone: typeof phone === "string" ? phone : "",
-    locationName:
-      typeof locationName === "string" ? locationName : undefined,
+    locationName: typeof locationName === "string" ? locationName : undefined,
   };
 }
 
-const PersonalInfo = () => {
-  const [personalInfo, setPersonalInfo] = useState<PersonalInfoData>(
-    defaultPersonalInfo,
-  );
+interface IProps {
+  personalInfo: PersonalInfoData;
+  setPersonalInfo: React.Dispatch<React.SetStateAction<PersonalInfoData>>;
+  errorMessage: string;
+  selectedCountry: CountryItem | undefined;
+}
+
+const PersonalInfo = ({
+  personalInfo,
+  setPersonalInfo,
+  errorMessage,
+  selectedCountry,
+}: IProps) => {
   const { data: countries = [], isLoading: countriesLoading } = useCountries();
   const { data: userInfo } = useGetUserInfo();
-  const { updateUser, isUpdating, errorMessage } = useUpdateUser();
-  const selectedCountry = countries.find(
-    (c) => c.code === personalInfo.countryCode
-  );
 
   useEffect(() => {
     if (!userInfo) return;
@@ -93,7 +95,9 @@ const PersonalInfo = () => {
       const byName = countries.find(
         (c) =>
           c.name === prefill.locationName ||
-          c.name.localeCompare(prefill.locationName!, undefined, { sensitivity: "accent" }) === 0,
+          c.name.localeCompare(prefill.locationName!, undefined, {
+            sensitivity: "accent",
+          }) === 0,
       );
       if (byName) countryCode = byName.code;
     }
@@ -119,28 +123,14 @@ const PersonalInfo = () => {
       const byName = countries.find(
         (c) =>
           c.name === prefill.locationName ||
-          c.name.localeCompare(prefill.locationName!, undefined, { sensitivity: "accent" }) === 0,
+          c.name.localeCompare(prefill.locationName!, undefined, {
+            sensitivity: "accent",
+          }) === 0,
       );
       if (!byName) return prev;
       return { ...prev, countryCode: byName.code };
     });
   }, [userInfo, countries]);
-
-  const handleSave = async () => {
-    const location = selectedCountry?.name ?? personalInfo.countryCode ?? "";
-    try {
-      await updateUser({
-        firstName: personalInfo.firstName,
-        lastName: personalInfo.lastName,
-        email: personalInfo.email,
-        location,
-        countryCode: personalInfo.countryCode,
-        phone: personalInfo.phone,
-      });
-    } catch {
-      // errorMessage set by hook
-    }
-  };
 
   return (
     <div className="max-w-md">
@@ -219,7 +209,11 @@ const PersonalInfo = () => {
           disabled={countriesLoading}
         >
           <SelectTrigger id="location" className={portfolioInputStyle}>
-            <SelectValue placeholder={countriesLoading ? "Loading…" : "Select your location"} />
+            <SelectValue
+              placeholder={
+                countriesLoading ? "Loading…" : "Select your location"
+              }
+            />
           </SelectTrigger>
           <SelectContent>
             {countries.map((c) => (
@@ -233,7 +227,7 @@ const PersonalInfo = () => {
                     className="shrink-0 h-5 w-5 rounded-full object-cover"
                     unoptimized
                   />
-                  {c.name} 
+                  {c.name}
                 </span>
               </SelectItem>
             ))}
@@ -283,14 +277,14 @@ const PersonalInfo = () => {
           {errorMessage}
         </p>
       )}
-      <Button
+      {/* <Button
         type="button"
         onClick={handleSave}
         disabled={isUpdating}
         className="mt-6 rounded-lg bg-primary text-white hover:bg-primary/90 disabled:opacity-60"
       >
         {isUpdating ? "Saving…" : "Save"}
-      </Button>
+      </Button> */}
     </div>
   );
 };
