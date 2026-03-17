@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PersonalInfo, {
@@ -14,7 +14,7 @@ import {
   categoryToPayload,
 } from "./your-specialization";
 import { YourSkills, skillsToPayload } from "./your-skills";
-import { YourTools } from "./your-tools";
+import { YourTools, toolsToPayload, type ToolIconMap } from "./your-tools";
 import {
   getInitialWorkExperienceData,
   WorkExperience,
@@ -26,18 +26,36 @@ import {
 } from "./education-background";
 import Aside, { STEPS } from "./aside";
 import { useUpdateProject } from "@/features/portfolio/use-update-portfolio";
+import { useUploadImage } from "@/features/portfolio/use-upload-image";
 import { useInitializePortfolio } from "@/features/portfolio/use-initialize-portfolio";
 import { useUpdateUser } from "@/features/user/use-update-user-details";
 import { useCountries } from "@/features/portfolio/use-countries";
 import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
+import { useGetTools } from "@/features/portfolio/use-get-tools";
 
 export function CreatePortfolioForm() {
   const { updateProject, isUpdating, errorMessage } = useUpdateProject();
+  const {
+    uploadImage,
+    isUploading: isToolsUploading,
+    errorMessage: uploadErrorMessage,
+  } = useUploadImage();
   const { initializePortfolio, isInitializing, errorMessage: initErrorMessage } =
     useInitializePortfolio();
   const { updateUser, errorMessage: userDetailsErrMessage } = useUpdateUser();
   const { data: countries = [] } = useCountries();
-  const { data: portfolioData } = useGetPortfolio()
+  const { data: portfolioData } = useGetPortfolio();
+  const { data: apiTools = [] } = useGetTools();
+
+  const toolIconMap: ToolIconMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const t of apiTools) {
+      const name = t.name?.trim();
+      const icon = t.icon ?? t.url ?? t.image;
+      if (name && icon) map[name] = icon;
+    }
+    return map;
+  }, [apiTools]);
   const [step, setStep] = useState(1);
   const [personalInfo, setPersonalInfo] =
     useState<PersonalInfoData>(defaultPersonalInfo);
@@ -55,8 +73,12 @@ export function CreatePortfolioForm() {
   const [skillsData, setSkillsData] = useState({
     selectedSkills: [] as string[],
   });
-  const [toolsData, setToolsData] = useState({
-    selectedTools: [] as string[],
+  const [toolsData, setToolsData] = useState<{
+    selectedTools: string[];
+    customToolImages?: Record<string, string>;
+    customToolFiles?: Record<string, File>;
+  }>({
+    selectedTools: [],
   });
   const [workExperienceData, setWorkExperienceData] = useState(
     getInitialWorkExperienceData,
@@ -114,6 +136,20 @@ export function CreatePortfolioForm() {
     try {
       const result = await updateProject({
         category: payload.category,
+      });
+      return result !== undefined;
+    } catch {
+      return false;
+    }
+  };
+
+  const saveTools = async (
+    data: Parameters<typeof toolsToPayload>[0],
+  ): Promise<boolean> => {
+    try {
+      const payload = await toolsToPayload(data, uploadImage, toolIconMap);
+      const result = await updateProject({
+        tools: payload.tools,
       });
       return result !== undefined;
     } catch {
@@ -201,6 +237,10 @@ export function CreatePortfolioForm() {
       const ok = await saveSkills(skillsData);
       if (!ok) return;
     }
+    if (step === 6) {
+      const ok = await saveTools(toolsData);
+      if (!ok) return;
+    }
     if (step === 7) {
       const ok = await saveWorkExperience(workExperienceData);
       if (!ok) return;
@@ -279,21 +319,21 @@ export function CreatePortfolioForm() {
             <Button
               type="button"
               onClick={handleNext}
-              disabled={isUpdating || isInitializing}
+              disabled={isUpdating || isInitializing || isToolsUploading}
               className="flex-1 h-10 rounded-lg bg-primary text-white hover:bg-primary/90"
             >
               {isLastStep
                 ? isUpdating
                   ? "Creating…"
                   : "Create Portfolio"
-                : isUpdating || isInitializing
+                : isUpdating || isInitializing || isToolsUploading
                   ? "Saving…"
                   : "Save & continue"}
             </Button>
           </div>
-          {(errorMessage || initErrorMessage) && (
+          {(errorMessage || initErrorMessage || uploadErrorMessage) && (
             <p className="mt-3 text-sm text-red-600" role="alert">
-              {errorMessage || initErrorMessage}
+              {errorMessage || initErrorMessage || uploadErrorMessage}
             </p>
           )}
         </div>
