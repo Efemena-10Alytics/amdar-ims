@@ -22,7 +22,6 @@ const ChoosePath = () => {
       ? data
       : (data as { data?: InternshipProgram[] })?.data) ?? [];
 
-  console.log(internshipPrograms);
   return (
     <div className="bg-white py-12">
       <div className="app-width">
