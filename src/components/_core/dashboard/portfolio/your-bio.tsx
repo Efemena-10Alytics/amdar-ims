@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
+import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { cn } from "@/lib/utils";
 import { portfolioInputStyle } from "./portfolio-styles";
 
@@ -63,6 +65,26 @@ type YourBioProps = {
 };
 
 export function YourBio({ value, onChange }: YourBioProps) {
+  const { data: portfolioData } = useGetPortfolio();
+  useEffect(() => {
+    if (!portfolioData?.bio) return;
+    const isEmpty =
+      !value.jobTitle.trim() &&
+      !value.yearsOfExperience.trim() &&
+      !value.lifeProjectsCount.trim() &&
+      !value.bio.trim();
+    if (!isEmpty) return;
+    const prefill = payloadToBio(portfolioData);
+    if (
+      !prefill.jobTitle &&
+      !prefill.yearsOfExperience &&
+      !prefill.lifeProjectsCount &&
+      !prefill.bio
+    )
+      return;
+    onChange({ ...value, ...prefill });
+  }, [portfolioData]);
+
   const bioRemaining = BIO_MAX_LENGTH - value.bio.length;
 
   return (

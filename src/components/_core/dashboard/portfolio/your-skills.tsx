@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, Square } from "lucide-react";
 import { AddMorePopover } from "./add-more-popover";
+import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { cn } from "@/lib/utils";
 
 const SKILLS = [
@@ -45,12 +46,22 @@ export function skillsToPayload(data: YourSkillsData): CategorySkillsPayload {
 /** Parse API category.skills into form data (e.g. for prefilling). */
 export function payloadToSkills(payload: {
   category?: {
-    skills?: string[];
+    skills?: unknown[];
   };
 }): YourSkillsData {
-  return {
-    selectedSkills: payload.category?.skills ?? [],
-  };
+  const raw = payload.category?.skills ?? [];
+  const selectedSkills = Array.isArray(raw)
+    ? raw.map((s) =>
+        typeof s === "string"
+          ? s
+          : String(
+              (s as { title?: string; name?: string })?.title ??
+                (s as { name?: string })?.name ??
+                s,
+            ),
+      )
+    : [];
+  return { selectedSkills };
 }
 
 type YourSkillsProps = {
@@ -59,8 +70,19 @@ type YourSkillsProps = {
 };
 
 export function YourSkills({ value, onChange }: YourSkillsProps) {
+  const { data: portfolioData } = useGetPortfolio();
   const [addMoreOpen, setAddMoreOpen] = useState(false);
   const [addTitle, setAddTitle] = useState("");
+
+  useEffect(() => {
+    if (!portfolioData?.category) return;
+    const isEmpty = value.selectedSkills.length === 0;
+    if (!isEmpty) return;
+    const prefill = payloadToSkills(portfolioData);
+    if (prefill.selectedSkills.length === 0) return;
+    onChange(prefill);
+  }, [portfolioData]);
+
   const displayedSkills = useMemo(() => {
     const base = [...SKILLS];
     const custom = value.selectedSkills.filter((s) => !base.includes(s));
@@ -98,7 +120,7 @@ export function YourSkills({ value, onChange }: YourSkillsProps) {
       <div className="space-y-1 mb-3">
         <div className="text-sm text-[#092A31]">Category</div>
         <div className="p-2 bg-[#F8FAFC] rounded-lg text-[#092A31]">
-          Product design
+          {portfolioData?.category?.title ?? " Product design"}
         </div>
       </div>
       <div className="space-y-4">

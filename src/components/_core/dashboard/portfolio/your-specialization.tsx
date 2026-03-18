@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, ChevronDown, Search, Square } from "lucide-react";
 import {
     Popover,
@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { AddMorePopover } from "./add-more-popover";
+import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { cn } from "@/lib/utils";
 import { portfolioInputStyle } from "./portfolio-styles";
 
@@ -90,13 +91,17 @@ export function categoryToPayload(data: YourSpecializationData): CategoryPayload
 export function payloadToCategory(payload: {
     category?: {
         title?: string | null;
-        specializationData?: string[];
+        specializationData?: unknown[];
     };
 }): YourSpecializationData {
     const c = payload.category;
+    const raw = c?.specializationData ?? [];
+    const selectedSpecializations = Array.isArray(raw)
+        ? raw.map((s) => (typeof s === "string" ? s : String((s as { title?: string })?.title ?? s)))
+        : [];
     return {
         category: c?.title ?? "",
-        selectedSpecializations: c?.specializationData ?? [],
+        selectedSpecializations,
     };
 }
 
@@ -106,10 +111,21 @@ type YourSpecializationProps = {
 };
 
 export function YourSpecialization({ value, onChange }: YourSpecializationProps) {
+    const { data: portfolioData } = useGetPortfolio();
     const [categoryOpen, setCategoryOpen] = useState(false);
     const [categorySearch, setCategorySearch] = useState("");
     const [addMoreOpen, setAddMoreOpen] = useState(false);
     const [addTitle, setAddTitle] = useState("");
+
+    useEffect(() => {
+        if (!portfolioData?.category) return;
+        const isEmpty = !value.category && value.selectedSpecializations.length === 0;
+        if (!isEmpty) return;
+        const prefill = payloadToCategory(portfolioData);
+        if (!prefill.category && prefill.selectedSpecializations.length === 0)
+            return;
+        onChange({ ...value, ...prefill });
+    }, [portfolioData]);
 
     const displayedSpecializations = useMemo(() => {
         const base = SPECIALIZATIONS_BY_CATEGORY[value.category] ?? [];
