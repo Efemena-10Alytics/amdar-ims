@@ -10,6 +10,7 @@ import type { YourToolsData } from "@/components/_core/dashboard/portfolio/your-
 import { AddToolsPopover } from "@/components/_core/dashboard/portfolio/add-tools-popover";
 import { portfolioInputStyle } from "@/components/_core/dashboard/portfolio/portfolio-styles";
 import { cn } from "@/lib/utils";
+import { useAddProject } from "@/features/portfolio/use-add-project";
 
 const TOOL_IMAGES: Record<string, string> = {
   Figma: "/images/svgs/tools/figma.svg",
@@ -39,6 +40,7 @@ export default function AddProjectPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const projectFilesInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const { addProject, isSubmitting, errorMessage } = useAddProject();
 
   const onCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -65,9 +67,24 @@ export default function AddProjectPage() {
     setProjectFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleAddProject = () => {
-    // TODO: submit to API
-    router.push("/dashboard-dev/portfolio");
+  const handleAddProject = async () => {
+    const success = await addProject({
+      title,
+      category,
+      overview,
+      rationale,
+      aim,
+      scope,
+      expert,
+      solutionUrl,
+      mediaLink,
+      tools: toolsData.selectedTools,
+      coverFile,
+      projectFiles,
+    });
+    if (success) {
+      router.push("/dashboard-dev/portfolio");
+    }
   };
 
   return (
@@ -325,12 +342,18 @@ export default function AddProjectPage() {
             )}
           </div>
 
+          {errorMessage && (
+            <p className="mt-2 text-sm text-red-600" role="alert">
+              {errorMessage}
+            </p>
+          )}
           <Button
             type="button"
             onClick={handleAddProject}
+            disabled={isSubmitting}
             className="w-full bg-primary text-white hover:bg-primary/90 h-11 rounded-lg font-medium mt-4"
           >
-            Add project
+            {isSubmitting ? "Adding project…" : "Add project"}
           </Button>
         </div>
       </div>
