@@ -8,7 +8,8 @@ const EXCLUDED_PROGRAM_SLUGS = [
   "cybersecurity-career-experience-internship-ccei",
   "financial-analytics-career-experience-internship-facei",
   "devops-career-experience-internship-dcei",
-  "project-management-career-experience-internship-pmcei",
+  "product-design-career-experience-internship-pdcei",
+  "data-engineering-career-experience-internship-decei",
 ];
 
 export function useGetInternshipPrograms() {
