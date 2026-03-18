@@ -135,7 +135,10 @@ export function CreatePortfolioForm() {
     const payload = categoryToPayload(data);
     try {
       const result = await updateProject({
-        category: payload.category,
+        category: {
+          ...payload.category,
+          skills: skillsData.selectedSkills,
+        },
       });
       return result !== undefined;
     } catch {
@@ -163,7 +166,11 @@ export function CreatePortfolioForm() {
     const payload = skillsToPayload(data);
     try {
       const result = await updateProject({
-        category: payload.category,
+        category: {
+          title: specializationData.category || null,
+          specializationData: specializationData.selectedSpecializations,
+          skills: payload.category.skills,
+        },
       });
       return result !== undefined;
     } catch {
