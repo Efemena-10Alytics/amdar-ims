@@ -85,40 +85,8 @@ export type YourToolsData = {
   customToolFiles?: Record<string, File>;
 };
 
-export type ToolsPayloadItem = {
-  name: string;
-  url: string | null;
-};
-
-export type ToolsPayload = {
-  tools: ToolsPayloadItem[];
-};
-
-export type UploadImageFn = (file: File) => Promise<string | null>;
-
 /** Map of tool name -> icon URL (from API). */
 export type ToolIconMap = Record<string, string>;
-
-/** Convert form data to API payload format (camelCase). Includes icon URL from API when available. */
-export async function toolsToPayload(
-  data: YourToolsData,
-  uploadImage: UploadImageFn,
-  toolIconMap?: ToolIconMap,
-): Promise<ToolsPayload> {
-  const tools: ToolsPayloadItem[] = await Promise.all(
-    data.selectedTools.map(async (name) => {
-      const customFile = data.customToolFiles?.[name];
-      let url: string | null = null;
-      if (customFile) {
-        url = await uploadImage(customFile);
-      } else if (toolIconMap?.[name]) {
-        url = toolIconMap[name];
-      }
-      return { name, url };
-    }),
-  );
-  return { tools };
-}
 
 /** Parse API tools into form data (e.g. for prefilling). */
 export function payloadToTools(payload: {

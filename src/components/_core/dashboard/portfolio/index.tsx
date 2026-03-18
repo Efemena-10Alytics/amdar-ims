@@ -14,7 +14,7 @@ import {
   categoryToPayload,
 } from "./your-specialization";
 import { YourSkills, skillsToPayload } from "./your-skills";
-import { YourTools, toolsToPayload, type ToolIconMap } from "./your-tools";
+import { YourTools, type ToolIconMap } from "./your-tools";
 import {
   getInitialWorkExperienceData,
   WorkExperience,
@@ -26,7 +26,7 @@ import {
 } from "./education-background";
 import Aside, { STEPS } from "./aside";
 import { useUpdateProject } from "@/features/portfolio/use-update-portfolio";
-import { useUploadImage } from "@/features/portfolio/use-upload-image";
+import { useAddTools } from "@/features/portfolio/use-add-tools";
 import { useInitializePortfolio } from "@/features/portfolio/use-initialize-portfolio";
 import { useUpdateUser } from "@/features/user/use-update-user-details";
 import { useCountries } from "@/features/portfolio/use-countries";
@@ -36,10 +36,10 @@ import { useGetTools } from "@/features/portfolio/use-get-tools";
 export function CreatePortfolioForm() {
   const { updateProject, isUpdating, errorMessage } = useUpdateProject();
   const {
-    uploadImage,
-    isUploading: isToolsUploading,
-    errorMessage: uploadErrorMessage,
-  } = useUploadImage();
+    addTools,
+    isSubmitting: isToolsSubmitting,
+    errorMessage: addToolsErrorMessage,
+  } = useAddTools();
   const { initializePortfolio, isInitializing, errorMessage: initErrorMessage } =
     useInitializePortfolio();
   const { updateUser, errorMessage: userDetailsErrMessage } = useUpdateUser();
@@ -144,17 +144,17 @@ export function CreatePortfolioForm() {
   };
 
   const saveTools = async (
-    data: Parameters<typeof toolsToPayload>[0],
+    data: {
+      selectedTools: string[];
+      customToolFiles?: Record<string, File>;
+    },
   ): Promise<boolean> => {
-    try {
-      const payload = await toolsToPayload(data, uploadImage, toolIconMap);
-      const result = await updateProject({
-        tools: payload.tools,
-      });
-      return result !== undefined;
-    } catch {
-      return false;
-    }
+    const tools = data.selectedTools.map((name) => ({
+      name,
+      image:
+        data.customToolFiles?.[name] ?? toolIconMap[name] ?? null,
+    }));
+    return addTools({ tools });
   };
 
   const saveSkills = async (
@@ -319,21 +319,21 @@ export function CreatePortfolioForm() {
             <Button
               type="button"
               onClick={handleNext}
-              disabled={isUpdating || isInitializing || isToolsUploading}
+              disabled={isUpdating || isInitializing || isToolsSubmitting}
               className="flex-1 h-10 rounded-lg bg-primary text-white hover:bg-primary/90"
             >
               {isLastStep
                 ? isUpdating
                   ? "Creating…"
                   : "Create Portfolio"
-                : isUpdating || isInitializing || isToolsUploading
+                : isUpdating || isInitializing || isToolsSubmitting
                   ? "Saving…"
                   : "Save & continue"}
             </Button>
           </div>
-          {(errorMessage || initErrorMessage || uploadErrorMessage) && (
+          {(errorMessage || initErrorMessage || addToolsErrorMessage) && (
             <p className="mt-3 text-sm text-red-600" role="alert">
-              {errorMessage || initErrorMessage || uploadErrorMessage}
+              {errorMessage || initErrorMessage || addToolsErrorMessage}
             </p>
           )}
         </div>
