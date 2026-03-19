@@ -5,7 +5,7 @@ import { createChat } from "@n8n/chat";
 import "@/styles/n8n-chat-vendor.css";
 
 const webhookUrl =
-  process.env.NEXT_PUBLIC_N8N_CHAT_WEBHOOK_URL ??
+  process.env.NEXT_PUBLIC_REACT_N8N_WEBHOOK_URL ??
   process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL;
 
 export default function N8nChat() {
