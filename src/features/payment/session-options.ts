@@ -22,6 +22,11 @@ export const SESSION_OPTIONS = [
     label: "IWD ConferenceChat",
     key: "iwd-conference",
   },
+  {
+    value: "Fireside Chat",
+    label: "Fireside Chat",
+    key: "fireside-chat",
+  },
   { value: "None of the above", label: "None of the above", key: "none" },
 ] as const;
 
