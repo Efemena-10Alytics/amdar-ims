@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Link2 } from "lucide-react";
-import { useGetUserDetails } from "@/features/user/use-get-user-details";
+import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { cn } from "@/lib/utils";
 import { portfolioInputStyle } from "./portfolio-styles";
 
@@ -11,6 +11,37 @@ export type YourSocialData = {
   linkedIn: string;
   twitter: string;
 };
+
+export type SocialPayload = {
+  social: {
+    linkedIn: string | null;
+    twitter: string | null;
+  };
+};
+
+/** Convert form data to API payload format (camelCase). */
+export function socialToPayload(data: YourSocialData): SocialPayload {
+  return {
+    social: {
+      linkedIn: data.linkedIn.trim() || null,
+      twitter: data.twitter.trim() || null,
+    },
+  };
+}
+
+/** Parse API social into form data (e.g. for prefilling). */
+export function payloadToSocial(payload: {
+  social?: {
+    linkedIn?: string | null;
+    twitter?: string | null;
+  };
+}): YourSocialData {
+  const s = payload.social;
+  return {
+    linkedIn: s?.linkedIn ?? "",
+    twitter: s?.twitter ?? "",
+  };
+}
 
 /** Returns true if value is empty or a valid URL (http/https). */
 function isValidUrl(value: string): boolean {
@@ -31,31 +62,16 @@ type YourSocialProps = {
 
 const LINK_ERROR = "Please enter a valid link (e.g. https://...)";
 
-function getSocialFromUserDetails(
-  details: Record<string, unknown> | null | undefined
-): Partial<YourSocialData> {
-  if (!details || typeof details !== "object") return {};
-  const linkedIn =
-    details.linkedIn ?? details.linkedin ?? details.linked_in ?? "";
-  const twitter =
-    details.twitter ?? details.x ?? details.x_twitter ?? "";
-  return {
-    linkedIn: typeof linkedIn === "string" ? linkedIn : "",
-    twitter: typeof twitter === "string" ? twitter : "",
-  };
-}
-
 export function YourSocial({ value, onChange }: YourSocialProps) {
-  const { data: userDetails } = useGetUserDetails();
-console.log('userDetails', userDetails)
+  const { data: portfolioData } = useGetPortfolio();
   useEffect(() => {
-    if (!userDetails) return;
+    if (!portfolioData?.social) return;
     const isEmpty = !value.linkedIn.trim() && !value.twitter.trim();
     if (!isEmpty) return;
-    const prefill = getSocialFromUserDetails(userDetails);
+    const prefill = payloadToSocial(portfolioData);
     if (!prefill.linkedIn && !prefill.twitter) return;
     onChange({ ...value, ...prefill });
-  }, [userDetails]);
+  }, [portfolioData]);
 
   const linkedInInvalid = value.linkedIn.trim() !== "" && !isValidUrl(value.linkedIn);
   const twitterInvalid = value.twitter.trim() !== "" && !isValidUrl(value.twitter);

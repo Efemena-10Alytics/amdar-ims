@@ -92,6 +92,80 @@ export type WorkExperienceData = {
     entries: WorkExperienceEntry[];
 };
 
+/** API payload item (camelCase). endDate is null when currentlyWorkThere is true. */
+export type WorkExperiencePayloadItem = {
+    companyName: string;
+    jobTitle: string;
+    industry: string;
+    jobDescription: string;
+    startDate: string;
+    endDate: string | null;
+    currentlyWorkThere: boolean;
+};
+
+export type WorkExperiencePayload = {
+    workExperience: WorkExperiencePayloadItem[];
+};
+
+/** Normalize date to YYYY-MM for API (accepts YYYY-MM or YYYY-MM-DD). */
+function toYearMonth(date: string): string {
+    if (!date) return "";
+    return date.length >= 7 ? date.slice(0, 7) : date;
+}
+
+/** Convert form data to API payload format (camelCase). */
+export function workExperienceToPayload(
+    data: WorkExperienceData,
+): WorkExperiencePayload {
+    const workExperience: WorkExperiencePayloadItem[] = data.entries
+        .filter(
+            (e) =>
+                e.companyName.trim() ||
+                e.jobTitle.trim() ||
+                e.industry.trim() ||
+                e.jobDescription.trim() ||
+                e.startDate ||
+                e.endDate,
+        )
+        .map((entry) => ({
+            companyName: entry.companyName.trim(),
+            jobTitle: entry.jobTitle.trim(),
+            industry: entry.industry.trim(),
+            jobDescription: entry.jobDescription.trim(),
+            startDate: toYearMonth(entry.startDate),
+            endDate: entry.currentlyWorkHere ? null : toYearMonth(entry.endDate),
+            currentlyWorkThere: entry.currentlyWorkHere,
+        }));
+    return { workExperience };
+}
+
+/** Parse API work experience into form data (e.g. for prefilling). */
+export function payloadToWorkExperience(payload: {
+    workExperience?: Array<{
+        companyName?: string | null;
+        jobTitle?: string | null;
+        industry?: string | null;
+        jobDescription?: string | null;
+        startDate?: string | null;
+        endDate?: string | null;
+        currentlyWorkThere?: boolean;
+    }>;
+}): WorkExperienceData {
+    const raw = payload.workExperience ?? [];
+    const entries = raw.map((e) => ({
+        companyName: e.companyName ?? "",
+        jobTitle: e.jobTitle ?? "",
+        industry: e.industry ?? "",
+        jobDescription: e.jobDescription ?? "",
+        startDate: e.startDate ?? "",
+        endDate: e.endDate ?? "",
+        currentlyWorkHere: !!e.currentlyWorkThere,
+    }));
+    return {
+        entries: entries.length > 0 ? entries : [{ ...defaultEntry }],
+    };
+}
+
 const defaultEntry: WorkExperienceEntry = {
     companyName: "",
     jobTitle: "",
@@ -101,6 +175,15 @@ const defaultEntry: WorkExperienceEntry = {
     endDate: "",
     currentlyWorkHere: false,
 };
+
+export const initialWorkExperienceData: WorkExperienceData = {
+    entries: [{ ...defaultEntry }],
+};
+
+/** Fresh initial state for useState (avoids shared reference). */
+export function getInitialWorkExperienceData(): WorkExperienceData {
+    return { entries: [{ ...defaultEntry }] };
+}
 
 type WorkExperienceProps = {
     value: WorkExperienceData;

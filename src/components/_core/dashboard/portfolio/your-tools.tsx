@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { Check, Square } from "lucide-react";
 import { AddToolsPopover } from "./add-tools-popover";
 import { cn } from "@/lib/utils";
+import { useGetTools } from "@/features/portfolio/use-get-tools";
 
 const DEFAULT_CATEGORY = "Product Design";
 
@@ -33,19 +34,21 @@ const TOOL_IMAGES: Record<string, string> = {
 function ToolIcon({
   name,
   customImageUrl,
+  apiImageUrl,
 }: {
   name: string;
   customImageUrl?: string | null;
+  apiImageUrl?: string | null;
 }) {
-  const src = customImageUrl ?? TOOL_IMAGES[name];
+  const src = customImageUrl ?? apiImageUrl ?? TOOL_IMAGES[name];
   if (src) {
-    const isCustom = !!customImageUrl;
+    const useImg = !!customImageUrl || !!apiImageUrl;
     return (
       <span
         className="relative flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white"
         aria-hidden
       >
-        {isCustom ? (
+        {useImg ? (
           <img
             src={src}
             alt=""
@@ -78,7 +81,27 @@ export type YourToolsData = {
   selectedTools: string[];
   /** Object URLs for custom tool icons (from upload). Revoke when no longer needed. */
   customToolImages?: Record<string, string>;
+  /** File objects for custom tools (for upload). */
+  customToolFiles?: Record<string, File>;
 };
+
+/** Map of tool name -> icon URL (from API). */
+export type ToolIconMap = Record<string, string>;
+
+/** Parse API tools into form data (e.g. for prefilling). */
+export function payloadToTools(payload: {
+  tools?: Array<{
+    name?: string | null;
+    url?: string | null;
+  }>;
+}): YourToolsData {
+  const raw = payload.tools ?? [];
+  return {
+    selectedTools: raw.map((t) => t.name ?? "").filter(Boolean),
+    customToolImages: undefined,
+    customToolFiles: undefined,
+  };
+}
 
 type YourToolsProps = {
   value: YourToolsData;
@@ -87,11 +110,29 @@ type YourToolsProps = {
 
 export function YourTools({ value, onChange }: YourToolsProps) {
   const [addToolsOpen, setAddToolsOpen] = useState(false);
-  const displayedTools = useMemo(() => {
-    const base = [...TOOLS];
-    const custom = value.selectedTools.filter((t) => !base.includes(t));
-    return [...base, ...custom];
-  }, [value.selectedTools]);
+  const { data: apiTools = [] } = useGetTools();
+
+  const toolNameToIcon = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const t of apiTools) {
+      const name = t.name?.trim();
+      const icon = t.icon ?? t.url ?? t.image;
+      if (name && icon) map[name] = icon;
+    }
+    return map;
+  }, [apiTools]);
+
+  const baseToolNames = useMemo((): string[] => {
+    const fromApi = apiTools
+      .map((t) => t.name?.trim())
+      .filter((n): n is string => !!n);
+    return fromApi.length > 0 ? fromApi : [...TOOLS];
+  }, [apiTools]);
+
+  const displayedTools = useMemo((): string[] => {
+    const custom = value.selectedTools.filter((t) => !baseToolNames.includes(t));
+    return [...baseToolNames, ...custom];
+  }, [baseToolNames, value.selectedTools]);
   const count = value.selectedTools.length;
 
   const toggle = (name: string) => {
@@ -99,29 +140,41 @@ export function YourTools({ value, onChange }: YourToolsProps) {
     const next = isRemoving
       ? value.selectedTools.filter((t) => t !== name)
       : [...value.selectedTools, name];
-    let nextCustom = value.customToolImages;
-    if (isRemoving && value.customToolImages?.[name]) {
-      URL.revokeObjectURL(value.customToolImages[name]);
-      nextCustom = { ...value.customToolImages };
-      delete nextCustom[name];
-      if (Object.keys(nextCustom).length === 0) nextCustom = undefined;
+    let nextCustomImages = value.customToolImages;
+    let nextCustomFiles = value.customToolFiles;
+    if (isRemoving) {
+      if (value.customToolImages?.[name]) {
+        URL.revokeObjectURL(value.customToolImages[name]);
+        nextCustomImages = { ...value.customToolImages };
+        delete nextCustomImages[name];
+        if (Object.keys(nextCustomImages).length === 0) nextCustomImages = undefined;
+      }
+      if (value.customToolFiles?.[name]) {
+        nextCustomFiles = { ...value.customToolFiles };
+        delete nextCustomFiles[name];
+        if (Object.keys(nextCustomFiles).length === 0) nextCustomFiles = undefined;
+      }
     }
     onChange({
       selectedTools: next,
-      ...(nextCustom && { customToolImages: nextCustom }),
+      ...(nextCustomImages && { customToolImages: nextCustomImages }),
+      ...(nextCustomFiles && { customToolFiles: nextCustomFiles }),
     });
   };
 
   const handleAddDone = (toolName: string, imageFile: File | null) => {
     if (value.selectedTools.includes(toolName)) return;
     const nextSelected = [...value.selectedTools, toolName];
-    const nextCustom: Record<string, string> = { ...value.customToolImages };
+    const nextCustomImages: Record<string, string> = { ...value.customToolImages };
+    const nextCustomFiles: Record<string, File> = { ...value.customToolFiles };
     if (imageFile) {
-      nextCustom[toolName] = URL.createObjectURL(imageFile);
+      nextCustomImages[toolName] = URL.createObjectURL(imageFile);
+      nextCustomFiles[toolName] = imageFile;
     }
     onChange({
       selectedTools: nextSelected,
-      customToolImages: Object.keys(nextCustom).length ? nextCustom : undefined,
+      customToolImages: Object.keys(nextCustomImages).length ? nextCustomImages : undefined,
+      customToolFiles: Object.keys(nextCustomFiles).length ? nextCustomFiles : undefined,
     });
     setAddToolsOpen(false);
   };
@@ -174,6 +227,7 @@ export function YourTools({ value, onChange }: YourToolsProps) {
                 <ToolIcon
                   name={name}
                   customImageUrl={value.customToolImages?.[name]}
+                  apiImageUrl={toolNameToIcon[name]}
                 />
                 <span>{name}</span>
                 {selected ? (

@@ -3,10 +3,13 @@ import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
 
 const INTERNSHIP_PROGRAMS_QUERY_KEY = ["internship-programs-all"];
 
-const EXCLUDED_PROGRAM_TITLES = [
-  "HR Analytics Career Experience Internship (HACEI)",
-  "Cybersecurity Career Experience Internship (CCEI)",
-  "Financial Analytics Career Experience Internship (FACEI)",
+const EXCLUDED_PROGRAM_SLUGS = [
+  "hr-analytics-career-experience-internship-hacei",
+  "cybersecurity-career-experience-internship-ccei",
+  "financial-analytics-career-experience-internship-facei",
+  "devops-career-experience-internship-dcei",
+  "product-design-career-experience-internship-pdcei",
+  // "data-engineering-career-experience-internship-decei",
 ];
 
 export function useGetInternshipPrograms() {
@@ -16,7 +19,7 @@ export function useGetInternshipPrograms() {
       const { data } = await axiosInstance.get("/internship-programs-all");
       const programs = Array.isArray(data) ? data : (data as { data?: unknown[] })?.data ?? [];
       const filtered = programs.filter(
-        (p: { title?: string }) => !EXCLUDED_PROGRAM_TITLES.includes(p?.title ?? "")
+        (p: { slug?: string }) => !EXCLUDED_PROGRAM_SLUGS.includes(p?.slug ?? "")
       );
       return Array.isArray(data) ? filtered : { ...data, data: filtered };
     },

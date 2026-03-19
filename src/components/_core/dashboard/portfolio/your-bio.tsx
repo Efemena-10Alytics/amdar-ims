@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
+import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { cn } from "@/lib/utils";
 import { portfolioInputStyle } from "./portfolio-styles";
 
@@ -13,6 +15,45 @@ export type YourBioData = {
   bio: string;
 };
 
+export type BioPayload = {
+  bio: {
+    jobTitle: string | null;
+    yearsOfExperience: string | null;
+    projectCount: string | null;
+    bio: string | null;
+  };
+};
+
+/** Convert form data to API payload format (camelCase). */
+export function bioToPayload(data: YourBioData): BioPayload {
+  return {
+    bio: {
+      jobTitle: data.jobTitle.trim() || null,
+      yearsOfExperience: data.yearsOfExperience.trim() || null,
+      projectCount: data.lifeProjectsCount.trim() || null,
+      bio: data.bio.trim() || null,
+    },
+  };
+}
+
+/** Parse API bio into form data (e.g. for prefilling). */
+export function payloadToBio(payload: {
+  bio?: {
+    jobTitle?: string | null;
+    yearsOfExperience?: string | null;
+    projectCount?: string | null;
+    bio?: string | null;
+  };
+}): YourBioData {
+  const b = payload.bio;
+  return {
+    jobTitle: b?.jobTitle ?? "",
+    yearsOfExperience: b?.yearsOfExperience ?? "",
+    lifeProjectsCount: b?.projectCount ?? "",
+    bio: b?.bio ?? "",
+  };
+}
+
 const textareaStyle = cn(
   portfolioInputStyle,
   "min-h-[120px] h-auto resize-y py-3",
@@ -24,6 +65,26 @@ type YourBioProps = {
 };
 
 export function YourBio({ value, onChange }: YourBioProps) {
+  const { data: portfolioData } = useGetPortfolio();
+  useEffect(() => {
+    if (!portfolioData?.bio) return;
+    const isEmpty =
+      !value.jobTitle.trim() &&
+      !value.yearsOfExperience.trim() &&
+      !value.lifeProjectsCount.trim() &&
+      !value.bio.trim();
+    if (!isEmpty) return;
+    const prefill = payloadToBio(portfolioData);
+    if (
+      !prefill.jobTitle &&
+      !prefill.yearsOfExperience &&
+      !prefill.lifeProjectsCount &&
+      !prefill.bio
+    )
+      return;
+    onChange({ ...value, ...prefill });
+  }, [portfolioData]);
+
   const bioRemaining = BIO_MAX_LENGTH - value.bio.length;
 
   return (

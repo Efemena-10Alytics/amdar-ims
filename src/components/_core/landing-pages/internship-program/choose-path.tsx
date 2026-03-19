@@ -17,7 +17,10 @@ const FALLBACK_IMAGE = "/images/pngs/internship.png";
 
 const ChoosePath = () => {
   const { data, isPending, isFetching } = useGetInternshipPrograms();
-  const internshipPrograms = (Array.isArray(data) ? data : (data as { data?: InternshipProgram[] })?.data) ?? [];
+  const internshipPrograms =
+    (Array.isArray(data)
+      ? data
+      : (data as { data?: InternshipProgram[] })?.data) ?? [];
 
   return (
     <div className="bg-white py-12">
@@ -43,14 +46,27 @@ const ChoosePath = () => {
         </div>
 
         {isPending ? (
-          <div className="flex flex-col items-center justify-center py-16 gap-4" role="status" aria-live="polite">
-            <Loader2 className="size-12 animate-spin text-[#156374]" aria-hidden />
-            <p className="text-[#64748B] text-sm font-medium">Loading career paths...</p>
+          <div
+            className="flex flex-col items-center justify-center py-16 gap-4"
+            role="status"
+            aria-live="polite"
+          >
+            <Loader2
+              className="size-12 animate-spin text-[#156374]"
+              aria-hidden
+            />
+            <p className="text-[#64748B] text-sm font-medium">
+              Loading career paths...
+            </p>
           </div>
         ) : (
           <>
             {isFetching && (
-              <div className="flex justify-center mb-4" role="status" aria-live="polite">
+              <div
+                className="flex justify-center mb-4"
+                role="status"
+                aria-live="polite"
+              >
                 <span className="flex items-center gap-2 text-sm text-[#64748B]">
                   <Loader2 className="size-4 animate-spin" aria-hidden />
                   Updating...
@@ -69,7 +85,9 @@ const ChoosePath = () => {
                       alt={career.title}
                       fill
                       className="object-cover rounded-md"
-                      unoptimized={!!(career.image && !career.image.startsWith("/"))}
+                      unoptimized={
+                        !!(career.image && !career.image.startsWith("/"))
+                      }
                     />
                   </div>
                   <div className="mt-4">

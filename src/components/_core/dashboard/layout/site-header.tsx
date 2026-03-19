@@ -28,12 +28,12 @@ export function SiteHeader() {
   const avatarUrl = getAvatarUrlFromUser(userInfo ?? null);
 
   return (
-    <header className="flex h-22 shrink-0 items-center gap-4 rounded-b-2xl bg-white px-4 md:px-6 shadow-sm">
+    <header className="flex h-22 shrink-0 items-center gap-4 rounded-b-2xl bg-white px-4 lg:px-6 shadow-sm">
       <SidebarTrigger
-        className="mr-auto md:hidden"
+        className="mr-auto lg:hidden"
         aria-label="Toggle sidebar"
       />
-      <h1 className="text-lg font-semibold text-zinc-900 md:text-xl">
+      <h1 className="text-lg font-semibold text-zinc-900 lg:text-xl">
         {title}
       </h1>
       <div className="ml-auto flex items-center gap-2">
