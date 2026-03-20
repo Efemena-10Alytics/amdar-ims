@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -10,6 +10,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
+import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { cn } from "@/lib/utils";
 import { FillCalendaSvg } from "../../landing-pages/internship-program/svg";
 import { portfolioInputStyle } from "./portfolio-styles";
@@ -191,6 +192,33 @@ type WorkExperienceProps = {
 };
 
 export function WorkExperience({ value, onChange }: WorkExperienceProps) {
+    const { data: portfolioData } = useGetPortfolio();
+    useEffect(() => {
+        if (!portfolioData?.workExperience?.length) return;
+        const isEmpty = value.entries.every(
+            (e) =>
+                !e.companyName.trim() &&
+                !e.jobTitle.trim() &&
+                !e.industry.trim() &&
+                !e.jobDescription.trim() &&
+                !e.startDate &&
+                !e.endDate
+        );
+        if (!isEmpty) return;
+        const prefill = payloadToWorkExperience(portfolioData);
+        const hasData = prefill.entries.some(
+            (e) =>
+                e.companyName.trim() ||
+                e.jobTitle.trim() ||
+                e.industry.trim() ||
+                e.jobDescription.trim() ||
+                e.startDate ||
+                e.endDate
+        );
+        if (!hasData) return;
+        onChange(prefill);
+    }, [portfolioData]);
+
     const updateEntry = (index: number, updates: Partial<WorkExperienceEntry>) => {
         const next = value.entries.map((entry, i) =>
             i === index ? { ...entry, ...updates } : entry

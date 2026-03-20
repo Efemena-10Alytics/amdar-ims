@@ -152,11 +152,19 @@ export function CreatePortfolioForm() {
       customToolFiles?: Record<string, File>;
     },
   ): Promise<boolean> => {
-    const tools = data.selectedTools.map((name) => ({
-      name,
-      image:
-        data.customToolFiles?.[name] ?? toolIconMap[name] ?? null,
-    }));
+    const seen = new Set<string>();
+    const tools = data.selectedTools
+      .filter((name) => {
+        const key = name.trim().toLowerCase();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .map((name) => ({
+        name,
+        image:
+          data.customToolFiles?.[name] ?? toolIconMap[name] ?? null,
+      }));
     return addTools({ tools });
   };
 

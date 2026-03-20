@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect } from "react";
 import { Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { portfolioInputStyle } from "./portfolio-styles";
 
 export type EducationEntry = {
@@ -66,6 +68,21 @@ export function EducationBackground({
   value,
   onChange,
 }: EducationBackgroundProps) {
+  const { data: portfolioData } = useGetPortfolio();
+  useEffect(() => {
+    if (!portfolioData?.educationalBackground?.length) return;
+    const isEmpty = value.entries.every(
+      (e) => !e.schoolName.trim() && !e.qualification.trim()
+    );
+    if (!isEmpty) return;
+    const prefill = payloadToEducationBackground(portfolioData);
+    const hasData = prefill.entries.some(
+      (e) => e.schoolName.trim() || e.qualification.trim()
+    );
+    if (!hasData) return;
+    onChange(prefill);
+  }, [portfolioData]);
+
   const updateEntry = (index: number, updates: Partial<EducationEntry>) => {
     const next = value.entries.map((entry, i) =>
       i === index ? { ...entry, ...updates } : entry

@@ -1,10 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, Square } from "lucide-react";
 import { AddToolsPopover } from "./add-tools-popover";
 import { cn } from "@/lib/utils";
+import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { useGetTools } from "@/features/portfolio/use-get-tools";
 
 const DEFAULT_CATEGORY = "Product Design";
@@ -110,7 +111,17 @@ type YourToolsProps = {
 
 export function YourTools({ value, onChange }: YourToolsProps) {
   const [addToolsOpen, setAddToolsOpen] = useState(false);
+  const { data: portfolioData } = useGetPortfolio();
   const { data: apiTools = [] } = useGetTools();
+
+  useEffect(() => {
+    if (!portfolioData?.tools?.length) return;
+    const isEmpty = value.selectedTools.length === 0;
+    if (!isEmpty) return;
+    const prefill = payloadToTools(portfolioData);
+    if (prefill.selectedTools.length === 0) return;
+    onChange(prefill);
+  }, [portfolioData]);
 
   const toolNameToIcon = useMemo(() => {
     const map: Record<string, string> = {};
@@ -119,8 +130,19 @@ export function YourTools({ value, onChange }: YourToolsProps) {
       const icon = t.icon ?? t.url ?? t.image;
       if (name && icon) map[name] = icon;
     }
+    for (const t of portfolioData?.tools ?? []) {
+      const name = t.name?.trim();
+      const icon = t.image ?? t.url;
+      if (name && icon && !map[name]) map[name] = icon;
+    }
     return map;
-  }, [apiTools]);
+  }, [apiTools, portfolioData?.tools]);
+
+  const portfolioToolNames = useMemo((): string[] => {
+    return (portfolioData?.tools ?? [])
+      .map((t) => t.name?.trim())
+      .filter((n): n is string => !!n);
+  }, [portfolioData?.tools]);
 
   const baseToolNames = useMemo((): string[] => {
     const fromApi = apiTools
@@ -130,9 +152,12 @@ export function YourTools({ value, onChange }: YourToolsProps) {
   }, [apiTools]);
 
   const displayedTools = useMemo((): string[] => {
-    const custom = value.selectedTools.filter((t) => !baseToolNames.includes(t));
-    return [...baseToolNames, ...custom];
-  }, [baseToolNames, value.selectedTools]);
+    const rest = baseToolNames.filter((t) => !portfolioToolNames.includes(t));
+    const custom = value.selectedTools.filter(
+      (t) => !portfolioToolNames.includes(t) && !rest.includes(t)
+    );
+    return [...portfolioToolNames, ...rest, ...custom];
+  }, [baseToolNames, portfolioToolNames, value.selectedTools]);
   const count = value.selectedTools.length;
 
   const toggle = (name: string) => {
