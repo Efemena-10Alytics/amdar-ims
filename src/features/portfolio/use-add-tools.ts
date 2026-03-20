@@ -31,9 +31,17 @@ export type AddToolsFormData = {
 
 function buildFormData(data: AddToolsFormData): FormData {
   const formData = new FormData();
-  formData.append("append", "1");
+  // formData.append("append", "1");
 
-  data.tools.forEach((tool, i) => {
+  const seen = new Set<string>();
+  const uniqueTools = data.tools.filter((tool) => {
+    const key = tool.name.trim().toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  uniqueTools.forEach((tool, i) => {
     const prefix = `tools[${i}]`;
     formData.append(`${prefix}[name]`, tool.name.trim());
     if (tool.image != null && tool.image !== "") {
