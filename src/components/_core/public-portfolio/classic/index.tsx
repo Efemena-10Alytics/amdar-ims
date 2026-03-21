@@ -115,6 +115,35 @@ const Classic = ({ portfolio, isLoading, error }: ClassicProps) => {
 
   const categoryTitle = portfolio?.category?.title || "Product Designer";
 
+  const footerContact = useMemo(() => {
+    if (!portfolio?.personalInfo) return undefined;
+    const p = portfolio.personalInfo;
+    const country = countries.find((c) => c.code === p?.countryCode);
+    const phone = p?.phoneNumber?.trim() ?? "";
+    const email = p?.email?.trim() ?? "";
+    const countryName = (country?.name ?? p?.location ?? "").trim();
+    if (!phone && !email && !countryName) return undefined;
+    return {
+      phone: phone || "—",
+      email: email || "—",
+      country: countryName || "—",
+    };
+  }, [portfolio?.personalInfo, countries]);
+
+  const footerSocialLinks = useMemo(() => {
+    const s = portfolio?.social;
+    const p = portfolio?.personalInfo;
+    const hasSocial = s?.linkedIn || s?.twitter;
+    const hasContact = p?.phoneNumber || p?.email;
+    if (!hasSocial && !hasContact) return undefined;
+    const links: { type: "twitter" | "linkedin" | "phone" | "mail"; href: string; label: string }[] = [];
+    if (s?.linkedIn) links.push({ type: "linkedin", href: s.linkedIn, label: "LinkedIn" });
+    if (s?.twitter) links.push({ type: "twitter", href: s.twitter!, label: "X (Twitter)" });
+    if (p?.phoneNumber) links.push({ type: "phone", href: `tel:${p.phoneNumber.replace(/\s/g, "")}`, label: "Phone" });
+    if (p?.email) links.push({ type: "mail", href: `mailto:${p.email}`, label: "Email" });
+    return links.length > 0 ? links : undefined;
+  }, [portfolio?.social, portfolio?.personalInfo]);
+
   if (isLoading) {
     return (
       <div className="app-width flex flex-col min-h-[84vh] items-center justify-center">
@@ -182,7 +211,10 @@ const Classic = ({ portfolio, isLoading, error }: ClassicProps) => {
       <MySpecialization specializations={specializations} softSkills={softSkills} />
       <MyTools tools={tools} title={categoryTitle} />
       <MyEducationBackground entries={educationEntries} />
-      <Footer />
+      <Footer
+        contact={footerContact}
+        socialLinks={footerSocialLinks}
+      />
     </div>
   );
 };

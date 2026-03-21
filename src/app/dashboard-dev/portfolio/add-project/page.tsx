@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Cloud, Link2, Trash2 } from "lucide-react";
+import { ArrowLeft, Cloud, Link2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { YourToolsData } from "@/components/_core/dashboard/portfolio/your-tools";
@@ -67,6 +67,16 @@ export default function AddProjectPage() {
     setProjectFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const [projectPreviews, setProjectPreviews] = useState<string[]>([]);
+  useEffect(() => {
+    const urls = projectFiles.map((f) => URL.createObjectURL(f));
+    setProjectPreviews((prev) => {
+      prev.forEach((url) => URL.revokeObjectURL(url));
+      return urls;
+    });
+    return () => urls.forEach((url) => URL.revokeObjectURL(url));
+  }, [projectFiles]);
+
   const handleAddProject = async () => {
     const success = await addProject({
       title,
@@ -123,7 +133,7 @@ export default function AddProjectPage() {
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/jpeg,image/jpg"
+              accept="image/*"
               onChange={onCoverChange}
               className="hidden"
             />
@@ -150,7 +160,7 @@ export default function AddProjectPage() {
                 <>
                   <Cloud className="size-10" aria-hidden />
                   <span className="text-sm font-medium">Upload cover image</span>
-                  <span className="text-xs text-zinc-500">Jpeg (max 5mb)</span>
+                  <span className="text-xs text-zinc-500">PNG, JPEG, GIF, WebP (max 5mb)</span>
                 </>
               )}
             </button>
@@ -307,7 +317,7 @@ export default function AddProjectPage() {
             <input
               ref={projectFilesInputRef}
               type="file"
-              accept=".doc,.docx,application/pdf,image/jpeg,image/jpg"
+              accept="image/*"
               multiple
               onChange={onProjectFilesChange}
               className="hidden"
@@ -322,23 +332,33 @@ export default function AddProjectPage() {
             >
               <Cloud className="size-10" aria-hidden />
               <span className="text-sm font-medium">Add Project files</span>
-              <span className="text-xs">Doc, PDF Jpeg (max 5mb)</span>
+              <span className="text-xs">PNG, JPEG, GIF, WebP (max 5mb)</span>
             </button>
             {projectFiles.length > 0 && (
-              <ul className="mt-2 space-y-1">
+              <div className="mt-2 flex flex-wrap gap-3">
                 {projectFiles.map((file, i) => (
-                  <li key={i} className="flex items-center justify-between text-sm text-zinc-600">
-                    <span className="truncate">{file.name}</span>
+                  <div
+                    key={i}
+                    className="relative shrink-0 size-[100px] rounded-lg overflow-hidden bg-zinc-100 border border-zinc-200"
+                  >
+                    {projectPreviews[i] && (
+                      <img
+                        src={projectPreviews[i]}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
+                    )}
                     <button
                       type="button"
                       onClick={() => removeProjectFile(i)}
-                      className="text-zinc-400 hover:text-red-600 shrink-0 ml-2"
+                      className="absolute top-0.5 right-0.5 flex size-6 items-center justify-center rounded-full bg-black/60 text-white hover:bg-red-600 transition-colors"
+                      aria-label={`Remove ${file.name}`}
                     >
-                      <Trash2 />
+                      <X className="size-3.5" aria-hidden />
                     </button>
-                  </li>
+                  </div>
                 ))}
-              </ul>
+              </div>
             )}
           </div>
 
