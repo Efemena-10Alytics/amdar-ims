@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { getUserId } from "@/lib/get-user-id";
+import { useAuthStore } from "@/store/auth-store";
 import { ArrowLeft, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -87,6 +89,8 @@ function TemplatePreview({
 }
 
 export default function PortfolioPage() {
+  const user = useAuthStore((s) => s.user);
+  const userId = getUserId(user);
   const [selectedTemplate, setSelectedTemplate] = useState<string>("classic");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [viewLinkOpen, setViewLinkOpen] = useState(false);
@@ -141,7 +145,9 @@ export default function PortfolioPage() {
         open={viewLinkOpen}
         onOpenChange={setViewLinkOpen}
         onContinue={() => {
-          if (typeof window !== "undefined") {
+          if (typeof window !== "undefined" && userId != null) {
+            window.location.href = `/portfolio/${userId}`;
+          } else if (typeof window !== "undefined") {
             window.location.href = "/portfolio";
           }
         }}

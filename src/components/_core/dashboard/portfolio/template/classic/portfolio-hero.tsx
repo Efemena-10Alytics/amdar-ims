@@ -10,8 +10,10 @@ export type PortfolioHeroData = {
   yearsExperience: string;
   countryName: string;
   countryFlagUrl?: string;
-  /** Tool badge next to job title (e.g. "Figma"). Uses /images/svgs/tools/figma.svg when "Figma". */
+  /** Tool badge next to job title (e.g. "Figma"). */
   toolBadge?: string;
+  /** Icon URL from portfolio tools array. When set, used instead of local TOOL_ICONS. */
+  toolBadgeIconUrl?: string | null;
 };
 
 const TOOL_ICONS: Record<string, string> = {
@@ -23,7 +25,9 @@ type PortfolioHeroProps = {
 };
 
 export function PortfolioHero({ value }: PortfolioHeroProps) {
-  const toolIcon = value.toolBadge ? TOOL_ICONS[value.toolBadge] : null;
+  const toolIcon =
+    value.toolBadgeIconUrl ||
+    (value.toolBadge ? TOOL_ICONS[value.toolBadge] : null);
 
   return (
     <section className="text-center mt-16">
@@ -38,13 +42,23 @@ export function PortfolioHero({ value }: PortfolioHeroProps) {
             aria-hidden
           >
             <div className="bg-white p-2 rounded-full h-6 w-6 flex items-center justify-center">
-              <Image
-                src={toolIcon}
-                alt=""
-                width={16}
-                height={16}
-                className="shrink-0"
-              />
+              {value.toolBadgeIconUrl?.trim() ? (
+                <img
+                  src={value.toolBadgeIconUrl}
+                  alt=""
+                  width={16}
+                  height={16}
+                  className="shrink-0 size-4 object-contain"
+                />
+              ) : (
+                <Image
+                  src={toolIcon}
+                  alt=""
+                  width={16}
+                  height={16}
+                  className="shrink-0"
+                />
+              )}
             </div>
             <span>{value.toolBadge}</span>
           </span>
