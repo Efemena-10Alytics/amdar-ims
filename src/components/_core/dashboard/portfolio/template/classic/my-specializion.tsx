@@ -1,4 +1,6 @@
 "use client";
+import Aos from "aos";
+import { useEffect } from "react";
 
 type MySpecializationProps = {
   specializations?: string[];
@@ -9,8 +11,11 @@ export function MySpecialization({
   specializations = [],
   softSkills = [],
 }: MySpecializationProps) {
+  useEffect(() => {
+    Aos.init()
+  }, [])
   return (
-    <section className="mt-20" aria-label="Specialization and skills">
+    <section data-aos="fade-up" className="mt-20" aria-label="Specialization and skills">
       {/* My Specialization */}
       <div className="text-xl font-semibold text-[#A1A8B1] mb-4">
         My Specialization

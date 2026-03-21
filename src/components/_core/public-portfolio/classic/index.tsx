@@ -117,8 +117,9 @@ const Classic = ({ portfolio, isLoading, error }: ClassicProps) => {
 
   if (isLoading) {
     return (
-      <div className="app-width flex min-h-[50vh] items-center justify-center">
+      <div className="app-width flex flex-col min-h-[84vh] items-center justify-center">
         <Loader2 className="size-12 animate-spin text-primary" aria-hidden />
+        <h2 className="text-primary font-semibold">Amdari...</h2>
       </div>
     );
   }

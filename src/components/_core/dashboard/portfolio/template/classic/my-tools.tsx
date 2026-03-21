@@ -1,4 +1,6 @@
 "use client";
+import Aos from "aos";
+import { useEffect } from "react";
 
 export type ToolItem = {
   name: string;
@@ -27,9 +29,13 @@ export function MyTools({
   const firstLine = lines[0] ?? "";
   const restLine = lines.slice(1).join(" ");
 
+  useEffect(() => {
+    Aos.init()
+  }, [])
+
   return (
-    <div className="mt-20">
-     <div className="text-xl font-semibold text-[#A1A8B1] mb-4">My Tools</div>
+    <div data-aos="fade-up" className="mt-20">
+      <div className="text-xl font-semibold text-[#A1A8B1] mb-4">My Tools</div>
       <section
         className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-20 items-center"
         aria-label="My tools"

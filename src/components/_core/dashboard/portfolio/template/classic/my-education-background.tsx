@@ -1,4 +1,6 @@
 "use client";
+import Aos from "aos";
+import { useEffect } from "react";
 
 export type EducationEntry = {
   institution: string;
@@ -10,8 +12,11 @@ type MyEducationBackgroundProps = {
 };
 
 export function MyEducationBackground({ entries = [] }: MyEducationBackgroundProps) {
+  useEffect(() => {
+    Aos.init()
+  }, [])
   return (
-    <section className="mt-20" aria-label="Education background">
+    <section data-aos="fade-up" className="mt-20" aria-label="Education background">
       <span className="text-xl font-semibold text-[#A1A8B1] mb-4">
         Education Background
       </span>

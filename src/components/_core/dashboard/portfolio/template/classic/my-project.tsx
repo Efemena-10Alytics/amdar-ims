@@ -1,7 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { ArrowUpRight, Plus } from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
+import Aos from "aos";
+
+const HOVER_IMAGE = "/images/pngs/woman.png";
 
 /** Clip-path for card shape (folder-style). Uses objectBoundingBox so it scales with element width/height. */
 const CARD_CLIP_PATH_ID = "project-card-clip";
@@ -39,8 +44,11 @@ export function MyProjects({
   onProjectClick,
   showAddProject,
 }: MyProjectsProps) {
+  useEffect(() => {
+    Aos.init()
+  }, [])
   return (
-    <section className="mt-20 relative" aria-label="My projects">
+    <section data-aos="fade-up" className="mt-20 relative" aria-label="My projects">
       <CardClipPathDef />
       <div className="text-xl font-semibold text-[#A1A8B1] b mb-4">
         My projects
@@ -75,16 +83,24 @@ function ProjectCard({
   onClick?: () => void;
   showAddProject?: boolean;
 }) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const displayImage = isHovered ? HOVER_IMAGE : project.imageUrl;
+
   return (
-    <article className="relative block w-full min-w-0 overflow-visible">
+    <article
+      className="relative block w-full min-w-0 overflow-visible"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className="relative h-60 w-full min-w-0">
         <div
-          className="absolute inset-0 overflow-hidden bg-[#E8EFF1] hover:scale-95 transition-all shadow-sm"
+          className="absolute inset-0 overflow-hidden bg-[#E8EFF1] transition-opacity shadow-sm"
           style={{ clipPath: `url(#${CARD_CLIP_PATH_ID})` }}
         >
-          {project.imageUrl ? (
+          {displayImage ? (
             <img
-              src={project.imageUrl}
+              src={displayImage}
               alt=""
               className="absolute inset-0 h-full w-full object-cover"
             />
@@ -99,10 +115,19 @@ function ProjectCard({
           <button
             type="button"
             onClick={onClick}
-            className="absolute bottom-2 right-2 flex size-9 items-center justify-center rounded-full bg-primary text-white shadow-md transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 z-20"
+            className={cn(
+              "absolute bottom-2 right-2 flex size-9 items-center justify-center gap-1.5 rounded-full shadow-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 z-20",
+              isHovered
+                ? "bg-amdari-yellow text-[#092A31] px-4 h-9"
+                : "bg-primary text-white size-9"
+            )}
             aria-label={`View ${project.title}`}
           >
-            <ArrowUpRight className="size-4" aria-hidden />
+            {isHovered ? (
+              <span className="text-[6px] font-medium">View</span>
+            ) : (
+              <ArrowUpRight className="size-4" aria-hidden />
+            )}
           </button>
         </Link>
       </div>
