@@ -4,9 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { getUserId } from "@/lib/get-user-id";
 import { useAuthStore } from "@/store/auth-store";
-import { ArrowLeft, Settings } from "lucide-react";
+import { ArrowLeft,  Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
+  LockKeyHoleIcon,
   PencilFilledIcon,
   ShareFilledIcon,
 } from "@/components/_core/dashboard/svg";
@@ -16,13 +17,13 @@ import { ViewLinkModal } from "@/components/_core/dashboard/portfolio/view-link-
 import CreateClassic from "@/components/_core/dashboard/portfolio/template/classic";
 
 const TEMPLATES = [
-  { id: "classic", label: "Classic" },
-  { id: "bold", label: "Bold" },
-  { id: "simple", label: "Simple" },
-  { id: "highlight", label: "Highlight" },
-  { id: "whole", label: "Whole" },
-  { id: "dark", label: "Dark" },
-  { id: "square", label: "Square" },
+  { id: "classic", label: "Classic",comingSoon: false },
+  { id: "bold", label: "Bold", comingSoon: true },
+  { id: "simple", label: "Simple", comingSoon: true },
+  { id: "highlight", label: "Highlight", comingSoon: true },
+  { id: "whole", label: "Whole", comingSoon: true },
+  { id: "dark", label: "Dark", comingSoon: true },
+  { id: "square", label: "Square", comingSoon: true },
 ] as const;
 
 // Template images from public/pngs/template/ (e.g. classic.png, bold.png, ...)
@@ -32,11 +33,13 @@ function TemplatePreview({
   id,
   label,
   selected,
+  comingSoon,
   onClick,
 }: {
   id: string;
   label: string;
   selected: boolean;
+  comingSoon?: boolean;
   onClick: () => void;
 }) {
   const [imgError, setImgError] = useState(false);
@@ -46,15 +49,18 @@ function TemplatePreview({
     <div className="space-y-2">
       <button
         type="button"
-        onClick={onClick}
+        onClick={comingSoon ? undefined : onClick}
+        disabled={comingSoon}
         className={cn(
-          "flex shrink-0 flex-col items-center gap-2 min-h-35 text-left transition-colors rounded-xl w-full max-w-30",
-          selected
-            ? "border-primary bg-primary/5"
-            : "border-zinc-200 bg-white hover:border-zinc-300",
+          "flex shrink-0 flex-col items-center gap-2 min-h-35 text-left rounded-xl w-full max-w-30",
+          comingSoon ? "cursor-not-allowed" : "transition-colors",
+          !comingSoon &&
+            (selected
+              ? "border-primary bg-primary/5"
+              : "border-zinc-200 bg-white hover:border-zinc-300"),
         )}
         aria-pressed={selected}
-        aria-label={`Template: ${label}`}
+        aria-label={comingSoon ? `${label} (Coming soon)` : `Template: ${label}`}
       >
         <div className="relative w-full min-h-35 aspect-4/3 rounded-lg overflow-hidden bg-zinc-100">
           {!imgError ? (
@@ -63,9 +69,11 @@ function TemplatePreview({
               alt=""
               className={cn(
                 "h-full min-h-35 w-full object-cover object-top border-2 rounded-xl",
-                selected
-                  ? "border-primary bg-primary/5"
-                  : "border-zinc-200 bg-white hover:border-zinc-300",
+                comingSoon && "blur-xs",
+                !comingSoon &&
+                  (selected
+                    ? "border-primary bg-primary/5"
+                    : "border-zinc-200 bg-white hover:border-zinc-300"),
               )}
               onError={() => setImgError(true)}
             />
@@ -74,15 +82,26 @@ function TemplatePreview({
               Preview
             </div>
           )}
+          {comingSoon && (
+            <div
+              className="absolute inset-0 flex items-center justify-center"
+              aria-hidden
+            >
+              <div className="flex size-10 items-center justify-center rounded-md  text-primary">
+                <LockKeyHoleIcon />
+              </div>
+            </div>
+          )}
         </div>
       </button>
       <span
         className={cn(
           "text-sm font-medium",
-          selected ? "text-primary" : "text-zinc-700",
+          comingSoon && "text-[#C19A5B] font-bold",
+          !comingSoon && (selected ? "text-primary" : "text-zinc-700"),
         )}
       >
-        {label}
+        {comingSoon ? "Coming soon!" : label}
       </span>
     </div>
   );
@@ -144,13 +163,7 @@ export default function PortfolioPage() {
       <ViewLinkModal
         open={viewLinkOpen}
         onOpenChange={setViewLinkOpen}
-        onContinue={() => {
-          if (typeof window !== "undefined" && userId != null) {
-            window.location.href = `/portfolio/${userId}`;
-          } else if (typeof window !== "undefined") {
-            window.location.href = "/portfolio";
-          }
-        }}
+        href={userId != null ? `/portfolio/${userId}` : "/portfolio"}
       />
 
       <section className="py-6" aria-label="Portfolio template">
@@ -162,6 +175,7 @@ export default function PortfolioPage() {
                 id={t.id}
                 label={t.label}
                 selected={selectedTemplate === t.id}
+                comingSoon={t.comingSoon ?? false}
                 onClick={() => setSelectedTemplate(t.id)}
               />
             ))}

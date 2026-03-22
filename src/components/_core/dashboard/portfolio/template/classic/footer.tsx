@@ -95,6 +95,8 @@ export function Footer({
               <a
                 key={link.type}
                 href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={link.label}
                 className="flex size-9 items-center justify-center rounded-lg bg-primary text-white shrink-0"
               // style={{ backgroundColor: TEAL }}
