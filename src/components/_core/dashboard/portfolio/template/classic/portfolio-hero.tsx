@@ -27,9 +27,10 @@ const TOOL_ICONS: Record<string, string> = {
 
 type PortfolioHeroProps = {
   value: PortfolioHeroData;
+  id?: string;
 };
 
-export function PortfolioHero({ value }: PortfolioHeroProps) {
+export function PortfolioHero({ value, id }: PortfolioHeroProps) {
   const toolIcon =
     value.toolBadgeIconUrl ||
     (value.toolBadge ? TOOL_ICONS[value.toolBadge] : null);
@@ -47,7 +48,7 @@ export function PortfolioHero({ value }: PortfolioHeroProps) {
   }, []);
 
   return (
-    <section className="text-center mt-16">
+    <section id={id} className="text-center mt-16">
       <h1 data-aos="zoom-in" className="text-2xl md:text-6xl font-semibold text-[#092A31] tracking-tight">
         Hello, I&apos;m {value.name || "—"}
       </h1>

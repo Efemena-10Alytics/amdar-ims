@@ -36,6 +36,7 @@ type MyProjectsProps = {
   onAddProject?: () => void;
   onProjectClick?: (project: ProjectItem) => void;
   showAddProject?: boolean;
+  id?: string;
 };
 
 export function MyProjects({
@@ -43,12 +44,13 @@ export function MyProjects({
   onAddProject,
   onProjectClick,
   showAddProject,
+  id,
 }: MyProjectsProps) {
   useEffect(() => {
     Aos.init()
   }, [])
   return (
-    <section data-aos="fade-up" className="mt-20 relative" aria-label="My projects">
+    <section id={id} data-aos="fade-up" className="mt-20 relative" aria-label="My projects">
       <CardClipPathDef />
       <div className="text-xl font-semibold text-[#A1A8B1] b mb-4">
         My projects

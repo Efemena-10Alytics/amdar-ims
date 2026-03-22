@@ -5,17 +5,19 @@ import { useEffect } from "react";
 type MySpecializationProps = {
   specializations?: string[];
   softSkills?: string[];
+  id?: string;
 };
 
 export function MySpecialization({
   specializations = [],
   softSkills = [],
+  id,
 }: MySpecializationProps) {
   useEffect(() => {
     Aos.init()
   }, [])
   return (
-    <section data-aos="fade-up" className="mt-20" aria-label="Specialization and skills">
+    <section id={id} data-aos="fade-up" className="mt-20" aria-label="Specialization and skills">
       {/* My Specialization */}
       <div className="text-xl font-semibold text-[#A1A8B1] mb-4">
         My Specialization

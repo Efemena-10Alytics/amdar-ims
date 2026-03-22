@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useMemo } from "react";
-import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getImageUrl } from "@/lib/utils";
@@ -178,7 +177,7 @@ const Classic = ({ portfolio, isLoading, error }: ClassicProps) => {
           {NAV_ITEMS.map(({ href, label }) => {
             const isActive = label === "Home";
             return (
-              <Link
+              <a
                 key={href}
                 href={href}
                 className={cn(
@@ -189,12 +188,13 @@ const Classic = ({ portfolio, isLoading, error }: ClassicProps) => {
                 )}
               >
                 {label}
-              </Link>
+              </a>
             );
           })}
         </nav>
       </header>
       <PortfolioHero
+        id="home"
         value={heroData ?? {
           name: "—",
           jobTitle: "Professional",
@@ -206,12 +206,13 @@ const Classic = ({ portfolio, isLoading, error }: ClassicProps) => {
         }}
       />
 
-      <MyProjects projects={projects} onAddProject={() => {}} />
+      <MyProjects id="projects" projects={projects} onAddProject={() => {}} />
       <MyWorkExperience items={workItems} onItemClick={() => {}} />
-      <MySpecialization specializations={specializations} softSkills={softSkills} />
+      <MySpecialization id="specialization" specializations={specializations} softSkills={softSkills} />
       <MyTools tools={tools} title={categoryTitle} />
       <MyEducationBackground entries={educationEntries} />
       <Footer
+        id="contact"
         contact={footerContact}
         socialLinks={footerSocialLinks}
       />

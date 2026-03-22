@@ -23,6 +23,7 @@ type FooterProps = {
   contact?: FooterContact;
   socialLinks?: SocialLink[];
   poweredByHref?: string;
+  id?: string;
 };
 
 const TEAL = "#202C3D";
@@ -41,6 +42,7 @@ export function Footer({
     { type: "mail" as const, href: "#", label: "Email" },
   ],
   poweredByHref = "/",
+  id,
 }: FooterProps) {
   const SocialIcon = ({ type }: { type: SocialLink["type"] }) => {
     switch (type) {
@@ -62,7 +64,7 @@ export function Footer({
   }, [])
 
   return (
-    <footer data-aos="fade-up" className="mt-16 pt-10 pb-4" aria-label="Contact and footer">
+    <footer id={id} data-aos="fade-up" className="mt-16 pt-10 pb-4" aria-label="Contact and footer">
       {/* Top: Contact left, Email + Social right */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
         <div>
