@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { Phone, Mail, Flag, Twitter, Linkedin } from "lucide-react";
 import Image from "next/image";
+import Aos from "aos";
+import { useEffect } from "react";
 
 export type FooterContact = {
   phone: string;
@@ -21,6 +23,7 @@ type FooterProps = {
   contact?: FooterContact;
   socialLinks?: SocialLink[];
   poweredByHref?: string;
+  id?: string;
 };
 
 const TEAL = "#202C3D";
@@ -39,6 +42,7 @@ export function Footer({
     { type: "mail" as const, href: "#", label: "Email" },
   ],
   poweredByHref = "/",
+  id,
 }: FooterProps) {
   const SocialIcon = ({ type }: { type: SocialLink["type"] }) => {
     switch (type) {
@@ -55,8 +59,12 @@ export function Footer({
     }
   };
 
+  useEffect(() => {
+    Aos.init()
+  }, [])
+
   return (
-    <footer className="mt-16 pt-10 pb-4" aria-label="Contact and footer">
+    <footer id={id} data-aos="fade-up" className="mt-16 pt-10 pb-4" aria-label="Contact and footer">
       {/* Top: Contact left, Email + Social right */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
         <div>
@@ -89,9 +97,11 @@ export function Footer({
               <a
                 key={link.type}
                 href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={link.label}
                 className="flex size-9 items-center justify-center rounded-lg bg-primary text-white shrink-0"
-                // style={{ backgroundColor: TEAL }}
+              // style={{ backgroundColor: TEAL }}
               >
                 <SocialIcon type={link.type} />
               </a>

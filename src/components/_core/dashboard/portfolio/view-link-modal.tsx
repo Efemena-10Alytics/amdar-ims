@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { LinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,19 +15,14 @@ import {
 type ViewLinkModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onContinue?: () => void;
+  href?: string;
 };
 
 export function ViewLinkModal({
   open,
   onOpenChange,
-  onContinue,
+  href,
 }: ViewLinkModalProps) {
-  const handleContinue = () => {
-    onContinue?.();
-    onOpenChange(false);
-  };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md text-center" showCloseButton>
@@ -50,13 +46,22 @@ export function ViewLinkModal({
           >
             Cancel
           </Button>
-          <Button
-            type="button"
-            className="bg-primary text-white hover:bg-primary/90 flex-1"
-            onClick={handleContinue}
-          >
-            Continue
-          </Button>
+          {href ? (
+            <Button asChild className="bg-primary text-white hover:bg-primary/90 flex-1">
+              <Link target="_blank"
+                rel="noopener noreferrer" href={href} onClick={() => onOpenChange(false)}>
+                Continue
+              </Link>
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              className="bg-primary text-white hover:bg-primary/90 flex-1"
+              disabled
+            >
+              Continue
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

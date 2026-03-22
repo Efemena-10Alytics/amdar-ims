@@ -1,6 +1,11 @@
 "use client";
 
 import Image from "next/image";
+import Aos from "aos";
+import { useEffect, useState } from "react";
+import { useCountUp } from "@/hooks/use-count-up";
+
+
 
 export type PortfolioHeroData = {
   name: string;
@@ -10,8 +15,10 @@ export type PortfolioHeroData = {
   yearsExperience: string;
   countryName: string;
   countryFlagUrl?: string;
-  /** Tool badge next to job title (e.g. "Figma"). Uses /images/svgs/tools/figma.svg when "Figma". */
+  /** Tool badge next to job title (e.g. "Figma"). */
   toolBadge?: string;
+  /** Icon URL from portfolio tools array. When set, used instead of local TOOL_ICONS. */
+  toolBadgeIconUrl?: string | null;
 };
 
 const TOOL_ICONS: Record<string, string> = {
@@ -20,14 +27,29 @@ const TOOL_ICONS: Record<string, string> = {
 
 type PortfolioHeroProps = {
   value: PortfolioHeroData;
+  id?: string;
 };
 
-export function PortfolioHero({ value }: PortfolioHeroProps) {
-  const toolIcon = value.toolBadge ? TOOL_ICONS[value.toolBadge] : null;
+export function PortfolioHero({ value, id }: PortfolioHeroProps) {
+  const toolIcon =
+    value.toolBadgeIconUrl ||
+    (value.toolBadge ? TOOL_ICONS[value.toolBadge] : null);
+
+  const projectsNum = parseInt(value.projectsCount?.replace(/\D/g, "") ?? "0", 10);
+  const projectsSuffix = value.projectsCount?.includes("+") ? "+" : "";
+  const projectsDisplay = useCountUp(projectsNum, 1500, !!value.projectsCount && projectsNum > 0);
+
+  const yearsNum = parseInt(value.yearsExperience?.replace(/\D/g, "") ?? "0", 10);
+  const yearsSuffix = value.yearsExperience?.includes("+") ? "+" : "";
+  const yearsDisplay = useCountUp(yearsNum, 1500, !!value.yearsExperience && yearsNum > 0);
+
+  useEffect(() => {
+    Aos.init();
+  }, []);
 
   return (
-    <section className="text-center mt-16">
-      <h1 className="text-2xl md:text-6xl font-semibold text-[#092A31] tracking-tight">
+    <section id={id} className="text-center mt-16">
+      <h1 data-aos="zoom-in" className="text-2xl md:text-6xl font-semibold text-[#092A31] tracking-tight">
         Hello, I&apos;m {value.name || "—"}
       </h1>
 
@@ -36,26 +58,37 @@ export function PortfolioHero({ value }: PortfolioHeroProps) {
           <span
             className="inline-flex items-center gap-1.5 rounded-full bg-[#E8EFF1] px-4 py-3 text-xs text-[#092A31] shadow-sm"
             aria-hidden
+            data-aos="fade-left"
           >
             <div className="bg-white p-2 rounded-full h-6 w-6 flex items-center justify-center">
-              <Image
-                src={toolIcon}
-                alt=""
-                width={16}
-                height={16}
-                className="shrink-0"
-              />
+              {value.toolBadgeIconUrl?.trim() ? (
+                <img
+                  src={value.toolBadgeIconUrl}
+                  alt=""
+                  width={16}
+                  height={16}
+                  className="shrink-0 size-4 object-contain"
+                />
+              ) : (
+                <Image
+                  src={toolIcon}
+                  alt=""
+                  width={16}
+                  height={16}
+                  className="shrink-0"
+                />
+              )}
             </div>
             <span>{value.toolBadge}</span>
           </span>
         )}
-        <h1 className="text-2xl md:text-6xl font-semibold text-[#092A31]">
+        <h1 data-aos="fade-right" className="text-2xl md:text-6xl font-semibold text-[#092A31]">
           A {value.jobTitle || "Professional"}
         </h1>
       </div>
 
       {value.bio && (
-        <p className="mt-6 max-w-2xl mx-auto text-sm md:text-base text-[#64748B] leading-relaxed">
+        <p className="mt-6 capitalize max-w-2xl mx-auto text-sm md:text-base text-[#64748B] leading-relaxed">
           &ldquo;{value.bio}&rdquo;
         </p>
       )}
@@ -66,7 +99,7 @@ export function PortfolioHero({ value }: PortfolioHeroProps) {
             {value.projectsCount && (
               <div className="text-left">
                 <h2 className="text-lg md:text-xl font-semibold text-[#092A31]">
-                  {value.projectsCount}+
+                  {projectsDisplay}{projectsSuffix}
                 </h2>
                 <div className="text-sm text-[#64748B] mt-0.5">Projects</div>
               </div>
@@ -74,7 +107,7 @@ export function PortfolioHero({ value }: PortfolioHeroProps) {
             {value.yearsExperience && (
               <div className="text-left">
                 <h2 className="text-lg md:text-xl font-semibold text-[#092A31]">
-                  {value.yearsExperience}+
+                  {yearsDisplay}{yearsSuffix}
                 </h2>
                 <div className="text-sm text-[#64748B] mt-0.5">Years</div>
               </div>

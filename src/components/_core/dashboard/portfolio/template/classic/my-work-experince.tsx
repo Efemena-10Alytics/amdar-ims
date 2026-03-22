@@ -1,6 +1,8 @@
 "use client";
 
 import { ArrowUpRight } from "lucide-react";
+import Aos from "aos";
+import { useEffect } from "react";
 
 export type WorkExperienceItem = {
   id?: string;
@@ -20,8 +22,11 @@ export function MyWorkExperience({
   items = [],
   onItemClick,
 }: MyWorkExperienceProps) {
+  useEffect(() => {
+    Aos.init()
+  }, [])
   return (
-    <section className="mt-20" aria-label="My work experience">
+    <section data-aos="fade-up" className="mt-20" aria-label="My work experience">
       <div className="text-xl font-semibold text-[#A1A8B1] mb-4">
         My Work Experience
       </div>
