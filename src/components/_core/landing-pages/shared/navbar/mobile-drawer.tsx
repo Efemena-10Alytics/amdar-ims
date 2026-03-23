@@ -43,10 +43,10 @@ const MobileDrawer = ({
         <div className="flex flex-col justify-between h-full">
           {/* Drawer Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            <span className="text-xl font-semibold text-[#156374]">Menu</span>
+            <span className="text-xl font-semibold text-primary">Menu</span>
             <button
               onClick={onClose}
-              className="p-2 text-[#156374] hover:text-[#0f4d5a] transition-colors"
+              className="p-2 text-primary hover:text-[#0f4d5a] transition-colors"
               aria-label="Close menu"
             >
               <X className="w-6 h-6" />
@@ -60,20 +60,61 @@ const MobileDrawer = ({
                 const isActive =
                   link.href !== "#" && pathname.startsWith(link.href);
                 return (
-                  <Link
+                  <Link as={"h1"}
                     key={link.label}
                     href={link.href}
                     onClick={onClose}
                     className={cn(
                       "text-base font-medium transition-colors py-2 relative",
                       isActive && "underline underline-offset-4",
-                      "text-[#156374] hover:text-[#0f4d5a]",
+                      "text-primary hover:text-[#0f4d5a]",
                     )}
                   >
                     {link.label}
                   </Link>
                 );
               })}
+              <div>
+                <h1 className={cn(
+                  "text-base font-medium transition-colors py-2 relative",
+                  "text-primary hover:text-[#0f4d5a]",
+                )}>More Programs</h1>
+                <div className="pl-2 space-y-3 mt-2">
+
+                  <div>
+                    <Link className={cn(
+                      "text-base font-medium transition-colors py-2 relative",
+                      "text-primary hover:text-[#0f4d5a]",
+                    )} href="/hackathon">
+                      <h2>Hackathon</h2>
+                    </Link>
+                  </div>
+                  <div>
+                    <Link className={cn(
+                      "text-base font-medium transition-colors py-2 relative",
+                      "text-primary hover:text-[#0f4d5a]",
+                    )} href="/job-board">
+                      <h2>Job Board</h2>
+                    </Link>
+                  </div>
+                  <div>
+                    <Link className={cn(
+                      "text-base font-medium transition-colors py-2 relative",
+                      "text-primary hover:text-[#0f4d5a]",
+                    )} href="/blog">
+                      <h2>Blog</h2>
+                    </Link>
+                  </div>
+                  <div>
+                    <Link className={cn(
+                      "text-base font-medium transition-colors py-2 relative",
+                      "text-primary hover:text-[#0f4d5a]",
+                    )} href="/contact">
+                      <h2>Chat With Us</h2>
+                    </Link>
+                  </div>
+                </div>
+              </div>
             </nav>
 
             {/* Drawer Buttons */}
@@ -83,7 +124,7 @@ const MobileDrawer = ({
                   <Link
                     href="/dashboard"
                     onClick={onClose}
-                    className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-lg bg-pink-100 text-[#156374] hover:bg-pink-200 transition-colors"
+                    className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-lg bg-pink-100 text-primary hover:bg-pink-200 transition-colors"
                   >
                     <User className="size-5" />
                     <span className="font-medium">Profile</span>
@@ -107,7 +148,7 @@ const MobileDrawer = ({
                       variant="outline"
                       onClick={onClose}
                       className={cn(
-                        "w-full border-[#156374] text-[#156374] bg-white hover:bg-[#156374]/5",
+                        "w-full border-primary text-primary bg-white hover:bg-primary/5",
                         "hover:border-[#0f4d5a] hover:text-[#0f4d5a]",
                       )}
                     >
@@ -119,7 +160,7 @@ const MobileDrawer = ({
                     <Button
                       onClick={onClose}
                       className={cn(
-                        "w-full bg-[#156374] text-white hover:bg-amdari-yellow hover:text-primary",
+                        "w-full bg-primary text-white hover:bg-amdari-yellow hover:text-primary",
                         "border-0",
                       )}
                     >
