@@ -1,56 +1,46 @@
 "use client";
 
-import { useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import {
-  ViewProjectContent,
-  mapProjectToViewData,
-} from "./view-project-content";
+import { Loader2 } from "lucide-react";
+import { ProjectForm } from "../project-form";
 import { useGetProjectByUserId } from "@/features/portfolio/use-get-project-by-id";
+import { useUpdatePortfolioProject } from "@/features/portfolio/use-update-portfolio-project";
 import { getUserId } from "@/lib/get-user-id";
 import { useAuthStore } from "@/store/auth-store";
 
-export default function ViewProjectPage() {
+function paramId(
+  value: string | string[] | undefined,
+): string | undefined {
+  if (typeof value === "string") return value;
+  if (Array.isArray(value)) return value[0];
+  return undefined;
+}
+
+export default function EditProjectPage() {
   const params = useParams();
   const router = useRouter();
-  const projectId = params?.id;
-  const idParam =
-    typeof projectId === "string"
-      ? projectId
-      : Array.isArray(projectId)
-        ? projectId[0]
-        : undefined;
+  const projectId = paramId(params?.id);
 
   const user = useAuthStore((s) => s.user);
   const userId = getUserId(user);
 
-  const { data, isLoading, isError, error } = useGetProjectByUserId(userId, idParam);
-
-  const project = useMemo(
-    () => (data ? mapProjectToViewData(data) : null),
-    [data],
+  const { data, isLoading, isError, error } = useGetProjectByUserId(
+    userId,
+    projectId ?? null,
   );
+  const { updateProject, isSubmitting, errorMessage } =
+    useUpdatePortfolioProject();
 
-  const handleEdit = () => {
-    if (idParam) {
-      router.push(
-        `/dashboard-dev/portfolio/add-project/${encodeURIComponent(idParam)}/edit`,
-      );
-    }
-  };
+  const viewHref =
+    projectId != null
+      ? `/dashboard-dev/portfolio/add-project/${encodeURIComponent(projectId)}`
+      : "/dashboard-dev/portfolio";
 
-  const handleDelete = () => {
-    if (typeof window !== "undefined" && window.confirm("Delete this project?")) {
-      router.push("/dashboard-dev/portfolio");
-    }
-  };
-
-  if (!idParam) {
+  if (!projectId) {
     return (
       <div className="app-width flex min-h-[40vh] flex-col items-center justify-center gap-2 px-4">
-        <p className="text-sm text-zinc-600">Invalid project link.</p>
+        <p className="text-sm text-zinc-600">Invalid project.</p>
         <Link
           href="/dashboard-dev/portfolio"
           className="text-sm font-medium text-primary hover:underline"
@@ -64,7 +54,7 @@ export default function ViewProjectPage() {
   if (userId == null || userId === "") {
     return (
       <div className="app-width flex min-h-[40vh] flex-col items-center justify-center gap-2 px-4">
-        <p className="text-sm text-zinc-600">Sign in to view this project.</p>
+        <p className="text-sm text-zinc-600">Sign in to edit this project.</p>
         <Link
           href="/auth/sign-in"
           className="text-sm font-medium text-primary hover:underline"
@@ -84,7 +74,7 @@ export default function ViewProjectPage() {
     );
   }
 
-  if (isError || !project) {
+  if (isError || !data) {
     const message =
       error instanceof Error ? error.message : "Could not load this project.";
     return (
@@ -101,10 +91,23 @@ export default function ViewProjectPage() {
   }
 
   return (
-    <ViewProjectContent
-      project={project}
-      onEdit={handleEdit}
-      onDelete={handleDelete}
+    <ProjectForm
+      initialProject={data}
+      prefillKey={projectId}
+      headline={{
+        title: "Edit project",
+        subtitle: "Update your project details and save your changes",
+      }}
+      backHref={viewHref}
+      submitLabel="Save changes"
+      submittingLabel="Saving…"
+      isSubmitting={isSubmitting}
+      errorMessage={errorMessage}
+      onSubmit={async (formData) => {
+        const ok = await updateProject(projectId, formData);
+        if (ok) router.push(viewHref);
+        return ok;
+      }}
     />
   );
 }
