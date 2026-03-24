@@ -213,7 +213,7 @@ export function YourTools({ value, onChange }: YourToolsProps) {
       <div className="space-y-1 mb-3">
         <div className="text-sm text-[#092A31]">Category</div>
         <div className="p-2 bg-[#F8FAFC] rounded-lg text-[#092A31]">
-          {DEFAULT_CATEGORY}
+          {portfolioData?.category?.title ?? DEFAULT_CATEGORY}
         </div>
       </div>
       <div className="space-y-4">
