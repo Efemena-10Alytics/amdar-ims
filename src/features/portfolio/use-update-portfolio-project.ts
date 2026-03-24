@@ -4,14 +4,10 @@ import { axiosInstance } from "@/lib/axios-instance";
 import { getUserId } from "@/lib/get-user-id";
 import { useAuthStore } from "@/store/auth-store";
 import { PORTFOLIO_QUERY_KEY } from "./use-get-portfolio";
-import {
-  buildProjectFormData,
-  type AddProjectFormData,
-} from "./build-project-form-data";
+import { PROJECT_BY_ID_QUERY_KEY } from "./use-get-project-by-id";
+import { buildProjectFormData, type AddProjectFormData } from "./build-project-form-data";
 
-export type { AddProjectFormData, ProjectTool } from "./build-project-form-data";
-
-type AddProjectResponse = {
+type UpdateProjectResponse = {
   success?: boolean;
   data?: unknown;
 };
@@ -21,11 +17,11 @@ function getErrorMessage(error: unknown): string {
     (error as { response?: { data?: { message?: string } }; message?: string })
       ?.response?.data?.message ??
     (error as Error)?.message ??
-    "Failed to add project"
+    "Failed to update project"
   );
 }
 
-export function useAddProject() {
+export function useUpdatePortfolioProject() {
   const queryClient = useQueryClient();
   const user = useAuthStore((s) => s.user);
   const userId = getUserId(user);
@@ -33,14 +29,21 @@ export function useAddProject() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const addProject = useCallback(
-    async (data: AddProjectFormData) => {
+  const updateProject = useCallback(
+    async (
+      projectId: string | number,
+      data: AddProjectFormData,
+    ): Promise<boolean> => {
+      if (userId == null || userId === "") {
+        setErrorMessage("You must be signed in to update a project.");
+        return false;
+      }
       setIsSubmitting(true);
       setErrorMessage("");
       try {
         const formData = buildProjectFormData(data);
-        const res = await axiosInstance.post<AddProjectResponse>(
-          "user-portfolio/projects",
+        const res = await axiosInstance.post<UpdateProjectResponse>(
+          `user-portfolio/projects/${projectId}`,
           formData,
           {
             headers: {
@@ -53,12 +56,15 @@ export function useAddProject() {
             (res?.data as { message?: string })?.message ??
             (res?.data as { error?: string })?.error;
           setErrorMessage(
-            backendMsg || getErrorMessage(new Error("Request failed"))
+            backendMsg || getErrorMessage(new Error("Request failed")),
           );
           return false;
         }
-        queryClient.invalidateQueries({
+        await queryClient.invalidateQueries({
           queryKey: PORTFOLIO_QUERY_KEY(userId ?? ""),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: PROJECT_BY_ID_QUERY_KEY(userId, projectId),
         });
         return true;
       } catch (error) {
@@ -72,5 +78,5 @@ export function useAddProject() {
     [queryClient, userId],
   );
 
-  return { addProject, isSubmitting, errorMessage };
+  return { updateProject, isSubmitting, errorMessage };
 }

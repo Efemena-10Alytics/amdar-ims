@@ -6,7 +6,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import Aos from "aos";
 
-const HOVER_IMAGE = "/images/pngs/woman.png";
+const HOVER_IMAGE = "/images/pngs/project-hover.png";
 
 /** Clip-path for card shape (folder-style). Uses objectBoundingBox so it scales with element width/height. */
 const CARD_CLIP_PATH_ID = "project-card-clip";
@@ -37,6 +37,8 @@ type MyProjectsProps = {
   onProjectClick?: (project: ProjectItem) => void;
   showAddProject?: boolean;
   id?: string;
+  /** Public portfolio owner id — enables links to `/portfolio/{id}/{projectId}`. */
+  publicPortfolioUserId?: string;
 };
 
 export function MyProjects({
@@ -45,6 +47,7 @@ export function MyProjects({
   onProjectClick,
   showAddProject,
   id,
+  publicPortfolioUserId,
 }: MyProjectsProps) {
   useEffect(() => {
     Aos.init()
@@ -62,6 +65,7 @@ export function MyProjects({
               project={project}
               onClick={() => onProjectClick?.(project)}
               showAddProject={showAddProject}
+              publicPortfolioUserId={publicPortfolioUserId}
             />
           </div>
         ))}
@@ -80,14 +84,33 @@ function ProjectCard({
   project,
   onClick,
   showAddProject,
+  publicPortfolioUserId,
 }: {
   project: ProjectItem;
   onClick?: () => void;
   showAddProject?: boolean;
+  publicPortfolioUserId?: string;
 }) {
   const [isHovered, setIsHovered] = useState(false);
 
   const displayImage = isHovered ? HOVER_IMAGE : project.imageUrl;
+
+  const hasProjectId =
+    project.id != null && String(project.id).trim() !== "";
+
+  const viewHref =
+    showAddProject && hasProjectId
+      ? `/dashboard-dev/portfolio/add-project/${encodeURIComponent(String(project.id))}`
+      : publicPortfolioUserId && hasProjectId
+        ? `/portfolio/${encodeURIComponent(publicPortfolioUserId)}/${encodeURIComponent(String(project.id))}`
+        : undefined;
+
+  const actionClassName = cn(
+    "absolute bottom-2 right-2 flex size-9 items-center justify-center gap-1.5 rounded-full shadow-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 z-20",
+    isHovered
+      ? "bg-amdari-yellow text-[#092A31] px-4 h-9"
+      : "bg-primary text-white size-9",
+  );
 
   return (
     <article
@@ -113,16 +136,24 @@ function ProjectCard({
           )}
         </div>
         {/* Action: bottom right, outside clip so it always shows */}
-        <Link href={showAddProject ? `portfolio/add-project/${"id"}` : "#"}>
+        {viewHref ? (
+          <Link
+            href={viewHref}
+            className={actionClassName}
+            aria-label={`View ${project.title}`}
+            onClick={onClick}
+          >
+            {isHovered ? (
+              <span className="text-[6px] font-medium">View</span>
+            ) : (
+              <ArrowUpRight className="size-4" aria-hidden />
+            )}
+          </Link>
+        ) : (
           <button
             type="button"
             onClick={onClick}
-            className={cn(
-              "absolute bottom-2 right-2 flex size-9 items-center justify-center gap-1.5 rounded-full shadow-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 z-20",
-              isHovered
-                ? "bg-amdari-yellow text-[#092A31] px-4 h-9"
-                : "bg-primary text-white size-9"
-            )}
+            className={actionClassName}
             aria-label={`View ${project.title}`}
           >
             {isHovered ? (
@@ -131,7 +162,7 @@ function ProjectCard({
               <ArrowUpRight className="size-4" aria-hidden />
             )}
           </button>
-        </Link>
+        )}
       </div>
       {/* Tags: top right, outside clip so they always show */}
       {project.tags && project.tags.length > 0 && (
@@ -156,7 +187,7 @@ function ProjectCard({
 
 function AddProjectCard({ onAdd }: { onAdd?: () => void }) {
   return (
-    <Link href={"portfolio/add-project"}>
+    <Link href="/dashboard-dev/portfolio/add-project">
       <button
         type="button"
         onClick={onAdd}

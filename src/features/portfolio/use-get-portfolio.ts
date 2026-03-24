@@ -55,6 +55,7 @@ export type UserPortfolioEducationItem = {
 };
 
 export type UserPortfolioProject = {
+  id?: string | number | null;
   coverImage?: string | null;
   title?: string | null;
   category?: string | null;
