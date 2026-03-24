@@ -11,7 +11,12 @@ export default function PortfolioByUserIdPage() {
 
   return (
     <div className="mt-10">
-      <Classic portfolio={portfolio} isLoading={isLoading} error={error} />
+      <Classic
+        portfolio={portfolio}
+        isLoading={isLoading}
+        error={error}
+        portfolioUserId={userId}
+      />
     </div>
   );
 }

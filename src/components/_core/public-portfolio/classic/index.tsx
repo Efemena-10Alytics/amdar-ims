@@ -41,9 +41,11 @@ type ClassicProps = {
   portfolio?: UserPortfolioData | null;
   isLoading?: boolean;
   error?: Error | null | unknown;
+  /** When set, project cards link to the public project view. */
+  portfolioUserId?: string | null;
 };
 
-const Classic = ({ portfolio, isLoading, error }: ClassicProps) => {
+const Classic = ({ portfolio, isLoading, error, portfolioUserId }: ClassicProps) => {
   const { data: countries = [] } = useCountries();
 
   const heroData = useMemo(() => {
@@ -70,8 +72,11 @@ const Classic = ({ portfolio, isLoading, error }: ClassicProps) => {
   }, [portfolio, countries]);
 
   const projects = useMemo(() => {
-    return (portfolio?.projects ?? []).map((p) => ({
-      id: String(p.coverImage ?? p.title ?? Math.random()),
+    return (portfolio?.projects ?? []).map((p, index) => ({
+      id:
+        p.id != null && String(p.id).trim() !== ""
+          ? String(p.id)
+          : String(p.coverImage ?? p.title ?? index),
       title: p.title || "Untitled",
       tags: p.category ? [p.category] : [],
       imageUrl: getImageUrl(p.coverImage ?? (Array.isArray(p.image) && p.image[0] ? String(p.image[0]) : null)) || undefined,
@@ -206,7 +211,12 @@ const Classic = ({ portfolio, isLoading, error }: ClassicProps) => {
         }}
       />
 
-      <MyProjects id="projects" projects={projects} onAddProject={() => {}} />
+      <MyProjects
+        id="projects"
+        projects={projects}
+        onAddProject={() => {}}
+        publicPortfolioUserId={portfolioUserId ?? undefined}
+      />
       <MyWorkExperience items={workItems} onItemClick={() => {}} />
       <MySpecialization id="specialization" specializations={specializations} softSkills={softSkills} />
       <MyTools tools={tools} title={categoryTitle} />

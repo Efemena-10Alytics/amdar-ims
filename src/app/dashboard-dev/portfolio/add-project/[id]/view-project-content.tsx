@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Pencil, Trash2, Link2, LinkIcon } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2, LinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getImageUrl } from "@/lib/utils";
+import type { UserPortfolioProjectDetail } from "@/features/portfolio/use-get-project-by-id";
 
 export type ViewProjectData = {
   title: string;
@@ -20,7 +22,34 @@ type ViewProjectContentProps = {
   project: ViewProjectData;
   onEdit?: () => void;
   onDelete?: () => void;
+  /** Back link target (default: dashboard portfolio). */
+  backHref?: string;
+  backLabel?: string;
 };
+
+export function mapProjectToViewData(
+  data: UserPortfolioProjectDetail,
+): ViewProjectData {
+  const category = data.category?.trim();
+  return {
+    title: data.title?.trim() || "Untitled",
+    tags: category ? [category] : undefined,
+    coverImageUrl: getImageUrl(data.coverImage) || undefined,
+    overview: data.overview?.trim() || undefined,
+    tools: (data.tools ?? [])
+      .map((t) => {
+        const name = t.name?.trim();
+        if (!name) return null;
+        const iconUrl = getImageUrl(t.image ?? t.url ?? undefined) || undefined;
+        return { name, ...(iconUrl && { iconUrl }) };
+      })
+      .filter((t): t is { name: string; iconUrl?: string } => t != null),
+    rationale: data.rationale?.trim() || undefined,
+    aim: data.aim?.trim() || undefined,
+    solutionUrl: data.solutionUrl?.trim() || undefined,
+    mediaLink: data.mediaLink?.trim() || undefined,
+  };
+}
 
 const TOOL_ICONS: Record<string, string> = {
   Figma: "/images/svgs/tools/figma.svg",
@@ -39,38 +68,44 @@ export function ViewProjectContent({
   project,
   onEdit,
   onDelete,
+  backHref = "/dashboard-dev/portfolio",
+  backLabel = "Back",
 }: ViewProjectContentProps) {
+  const showActions = onEdit != null || onDelete != null;
+
   return (
     <div className="min-h-full flex flex-col">
       <header className="flex items-center justify-between w-full border-b border-zinc-200 bg-white py-4">
         <Link
-          href="/dashboard-dev/portfolio"
+          href={backHref}
           className="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-700 transition-colors"
         >
           <ArrowLeft className="size-4" aria-hidden />
-          Back
+          {backLabel}
         </Link>
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="secondary"
-            className="rounded-lg bg-[#F1F5F9] text-zinc-700 hover:bg-zinc-200 border-0"
-            onClick={onEdit}
-          >
-            <Pencil className="size-4 mr-2" aria-hidden />
-            Edit project
-          </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            size="icon"
-            className="rounded-full bg-[#FDECEC] text-[#EF4444] cursor-pointer hover:bg-red-50 hover:text-red-600 border border-[#FAC5C5] size-9"
-            aria-label="Delete project"
-            onClick={onDelete}
-          >
-            <Trash2 className="size-4" aria-hidden />
-          </Button>
-        </div>
+        {showActions ? (
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              className="rounded-lg bg-[#F1F5F9] text-zinc-700 hover:bg-zinc-200 border-0"
+              onClick={onEdit}
+            >
+              <Pencil className="size-4 mr-2" aria-hidden />
+              Edit project
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              size="icon"
+              className="rounded-full bg-[#FDECEC] text-[#EF4444] cursor-pointer hover:bg-red-50 hover:text-red-600 border border-[#FAC5C5] size-9"
+              aria-label="Delete project"
+              onClick={onDelete}
+            >
+              <Trash2 className="size-4" aria-hidden />
+            </Button>
+          </div>
+        ) : null}
       </header>
 
       {/* Hero banner */}
@@ -175,46 +210,82 @@ export function ViewProjectContent({
               Additional link
             </h2>
             <div className="space-y-3">
-              <div className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-center justify-between gap-3">
-                <span className="text-sm font-medium text-[#092A31]">
-                  Solution URL
-                </span>
-                {project.solutionUrl ? (
-                  <a
-                    href={project.solutionUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex size-9 shrink-0 items-center justify-center rounded-full text-primary bg-[#EBF3FE] border border-[#C2D8FC] transition-colors"
-                    aria-label="Open solution URL"
+              {project.solutionUrl ? (
+                <a
+                  href={project.solutionUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-start justify-between gap-3 hover:bg-[#dde8eb] transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                >
+                  <div className="min-w-0 flex-1 text-left">
+                    <div className="text-sm font-medium text-[#092A31]">
+                      Solution URL
+                    </div>
+                    <p
+                      className="text-sm text-primary mt-1 break-all sm:break-words line-clamp-2 group-hover:underline"
+                      title={project.solutionUrl}
+                    >
+                      {project.solutionUrl}
+                    </p>
+                  </div>
+                  <span
+                    className="flex size-9 shrink-0 items-center justify-center rounded-full text-primary bg-[#EBF3FE] border border-[#C2D8FC]"
+                    aria-hidden
                   >
                     <LinkIcon className="size-4" />
-                  </a>
-                ) : (
+                  </span>
+                </a>
+              ) : (
+                <div className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-center justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <span className="text-sm font-medium text-[#092A31]">
+                      Solution URL
+                    </span>
+                    <p className="text-sm text-zinc-400 mt-1">—</p>
+                  </div>
                   <span className="flex size-9 shrink-0 items-center justify-center rounded-full text-zinc-400">
                     <LinkIcon className="size-4" />
                   </span>
-                )}
-              </div>
-              <div className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-center justify-between gap-3">
-                <span className="text-sm font-medium text-[#092A31]">
-                  Media link
-                </span>
-                {project.mediaLink ? (
-                  <a
-                    href={project.mediaLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex size-9 shrink-0 items-center justify-center rounded-full text-primary bg-[#EBF3FE] border border-[#C2D8FC] transition-colors"
-                    aria-label="Open media link"
+                </div>
+              )}
+              {project.mediaLink ? (
+                <a
+                  href={project.mediaLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-start justify-between gap-3 hover:bg-[#dde8eb] transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                >
+                  <div className="min-w-0 flex-1 text-left">
+                    <div className="text-sm font-medium text-[#092A31]">
+                      Media link
+                    </div>
+                    <p
+                      className="text-sm text-primary mt-1 break-all sm:break-words line-clamp-2 group-hover:underline"
+                      title={project.mediaLink}
+                    >
+                      {project.mediaLink}
+                    </p>
+                  </div>
+                  <span
+                    className="flex size-9 shrink-0 items-center justify-center rounded-full text-primary bg-[#EBF3FE] border border-[#C2D8FC]"
+                    aria-hidden
                   >
                     <LinkIcon className="size-4" />
-                  </a>
-                ) : (
+                  </span>
+                </a>
+              ) : (
+                <div className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-center justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <span className="text-sm font-medium text-[#092A31]">
+                      Media link
+                    </span>
+                    <p className="text-sm text-zinc-400 mt-1">—</p>
+                  </div>
                   <span className="flex size-9 shrink-0 items-center justify-center rounded-full text-zinc-400">
                     <LinkIcon className="size-4" />
                   </span>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </section>
         </aside>
