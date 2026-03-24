@@ -205,12 +205,12 @@ export function YourTools({ value, onChange }: YourToolsProps) {
   };
 
   return (
-    <div className="max-w-md">
+    <div className="">
       <h2 className="text-lg font-semibold text-zinc-900">Your Tools</h2>
       <p className="mt-1 text-sm text-zinc-500 mb-6">
         Select tools or technologies you excel in
       </p>
-      <div className="space-y-1 mb-3">
+      <div className="space-y-1 mb-3 max-w-md">
         <div className="text-sm text-[#092A31]">Category</div>
         <div className="p-2 bg-[#F8FAFC] rounded-lg text-[#092A31]">
           {portfolioData?.category?.title ?? DEFAULT_CATEGORY}
