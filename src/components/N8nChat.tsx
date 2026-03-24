@@ -21,7 +21,7 @@ export default function N8nChat() {
       loadPreviousSession: true,
       showWelcomeScreen: true,
       enableStreaming: false,
-      initialMessages: ["Hi there!", "How can I help you today?"],
+      initialMessages: ["Hi there! I'm Amda 👋"],
       i18n: {
         en: {
           title: "",
