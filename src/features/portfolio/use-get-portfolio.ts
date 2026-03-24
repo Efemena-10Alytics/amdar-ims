@@ -1,7 +1,12 @@
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
 import { getUserId } from "@/lib/get-user-id";
 import { useAuthStore } from "@/store/auth-store";
+
+const CREATE_PORTFOLIO_PATH = "/dashboard-dev/portfolio/create-portfolio";
 
 export const PORTFOLIO_QUERY_KEY = (userId: string | number) =>
   ["user-portfolio", String(userId)] as const;
@@ -81,10 +86,11 @@ export type UserPortfolioData = {
 };
 
 export function useGetPortfolio() {
+  const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const userId = getUserId(user);
 
-  return useQuery({
+  const query = useQuery({
     queryKey: PORTFOLIO_QUERY_KEY(userId ?? ""),
     queryFn: async (): Promise<UserPortfolioData | null> => {
       const { data } = await axiosInstance.get<
@@ -96,4 +102,13 @@ export function useGetPortfolio() {
     },
     enabled: !!apiBaseURL && userId != null && userId !== "",
   });
+
+  useEffect(() => {
+    if (!query.isError || query.error == null) return;
+    if (!axios.isAxiosError(query.error)) return;
+    if (query.error.response?.status !== 404) return;
+    router.replace(CREATE_PORTFOLIO_PATH);
+  }, [query.isError, query.error, router]);
+
+  return query;
 }
