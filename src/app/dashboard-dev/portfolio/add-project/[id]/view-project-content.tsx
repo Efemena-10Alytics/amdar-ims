@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Pencil, Trash2, Link2, LinkIcon } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2, LinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export type ViewProjectData = {
@@ -175,46 +175,82 @@ export function ViewProjectContent({
               Additional link
             </h2>
             <div className="space-y-3">
-              <div className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-center justify-between gap-3">
-                <span className="text-sm font-medium text-[#092A31]">
-                  Solution URL
-                </span>
-                {project.solutionUrl ? (
-                  <a
-                    href={project.solutionUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex size-9 shrink-0 items-center justify-center rounded-full text-primary bg-[#EBF3FE] border border-[#C2D8FC] transition-colors"
-                    aria-label="Open solution URL"
+              {project.solutionUrl ? (
+                <a
+                  href={project.solutionUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-start justify-between gap-3 hover:bg-[#dde8eb] transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                >
+                  <div className="min-w-0 flex-1 text-left">
+                    <div className="text-sm font-medium text-[#092A31]">
+                      Solution URL
+                    </div>
+                    <p
+                      className="text-sm text-primary mt-1 break-all sm:break-words line-clamp-2 group-hover:underline"
+                      title={project.solutionUrl}
+                    >
+                      {project.solutionUrl}
+                    </p>
+                  </div>
+                  <span
+                    className="flex size-9 shrink-0 items-center justify-center rounded-full text-primary bg-[#EBF3FE] border border-[#C2D8FC]"
+                    aria-hidden
                   >
                     <LinkIcon className="size-4" />
-                  </a>
-                ) : (
+                  </span>
+                </a>
+              ) : (
+                <div className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-center justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <span className="text-sm font-medium text-[#092A31]">
+                      Solution URL
+                    </span>
+                    <p className="text-sm text-zinc-400 mt-1">—</p>
+                  </div>
                   <span className="flex size-9 shrink-0 items-center justify-center rounded-full text-zinc-400">
                     <LinkIcon className="size-4" />
                   </span>
-                )}
-              </div>
-              <div className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-center justify-between gap-3">
-                <span className="text-sm font-medium text-[#092A31]">
-                  Media link
-                </span>
-                {project.mediaLink ? (
-                  <a
-                    href={project.mediaLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex size-9 shrink-0 items-center justify-center rounded-full text-primary bg-[#EBF3FE] border border-[#C2D8FC] transition-colors"
-                    aria-label="Open media link"
+                </div>
+              )}
+              {project.mediaLink ? (
+                <a
+                  href={project.mediaLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-start justify-between gap-3 hover:bg-[#dde8eb] transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                >
+                  <div className="min-w-0 flex-1 text-left">
+                    <div className="text-sm font-medium text-[#092A31]">
+                      Media link
+                    </div>
+                    <p
+                      className="text-sm text-primary mt-1 break-all sm:break-words line-clamp-2 group-hover:underline"
+                      title={project.mediaLink}
+                    >
+                      {project.mediaLink}
+                    </p>
+                  </div>
+                  <span
+                    className="flex size-9 shrink-0 items-center justify-center rounded-full text-primary bg-[#EBF3FE] border border-[#C2D8FC]"
+                    aria-hidden
                   >
                     <LinkIcon className="size-4" />
-                  </a>
-                ) : (
+                  </span>
+                </a>
+              ) : (
+                <div className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-center justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <span className="text-sm font-medium text-[#092A31]">
+                      Media link
+                    </span>
+                    <p className="text-sm text-zinc-400 mt-1">—</p>
+                  </div>
                   <span className="flex size-9 shrink-0 items-center justify-center rounded-full text-zinc-400">
                     <LinkIcon className="size-4" />
                   </span>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </section>
         </aside>

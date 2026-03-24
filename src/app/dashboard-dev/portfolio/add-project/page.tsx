@@ -1,16 +1,19 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Cloud, Link2, X } from "lucide-react";
+import { ArrowLeft, Check, Cloud, Link2, Square, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { YourToolsData } from "@/components/_core/dashboard/portfolio/your-tools";
+import { ToolIcon } from "@/components/_core/dashboard/portfolio/your-tools";
 import { AddToolsPopover } from "@/components/_core/dashboard/portfolio/add-tools-popover";
 import { portfolioInputStyle } from "@/components/_core/dashboard/portfolio/portfolio-styles";
 import { cn } from "@/lib/utils";
 import { useAddProject } from "@/features/portfolio/use-add-project";
+import { useGetTools } from "@/features/portfolio/use-get-tools";
+import { getImageUrl } from "@/lib/utils";
 
 const TOOL_IMAGES: Record<string, string> = {
   Figma: "/images/svgs/tools/figma.svg",
@@ -41,6 +44,17 @@ export default function AddProjectPage() {
   const projectFilesInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { addProject, isSubmitting, errorMessage } = useAddProject();
+  const { data: apiTools = [] } = useGetTools();
+
+  const toolNameToIcon = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const t of apiTools) {
+      const name = t.name?.trim();
+      const icon = t.icon ?? t.url ?? t.image;
+      if (name && icon) map[name] = getImageUrl(icon);
+    }
+    return map;
+  }, [apiTools]);
 
   const onCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -78,6 +92,10 @@ export default function AddProjectPage() {
   }, [projectFiles]);
 
   const handleAddProject = async () => {
+    const tools = toolsData.selectedTools.map((name) => {
+      const image = toolNameToIcon[name] ?? TOOL_IMAGES[name];
+      return { name, ...(image && { image }) };
+    });
     const success = await addProject({
       title,
       category,
@@ -88,7 +106,7 @@ export default function AddProjectPage() {
       expert,
       solutionUrl,
       mediaLink,
-      tools: toolsData.selectedTools,
+      tools,
       coverFile,
       projectFiles,
     });
@@ -339,7 +357,7 @@ export default function AddProjectPage() {
                 {projectFiles.map((file, i) => (
                   <div
                     key={i}
-                    className="relative shrink-0 size-[100px] rounded-lg overflow-hidden bg-zinc-100 border border-zinc-200"
+                    className="relative shrink-0 size-25 rounded-lg overflow-hidden bg-zinc-100 border border-zinc-200"
                   >
                     {projectPreviews[i] && (
                       <img
@@ -381,6 +399,17 @@ export default function AddProjectPage() {
   );
 }
 
+const FALLBACK_TOOLS = [
+  "Figma",
+  "Canva",
+  "Sketch",
+  "Jira",
+  "Photoshop",
+  "Adobe illustration",
+  "Trello",
+  "Light room",
+];
+
 function AddProjectToolsSection({
   value,
   onChange,
@@ -389,24 +418,48 @@ function AddProjectToolsSection({
   onChange: (data: YourToolsData) => void;
 }) {
   const [addToolsOpen, setAddToolsOpen] = useState(false);
-  const TOOLS = [
-    "Figma",
-    "Canva",
-    "Sketch",
-    "Jira",
-    "Photoshop",
-    "Adobe illustration",
-    "Trello",
-    "Light room",
+  const { data: apiTools = [] } = useGetTools();
+
+  const baseToolNames = useMemo(() => {
+    const fromApi = apiTools
+      .map((t) => t.name?.trim())
+      .filter((n): n is string => !!n);
+    return fromApi.length > 0 ? fromApi : FALLBACK_TOOLS;
+  }, [apiTools]);
+
+  const toolNameToIcon = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const t of apiTools) {
+      const name = t.name?.trim();
+      const icon = t.icon ?? t.url ?? t.image;
+      if (name && icon) map[name] = getImageUrl(icon);
+    }
+    return map;
+  }, [apiTools]);
+
+  const displayedTools = [
+    ...baseToolNames,
+    ...value.selectedTools.filter((t) => !baseToolNames.includes(t)),
   ];
-  const displayedTools = [...TOOLS, ...value.selectedTools.filter((t) => !TOOLS.includes(t))];
   const count = value.selectedTools.length;
 
   const toggle = (name: string) => {
-    const next = value.selectedTools.includes(name)
+    const isRemoving = value.selectedTools.includes(name);
+    const next = isRemoving
       ? value.selectedTools.filter((t) => t !== name)
       : [...value.selectedTools, name];
-    onChange({ ...value, selectedTools: next });
+    let nextCustomImages = value.customToolImages;
+    if (isRemoving && value.customToolImages?.[name]) {
+      URL.revokeObjectURL(value.customToolImages[name]);
+      nextCustomImages = { ...value.customToolImages };
+      delete nextCustomImages[name];
+      if (Object.keys(nextCustomImages).length === 0) nextCustomImages = undefined;
+    }
+    onChange({
+      ...value,
+      selectedTools: next,
+      customToolImages: nextCustomImages,
+    });
   };
 
   const handleAddDone = (toolName: string, imageFile: File | null) => {
@@ -434,29 +487,34 @@ function AddProjectToolsSection({
       <div className="flex flex-wrap gap-2">
         {displayedTools.map((name) => {
           const selected = value.selectedTools.includes(name);
-          const iconSrc = value.customToolImages?.[name] ?? TOOL_IMAGES[name];
+          const displayName =
+            name === "Adobe illustration" ? "Adobe Illustration" : name;
           return (
             <button
               key={name}
               type="button"
               onClick={() => toggle(name)}
               className={cn(
-                "inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm border transition-colors",
-                "bg-primary/10 border-primary/20 text-[#092A31]",
-                "hover:bg-primary/15",
-                selected && "bg-primary border-primary text-white hover:bg-primary"
+                "group inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm border transition-colors",
+                "bg-[#E8EFF1] border-[#E8EFF1] text-[#2c4652]",
+                "hover:bg-[#dce4e8] hover:border-[#dce4e8]",
+                selected &&
+                  "bg-primary border-primary text-white hover:bg-primary hover:border-primary",
               )}
             >
-              {iconSrc ? (
-                <span className="relative flex size-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white">
-                  <img src={iconSrc} alt="" className="size-4 object-contain" />
+              <ToolIcon
+                name={name}
+                customImageUrl={value.customToolImages?.[name]}
+                apiImageUrl={toolNameToIcon[name]}
+              />
+              <span>{displayName}</span>
+              {selected ? (
+                <span className="flex size-4 shrink-0 items-center justify-center rounded bg-[#F7D25A]">
+                  <Check className="size-3 text-primary" strokeWidth={3} />
                 </span>
               ) : (
-                <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-zinc-200 text-xs font-semibold text-zinc-600">
-                  {name.charAt(0)}
-                </span>
+                <Square className="size-4 shrink-0 rounded-md text-zinc-400 opacity-0 transition-opacity group-hover:opacity-100" />
               )}
-              <span>{name === "Adobe illustration" ? "Adobe Illustration" : name}</span>
             </button>
           );
         })}

@@ -20,10 +20,10 @@ const TEMPLATES = [
   { id: "classic", label: "Classic",comingSoon: false },
   { id: "bold", label: "Bold", comingSoon: true },
   { id: "simple", label: "Simple", comingSoon: true },
-  { id: "highlight", label: "Highlight", comingSoon: true },
-  { id: "whole", label: "Whole", comingSoon: true },
-  { id: "dark", label: "Dark", comingSoon: true },
-  { id: "square", label: "Square", comingSoon: true },
+  // { id: "highlight", label: "Highlight", comingSoon: true },
+  // { id: "whole", label: "Whole", comingSoon: true },
+  // { id: "dark", label: "Dark", comingSoon: true },
+  // { id: "square", label: "Square", comingSoon: true },
 ] as const;
 
 // Template images from public/pngs/template/ (e.g. classic.png, bold.png, ...)

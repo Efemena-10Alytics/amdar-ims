@@ -19,6 +19,11 @@ function getErrorMessage(error: unknown): string {
   );
 }
 
+export type ProjectTool = {
+  name: string;
+  image?: string;
+};
+
 export type AddProjectFormData = {
   title: string;
   category: string;
@@ -29,7 +34,7 @@ export type AddProjectFormData = {
   expert: string;
   solutionUrl: string;
   mediaLink: string;
-  tools: string[];
+  tools: ProjectTool[];
   coverFile: File | null;
   projectFiles: File[];
 };
@@ -54,6 +59,13 @@ function buildFormData(data: AddProjectFormData): FormData {
 
   data.projectFiles.slice(0, 6).forEach((file, i) => {
     formData.append(`${prefix}[images][${i}]`, file);
+  });
+
+  data.tools.forEach((tool, i) => {
+    formData.append(`${prefix}[tools][${i}][name]`, tool.name.trim());
+    if (tool.image?.trim()) {
+      formData.append(`${prefix}[tools][${i}][image]`, tool.image.trim());
+    }
   });
 
   return formData;

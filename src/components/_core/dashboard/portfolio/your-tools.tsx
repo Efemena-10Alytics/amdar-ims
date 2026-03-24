@@ -32,7 +32,7 @@ const TOOL_IMAGES: Record<string, string> = {
   "Light room": "/images/svgs/tools/light-room.svg",
 };
 
-function ToolIcon({
+export function ToolIcon({
   name,
   customImageUrl,
   apiImageUrl,

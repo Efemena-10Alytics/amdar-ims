@@ -70,8 +70,11 @@ const Classic = ({ portfolio, isLoading, error }: ClassicProps) => {
   }, [portfolio, countries]);
 
   const projects = useMemo(() => {
-    return (portfolio?.projects ?? []).map((p) => ({
-      id: String(p.coverImage ?? p.title ?? Math.random()),
+    return (portfolio?.projects ?? []).map((p, index) => ({
+      id:
+        p.id != null && String(p.id).trim() !== ""
+          ? String(p.id)
+          : String(p.coverImage ?? p.title ?? index),
       title: p.title || "Untitled",
       tags: p.category ? [p.category] : [],
       imageUrl: getImageUrl(p.coverImage ?? (Array.isArray(p.image) && p.image[0] ? String(p.image[0]) : null)) || undefined,
