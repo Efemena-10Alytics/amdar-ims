@@ -4,37 +4,13 @@ import { useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import { ViewProjectContent } from "./view-project-content";
-import type { ViewProjectData } from "./view-project-content";
 import {
-  useGetProjectByUserId,
-  type UserPortfolioProjectDetail,
-} from "@/features/portfolio/use-get-project-by-id";
+  ViewProjectContent,
+  mapProjectToViewData,
+} from "./view-project-content";
+import { useGetProjectByUserId } from "@/features/portfolio/use-get-project-by-id";
 import { getUserId } from "@/lib/get-user-id";
 import { useAuthStore } from "@/store/auth-store";
-import { getImageUrl } from "@/lib/utils";
-
-function mapProjectToViewData(data: UserPortfolioProjectDetail): ViewProjectData {
-  const category = data.category?.trim();
-  return {
-    title: data.title?.trim() || "Untitled",
-    tags: category ? [category] : undefined,
-    coverImageUrl: getImageUrl(data.coverImage) || undefined,
-    overview: data.overview?.trim() || undefined,
-    tools: (data.tools ?? [])
-      .map((t) => {
-        const name = t.name?.trim();
-        if (!name) return null;
-        const iconUrl = getImageUrl(t.image ?? t.url ?? undefined) || undefined;
-        return { name, ...(iconUrl && { iconUrl }) };
-      })
-      .filter((t): t is { name: string; iconUrl?: string } => t != null),
-    rationale: data.rationale?.trim() || undefined,
-    aim: data.aim?.trim() || undefined,
-    solutionUrl: data.solutionUrl?.trim() || undefined,
-    mediaLink: data.mediaLink?.trim() || undefined,
-  };
-}
 
 export default function ViewProjectPage() {
   const params = useParams();

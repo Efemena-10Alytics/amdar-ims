@@ -37,6 +37,8 @@ type MyProjectsProps = {
   onProjectClick?: (project: ProjectItem) => void;
   showAddProject?: boolean;
   id?: string;
+  /** Public portfolio owner id — enables links to `/portfolio/{id}/{projectId}`. */
+  publicPortfolioUserId?: string;
 };
 
 export function MyProjects({
@@ -45,6 +47,7 @@ export function MyProjects({
   onProjectClick,
   showAddProject,
   id,
+  publicPortfolioUserId,
 }: MyProjectsProps) {
   useEffect(() => {
     Aos.init()
@@ -62,6 +65,7 @@ export function MyProjects({
               project={project}
               onClick={() => onProjectClick?.(project)}
               showAddProject={showAddProject}
+              publicPortfolioUserId={publicPortfolioUserId}
             />
           </div>
         ))}
@@ -80,21 +84,26 @@ function ProjectCard({
   project,
   onClick,
   showAddProject,
+  publicPortfolioUserId,
 }: {
   project: ProjectItem;
   onClick?: () => void;
   showAddProject?: boolean;
+  publicPortfolioUserId?: string;
 }) {
   const [isHovered, setIsHovered] = useState(false);
 
   const displayImage = isHovered ? HOVER_IMAGE : project.imageUrl;
 
+  const hasProjectId =
+    project.id != null && String(project.id).trim() !== "";
+
   const viewHref =
-    showAddProject &&
-    project.id != null &&
-    String(project.id).trim() !== ""
+    showAddProject && hasProjectId
       ? `/dashboard-dev/portfolio/add-project/${encodeURIComponent(String(project.id))}`
-      : undefined;
+      : publicPortfolioUserId && hasProjectId
+        ? `/portfolio/${encodeURIComponent(publicPortfolioUserId)}/${encodeURIComponent(String(project.id))}`
+        : undefined;
 
   const actionClassName = cn(
     "absolute bottom-2 right-2 flex size-9 items-center justify-center gap-1.5 rounded-full shadow-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 z-20",

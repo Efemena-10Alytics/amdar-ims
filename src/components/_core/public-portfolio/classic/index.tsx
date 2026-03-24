@@ -41,9 +41,11 @@ type ClassicProps = {
   portfolio?: UserPortfolioData | null;
   isLoading?: boolean;
   error?: Error | null | unknown;
+  /** When set, project cards link to the public project view. */
+  portfolioUserId?: string | null;
 };
 
-const Classic = ({ portfolio, isLoading, error }: ClassicProps) => {
+const Classic = ({ portfolio, isLoading, error, portfolioUserId }: ClassicProps) => {
   const { data: countries = [] } = useCountries();
 
   const heroData = useMemo(() => {
@@ -209,7 +211,12 @@ const Classic = ({ portfolio, isLoading, error }: ClassicProps) => {
         }}
       />
 
-      <MyProjects id="projects" projects={projects} onAddProject={() => {}} />
+      <MyProjects
+        id="projects"
+        projects={projects}
+        onAddProject={() => {}}
+        publicPortfolioUserId={portfolioUserId ?? undefined}
+      />
       <MyWorkExperience items={workItems} onItemClick={() => {}} />
       <MySpecialization id="specialization" specializations={specializations} softSkills={softSkills} />
       <MyTools tools={tools} title={categoryTitle} />
