@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar } from "@/components/ui/calendar";
@@ -83,7 +83,7 @@ export type WorkExperienceEntry = {
     companyName: string;
     jobTitle: string;
     industry: string;
-    jobDescription: string;
+    jobDescription: string[];
     startDate: string;
     endDate: string;
     currentlyWorkHere: boolean;
@@ -98,7 +98,7 @@ export type WorkExperiencePayloadItem = {
     companyName: string;
     jobTitle: string;
     industry: string;
-    jobDescription: string;
+    jobDescription: string[];
     startDate: string;
     endDate: string | null;
     currentlyWorkThere: boolean;
@@ -114,6 +114,14 @@ function toYearMonth(date: string): string {
     return date.length >= 7 ? date.slice(0, 7) : date;
 }
 
+function normalizeJobDescription(lines: string[]): string[] {
+    return lines.map((line) => line.trim()).filter(Boolean);
+}
+
+function textToJobDescription(value: string): string[] {
+    return normalizeJobDescription(value.split(/\r?\n/));
+}
+
 /** Convert form data to API payload format (camelCase). */
 export function workExperienceToPayload(
     data: WorkExperienceData,
@@ -124,7 +132,7 @@ export function workExperienceToPayload(
                 e.companyName.trim() ||
                 e.jobTitle.trim() ||
                 e.industry.trim() ||
-                e.jobDescription.trim() ||
+                e.jobDescription.some((line) => line.trim()) ||
                 e.startDate ||
                 e.endDate,
         )
@@ -132,7 +140,7 @@ export function workExperienceToPayload(
             companyName: entry.companyName.trim(),
             jobTitle: entry.jobTitle.trim(),
             industry: entry.industry.trim(),
-            jobDescription: entry.jobDescription.trim(),
+            jobDescription: normalizeJobDescription(entry.jobDescription),
             startDate: toYearMonth(entry.startDate),
             endDate: entry.currentlyWorkHere ? null : toYearMonth(entry.endDate),
             currentlyWorkThere: entry.currentlyWorkHere,
@@ -146,7 +154,7 @@ export function payloadToWorkExperience(payload: {
         companyName?: string | null;
         jobTitle?: string | null;
         industry?: string | null;
-        jobDescription?: string | null;
+        jobDescription?: string[] | string | null;
         startDate?: string | null;
         endDate?: string | null;
         currentlyWorkThere?: boolean;
@@ -157,7 +165,9 @@ export function payloadToWorkExperience(payload: {
         companyName: e.companyName ?? "",
         jobTitle: e.jobTitle ?? "",
         industry: e.industry ?? "",
-        jobDescription: e.jobDescription ?? "",
+        jobDescription: Array.isArray(e.jobDescription)
+            ? normalizeJobDescription(e.jobDescription)
+            : textToJobDescription(e.jobDescription ?? ""),
         startDate: e.startDate ?? "",
         endDate: e.endDate ?? "",
         currentlyWorkHere: !!e.currentlyWorkThere,
@@ -171,7 +181,7 @@ const defaultEntry: WorkExperienceEntry = {
     companyName: "",
     jobTitle: "",
     industry: "",
-    jobDescription: "",
+    jobDescription: [],
     startDate: "",
     endDate: "",
     currentlyWorkHere: false,
@@ -193,6 +203,9 @@ type WorkExperienceProps = {
 
 export function WorkExperience({ value, onChange }: WorkExperienceProps) {
     const { data: portfolioData } = useGetPortfolio();
+    const [jobDescriptionDrafts, setJobDescriptionDrafts] = useState<
+        Record<number, string>
+    >({});
     useEffect(() => {
         if (!portfolioData?.workExperience?.length) return;
         const isEmpty = value.entries.every(
@@ -200,7 +213,7 @@ export function WorkExperience({ value, onChange }: WorkExperienceProps) {
                 !e.companyName.trim() &&
                 !e.jobTitle.trim() &&
                 !e.industry.trim() &&
-                !e.jobDescription.trim() &&
+                e.jobDescription.length === 0 &&
                 !e.startDate &&
                 !e.endDate
         );
@@ -211,7 +224,7 @@ export function WorkExperience({ value, onChange }: WorkExperienceProps) {
                 e.companyName.trim() ||
                 e.jobTitle.trim() ||
                 e.industry.trim() ||
-                e.jobDescription.trim() ||
+                e.jobDescription.length > 0 ||
                 e.startDate ||
                 e.endDate
         );
@@ -224,6 +237,45 @@ export function WorkExperience({ value, onChange }: WorkExperienceProps) {
             i === index ? { ...entry, ...updates } : entry
         );
         onChange({ entries: next });
+    };
+
+    const updateJobDescriptionDraft = (index: number, draft: string) => {
+        setJobDescriptionDrafts((prev) => ({
+            ...prev,
+            [index]: draft,
+        }));
+    };
+
+    const addJobDescription = (index: number) => {
+        const nextDescription = jobDescriptionDrafts[index]?.trim();
+        if (!nextDescription) return;
+        const nextEntries = value.entries.map((entry, i) =>
+            i === index
+                ? {
+                    ...entry,
+                    jobDescription: [...entry.jobDescription, nextDescription],
+                }
+                : entry,
+        );
+        onChange({ entries: nextEntries });
+        setJobDescriptionDrafts((prev) => ({
+            ...prev,
+            [index]: "",
+        }));
+    };
+
+    const removeJobDescription = (index: number, descriptionIndex: number) => {
+        const nextEntries = value.entries.map((entry, i) =>
+            i === index
+                ? {
+                    ...entry,
+                    jobDescription: entry.jobDescription.filter(
+                        (_, itemIndex) => itemIndex !== descriptionIndex,
+                    ),
+                }
+                : entry,
+        );
+        onChange({ entries: nextEntries });
     };
 
     const addMore = () => {
@@ -262,20 +314,7 @@ export function WorkExperience({ value, onChange }: WorkExperienceProps) {
                                         className={portfolioInputStyle}
                                     />
                                 </div>
-                                {/* <label className="flex shrink-0 items-center gap-2 cursor-pointer mt-8">
-                  <Checkbox
-                    checked={entry.currentlyWorkHere}
-                    onCheckedChange={(checked) =>
-                      updateEntry(index, {
-                        currentlyWorkHere: !!checked,
-                        ...(!!checked && { endDate: "" }),
-                      })
-                    }
-                  />
-                  <span className="text-sm text-zinc-700 whitespace-nowrap">
-                    I currently work here
-                  </span>
-                </label> */}
+
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -322,19 +361,55 @@ export function WorkExperience({ value, onChange }: WorkExperienceProps) {
                                 >
                                     Job description
                                 </label>
-                                <textarea
-                                    id={`job-desc-${index}`}
-                                    value={entry.jobDescription}
-                                    onChange={(e) =>
-                                        updateEntry(index, { jobDescription: e.target.value })
-                                    }
-                                    placeholder="e.g. Created wireframes, Presentations to stakeholders..."
-                                    rows={4}
-                                    className={cn(
-                                        portfolioInputStyle,
-                                        "h-auto min-h-20 resize-y py-3",
-                                    )}
-                                />
+                                <div className="flex gap-2">
+                                    <Input
+                                        id={`job-desc-${index}`}
+                                        value={jobDescriptionDrafts[index] ?? ""}
+                                        onChange={(e) =>
+                                            updateJobDescriptionDraft(index, e.target.value)
+                                        }
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                e.preventDefault();
+                                                addJobDescription(index);
+                                            }
+                                        }}
+                                        placeholder="e.g. Created wireframes"
+                                        className={portfolioInputStyle}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => addJobDescription(index)}
+                                        className="shrink-0 rounded-lg bg-primary px-4 text-sm font-medium text-white hover:bg-primary/90"
+                                    >
+                                        Add
+                                    </button>
+                                </div>
+                                {entry.jobDescription.length > 0 ? (
+                                    <div className="space-y-2 pt-1">
+                                        {entry.jobDescription.map((description, descriptionIndex) => (
+                                            <div
+                                                key={`${index}-${descriptionIndex}-${description}`}
+                                                className="flex items-start justify-between gap-3 border-b border-zinc-200 pb-2 text-sm text-[#092A31]"
+                                            >
+                                                <span className="flex-1">{description}</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        removeJobDescription(
+                                                            index,
+                                                            descriptionIndex,
+                                                        )
+                                                    }
+                                                    className="shrink-0 rounded-full p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
+                                                    aria-label={`Remove ${description}`}
+                                                >
+                                                    <X className="size-4" aria-hidden />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : null}
                             </div>
 
                             <div className="space-y-2">

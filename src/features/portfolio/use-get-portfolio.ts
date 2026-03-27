@@ -50,7 +50,7 @@ export type UserPortfolioWorkExperienceItem = {
   companyName?: string | null;
   jobTitle?: string | null;
   industry?: string | null;
-  jobDescription?: string | null;
+  jobDescription?: string[] | string | null;
   startDate?: string | null;
   endDate?: string | null;
   currentlyWorkThere?: boolean;
