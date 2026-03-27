@@ -42,6 +42,8 @@ export type UserPortfolioTool = {
   name?: string;
   image?: string | null;
   url?: string | null;
+  skillLevel?: string | number | null;
+  skill_level?: string | number | null;
 };
 
 export type UserPortfolioWorkExperienceItem = {

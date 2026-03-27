@@ -23,6 +23,7 @@ function getErrorMessage(error: unknown): string {
 export type AddToolItem = {
   name: string;
   image?: File | string | null;
+  skillLevel?: string | number | null;
 };
 
 export type AddToolsFormData = {
@@ -46,6 +47,9 @@ function buildFormData(data: AddToolsFormData): FormData {
     formData.append(`${prefix}[name]`, tool.name.trim());
     if (tool.image != null && tool.image !== "") {
       formData.append(`${prefix}[image]`, tool.image);
+    }
+    if (tool.skillLevel != null && String(tool.skillLevel).trim() !== "") {
+      formData.append(`${prefix}[skillLevel]`, String(tool.skillLevel).trim());
     }
   });
 

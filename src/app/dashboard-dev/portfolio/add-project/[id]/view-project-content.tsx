@@ -22,6 +22,8 @@ type ViewProjectContentProps = {
   project: ViewProjectData;
   onEdit?: () => void;
   onDelete?: () => void;
+  /** Disables delete control while a delete request is in flight. */
+  isDeletePending?: boolean;
   /** Back link target (default: dashboard portfolio). */
   backHref?: string;
   backLabel?: string;
@@ -68,6 +70,7 @@ export function ViewProjectContent({
   project,
   onEdit,
   onDelete,
+  isDeletePending = false,
   backHref = "/dashboard-dev/portfolio",
   backLabel = "Back",
 }: ViewProjectContentProps) {
@@ -98,8 +101,9 @@ export function ViewProjectContent({
               type="button"
               variant="secondary"
               size="icon"
-              className="rounded-full bg-[#FDECEC] text-[#EF4444] cursor-pointer hover:bg-red-50 hover:text-red-600 border border-[#FAC5C5] size-9"
+              className="rounded-full bg-[#FDECEC] text-[#EF4444] cursor-pointer hover:bg-red-50 hover:text-red-600 border border-[#FAC5C5] size-9 disabled:opacity-60"
               aria-label="Delete project"
+              disabled={isDeletePending}
               onClick={onDelete}
             >
               <Trash2 className="size-4" aria-hidden />

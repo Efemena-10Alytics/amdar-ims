@@ -14,7 +14,7 @@ import {
   categoryToPayload,
 } from "./your-specialization";
 import { YourSkills, skillsToPayload } from "./your-skills";
-import { YourTools, type ToolIconMap } from "./your-tools";
+import { YourTools, type ToolIconMap, type YourToolsData } from "./your-tools";
 import {
   getInitialWorkExperienceData,
   WorkExperience,
@@ -73,11 +73,7 @@ export function CreatePortfolioForm() {
   const [skillsData, setSkillsData] = useState({
     selectedSkills: [] as string[],
   });
-  const [toolsData, setToolsData] = useState<{
-    selectedTools: string[];
-    customToolImages?: Record<string, string>;
-    customToolFiles?: Record<string, File>;
-  }>({
+  const [toolsData, setToolsData] = useState<YourToolsData>({
     selectedTools: [],
   });
   const [workExperienceData, setWorkExperienceData] = useState(
@@ -147,10 +143,7 @@ export function CreatePortfolioForm() {
   };
 
   const saveTools = async (
-    data: {
-      selectedTools: string[];
-      customToolFiles?: Record<string, File>;
-    },
+    data: Pick<YourToolsData, "selectedTools" | "customToolFiles" | "toolSkillLevels">,
   ): Promise<boolean> => {
     const seen = new Set<string>();
     const tools = data.selectedTools
@@ -164,6 +157,10 @@ export function CreatePortfolioForm() {
         name,
         image:
           data.customToolFiles?.[name] ?? toolIconMap[name] ?? null,
+        skillLevel:
+          data.toolSkillLevels?.[name] != null
+            ? String(data.toolSkillLevels[name])
+            : undefined,
       }));
     return addTools({ tools });
   };
