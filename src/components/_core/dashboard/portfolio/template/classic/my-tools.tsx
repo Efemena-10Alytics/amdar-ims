@@ -5,6 +5,7 @@ import { useEffect } from "react";
 export type ToolItem = {
   name: string;
   iconUrl?: string;
+  skillLevel?: number;
   percentage?: number;
 };
 
@@ -45,7 +46,7 @@ export function MyTools({
           <ul className="">
             {tools.map((tool, index) => {
               const iconSrc = tool.iconUrl ?? DEFAULT_TOOL_ICONS[tool.name];
-              const pct = tool.percentage ?? 80;
+              const pct = tool.skillLevel ?? tool.percentage ?? 80;
               return (
                 <li key={tool.name + index}>
                   <div className="flex items-center gap-3 py-3">

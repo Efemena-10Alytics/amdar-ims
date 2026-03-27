@@ -10,6 +10,7 @@ export type WorkExperienceItem = {
   category: string;
   role: string;
   duration: string;
+  descriptions?: string[];
   linkUrl?: string;
 };
 
@@ -51,6 +52,15 @@ export function MyWorkExperience({
                   </span>
                   {item.duration}
                 </p>
+                {item.descriptions && item.descriptions.length > 0 ? (
+                  <ul className="mt-3 list-disc space-y-1 pl-5 text-sm leading-relaxed text-[#64748B] marker:text-[#64748B]">
+                    {item.descriptions.map((description, descriptionIndex) => (
+                      <li className="capitalize" key={`${item.id ?? index}-desc-${descriptionIndex}`}>
+                        {description}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
               </div>
               <span className="shrink-0 flex size-9 items-center justify-center rounded-full text-primary mt-0.5" aria-hidden>
                 <ArrowUpRight className="size-4" />

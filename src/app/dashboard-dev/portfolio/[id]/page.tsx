@@ -19,9 +19,17 @@ const SAMPLE_PROJECT: ViewProjectData = {
     { name: "Canva" },
     { name: "Adobe illustration" },
   ],
+  excerpt:
+    "Designed a clearer learning flow for students, balancing usability, accessibility, and stakeholder goals across the product journey.",
   rationale:
     "Product designer crafting intuitive digital experiences for fintech, enterprise, and social impact. I design with empathy, think systematically, and build solutions that work for everyone. Based in Nigeria, working globally.",
   aim: "Product designer crafting intuitive digital experiences for fintech, enterprise, and social impact. I design with empathy, think systematically, and build solutions that work for everyone. Based in Nigeria, working globally.",
+  scope:
+    "User research, wireframing, interface design, usability testing, stakeholder presentations, and design system refinement.",
+  projectImages: [
+    "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1200&q=80",
+  ],
   solutionUrl: "https://example.com/solution",
   mediaLink: "https://example.com/media",
 };

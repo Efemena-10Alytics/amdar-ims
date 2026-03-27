@@ -9,6 +9,7 @@ import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { useGetTools } from "@/features/portfolio/use-get-tools";
 
 const DEFAULT_CATEGORY = "Product Design";
+const DEFAULT_SKILL_LEVEL = 60;
 
 const TOOLS = [
   "Figma",
@@ -31,6 +32,17 @@ const TOOL_IMAGES: Record<string, string> = {
   Trello: "/images/svgs/tools/trello.svg",
   "Light room": "/images/svgs/tools/light-room.svg",
 };
+
+function normalizeSkillLevel(value: unknown): number {
+  const parsed =
+    typeof value === "number" ? value : Number.parseInt(String(value ?? ""), 10);
+  if (!Number.isFinite(parsed)) return DEFAULT_SKILL_LEVEL;
+  return Math.min(100, Math.max(0, Math.round(parsed)));
+}
+
+function getDisplayToolName(name: string): string {
+  return name === "Adobe illustration" ? "Adobe Illustration" : name;
+}
 
 export function ToolIcon({
   name,
@@ -80,6 +92,7 @@ export function ToolIcon({
 
 export type YourToolsData = {
   selectedTools: string[];
+  toolSkillLevels?: Record<string, number>;
   /** Object URLs for custom tool icons (from upload). Revoke when no longer needed. */
   customToolImages?: Record<string, string>;
   /** File objects for custom tools (for upload). */
@@ -94,11 +107,21 @@ export function payloadToTools(payload: {
   tools?: Array<{
     name?: string | null;
     url?: string | null;
+    skillLevel?: string | number | null;
+    skill_level?: string | number | null;
   }>;
 }): YourToolsData {
   const raw = payload.tools ?? [];
+  const toolSkillLevels = raw.reduce<Record<string, number>>((acc, tool) => {
+    const name = tool.name?.trim();
+    if (!name) return acc;
+    acc[name] = normalizeSkillLevel(tool.skillLevel ?? tool.skill_level);
+    return acc;
+  }, {});
   return {
     selectedTools: raw.map((t) => t.name ?? "").filter(Boolean),
+    toolSkillLevels:
+      Object.keys(toolSkillLevels).length > 0 ? toolSkillLevels : undefined,
     customToolImages: undefined,
     customToolFiles: undefined,
   };
@@ -165,9 +188,16 @@ export function YourTools({ value, onChange }: YourToolsProps) {
     const next = isRemoving
       ? value.selectedTools.filter((t) => t !== name)
       : [...value.selectedTools, name];
+    let nextSkillLevels = value.toolSkillLevels
+      ? { ...value.toolSkillLevels }
+      : undefined;
     let nextCustomImages = value.customToolImages;
     let nextCustomFiles = value.customToolFiles;
     if (isRemoving) {
+      if (nextSkillLevels?.[name] != null) {
+        delete nextSkillLevels[name];
+        if (Object.keys(nextSkillLevels).length === 0) nextSkillLevels = undefined;
+      }
       if (value.customToolImages?.[name]) {
         URL.revokeObjectURL(value.customToolImages[name]);
         nextCustomImages = { ...value.customToolImages };
@@ -179,17 +209,37 @@ export function YourTools({ value, onChange }: YourToolsProps) {
         delete nextCustomFiles[name];
         if (Object.keys(nextCustomFiles).length === 0) nextCustomFiles = undefined;
       }
+    } else {
+      nextSkillLevels = {
+        ...(nextSkillLevels ?? {}),
+        [name]: normalizeSkillLevel(value.toolSkillLevels?.[name]),
+      };
     }
     onChange({
       selectedTools: next,
+      ...(nextSkillLevels && { toolSkillLevels: nextSkillLevels }),
       ...(nextCustomImages && { customToolImages: nextCustomImages }),
       ...(nextCustomFiles && { customToolFiles: nextCustomFiles }),
+    });
+  };
+
+  const updateSkillLevel = (name: string, skillLevel: number) => {
+    onChange({
+      ...value,
+      toolSkillLevels: {
+        ...(value.toolSkillLevels ?? {}),
+        [name]: normalizeSkillLevel(skillLevel),
+      },
     });
   };
 
   const handleAddDone = (toolName: string, imageFile: File | null) => {
     if (value.selectedTools.includes(toolName)) return;
     const nextSelected = [...value.selectedTools, toolName];
+    const nextSkillLevels = {
+      ...(value.toolSkillLevels ?? {}),
+      [toolName]: DEFAULT_SKILL_LEVEL,
+    };
     const nextCustomImages: Record<string, string> = { ...value.customToolImages };
     const nextCustomFiles: Record<string, File> = { ...value.customToolFiles };
     if (imageFile) {
@@ -198,6 +248,7 @@ export function YourTools({ value, onChange }: YourToolsProps) {
     }
     onChange({
       selectedTools: nextSelected,
+      toolSkillLevels: nextSkillLevels,
       customToolImages: Object.keys(nextCustomImages).length ? nextCustomImages : undefined,
       customToolFiles: Object.keys(nextCustomFiles).length ? nextCustomFiles : undefined,
     });
@@ -210,62 +261,135 @@ export function YourTools({ value, onChange }: YourToolsProps) {
       <p className="mt-1 text-sm text-zinc-500 mb-6">
         Select tools or technologies you excel in
       </p>
-      <div className="space-y-1 mb-3 max-w-md">
-        <div className="text-sm text-[#092A31]">Category</div>
-        <div className="p-2 bg-[#F8FAFC] rounded-lg text-[#092A31]">
-          {portfolioData?.category?.title ?? DEFAULT_CATEGORY}
-        </div>
-      </div>
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-zinc-500">{count} selected</span>
-          <AddToolsPopover
-            open={addToolsOpen}
-            onOpenChange={setAddToolsOpen}
-            onDone={handleAddDone}
-          >
-            <button
-              type="button"
-              className="text-sm text-[#3B82F6] hover:underline focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:ring-offset-1 rounded"
-            >
-              Add tools
-            </button>
-          </AddToolsPopover>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          {displayedTools.map((name) => {
-            const selected = value.selectedTools.includes(name);
-            return (
-              <button
-                key={name}
-                type="button"
-                onClick={() => toggle(name)}
-                className={cn(
-                  "group inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm border transition-colors",
-                  "bg-[#E8EFF1] border-[#E8EFF1] text-[#2c4652]",
-                  "hover:bg-[#dce4e8] hover:border-[#dce4e8]",
-                  selected &&
-                    "bg-primary border-primary text-white hover:bg-primary hover:border-primary",
-                )}
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <div className="space-y-1 mb-3 max-w-md">
+            <div className="text-sm text-[#092A31]">Category</div>
+            <div className="p-2 bg-[#F8FAFC] rounded-lg text-[#092A31]">
+              {portfolioData?.category?.title ?? DEFAULT_CATEGORY}
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-zinc-500">{count} selected</span>
+              <AddToolsPopover
+                open={addToolsOpen}
+                onOpenChange={setAddToolsOpen}
+                onDone={handleAddDone}
               >
-                <ToolIcon
-                  name={name}
-                  customImageUrl={value.customToolImages?.[name]}
-                  apiImageUrl={toolNameToIcon[name]}
-                />
-                <span>{name}</span>
-                {selected ? (
-                  <span className="flex size-4 shrink-0 items-center justify-center rounded bg-[#F7D25A]">
-                    <Check className="size-3 text-primary" strokeWidth={3} />
-                  </span>
-                ) : (
-                  <Square className="size-4 shrink-0 rounded-md text-zinc-400 opacity-0 transition-opacity group-hover:opacity-100" />
-                )}
-              </button>
-            );
-          })}
+                <button
+                  type="button"
+                  className="text-sm text-[#3B82F6] hover:underline focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:ring-offset-1 rounded"
+                >
+                  Add tools
+                </button>
+              </AddToolsPopover>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {displayedTools.map((name) => {
+                const selected = value.selectedTools.includes(name);
+                const displayName = getDisplayToolName(name);
+                return (
+                  <button
+                    key={name}
+                    type="button"
+                    onClick={() => toggle(name)}
+                    className={cn(
+                      "group inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm border transition-colors",
+                      "bg-[#E8EFF1] border-[#E8EFF1] text-[#2c4652]",
+                      "hover:bg-[#dce4e8] hover:border-[#dce4e8]",
+                      selected &&
+                      "bg-primary border-primary text-white hover:bg-primary hover:border-primary",
+                    )}
+                  >
+                    <ToolIcon
+                      name={name}
+                      customImageUrl={value.customToolImages?.[name]}
+                      apiImageUrl={toolNameToIcon[name]}
+                    />
+                    <span>{displayName}</span>
+                    {selected ? (
+                      <span className="flex size-4 shrink-0 items-center justify-center rounded bg-[#F7D25A]">
+                        <Check className="size-3 text-primary" strokeWidth={3} />
+                      </span>
+                    ) : (
+                      <Square className="size-4 shrink-0 rounded-md text-zinc-400 opacity-0 transition-opacity group-hover:opacity-100" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
+        {count > 0 ? (
+          <div className="mt-6 rounded-2xl bg-[#F8FAFC] p-4 sm:p-5">
+            <h3 className="text-sm font-semibold text-[#092A31]">Selected tools</h3>
+            <div className="mt-4 space-y-3">
+              {value.selectedTools.map((name) => {
+                const displayName = getDisplayToolName(name);
+                const skillLevel = normalizeSkillLevel(value.toolSkillLevels?.[name]);
+                return (
+                  <div
+                    key={`selected-${name}`}
+                    className="py-1"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <ToolIcon
+                          name={name}
+                          customImageUrl={value.customToolImages?.[name]}
+                          apiImageUrl={toolNameToIcon[name]}
+                        />
+                        <span className="truncate text-sm font-medium text-[#092A31]">
+                          {displayName}
+                        </span>
+                      </div>
+                      <span className="shrink-0 rounded-xl bg-[#EEF3F3] px-2.5 py-1 text-xs font-semibold text-[#71858A]">
+                        {skillLevel} %
+                      </span>
+                    </div>
+                    <div className="relative mt-3">
+                      <div className="h-1 rounded-full bg-[#CFE9D9]" />
+                      <div
+                        className="absolute inset-y-0 left-0 rounded-full bg-[#2AA56F]"
+                        style={{ width: `${skillLevel}%` }}
+                      />
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        step="5"
+                        value={skillLevel}
+                        onChange={(e) =>
+                          updateSkillLevel(name, Number(e.target.value))
+                        }
+                        aria-label={`Skill level for ${displayName}`}
+                        className={cn(
+                          "absolute inset-0 h-1 w-full cursor-pointer appearance-none bg-transparent",
+                          "[&::-webkit-slider-runnable-track]:h-1",
+                          "[&::-webkit-slider-runnable-track]:bg-transparent",
+                          "[&::-webkit-slider-thumb]:mt-[-5px]",
+                          "[&::-webkit-slider-thumb]:size-3.5",
+                          "[&::-webkit-slider-thumb]:appearance-none",
+                          "[&::-webkit-slider-thumb]:rounded-full",
+                          "[&::-webkit-slider-thumb]:border-0",
+                          "[&::-webkit-slider-thumb]:bg-[#2AA56F]",
+                          "[&::-moz-range-track]:h-1",
+                          "[&::-moz-range-track]:bg-transparent",
+                          "[&::-moz-range-thumb]:size-3.5",
+                          "[&::-moz-range-thumb]:rounded-full",
+                          "[&::-moz-range-thumb]:border-0",
+                          "[&::-moz-range-thumb]:bg-[#2AA56F]",
+                        )}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

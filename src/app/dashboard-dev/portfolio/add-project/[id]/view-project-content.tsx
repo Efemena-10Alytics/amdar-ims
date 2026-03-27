@@ -12,8 +12,11 @@ export type ViewProjectData = {
   coverImageUrl?: string;
   overview?: string;
   tools?: { name: string; iconUrl?: string }[];
+  excerpt?: string;
   rationale?: string;
   aim?: string;
+  scope?: string;
+  projectImages?: string[];
   solutionUrl?: string;
   mediaLink?: string;
 };
@@ -22,6 +25,8 @@ type ViewProjectContentProps = {
   project: ViewProjectData;
   onEdit?: () => void;
   onDelete?: () => void;
+  /** Disables delete control while a delete request is in flight. */
+  isDeletePending?: boolean;
   /** Back link target (default: dashboard portfolio). */
   backHref?: string;
   backLabel?: string;
@@ -44,8 +49,13 @@ export function mapProjectToViewData(
         return { name, ...(iconUrl && { iconUrl }) };
       })
       .filter((t): t is { name: string; iconUrl?: string } => t != null),
+    excerpt: data.excerpt?.trim() || undefined,
     rationale: data.rationale?.trim() || undefined,
     aim: data.aim?.trim() || undefined,
+    scope: data.scope?.trim() || undefined,
+    projectImages: (data.image ?? [])
+      .map((img) => getImageUrl(img))
+      .filter((img): img is string => !!img),
     solutionUrl: data.solutionUrl?.trim() || undefined,
     mediaLink: data.mediaLink?.trim() || undefined,
   };
@@ -68,6 +78,7 @@ export function ViewProjectContent({
   project,
   onEdit,
   onDelete,
+  isDeletePending = false,
   backHref = "/dashboard-dev/portfolio",
   backLabel = "Back",
 }: ViewProjectContentProps) {
@@ -98,8 +109,9 @@ export function ViewProjectContent({
               type="button"
               variant="secondary"
               size="icon"
-              className="rounded-full bg-[#FDECEC] text-[#EF4444] cursor-pointer hover:bg-red-50 hover:text-red-600 border border-[#FAC5C5] size-9"
+              className="rounded-full bg-[#FDECEC] text-[#EF4444] cursor-pointer hover:bg-red-50 hover:text-red-600 border border-[#FAC5C5] size-9 disabled:opacity-60"
               aria-label="Delete project"
+              disabled={isDeletePending}
               onClick={onDelete}
             >
               <Trash2 className="size-4" aria-hidden />
@@ -144,40 +156,65 @@ export function ViewProjectContent({
       <div className="flex-1 py-8 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 lg:gap-12">
         {/* Left column */}
         <div className="space-y-8">
-          {project.overview && (
+          <div>
+
+            {project.overview && (
+              <section>
+                <h2 className="text-lg font-semibold text-[#092A31] mb-3">Overview</h2>
+                <p className="text-sm text-zinc-600 leading-relaxed">
+                  {project.overview}
+                </p>
+              </section>
+            )}
+            {project.tools && project.tools.length > 0 && (
+              <div className="flex flex-wrap gap-3 mt-2">
+                {project.tools.map((tool) => {
+                  const iconSrc = tool.iconUrl ?? TOOL_ICONS[tool.name];
+                  return (
+                    <span
+                      key={tool.name}
+                      className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white border border-zinc-200 shadow-sm overflow-hidden"
+                      title={tool.name}
+                    >
+                      {iconSrc ? (
+                        <img
+                          src={iconSrc}
+                          alt=""
+                          className="size-6 object-contain"
+                        />
+                      ) : (
+                        <span className="text-xs font-semibold text-zinc-500">
+                          {tool.name.charAt(0)}
+                        </span>
+                      )}
+                    </span>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+
+          {project.aim && (
             <section>
-              <h2 className="text-lg font-semibold text-[#092A31] mb-3">Overview</h2>
+              <h2 className="text-lg font-semibold text-[#092A31] mb-3">
+                Aim of project
+              </h2>
               <p className="text-sm text-zinc-600 leading-relaxed">
-                {project.overview}
+                {project.aim}
               </p>
             </section>
           )}
 
-          {project.tools && project.tools.length > 0 && (
-            <div className="flex flex-wrap gap-3">
-              {project.tools.map((tool) => {
-                const iconSrc = tool.iconUrl ?? TOOL_ICONS[tool.name];
-                return (
-                  <span
-                    key={tool.name}
-                    className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white border border-zinc-200 shadow-sm overflow-hidden"
-                    title={tool.name}
-                  >
-                    {iconSrc ? (
-                      <img
-                        src={iconSrc}
-                        alt=""
-                        className="size-6 object-contain"
-                      />
-                    ) : (
-                      <span className="text-xs font-semibold text-zinc-500">
-                        {tool.name.charAt(0)}
-                      </span>
-                    )}
-                  </span>
-                );
-              })}
-            </div>
+          {project.excerpt && (
+            <section>
+              <h2 className="text-lg font-semibold text-[#092A31] mb-3">
+                Project excerpt
+              </h2>
+              <p className="text-sm text-zinc-600 leading-relaxed">
+                {project.excerpt}
+              </p>
+            </section>
           )}
 
           {project.rationale && (
@@ -191,16 +228,40 @@ export function ViewProjectContent({
             </section>
           )}
 
-          {project.aim && (
+          {project.scope && (
             <section>
               <h2 className="text-lg font-semibold text-[#092A31] mb-3">
-                Aim of project
+                Project scope
               </h2>
               <p className="text-sm text-zinc-600 leading-relaxed">
-                {project.aim}
+                {project.scope}
               </p>
             </section>
           )}
+
+          {project.projectImages && project.projectImages.length > 0 && (
+            <section>
+              <h2 className="text-lg font-semibold text-[#092A31] mb-4">
+                Project images
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {project.projectImages.map((imageUrl, index) => (
+                  <div
+                    key={`${imageUrl}-${index}`}
+                    className="overflow-hidden rounded-2xl border border-zinc-200 bg-[#F8FAFC]"
+                  >
+                    <img
+                      src={imageUrl}
+                      alt=""
+                      className="h-56 w-full object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+
         </div>
 
         {/* Right column - Additional link */}

@@ -42,13 +42,15 @@ export type UserPortfolioTool = {
   name?: string;
   image?: string | null;
   url?: string | null;
+  skillLevel?: string | number | null;
+  skill_level?: string | number | null;
 };
 
 export type UserPortfolioWorkExperienceItem = {
   companyName?: string | null;
   jobTitle?: string | null;
   industry?: string | null;
-  jobDescription?: string | null;
+  jobDescription?: string[] | string | null;
   startDate?: string | null;
   endDate?: string | null;
   currentlyWorkThere?: boolean;

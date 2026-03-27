@@ -9,6 +9,7 @@ import {
   mapProjectToViewData,
 } from "./view-project-content";
 import { useGetProjectByUserId } from "@/features/portfolio/use-get-project-by-id";
+import { useDeletePortfolioProject } from "@/features/portfolio/use-delete-portfolio-project";
 import { getUserId } from "@/lib/get-user-id";
 import { useAuthStore } from "@/store/auth-store";
 
@@ -27,6 +28,7 @@ export default function ViewProjectPage() {
   const userId = getUserId(user);
 
   const { data, isLoading, isError, error } = useGetProjectByUserId(userId, idParam);
+  const { deleteProject, isDeleting } = useDeletePortfolioProject();
 
   const project = useMemo(
     () => (data ? mapProjectToViewData(data) : null),
@@ -41,9 +43,19 @@ export default function ViewProjectPage() {
     }
   };
 
-  const handleDelete = () => {
-    if (typeof window !== "undefined" && window.confirm("Delete this project?")) {
+  const handleDelete = async () => {
+    if (!idParam) return;
+    if (
+      typeof window === "undefined" ||
+      !window.confirm("Delete this project? This cannot be undone.")
+    ) {
+      return;
+    }
+    const result = await deleteProject(idParam);
+    if (result.ok) {
       router.push("/dashboard-dev/portfolio");
+    } else {
+      window.alert(result.message);
     }
   };
 
@@ -105,6 +117,7 @@ export default function ViewProjectPage() {
       project={project}
       onEdit={handleEdit}
       onDelete={handleDelete}
+      isDeletePending={isDeleting}
     />
   );
 }

@@ -29,6 +29,26 @@ function mapSkillsData(raw: unknown[]): string[] {
   return raw.map((s) => (typeof s === "string" ? s : String((s as { title?: string; name?: string })?.title ?? (s as { name?: string })?.name ?? s)));
 }
 
+function normalizeJobDescriptions(raw: string[] | string | null | undefined): string[] {
+  if (Array.isArray(raw)) {
+    return raw.map((line) => line.trim()).filter(Boolean);
+  }
+  if (typeof raw === "string") {
+    return raw
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+
+function normalizeSkillLevel(value: string | number | null | undefined): number {
+  const parsed =
+    typeof value === "number" ? value : Number.parseInt(String(value ?? ""), 10);
+  if (!Number.isFinite(parsed)) return 80;
+  return Math.min(100, Math.max(0, Math.round(parsed)));
+}
+
 const DEFAULT_HERO = {
   name: "—",
   jobTitle: "Professional",
@@ -85,6 +105,7 @@ const CreateClassic = () => {
       category: w.industry || "",
       role: w.jobTitle || "",
       duration: formatDuration(w.startDate, w.endDate, w.currentlyWorkThere),
+      descriptions: normalizeJobDescriptions(w.jobDescription),
     }));
   }, [portfolio?.workExperience]);
 
@@ -102,7 +123,7 @@ const CreateClassic = () => {
     return (portfolio?.tools ?? []).map((t) => ({
       name: t.name || "",
       iconUrl: getImageUrl(t.image ?? t.url ?? undefined) || undefined,
-      percentage: 80,
+      skillLevel: normalizeSkillLevel(t.skillLevel ?? t.skill_level),
     }));
   }, [portfolio?.tools]);
 
