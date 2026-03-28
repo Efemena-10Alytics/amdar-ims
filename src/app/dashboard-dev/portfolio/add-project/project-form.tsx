@@ -569,6 +569,11 @@ const FALLBACK_TOOLS = [
   "Trello",
   "Light room",
 ];
+const PROJECT_FORM_TOOLS_PER_PAGE = 12;
+
+function getDisplayToolName(name: string): string {
+  return name === "Adobe illustration" ? "Adobe Illustration" : name;
+}
 
 function AddProjectToolsSection({
   value,
@@ -578,6 +583,8 @@ function AddProjectToolsSection({
   onChange: (data: YourToolsData) => void;
 }) {
   const [addToolsOpen, setAddToolsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const { data: apiTools = [] } = useGetTools();
 
   const baseToolNames = useMemo(() => {
@@ -601,7 +608,33 @@ function AddProjectToolsSection({
     ...baseToolNames,
     ...value.selectedTools.filter((t) => !baseToolNames.includes(t)),
   ];
+  const filteredTools = useMemo(() => {
+    const query = searchTerm.trim().toLowerCase();
+    if (!query) return displayedTools;
+    return displayedTools.filter((name) => {
+      const displayName = getDisplayToolName(name).toLowerCase();
+      return name.toLowerCase().includes(query) || displayName.includes(query);
+    });
+  }, [displayedTools, searchTerm]);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredTools.length / PROJECT_FORM_TOOLS_PER_PAGE),
+  );
+  const paginatedTools = useMemo(() => {
+    const start = (currentPage - 1) * PROJECT_FORM_TOOLS_PER_PAGE;
+    return filteredTools.slice(start, start + PROJECT_FORM_TOOLS_PER_PAGE);
+  }, [currentPage, filteredTools]);
   const count = value.selectedTools.length;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   const toggle = (name: string) => {
     const isRemoving = value.selectedTools.includes(name);
@@ -645,11 +678,25 @@ function AddProjectToolsSection({
           onDone={handleAddDone}
         />
       </div>
+      <div className="space-y-2">
+        <label
+          htmlFor="project-tool-search"
+          className="text-sm font-medium text-[#092A31]"
+        >
+          Search tools
+        </label>
+        <Input
+          id="project-tool-search"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search by tool name"
+          className="border-zinc-200 bg-white"
+        />
+      </div>
       <div className="flex flex-wrap gap-2">
-        {displayedTools.map((name) => {
+        {paginatedTools.map((name) => {
           const selected = value.selectedTools.includes(name);
-          const displayName =
-            name === "Adobe illustration" ? "Adobe Illustration" : name;
+          const displayName = getDisplayToolName(name);
           return (
             <button
               key={name}
@@ -680,6 +727,35 @@ function AddProjectToolsSection({
           );
         })}
       </div>
+      {filteredTools.length === 0 ? (
+        <p className="text-sm text-zinc-500">No tools match your search.</p>
+      ) : (
+        <div className="flex items-center justify-between gap-3 pt-2">
+          <span className="text-sm text-zinc-500">
+            Page {currentPage} of {totalPages}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+              disabled={currentPage === 1}
+              className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-[#092A31] transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                setCurrentPage((page) => Math.min(totalPages, page + 1))
+              }
+              disabled={currentPage === totalPages}
+              className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-[#092A31] transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

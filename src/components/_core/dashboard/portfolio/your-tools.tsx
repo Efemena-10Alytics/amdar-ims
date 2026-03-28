@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { Check, Square } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { AddToolsPopover } from "./add-tools-popover";
 import { cn } from "@/lib/utils";
 import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
@@ -10,6 +11,7 @@ import { useGetTools } from "@/features/portfolio/use-get-tools";
 
 const DEFAULT_CATEGORY = "Product Design";
 const DEFAULT_SKILL_LEVEL = 60;
+const TOOLS_PER_PAGE = 12;
 
 const TOOLS = [
   "Figma",
@@ -134,6 +136,8 @@ type YourToolsProps = {
 
 export function YourTools({ value, onChange }: YourToolsProps) {
   const [addToolsOpen, setAddToolsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const { data: portfolioData } = useGetPortfolio();
   const { data: apiTools = [] } = useGetTools();
 
@@ -181,7 +185,30 @@ export function YourTools({ value, onChange }: YourToolsProps) {
     );
     return [...portfolioToolNames, ...rest, ...custom];
   }, [baseToolNames, portfolioToolNames, value.selectedTools]);
+  const filteredTools = useMemo((): string[] => {
+    const query = searchTerm.trim().toLowerCase();
+    if (!query) return displayedTools;
+    return displayedTools.filter((name) => {
+      const displayName = getDisplayToolName(name).toLowerCase();
+      return name.toLowerCase().includes(query) || displayName.includes(query);
+    });
+  }, [displayedTools, searchTerm]);
+  const totalPages = Math.max(1, Math.ceil(filteredTools.length / TOOLS_PER_PAGE));
+  const paginatedTools = useMemo((): string[] => {
+    const start = (currentPage - 1) * TOOLS_PER_PAGE;
+    return filteredTools.slice(start, start + TOOLS_PER_PAGE);
+  }, [currentPage, filteredTools]);
   const count = value.selectedTools.length;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   const toggle = (name: string) => {
     const isRemoving = value.selectedTools.includes(name);
@@ -286,8 +313,24 @@ export function YourTools({ value, onChange }: YourToolsProps) {
               </AddToolsPopover>
             </div>
 
+            <div className="space-y-2">
+              <label
+                htmlFor="tool-search"
+                className="text-sm font-medium text-[#092A31]"
+              >
+                Search tools
+              </label>
+              <Input
+                id="tool-search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search by tool name"
+                className="border-zinc-200 bg-white"
+              />
+            </div>
+
             <div className="flex flex-wrap gap-2">
-              {displayedTools.map((name) => {
+              {paginatedTools.map((name) => {
                 const selected = value.selectedTools.includes(name);
                 const displayName = getDisplayToolName(name);
                 return (
@@ -320,6 +363,38 @@ export function YourTools({ value, onChange }: YourToolsProps) {
                 );
               })}
             </div>
+
+            {filteredTools.length === 0 ? (
+              <p className="text-sm text-zinc-500">
+                No tools match your search.
+              </p>
+            ) : (
+              <div className="flex items-center justify-between gap-3 pt-2">
+                <span className="text-sm text-zinc-500">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                    disabled={currentPage === 1}
+                    className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-[#092A31] transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCurrentPage((page) => Math.min(totalPages, page + 1))
+                    }
+                    disabled={currentPage === totalPages}
+                    className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-[#092A31] transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         {count > 0 ? (

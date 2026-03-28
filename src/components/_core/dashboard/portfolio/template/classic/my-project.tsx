@@ -198,7 +198,7 @@ function AddProjectCard({ onAdd }: { onAdd?: () => void }) {
       <button
         type="button"
         onClick={onAdd}
-        className="relative block w-full min-w-0 overflow-visible text-left focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 group"
+        className="relative block w-full min-w-0 overflow-visible text-left cursor-pointer group"
         aria-label="Add project"
       >
         <div className="relative h-60 w-full">
