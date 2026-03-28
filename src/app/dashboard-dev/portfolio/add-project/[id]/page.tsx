@@ -10,6 +10,7 @@ import {
 } from "./view-project-content";
 import { useGetProjectByUserId } from "@/features/portfolio/use-get-project-by-id";
 import { useDeletePortfolioProject } from "@/features/portfolio/use-delete-portfolio-project";
+import { useConfirm } from "@/hooks/use-confirm";
 import { getUserId } from "@/lib/get-user-id";
 import { useAuthStore } from "@/store/auth-store";
 
@@ -26,6 +27,13 @@ export default function ViewProjectPage() {
 
   const user = useAuthStore((s) => s.user);
   const userId = getUserId(user);
+  const { confirm, ConfirmDialog } = useConfirm({
+    title: "Delete project?",
+    description: "This project will be permanently removed and cannot be undone.",
+    confirmText: "Delete",
+    cancelText: "Cancel",
+    variant: "destructive",
+  });
 
   const { data, isLoading, isError, error } = useGetProjectByUserId(userId, idParam);
   const { deleteProject, isDeleting } = useDeletePortfolioProject();
@@ -45,10 +53,8 @@ export default function ViewProjectPage() {
 
   const handleDelete = async () => {
     if (!idParam) return;
-    if (
-      typeof window === "undefined" ||
-      !window.confirm("Delete this project? This cannot be undone.")
-    ) {
+    const confirmed = await confirm();
+    if (!confirmed) {
       return;
     }
     const result = await deleteProject(idParam);
@@ -113,11 +119,14 @@ export default function ViewProjectPage() {
   }
 
   return (
-    <ViewProjectContent
-      project={project}
-      onEdit={handleEdit}
-      onDelete={handleDelete}
-      isDeletePending={isDeleting}
-    />
+    <>
+      <ViewProjectContent
+        project={project}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        isDeletePending={isDeleting}
+      />
+      {ConfirmDialog}
+    </>
   );
 }

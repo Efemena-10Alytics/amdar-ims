@@ -1,7 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { ViewProjectContent } from "../add-project/[id]/view-project-content";
 import type { ViewProjectData } from "../add-project/[id]/view-project-content";
+import { useConfirm } from "@/hooks/use-confirm";
 
 const SAMPLE_PROJECT: ViewProjectData = {
   title: "Project title",
@@ -35,23 +37,36 @@ const SAMPLE_PROJECT: ViewProjectData = {
 };
 
 export default function ViewProjectPage() {
+  const router = useRouter();
+  const { confirm, ConfirmDialog } = useConfirm({
+    title: "Delete project?",
+    description: "This project will be permanently removed and cannot be undone.",
+    confirmText: "Delete",
+    cancelText: "Cancel",
+    variant: "destructive",
+  });
+
   const handleEdit = () => {
     // TODO: navigate to edit project
-    window.location.href = "/dashboard-dev/portfolio/add-project";
+    router.push("/dashboard-dev/portfolio/add-project");
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     // TODO: confirm and delete
-    if (typeof window !== "undefined" && window.confirm("Delete this project?")) {
-      window.location.href = "/dashboard-dev/portfolio";
+    const confirmed = await confirm();
+    if (confirmed) {
+      router.push("/dashboard-dev/portfolio");
     }
   };
 
   return (
-    <ViewProjectContent
-      project={SAMPLE_PROJECT}
-      onEdit={handleEdit}
-      onDelete={handleDelete}
-    />
+    <>
+      <ViewProjectContent
+        project={SAMPLE_PROJECT}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
+      {ConfirmDialog}
+    </>
   );
 }
