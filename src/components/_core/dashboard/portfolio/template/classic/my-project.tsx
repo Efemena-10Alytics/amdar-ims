@@ -106,18 +106,14 @@ function ProjectCard({
         : undefined;
 
   const actionClassName = cn(
-    "absolute bottom-2 right-2 flex size-9 items-center justify-center gap-1.5 rounded-full shadow-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 z-20",
+    "absolute bottom-2 right-2 flex size-9 items-center justify-center gap-1.5 rounded-full shadow-md transition-colors z-20 pointer-events-none",
     isHovered
       ? "bg-amdari-yellow text-[#092A31] px-4 h-9"
       : "bg-primary text-white size-9",
   );
 
-  return (
-    <article
-      className="relative block w-full min-w-0 overflow-visible"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+  const cardContent = (
+    <>
       <div className="relative h-60 w-full min-w-0">
         <div
           className="absolute inset-0 overflow-hidden bg-[#E8EFF1] transition-opacity shadow-sm"
@@ -135,34 +131,17 @@ function ProjectCard({
             </div>
           )}
         </div>
-        {/* Action: bottom right, outside clip so it always shows */}
-        {viewHref ? (
-          <Link
-            href={viewHref}
-            className={actionClassName}
-            aria-label={`View ${project.title}`}
-            onClick={onClick}
-          >
-            {isHovered ? (
-              <span className="text-[6px] font-medium">View</span>
-            ) : (
-              <ArrowUpRight className="size-4" aria-hidden />
-            )}
-          </Link>
-        ) : (
-          <button
-            type="button"
-            onClick={onClick}
-            className={actionClassName}
-            aria-label={`View ${project.title}`}
-          >
-            {isHovered ? (
-              <span className="text-[6px] font-medium">View</span>
-            ) : (
-              <ArrowUpRight className="size-4" aria-hidden />
-            )}
-          </button>
-        )}
+        {/* Action indicator: bottom right, outside clip so it always shows */}
+        <span
+          className={actionClassName}
+          aria-hidden
+        >
+          {isHovered ? (
+            <span className="text-[6px] font-medium">View</span>
+          ) : (
+            <ArrowUpRight className="size-4" aria-hidden />
+          )}
+        </span>
       </div>
       {/* Tags: top right, outside clip so they always show */}
       {project.tags && project.tags.length > 0 && (
@@ -181,7 +160,35 @@ function ProjectCard({
       <span className="mt-2 text-left font-semibold block text-[#092A31] text-sm truncate">
         {project.title}
       </span>
-    </article>
+    </>
+  );
+
+  if (viewHref) {
+    return (
+      <Link
+        href={viewHref}
+        className="relative block w-full min-w-0 overflow-visible rounded-lg"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onClick={onClick}
+        aria-label={`View ${project.title}`}
+      >
+        {cardContent}
+      </Link>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      className="relative block w-full min-w-0 overflow-visible text-left focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={onClick}
+      aria-label={`View ${project.title}`}
+    >
+      {cardContent}
+    </button>
   );
 }
 
@@ -191,7 +198,7 @@ function AddProjectCard({ onAdd }: { onAdd?: () => void }) {
       <button
         type="button"
         onClick={onAdd}
-        className="relative block w-full min-w-0 overflow-visible text-left focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 group"
+        className="relative block w-full min-w-0 overflow-visible text-left cursor-pointer group"
         aria-label="Add project"
       >
         <div className="relative h-60 w-full">
