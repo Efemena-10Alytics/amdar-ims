@@ -167,7 +167,7 @@ function ProjectCard({
     return (
       <Link
         href={viewHref}
-        className="relative block w-full min-w-0 overflow-visible focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg"
+        className="relative block w-full min-w-0 overflow-visible rounded-lg"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onClick={onClick}
