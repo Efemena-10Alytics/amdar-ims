@@ -1,13 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 
 const COUNTRIES_API =
-  "https://restcountries.com/v3.1/all?fields=name,cca2,flags,idd";
+  "https://restcountries.com/v3.1/all?fields=name,cca2,flags,idd,region,subregion";
 
 export type CountryItem = {
   name: string;
   code: string;
   flag: string;
   callingCode: string;
+  /** RestCountries region, e.g. "Americas". */
+  region: string;
+  /** RestCountries subregion, e.g. "North America". */
+  subregion: string;
 };
 
 type RestCountry = {
@@ -15,6 +19,8 @@ type RestCountry = {
   cca2: string;
   flags: { png: string; svg: string };
   idd?: { root?: string; suffixes?: string[] };
+  region?: string;
+  subregion?: string;
 };
 
 function parseCallingCode(idd: RestCountry["idd"]): string {
@@ -30,6 +36,8 @@ function mapCountry(raw: RestCountry): CountryItem {
     code: raw.cca2,
     flag: raw.flags.svg,
     callingCode: parseCallingCode(raw.idd),
+    region: raw.region ?? "",
+    subregion: raw.subregion ?? "",
   };
 }
 

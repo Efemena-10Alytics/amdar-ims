@@ -152,6 +152,8 @@ const Classic = ({ portfolio, isLoading, error, portfolioUserId }: ClassicProps)
       phone: phone || "—",
       email: email || "—",
       country: countryName || "—",
+      region: country?.subregion || country?.region || undefined,
+      countryCode: p?.countryCode?.trim() || undefined,
     };
   }, [portfolio?.personalInfo, countries]);
 

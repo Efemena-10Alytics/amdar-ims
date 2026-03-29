@@ -1,16 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { Phone, Mail, Flag, Twitter, Linkedin } from "lucide-react";
+import { Phone, Mail, Twitter, Linkedin } from "lucide-react";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { initClassicAos } from "./init-classic-aos";
+import { type CountryItem, useCountries } from "@/features/portfolio/use-countries";
 
 export type FooterContact = {
   phone: string;
   email: string;
   country: string;
   region?: string;
+  /** ISO 3166-1 alpha-2; preferred for flag lookup. */
+  countryCode?: string;
 };
 
 export type SocialLink = {
@@ -34,6 +37,7 @@ export function Footer({
     email: "juwonlo@amdari.io",
     country: "Canada",
     region: "North America",
+    countryCode: "CA",
   },
   socialLinks = [
     { type: "twitter" as const, href: "#", label: "X (Twitter)" },
@@ -44,6 +48,33 @@ export function Footer({
   poweredByHref = "/",
   id,
 }: FooterProps) {
+  const { data: countries = [] } = useCountries();
+
+  const countryMatch = useMemo((): CountryItem | undefined => {
+    if (!countries.length) return undefined;
+    const norm = (s: string) => s.trim().toLowerCase();
+    const code = contact.countryCode?.trim().toUpperCase();
+    if (code) {
+      const byCode = countries.find((c) => c.code.toUpperCase() === code);
+      if (byCode) return byCode;
+    }
+    const countryName = contact.country?.trim();
+    if (countryName && countryName !== "—") {
+      const n = norm(countryName);
+      const regionNorm = contact.region ? norm(contact.region) : "";
+      const byName = countries.find((c) => norm(c.name) === n);
+      if (byName) return byName;
+      if (regionNorm) {
+        return countries.find(
+          (c) =>
+            norm(c.name) === n &&
+            (norm(c.subregion) === regionNorm || norm(c.region) === regionNorm)
+        );
+      }
+    }
+    return undefined;
+  }, [countries, contact.country, contact.countryCode, contact.region]);
+
   const SocialIcon = ({ type }: { type: SocialLink["type"] }) => {
     switch (type) {
       case "twitter":
@@ -75,8 +106,19 @@ export function Footer({
           >
             {contact.phone}
           </a>
-          <div className="mt-3 items-center gap-2">
-            <Flag className="size-4 text-[#092A31] shrink-0" aria-hidden />
+          <div className="mt-3 flex items-start gap-2">
+            {countryMatch?.flag ? (
+              <img
+                src={countryMatch.flag}
+                alt=""
+                className="size-4 shrink-0 rounded-sm object-cover"
+                aria-hidden
+              />
+            ) : (
+              <span className="text-base leading-none shrink-0" aria-hidden>
+                🌍
+              </span>
+            )}
             <div>
               <p className="text-sm font-semibold text-[#092A31]">{contact.country}</p>
               {contact.region && (

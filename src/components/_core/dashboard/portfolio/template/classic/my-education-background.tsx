@@ -23,7 +23,7 @@ export function MyEducationBackground({ entries = [] }: MyEducationBackgroundPro
       <ul className="">
         {entries.map((entry, index) => (
           <li key={entry.institution + index} className="py-4 hover:bg-[#B6CFD4] cursor-alias rounded transition-colors hover:px-4">
-            <h3 className="font-bold text-[#092A31] text-2xl">
+            <h3 className="font-semibold text-[#092A31] text-2xl">
               {entry.institution}
             </h3>
             <p className="mt-0.5 text-sm text-[#64748B]">
