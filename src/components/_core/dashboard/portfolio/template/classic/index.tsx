@@ -148,6 +148,8 @@ const CreateClassic = () => {
       phone: phone || "—",
       email: email || "—",
       country: countryName || "—",
+      region: country?.subregion || country?.region || undefined,
+      countryCode: p?.countryCode?.trim() || undefined,
     };
   }, [portfolio?.personalInfo, countries]);
 
@@ -186,10 +188,10 @@ const CreateClassic = () => {
       <PortfolioHero value={heroData} />
       <MyProjects
         projects={projects}
-        onAddProject={() => {}}
+        onAddProject={() => { }}
         showAddProject={true}
       />
-      <MyWorkExperience items={workItems} onItemClick={() => {}} />
+      <MyWorkExperience items={workItems} />
       <MySpecialization specializations={specializations} softSkills={softSkills} />
       <MyTools tools={tools} title={categoryTitle} />
       <MyEducationBackground entries={educationEntries} />

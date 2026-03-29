@@ -152,6 +152,8 @@ const Classic = ({ portfolio, isLoading, error, portfolioUserId }: ClassicProps)
       phone: phone || "—",
       email: email || "—",
       country: countryName || "—",
+      region: country?.subregion || country?.region || undefined,
+      countryCode: p?.countryCode?.trim() || undefined,
     };
   }, [portfolio?.personalInfo, countries]);
 
@@ -209,7 +211,7 @@ const Classic = ({ portfolio, isLoading, error, portfolioUserId }: ClassicProps)
                 className={cn(
                   "text-sm font-medium transition-colors",
                   isActive
-                    ? "text-blue-600 underline decoration-blue-600 underline-offset-4"
+                    ? "text-primary underline decoration-primary underline-offset-4"
                     : "text-gray-600 hover:text-gray-900",
                 )}
               >
@@ -238,7 +240,7 @@ const Classic = ({ portfolio, isLoading, error, portfolioUserId }: ClassicProps)
         onAddProject={() => {}}
         publicPortfolioUserId={portfolioUserId ?? undefined}
       />
-      <MyWorkExperience items={workItems} onItemClick={() => {}} />
+      <MyWorkExperience items={workItems} />
       <MySpecialization id="specialization" specializations={specializations} softSkills={softSkills} />
       <MyTools tools={tools} title={categoryTitle} />
       <MyEducationBackground entries={educationEntries} />

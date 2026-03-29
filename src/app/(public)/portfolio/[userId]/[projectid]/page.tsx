@@ -7,8 +7,12 @@ import { Loader2 } from "lucide-react";
 import {
   ViewProjectContent,
   mapProjectToViewData,
+  stableProjectListId,
+  type OtherProjectLink,
 } from "@/app/dashboard-dev/portfolio/add-project/[id]/view-project-content";
 import { useGetProjectByUserId } from "@/features/portfolio/use-get-project-by-id";
+import { useGetPortfolioByUserId } from "@/features/portfolio/use-get-portfolio-by-id";
+import { getImageUrl } from "@/lib/utils";
 
 function paramPart(
   value: string | string[] | undefined,
@@ -27,11 +31,34 @@ export default function PublicProjectDetailsPage() {
     userId ?? null,
     projectId ?? null,
   );
+  const { data: portfolioData } = useGetPortfolioByUserId(userId ?? null);
 
   const project = useMemo(
     () => (data ? mapProjectToViewData(data) : null),
     [data],
   );
+
+  const otherProjects = useMemo((): OtherProjectLink[] => {
+    const list = portfolioData?.projects ?? [];
+    if (!userId || !projectId || list.length === 0) return [];
+    return list
+      .map((p, i) => {
+        const id = stableProjectListId(p, i);
+        return {
+          id,
+          title: p.title?.trim() || "Untitled",
+          coverImageUrl: getImageUrl(p.coverImage) || undefined,
+          tag: p.category?.trim() || undefined,
+        };
+      })
+      .filter((p) => p.id !== projectId)
+      .map((p) => ({
+        href: `/portfolio/${encodeURIComponent(userId)}/${encodeURIComponent(p.id)}`,
+        title: p.title,
+        coverImageUrl: p.coverImageUrl,
+        tag: p.tag,
+      }));
+  }, [portfolioData?.projects, userId, projectId]);
 
   const backHref =
     userId != null && userId !== ""
@@ -83,6 +110,7 @@ export default function PublicProjectDetailsPage() {
         project={project}
         backHref={backHref}
         backLabel="Back to portfolio"
+        otherProjects={otherProjects}
       />
     </div>
   );

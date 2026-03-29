@@ -1,6 +1,6 @@
 "use client";
-import Aos from "aos";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+import { initClassicAos } from "./init-classic-aos";
 
 export type ToolItem = {
   name: string;
@@ -16,23 +16,44 @@ const DEFAULT_TOOL_ICONS: Record<string, string> = {
   "Adobe Illustrator": "/images/svgs/tools/adobe-illustrator.svg",
 };
 
+const MAX_VISIBLE_TOOLS = 7;
+
 type MyToolsProps = {
   tools?: ToolItem[];
   /** Large faded title on the right (e.g. "Product Designer"). */
   title?: string;
 };
 
+/** Higher skillLevel first; items without skillLevel rank by percentage after all rated ones. */
+function compareToolsBySkill(a: ToolItem, b: ToolItem): number {
+  const sa = a.skillLevel;
+  const sb = b.skillLevel;
+  if (sa != null && sb != null) return sb - sa;
+  if (sa != null) return -1;
+  if (sb != null) return 1;
+  return (b.percentage ?? 0) - (a.percentage ?? 0);
+}
+
 export function MyTools({
   tools = [],
   title = "Product Designer",
 }: MyToolsProps) {
-  const lines = title.split(" ");
-  const firstLine = lines[0] ?? "";
-  const restLine = lines.slice(1).join(" ");
+  const trimmed = title.trim();
+  const spaceIdx = trimmed.indexOf(" ");
+  const firstLine =
+    spaceIdx === -1 ? trimmed : trimmed.slice(0, spaceIdx);
+  const restLine =
+    spaceIdx === -1 ? "" : trimmed.slice(spaceIdx + 1).trimStart();
+
+  const displayedTools = useMemo(
+    () =>
+      [...tools].sort(compareToolsBySkill).slice(0, MAX_VISIBLE_TOOLS),
+    [tools]
+  );
 
   useEffect(() => {
-    Aos.init()
-  }, [])
+    initClassicAos();
+  }, []);
 
   return (
     <div data-aos="fade-up" className="mt-20">
@@ -44,11 +65,11 @@ export function MyTools({
         {/* Left: My Tools list */}
         <div>
           <ul className="">
-            {tools.map((tool, index) => {
+            {displayedTools.map((tool, index) => {
               const iconSrc = tool.iconUrl ?? DEFAULT_TOOL_ICONS[tool.name];
               const pct = tool.skillLevel ?? tool.percentage ?? 80;
               return (
-                <li key={tool.name + index}>
+                <li key={tool.name + index} className="hover:bg-[#B6CFD4] hover:px-4 group cursor-alias">
                   <div className="flex items-center gap-3 py-3">
                     <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded bg-white border border-zinc-100">
                       {iconSrc ? (
@@ -66,7 +87,7 @@ export function MyTools({
                     <h3 className="flex-1 min-w-0 text-sm font-semibold font-clash-display! text-[#092A31]">
                       {tool.name}
                     </h3>
-                    <h2 className="text-lg text-[#B6CFD4] font-black tabular-nums">
+                    <h2 className="text-lg text-[#B6CFD4] font-black tabular-nums group-hover:text-primary">
                       {pct}%
                     </h2>
                   </div>
@@ -80,12 +101,14 @@ export function MyTools({
         <div className="flex w-full items-center justify-center h-full md:min-h-0">
           <div className="">
             <h1
+            data-aos="fade-right"
               className="block text-4xl md:text-5xl lg:text-6xl font-black text-[#E8EFF1] leading-tight"
               aria-hidden
             >
               {firstLine}
             </h1>
             <h1
+            data-aos="fade-left"
               className="ml-auto translate-x-20 text-4xl md:text-5xl lg:text-6xl font-semibold text-[#B6CFD4] leading-tight mt-0.5"
               aria-hidden
             >

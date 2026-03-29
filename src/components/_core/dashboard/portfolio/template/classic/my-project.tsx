@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import { ArrowUpRight, Plus } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import Aos from "aos";
+import { initClassicAos } from "./init-classic-aos";
 
 const HOVER_IMAGE = "/images/pngs/project-hover.png";
 
 /** Clip-path for card shape (folder-style). Uses objectBoundingBox so it scales with element width/height. */
 const CARD_CLIP_PATH_ID = "project-card-clip";
 
-function CardClipPathDef() {
+export function CardClipPathDef() {
   return (
     <svg aria-hidden className="absolute size-0" focusable="false">
       <defs>
@@ -50,8 +50,8 @@ export function MyProjects({
   publicPortfolioUserId,
 }: MyProjectsProps) {
   useEffect(() => {
-    Aos.init()
-  }, [])
+    initClassicAos();
+  }, []);
   return (
     <section id={id} data-aos="fade-up" className="mt-20 relative" aria-label="My projects">
       <CardClipPathDef />
@@ -80,13 +80,16 @@ export function MyProjects({
 }
 
 /** Card: uses snippet clip-path (150×200, arcs at corners and left); title below; tag/button overlap edge */
-function ProjectCard({
+export function ProjectCard({
   project,
+  href: hrefOverride,
   onClick,
   showAddProject,
   publicPortfolioUserId,
 }: {
   project: ProjectItem;
+  /** When set, the card links here (e.g. “Other projects” on the project detail page). */
+  href?: string;
   onClick?: () => void;
   showAddProject?: boolean;
   publicPortfolioUserId?: string;
@@ -99,11 +102,12 @@ function ProjectCard({
     project.id != null && String(project.id).trim() !== "";
 
   const viewHref =
-    showAddProject && hasProjectId
+    hrefOverride ??
+    (showAddProject && hasProjectId
       ? `/dashboard-dev/portfolio/add-project/${encodeURIComponent(String(project.id))}`
       : publicPortfolioUserId && hasProjectId
         ? `/portfolio/${encodeURIComponent(publicPortfolioUserId)}/${encodeURIComponent(String(project.id))}`
-        : undefined;
+        : undefined);
 
   const actionClassName = cn(
     "absolute bottom-2 right-2 flex size-9 items-center justify-center gap-1.5 rounded-full shadow-md transition-colors z-20 pointer-events-none",

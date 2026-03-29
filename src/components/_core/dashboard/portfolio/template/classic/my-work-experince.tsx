@@ -1,8 +1,9 @@
 "use client";
 
 import { ArrowUpRight } from "lucide-react";
-import Aos from "aos";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { initClassicAos } from "./init-classic-aos";
+import { cn } from "@/lib/utils";
 
 export type WorkExperienceItem = {
   id?: string;
@@ -16,59 +17,91 @@ export type WorkExperienceItem = {
 
 type MyWorkExperienceProps = {
   items?: WorkExperienceItem[];
-  onItemClick?: (item: WorkExperienceItem) => void;
 };
 
 export function MyWorkExperience({
   items = [],
-  onItemClick,
 }: MyWorkExperienceProps) {
+  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
+
   useEffect(() => {
-    Aos.init()
-  }, [])
+    initClassicAos();
+  }, []);
+
+  const toggleExpanded = (key: string) => {
+    setExpandedItems((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
   return (
     <section data-aos="fade-up" className="mt-20" aria-label="My work experience">
       <div className="text-xl font-semibold text-[#A1A8B1] mb-4">
         My Work Experience
       </div>
-      <ul className="divide- divide-zinc-200">
-        {items.map((item, index) => (
-          <li key={item.id ?? index}>
-            <button
-              type="button"
-              onClick={() => onItemClick?.(item)}
-              className="w-full flex items-start gap-3 py-4 text-left hover:bg-zinc-50/80 transition-colors rounded-lg -mx-1 px-1 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-              aria-label={`View ${item.company} experience`}
+      <div className="">
+        {items.map((item, index) => {
+          const itemKey = String(item.id ?? index);
+          const isExpanded = expandedItems[itemKey] ?? false;
+          return (
+            <div key={item.id ?? index}
+              className="w-full"
             >
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="font-semibold text-[#092A31] text-2xl">{item.company}</h2>
-                  <h3 className="text-sm md:text-base text-[#B6CFD4] font-semibold">{item.category}</h3>
+
+              <button
+                type="button"
+                className={cn("flex p-4 cursor-pointer group text-left transition-colors hover:bg-[#156374] justify-between w-full",
+                )}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (item.descriptions && item.descriptions.length > 0) {
+                    toggleExpanded(itemKey);
+                  }
+                }}
+              >
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap text-left">
+                    <h2 className="text-2xl font-semibold text-[#092A31] transition-colors group-hover:text-white">
+                      {item.company}
+                    </h2>
+                    <h3 className="text-sm md:text-base font-semibold text-[#B6CFD4] transition-colors group-hover:text-[#D6E8EC]">
+                      {item.category}
+                    </h3>
+                  </div>
+                  <p className="mt-0.5 text-sm text-[#64748B] transition-colors group-hover:text-white/90">
+                    {item.role}
+                    <span className="mx-1.5" aria-hidden>
+                      ·
+                    </span>
+                    {item.duration}
+                  </p>
+
                 </div>
-                <p className="mt-0.5 text-sm text-[#64748B]">
-                  {item.role}
-                  <span className="mx-1.5" aria-hidden>
-                    ·
-                  </span>
-                  {item.duration}
-                </p>
-                {item.descriptions && item.descriptions.length > 0 ? (
-                  <ul className="mt-3 list-disc space-y-1 pl-5 text-sm leading-relaxed text-[#64748B] marker:text-[#64748B]">
-                    {item.descriptions.map((description, descriptionIndex) => (
-                      <li className="capitalize" key={`${item.id ?? index}-desc-${descriptionIndex}`}>
-                        {description}
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
-              </div>
-              <span className="shrink-0 flex size-9 items-center justify-center rounded-full text-primary mt-0.5" aria-hidden>
-                <ArrowUpRight className="size-4" />
-              </span>
-            </button>
-          </li>
-        ))}
-      </ul>
+                <ArrowUpRight
+                  className={cn("size-5 transition-transform text-[#092A31] group-hover:text-white", isExpanded ? "rotate-45" : "rotate-0")}
+                  aria-hidden
+                />
+              </button>
+
+              {item.descriptions && item.descriptions.length > 0 ? (
+                <div className="">
+                  {isExpanded ? (
+                    <ul className="list-disc space-y-3 pl-8 text-sm leading-relaxed text-[#64748B] marker:text-[#64748B]">
+                      {item.descriptions.map((description, descriptionIndex) => (
+                        <li className="capitalize" key={`${item.id ?? index}-desc-${descriptionIndex}`}>
+                          {description}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
+
+          )
+        })}
+      </div>
     </section>
   );
 }
