@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ArrowUpRight, Plus } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import Aos from "aos";
+import { initClassicAos } from "./init-classic-aos";
 
 const HOVER_IMAGE = "/images/pngs/project-hover.png";
 
@@ -50,8 +50,8 @@ export function MyProjects({
   publicPortfolioUserId,
 }: MyProjectsProps) {
   useEffect(() => {
-    Aos.init()
-  }, [])
+    initClassicAos();
+  }, []);
   return (
     <section id={id} data-aos="fade-up" className="mt-20 relative" aria-label="My projects">
       <CardClipPathDef />

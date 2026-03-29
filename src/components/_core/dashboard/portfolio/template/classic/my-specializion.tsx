@@ -1,6 +1,6 @@
 "use client";
-import Aos from "aos";
 import { useEffect } from "react";
+import { initClassicAos } from "./init-classic-aos";
 
 type MySpecializationProps = {
   specializations?: string[];
@@ -14,8 +14,8 @@ export function MySpecialization({
   id,
 }: MySpecializationProps) {
   useEffect(() => {
-    Aos.init()
-  }, [])
+    initClassicAos();
+  }, []);
   return (
     <section id={id} data-aos="fade-up" className="mt-20" aria-label="Specialization and skills">
       {/* My Specialization */}
@@ -35,10 +35,10 @@ export function MySpecialization({
       </ul>
 
       {/* Soft skills */}
-      <h3 className="text-2xl font-extrabold text-[#E8EFF1] text-center mt-20 mb-6">
+      <h3 data-aos="fade-up" className="text-2xl font-extrabold text-[#E8EFF1] text-center mt-20 mb-6">
         Soft skills
       </h3>
-      <div className="flex flex-wrap max-w-2xl mx-auto gap-4 justify-center">
+      <div data-aos="fade-up" className="flex flex-wrap max-w-2xl mx-auto gap-4 justify-center">
         {softSkills.map((skill, index) => (
           <span
             key={index}

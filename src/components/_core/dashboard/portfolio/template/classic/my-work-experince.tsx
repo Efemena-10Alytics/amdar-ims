@@ -1,8 +1,8 @@
 "use client";
 
 import { ArrowUpRight } from "lucide-react";
-import Aos from "aos";
 import { useEffect, useState } from "react";
+import { initClassicAos } from "./init-classic-aos";
 import { cn } from "@/lib/utils";
 
 export type WorkExperienceItem = {
@@ -17,18 +17,16 @@ export type WorkExperienceItem = {
 
 type MyWorkExperienceProps = {
   items?: WorkExperienceItem[];
-  onItemClick?: (item: WorkExperienceItem) => void;
 };
 
 export function MyWorkExperience({
   items = [],
-  onItemClick,
 }: MyWorkExperienceProps) {
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    Aos.init()
-  }, [])
+    initClassicAos();
+  }, []);
 
   const toggleExpanded = (key: string) => {
     setExpandedItems((prev) => ({
@@ -53,7 +51,7 @@ export function MyWorkExperience({
 
               <button
                 type="button"
-                className={cn("flex p-4 cursor-pointer group rounded-lg text-left transition-colors hover:bg-[#156374] justify-between w-full",
+                className={cn("flex p-4 cursor-pointer group text-left transition-colors hover:bg-[#156374] justify-between w-full",
                 )}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -89,7 +87,7 @@ export function MyWorkExperience({
               {item.descriptions && item.descriptions.length > 0 ? (
                 <div className="">
                   {isExpanded ? (
-                    <ul className="list-disc space-y-1 pl-8 text-sm leading-relaxed text-[#64748B] marker:text-[#64748B]">
+                    <ul className="list-disc space-y-3 pl-8 text-sm leading-relaxed text-[#64748B] marker:text-[#64748B]">
                       {item.descriptions.map((description, descriptionIndex) => (
                         <li className="capitalize" key={`${item.id ?? index}-desc-${descriptionIndex}`}>
                           {description}

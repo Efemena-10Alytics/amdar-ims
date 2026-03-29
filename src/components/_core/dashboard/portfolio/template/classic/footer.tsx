@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { Phone, Mail, Flag, Twitter, Linkedin } from "lucide-react";
 import Image from "next/image";
-import Aos from "aos";
 import { useEffect } from "react";
+import { initClassicAos } from "./init-classic-aos";
 
 export type FooterContact = {
   phone: string;
@@ -60,8 +60,8 @@ export function Footer({
   };
 
   useEffect(() => {
-    Aos.init()
-  }, [])
+    initClassicAos();
+  }, []);
 
   return (
     <footer id={id} data-aos="fade-up" className="mt-16 pt-10 pb-4" aria-label="Contact and footer">
@@ -71,14 +71,14 @@ export function Footer({
           <h3 className="text-sm font-medium text-zinc-500 mb-3">Contact Me</h3>
           <a
             href={`tel:${contact.phone.replace(/\s/g, "")}`}
-            className="block text-lg font-bold text-[#202C3D] hover:opacity-90"
+            className="block text-base md:text-lg lg:text-2xl font-semibold text-[#202C3D] hover:opacity-90"
           >
             {contact.phone}
           </a>
           <div className="mt-3 items-center gap-2">
             <Flag className="size-4 text-[#092A31] shrink-0" aria-hidden />
             <div>
-              <p className="text-sm font-medium text-zinc-700">{contact.country}</p>
+              <p className="text-sm font-semibold text-[#092A31]">{contact.country}</p>
               {contact.region && (
                 <p className="text-sm text-zinc-500">{contact.region}</p>
               )}
@@ -88,7 +88,7 @@ export function Footer({
         <div className="md:text-right">
           <a
             href={`mailto:${contact.email}`}
-            className="text-base font-medium text-[#202C3D] hover:opacity-90"
+            className="text-base md:text-lg lg:text-2xl font-semibold text-[#202C3D] hover:opacity-90"
           >
             {contact.email}
           </a>

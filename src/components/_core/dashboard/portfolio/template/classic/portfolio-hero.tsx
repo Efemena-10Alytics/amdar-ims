@@ -1,11 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import Aos from "aos";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { initClassicAos } from "./init-classic-aos";
 import { useCountUp } from "@/hooks/use-count-up";
-
-
 
 export type PortfolioHeroData = {
   name: string;
@@ -37,14 +35,14 @@ export function PortfolioHero({ value, id }: PortfolioHeroProps) {
 
   const projectsNum = parseInt(value.projectsCount?.replace(/\D/g, "") ?? "0", 10);
   const projectsSuffix = value.projectsCount?.includes("+") ? "+" : "";
-  const projectsDisplay = useCountUp(projectsNum, 1500, !!value.projectsCount && projectsNum > 0);
+  const projectsDisplay = useCountUp(projectsNum, 2400, !!value.projectsCount && projectsNum > 0);
 
   const yearsNum = parseInt(value.yearsExperience?.replace(/\D/g, "") ?? "0", 10);
   const yearsSuffix = value.yearsExperience?.includes("+") ? "+" : "";
-  const yearsDisplay = useCountUp(yearsNum, 1500, !!value.yearsExperience && yearsNum > 0);
+  const yearsDisplay = useCountUp(yearsNum, 2400, !!value.yearsExperience && yearsNum > 0);
 
   useEffect(() => {
-    Aos.init();
+    initClassicAos();
   }, []);
 
   return (

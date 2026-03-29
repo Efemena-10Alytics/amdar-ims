@@ -186,10 +186,10 @@ const CreateClassic = () => {
       <PortfolioHero value={heroData} />
       <MyProjects
         projects={projects}
-        onAddProject={() => {}}
+        onAddProject={() => { }}
         showAddProject={true}
       />
-      <MyWorkExperience items={workItems} onItemClick={() => {}} />
+      <MyWorkExperience items={workItems} />
       <MySpecialization specializations={specializations} softSkills={softSkills} />
       <MyTools tools={tools} title={categoryTitle} />
       <MyEducationBackground entries={educationEntries} />
