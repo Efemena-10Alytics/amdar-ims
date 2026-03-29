@@ -3,8 +3,21 @@
 import Link from "next/link";
 import { ArrowLeft, Pencil, Trash2, LinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  CardClipPathDef,
+  ProjectCard,
+} from "@/components/_core/dashboard/portfolio/template/classic/my-project";
 import { getImageUrl } from "@/lib/utils";
 import type { UserPortfolioProjectDetail } from "@/features/portfolio/use-get-project-by-id";
+import type { UserPortfolioProject } from "@/features/portfolio/use-get-portfolio";
+
+/** Card linking to another project in the same portfolio (built by the page). */
+export type OtherProjectLink = {
+  href: string;
+  title: string;
+  coverImageUrl?: string;
+  tag?: string;
+};
 
 export type ViewProjectData = {
   title: string;
@@ -30,7 +43,18 @@ type ViewProjectContentProps = {
   /** Back link target (default: dashboard portfolio). */
   backHref?: string;
   backLabel?: string;
+  /** Shown below the main content when non-empty. */
+  otherProjects?: OtherProjectLink[];
 };
+
+/** Matches list/detail URLs when the API omits `id`. */
+export function stableProjectListId(
+  p: UserPortfolioProject,
+  index: number,
+): string {
+  if (p.id != null && String(p.id).trim() !== "") return String(p.id);
+  return String(p.coverImage ?? p.title ?? index);
+}
 
 export function mapProjectToViewData(
   data: UserPortfolioProjectDetail,
@@ -81,6 +105,7 @@ export function ViewProjectContent({
   isDeletePending = false,
   backHref = "/dashboard-dev/portfolio",
   backLabel = "Back",
+  otherProjects = [],
 }: ViewProjectContentProps) {
   const showActions = onEdit != null || onDelete != null;
 
@@ -121,7 +146,7 @@ export function ViewProjectContent({
       </header>
 
       {/* Hero banner */}
-      <div className="relative w-full aspect-21/9 min-h-50 bg-[#E8EFF1] rounded-2xl overflow-hidden">
+      <div className="relative w-full aspect-3/1 max-h-44 sm:max-h-100 bg-[#E8EFF1] rounded-2xl overflow-hidden">
         {project.coverImageUrl ? (
           <img
             src={project.coverImageUrl}
@@ -283,7 +308,7 @@ export function ViewProjectContent({
                       Solution URL
                     </div>
                     <p
-                      className="text-sm text-primary mt-1 break-all sm:break-words line-clamp-2 group-hover:underline"
+                      className="text-sm text-primary mt-1 break-all sm:wrap-break-word line-clamp-2 group-hover:underline"
                       title={project.solutionUrl}
                     >
                       {project.solutionUrl}
@@ -321,7 +346,7 @@ export function ViewProjectContent({
                       Media link
                     </div>
                     <p
-                      className="text-sm text-primary mt-1 break-all sm:break-words line-clamp-2 group-hover:underline"
+                      className="text-sm text-primary mt-1 break-all sm:wrap-break-word line-clamp-2 group-hover:underline"
                       title={project.mediaLink}
                     >
                       {project.mediaLink}
@@ -351,6 +376,33 @@ export function ViewProjectContent({
           </section>
         </aside>
       </div>
+
+      {otherProjects.length > 0 ? (
+        <section
+          className="mt-14 pt-10 border-t border-zinc-200 relative"
+          aria-label="Other projects"
+        >
+          <CardClipPathDef />
+          <h2 className="text-lg font-semibold text-[#092A31] mb-6">
+            Other projects
+          </h2>
+          <div className="grid xl:grid-cols-3 gap-4 pb-2">
+            {otherProjects.map((item) => (
+              <div key={item.href} className="min-w-0 w-full">
+                <ProjectCard
+                  project={{
+                    id: item.href,
+                    title: item.title,
+                    imageUrl: item.coverImageUrl,
+                    tags: item.tag ? [item.tag] : undefined,
+                  }}
+                  href={item.href}
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }

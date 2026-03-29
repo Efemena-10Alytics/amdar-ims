@@ -7,8 +7,12 @@ import Link from "next/link";
 import {
   ViewProjectContent,
   mapProjectToViewData,
+  stableProjectListId,
+  type OtherProjectLink,
 } from "./view-project-content";
 import { useGetProjectByUserId } from "@/features/portfolio/use-get-project-by-id";
+import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
+import { getImageUrl } from "@/lib/utils";
 import { useDeletePortfolioProject } from "@/features/portfolio/use-delete-portfolio-project";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getUserId } from "@/lib/get-user-id";
@@ -36,12 +40,35 @@ export default function ViewProjectPage() {
   });
 
   const { data, isLoading, isError, error } = useGetProjectByUserId(userId, idParam);
+  const { data: portfolioData } = useGetPortfolio();
   const { deleteProject, isDeleting } = useDeletePortfolioProject();
 
   const project = useMemo(
     () => (data ? mapProjectToViewData(data) : null),
     [data],
   );
+
+  const otherProjects = useMemo((): OtherProjectLink[] => {
+    const list = portfolioData?.projects ?? [];
+    if (!idParam || list.length === 0) return [];
+    return list
+      .map((p, i) => {
+        const id = stableProjectListId(p, i);
+        return {
+          id,
+          title: p.title?.trim() || "Untitled",
+          coverImageUrl: getImageUrl(p.coverImage) || undefined,
+          tag: p.category?.trim() || undefined,
+        };
+      })
+      .filter((p) => p.id !== idParam)
+      .map((p) => ({
+        href: `/dashboard-dev/portfolio/add-project/${encodeURIComponent(p.id)}`,
+        title: p.title,
+        coverImageUrl: p.coverImageUrl,
+        tag: p.tag,
+      }));
+  }, [portfolioData?.projects, idParam]);
 
   const handleEdit = () => {
     if (idParam) {
@@ -125,6 +152,7 @@ export default function ViewProjectPage() {
         onEdit={handleEdit}
         onDelete={handleDelete}
         isDeletePending={isDeleting}
+        otherProjects={otherProjects}
       />
       {ConfirmDialog}
     </>
