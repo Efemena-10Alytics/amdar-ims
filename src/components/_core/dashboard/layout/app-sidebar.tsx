@@ -29,15 +29,16 @@ import { NavMain } from "./nav-main";
 import { Leaf } from "lucide-react";
 
 const navMain = [
-  { title: "Dashboard", url: "/dashboard-dev", icon: DashboardFilledIcon },
-  { title: "Internship program", url: "#", icon: InternshipProgramIcon },
-  { title: "Project vault", url: "#", icon: ProjectVaultIcon },
-  { title: "Interview prep", url: "#", icon: InterviewPrepIcon },
-  { title: "Portfolio", url: "/dashboard-dev/portfolio", icon: PortfolioIcon },
-  { title: "Hackathons", url: "#", icon: HackathonIcon },
-  { title: "Learn", url: "#", icon: LearnIcon },
-  { title: "Blog", url: "#", icon: BlogIcon },
-  { title: "Billings", url: "#", icon: BillingIcon },
+  { title: "Dashboard", url: "/dashboard", icon: DashboardFilledIcon },
+  { title: "Internship program", url: "/dashboard-dev/internship", icon: InternshipProgramIcon },
+  { title: "Project vault", url: "/dashboard-projects/dashboard-project-paths/filter", icon: ProjectVaultIcon },
+  // { title: "Interview prep", url: "/dashboard-dev/portfolio", icon: InterviewPrepIcon },
+  { title: "Job board", url: "/job-board", icon: InterviewPrepIcon },
+  { title: "Portfolio", url: "/dashboard/portfolio", icon: PortfolioIcon },
+  { title: "Hackathons", url: "/live-hackathon", icon: HackathonIcon },
+  { title: "Learn", url: "/learn", icon: LearnIcon },
+  { title: "Blog", url: "/dashboard-blog", icon: BlogIcon },
+  { title: "Billings", url: "/billing", icon: BillingIcon },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
