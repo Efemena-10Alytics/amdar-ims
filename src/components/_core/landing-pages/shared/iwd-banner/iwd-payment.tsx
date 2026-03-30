@@ -32,6 +32,7 @@ export type IWDPaymentProps = {
   /** Link for "See offers here" text link */
   offersHref?: string;
   id?: number;
+  registeredIntervalCount?: number;
 };
 
 export default function IWDPayment({
@@ -40,6 +41,7 @@ export default function IWDPayment({
   slotsLeft = 6,
   id,
   claimHref = id != null ? `/payment/${id}` : "/internship",
+  registeredIntervalCount = 1,
 }: IWDPaymentProps) {
   const [offerOpen, setOfferOpen] = useState(false);
   const { data: promoUrgency } = useGetPromoUrgency();
@@ -63,11 +65,14 @@ export default function IWDPayment({
     typeof promoUrgency?.registered === "number"
       ? promoUrgency.registered
       : registeredCount;
+  const registeredIntervalDisplay =
+    typeof promoUrgency?.registered_interval_hours === "number"
+      ? promoUrgency.registered_interval_hours
+      : registeredIntervalCount;
   const viewingDisplay =
     typeof promoUrgency?.viewing === "number"
       ? promoUrgency.viewing
       : viewingNow;
-
 
   const originalLabel = toPoundLabel(INTERNSHIP_ORIGINAL_PRICE_LABEL);
   const discountedLabel = toPoundLabel(INTERNSHIP_DISCOUNTED_PRICE_LABEL);
@@ -119,8 +124,9 @@ export default function IWDPayment({
                 ) : (
                   <span className="font-mono font-semibold tabular-nums text-[#334155] animate-countdown-pulse-color">
                     {/* {String(days).padStart(2, "0")} :{" "} */}
-                    {String(hrs).padStart(2, "0")} : {String(mins).padStart(2, "0")}{" "}
-                    : {String(secs).padStart(2, "0")}
+                    {String(hrs).padStart(2, "0")} :{" "}
+                    {String(mins).padStart(2, "0")} :{" "}
+                    {String(secs).padStart(2, "0")}
                   </span>
                 )}
               </p>
@@ -171,7 +177,10 @@ export default function IWDPayment({
               <p>🔥<span className="font-semibold">{registeredDisplay}</span>  Registered in past 1 hour</p>
             </div>
             <div className="rounded-full bg-[#E8CC76] px-3 py-2.5 space-y-1 text-xs">
-              <p>👀 <span className="font-semibold">{viewingDisplay}</span> viewing now</p>
+              <p>
+                👀 <span className="font-semibold">{viewingDisplay}</span>{" "}
+                viewing now
+              </p>
             </div>
           </div>
 

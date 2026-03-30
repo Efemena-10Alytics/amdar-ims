@@ -23,7 +23,7 @@ const IWD_BANNER_STORAGE_KEY = "amdari-iwd-banner-dismissed";
 const DUMMY_PROMO_URGENCY = {
   slots_left: 21,
   registered: 5,
-  registered_interval_hours: 3,
+  registered_interval_hours: 1,
   viewing: 40,
 } as const;
 
@@ -109,6 +109,10 @@ export default function IWDBanner({ offersHref = "#"}: IWDBannerProps) {
     typeof promoUrgency?.registered === "number"
       ? promoUrgency.registered
       : DUMMY_PROMO_URGENCY.registered;
+  const registeredIntervalDisplay =
+    typeof promoUrgency?.registered_interval_hours === "number"
+      ? promoUrgency.registered_interval_hours
+      : DUMMY_PROMO_URGENCY.registered_interval_hours;
   const viewingDisplay =
     typeof promoUrgency?.viewing === "number"
       ? promoUrgency.viewing
