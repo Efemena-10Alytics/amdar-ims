@@ -15,6 +15,7 @@ export type UserPortfolioPersonalInfo = {
   firstName?: string | null;
   lastName?: string | null;
   email?: string;
+  image?: string;
   phoneNumber?: string | null;
   location?: string | null;
   countryCode?: string | null;
@@ -36,6 +37,13 @@ export type UserPortfolioCategory = {
   title?: string | null;
   specializationData?: unknown[];
   skills?: unknown[];
+};
+
+export type UserPortfolioSetting = {
+  availableToWork?: boolean;
+  showProfilePicture?: boolean;
+  showToolsRate?: boolean;
+  template?: string;
 };
 
 export type UserPortfolioTool = {
@@ -81,6 +89,7 @@ export type UserPortfolioData = {
   social?: UserPortfolioSocial;
   bio?: UserPortfolioBio;
   category?: UserPortfolioCategory;
+  setting?: UserPortfolioSetting;
   tools?: UserPortfolioTool[];
   workExperience?: UserPortfolioWorkExperienceItem[];
   educationalBackground?: UserPortfolioEducationItem[];

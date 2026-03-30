@@ -86,6 +86,8 @@ const Classic = ({ portfolio, isLoading, error, portfolioUserId }: ClassicProps)
       yearsExperience: b?.yearsOfExperience || "",
       countryName: country?.name ?? p?.location ?? "",
       countryFlagUrl: country?.flag,
+      avatarUrl: p?.image || undefined,
+      showAvatar: portfolio.setting?.showProfilePicture ?? true,
       toolBadge: firstTool?.name || undefined,
       toolBadgeIconUrl: toolBadgeIconUrl || undefined,
     };
@@ -197,7 +199,7 @@ const Classic = ({ portfolio, isLoading, error, portfolioUserId }: ClassicProps)
             aria-hidden
           />
           <span className="text-xs font-medium text-[#1F5D36]">
-            Available to work
+          {!portfolio?.setting?.availableToWork && "Not"}  Available to work
           </span>
         </div>
 
@@ -230,7 +232,10 @@ const Classic = ({ portfolio, isLoading, error, portfolioUserId }: ClassicProps)
           projectsCount: "",
           yearsExperience: "",
           countryName: "",
+          avatarUrl: undefined,
+          showAvatar: true,
           toolBadge: undefined,
+          
         }}
       />
 
@@ -242,7 +247,11 @@ const Classic = ({ portfolio, isLoading, error, portfolioUserId }: ClassicProps)
       />
       <MyWorkExperience items={workItems} />
       <MySpecialization id="specialization" specializations={specializations} softSkills={softSkills} />
-      <MyTools tools={tools} title={categoryTitle} />
+      <MyTools
+        tools={tools}
+        title={categoryTitle}
+        showToolsRate={portfolio?.setting?.showToolsRate ?? true}
+      />
       <MyEducationBackground entries={educationEntries} />
       <Footer
         id="contact"

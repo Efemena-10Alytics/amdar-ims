@@ -13,6 +13,8 @@ export type PortfolioHeroData = {
   yearsExperience: string;
   countryName: string;
   countryFlagUrl?: string;
+  avatarUrl?: string;
+  showAvatar?: boolean;
   /** Tool badge next to job title (e.g. "Figma"). */
   toolBadge?: string;
   /** Icon URL from portfolio tools array. When set, used instead of local TOOL_ICONS. */
@@ -47,6 +49,7 @@ export function PortfolioHero({ value, id }: PortfolioHeroProps) {
 
   return (
     <section id={id} className="text-center mt-16">
+
       <h1 data-aos="zoom-in" className="text-2xl md:text-6xl font-semibold text-[#092A31] tracking-tight">
         Hello, I&apos;m {value.name || "—"}
       </h1>
@@ -91,44 +94,59 @@ export function PortfolioHero({ value, id }: PortfolioHeroProps) {
         </p>
       )}
 
-      <div className="mt-8 flex flex-wrap items-center justify-end gap-8 md:gap-10">
-        {(value.projectsCount || value.yearsExperience) && (
-          <>
-            {value.projectsCount && (
-              <div className="text-left">
-                <h2 className="text-lg md:text-xl font-semibold text-[#092A31]">
-                  {projectsDisplay}{projectsSuffix}
-                </h2>
-                <div className="text-sm text-[#64748B] mt-0.5">Projects</div>
-              </div>
-            )}
-            {value.yearsExperience && (
-              <div className="text-left">
-                <h2 className="text-lg md:text-xl font-semibold text-[#092A31]">
-                  {yearsDisplay}{yearsSuffix}
-                </h2>
-                <div className="text-sm text-[#64748B] mt-0.5">Years</div>
-              </div>
-            )}
-          </>
-        )}
-        {value.countryName && (
-          <div className="grid text-left text-sm text-[#64748B]">
-            {value.countryFlagUrl ? (
-              <img
-                src={value.countryFlagUrl}
-                alt=""
-                className="size-5 shrink-0 rounded-sm object-cover"
-                aria-hidden
+      <div className="flex gap-4 items-center justify-between">
+        <div className="flex-1">
+          {value.showAvatar !== false && value.avatarUrl ? (
+            <div data-aos="zoom-in" className="mb-5 flex justify-start">
+              <Image
+                height={54}
+                width={54}
+                src={value.avatarUrl}
+                alt={`${value.name || "Profile"} avatar`}
+                className="size-12 md:size-16 rounded-full object-cover border-4 border-[#E8EFF1] shadow-sm"
               />
-            ) : (
-              <span className="text-base" aria-hidden>
-                🌍
-              </span>
-            )}
-            <span>{value.countryName}</span>
-          </div>
-        )}
+            </div>
+          ) : null}
+        </div>
+        <div className="mt-8 flex flex-wrap items-center justify-end gap-8 md:gap-10">
+          {(value.projectsCount || value.yearsExperience) && (
+            <>
+              {value.projectsCount && (
+                <div className="text-left">
+                  <h2 className="text-lg md:text-xl font-semibold text-[#092A31]">
+                    {projectsDisplay}{projectsSuffix}
+                  </h2>
+                  <div className="text-sm text-[#64748B] mt-0.5">Projects</div>
+                </div>
+              )}
+              {value.yearsExperience && (
+                <div className="text-left">
+                  <h2 className="text-lg md:text-xl font-semibold text-[#092A31]">
+                    {yearsDisplay}{yearsSuffix}
+                  </h2>
+                  <div className="text-sm text-[#64748B] mt-0.5">Years</div>
+                </div>
+              )}
+            </>
+          )}
+          {value.countryName && (
+            <div className="grid text-left text-sm text-[#64748B]">
+              {value.countryFlagUrl ? (
+                <img
+                  src={value.countryFlagUrl}
+                  alt=""
+                  className="size-5 shrink-0 rounded-sm object-cover"
+                  aria-hidden
+                />
+              ) : (
+                <span className="text-base" aria-hidden>
+                  🌍
+                </span>
+              )}
+              <span>{value.countryName}</span>
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
