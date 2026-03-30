@@ -15,7 +15,7 @@ function getErrorMessage(error: unknown): string {
   );
 }
 
-export function useUpdateProject() {
+export function useUpdatePortfolio() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +11,8 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { useUpdatePortfolio } from "@/features/portfolio/use-update-portfolio";
+import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 
 type PortfolioSettingsModalProps = {
   open: boolean;
@@ -21,9 +23,45 @@ export function PortfolioSettingsModal({
   open,
   onOpenChange,
 }: PortfolioSettingsModalProps) {
+  const { updateProject, isUpdating, errorMessage } = useUpdatePortfolio();
+  const { data: portfolioData } = useGetPortfolio();
   const [availableToWork, setAvailableToWork] = useState(true);
-  const [showProfilePicture, setShowProfilePicture] = useState(false);
-  const [showToolsKnowledgeRate, setShowToolsKnowledgeRate] = useState(false);
+  const [showProfilePicture, setShowProfilePicture] = useState(true);
+  const [showToolsRate, setShowToolsRate] = useState(true);
+
+  useEffect(() => {
+    if (!open) return;
+    const setting = (
+      portfolioData as
+        | {
+            setting?: {
+              availableToWork?: boolean;
+              showProfilePicture?: boolean;
+              showToolsRate?: boolean;
+            };
+          }
+        | undefined
+    )?.setting;
+    if (!setting) return;
+    setAvailableToWork(setting.availableToWork ?? true);
+    setShowProfilePicture(setting.showProfilePicture ?? true);
+    setShowToolsRate(setting.showToolsRate ?? true);
+  }, [open, portfolioData]);
+
+  const handleSaveSettings = async () => {
+    try {
+      const result = await updateProject({
+        setting: {
+          availableToWork,
+          showProfilePicture,
+          showToolsRate,
+        },
+      });
+      if (result) onOpenChange(false);
+    } catch {
+      // handled by hook errorMessage
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -81,17 +119,17 @@ export function PortfolioSettingsModal({
             <button
               type="button"
               role="switch"
-              aria-checked={showToolsKnowledgeRate}
-              onClick={() => setShowToolsKnowledgeRate((v) => !v)}
+              aria-checked={showToolsRate}
+              onClick={() => setShowToolsRate((v) => !v)}
               className={cn(
                 "relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors",
-                showToolsKnowledgeRate ? "bg-primary" : "bg-zinc-200"
+                showToolsRate ? "bg-primary" : "bg-zinc-200"
               )}
             >
               <span
                 className={cn(
                   "pointer-events-none inline-block size-5 rounded-full bg-white shadow-sm ring-0 transition-transform translate-y-0.5",
-                  showToolsKnowledgeRate ? "translate-x-6" : "translate-x-0.5"
+                  showToolsRate ? "translate-x-6" : "translate-x-0.5"
                 )}
               />
             </button>
@@ -107,9 +145,19 @@ export function PortfolioSettingsModal({
             </a>
           </div>
         </div>
-        <Button className="w-full bg-primary text-white hover:bg-primary/90 mt-2">
-          Share portfolio link
+        <Button
+          type="button"
+          onClick={handleSaveSettings}
+          disabled={isUpdating}
+          className="w-full bg-primary text-white hover:bg-primary/90 mt-2"
+        >
+          {isUpdating ? "Saving..." : "Save settings"}
         </Button>
+        {errorMessage ? (
+          <p className="mt-2 text-sm text-red-600" role="alert">
+            {errorMessage}
+          </p>
+        ) : null}
       </DialogContent>
     </Dialog>
   );
