@@ -22,11 +22,9 @@ export const SESSION_OPTIONS = [
     label: "IWD ConferenceChat",
     key: "iwd-conference",
   },
-  {
-    value: "Fireside Chat",
-    label: "Fireside Chat",
-    key: "fireside-chat",
-  },
+  { value: "Immigration session", label: "Immigration session", key: "immigartion-session" },
+  { value: "UK job lab session", label: "UK job lab sessione", key: "uk-job" },
+  { value: "Hackathon", label: "Hackathon", key: "hackathon" },
   { value: "None of the above", label: "None of the above", key: "none" },
 ] as const;
 
