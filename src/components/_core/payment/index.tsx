@@ -219,8 +219,7 @@ const PaymentMain = ({
           />
         )}
       </div>
-      {activeStep !== "complete-profile" &&
-        !(activeStep === "personal" && normalizedPromoCode === "BBAMD26") && (
+      {activeStep === "checkout" && (
         <div className="lg:sticky lg:top-48 lg:self-start shrink-0">
           <Coupon
             discount={
