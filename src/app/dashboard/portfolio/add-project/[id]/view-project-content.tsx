@@ -103,14 +103,14 @@ export function ViewProjectContent({
   onEdit,
   onDelete,
   isDeletePending = false,
-  backHref = "/dashboard-dev/portfolio",
+  backHref = "/dashboard/portfolio",
   backLabel = "Back",
   otherProjects = [],
 }: ViewProjectContentProps) {
   const showActions = onEdit != null || onDelete != null;
 
   return (
-    <div className="min-h-full flex flex-col">
+    <div className="min-h-full flex flex-col p-5">
       <header className="flex items-center justify-between w-full border-b border-zinc-200 bg-white py-4">
         <Link
           href={backHref}

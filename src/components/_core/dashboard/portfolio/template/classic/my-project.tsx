@@ -104,7 +104,7 @@ export function ProjectCard({
   const viewHref =
     hrefOverride ??
     (showAddProject && hasProjectId
-      ? `/dashboard-dev/portfolio/add-project/${encodeURIComponent(String(project.id))}`
+      ? `/dashboard/portfolio/add-project/${encodeURIComponent(String(project.id))}`
       : publicPortfolioUserId && hasProjectId
         ? `/portfolio/${encodeURIComponent(publicPortfolioUserId)}/${encodeURIComponent(String(project.id))}`
         : undefined);
@@ -198,7 +198,7 @@ export function ProjectCard({
 
 function AddProjectCard({ onAdd }: { onAdd?: () => void }) {
   return (
-    <Link href="/dashboard-dev/portfolio/add-project">
+    <Link href="/dashboard/portfolio/add-project">
       <button
         type="button"
         onClick={onAdd}

@@ -6,7 +6,7 @@ import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
 import { getUserId } from "@/lib/get-user-id";
 import { useAuthStore } from "@/store/auth-store";
 
-const CREATE_PORTFOLIO_PATH = "/dashboard-dev/portfolio/create-portfolio";
+const CREATE_PORTFOLIO_PATH = "/dashboard/portfolio/create-portfolio";
 
 export const PORTFOLIO_QUERY_KEY = (userId: string | number) =>
   ["user-portfolio", String(userId)] as const;

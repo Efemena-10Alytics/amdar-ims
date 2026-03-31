@@ -14,14 +14,14 @@ export default function AddProjectPage() {
         title: "Add Project",
         subtitle: "Add one of your best project here",
       }}
-      backHref="/dashboard-dev/portfolio"
+      backHref="/dashboard/portfolio"
       submitLabel="Add project"
       submittingLabel="Adding project…"
       isSubmitting={isSubmitting}
       errorMessage={errorMessage}
       onSubmit={async (data) => {
         const ok = await addProject(data);
-        if (ok) router.push("/dashboard-dev/portfolio");
+        if (ok) router.push("/dashboard/portfolio");
         return ok;
       }}
     />

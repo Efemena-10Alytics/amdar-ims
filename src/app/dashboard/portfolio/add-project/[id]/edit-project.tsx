@@ -34,15 +34,15 @@ export default function EditProjectPage() {
 
   const viewHref =
     projectId != null
-      ? `/dashboard-dev/portfolio/add-project/${encodeURIComponent(projectId)}`
-      : "/dashboard-dev/portfolio";
+      ? `/dashboard/portfolio/add-project/${encodeURIComponent(projectId)}`
+      : "/dashboard/portfolio";
 
   if (!projectId) {
     return (
       <div className="app-width flex min-h-[40vh] flex-col items-center justify-center gap-2 px-4">
         <p className="text-sm text-zinc-600">Invalid project.</p>
         <Link
-          href="/dashboard-dev/portfolio"
+          href="/dashboard/portfolio"
           className="text-sm font-medium text-primary hover:underline"
         >
           Back to portfolio
@@ -81,7 +81,7 @@ export default function EditProjectPage() {
       <div className="app-width flex min-h-[40vh] flex-col items-center justify-center gap-2 px-4">
         <p className="text-sm text-red-600 text-center">{message}</p>
         <Link
-          href="/dashboard-dev/portfolio"
+          href="/dashboard/portfolio"
           className="text-sm font-medium text-primary hover:underline"
         >
           Back to portfolio

@@ -48,14 +48,14 @@ export default function ViewProjectPage() {
 
   const handleEdit = () => {
     // TODO: navigate to edit project
-    router.push("/dashboard-dev/portfolio/add-project");
+    router.push("/dashboard/portfolio/add-project");
   };
 
   const handleDelete = async () => {
     // TODO: confirm and delete
     const confirmed = await confirm();
     if (confirmed) {
-      router.push("/dashboard-dev/portfolio");
+      router.push("/dashboard/portfolio");
     }
   };
 
