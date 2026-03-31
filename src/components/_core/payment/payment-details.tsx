@@ -216,7 +216,7 @@ const PaymentDetails = ({
   }, [checkoutSelections?.pricing, checkoutSelections?.planId]);
 
   return (
-    <div className="flex flex-1 flex-col w-full">
+    <div className="flex flex-1 flex-col w-full min-w-0 max-w-3xl">
       {/* Left column */}
       <div className="flex-1 w-full space-y-8 lg:pb-24">
         {/* Personal data */}
