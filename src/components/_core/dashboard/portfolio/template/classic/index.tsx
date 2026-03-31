@@ -188,7 +188,7 @@ const CreateClassic = () => {
   }
 
   return (
-    <>
+    <div className="overflow-hidden bg-white shadow rounded-2xl p-5">
       <PortfolioHero value={heroData} />
       <MyProjects
         projects={projects}
@@ -207,7 +207,7 @@ const CreateClassic = () => {
         contact={footerContact}
         socialLinks={footerSocialLinks}
       />
-    </>
+    </div>
   );
 };
 

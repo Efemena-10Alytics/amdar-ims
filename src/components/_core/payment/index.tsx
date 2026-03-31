@@ -26,6 +26,13 @@ const VALID_STEPS: PaymentStepId[] = [
 
 const PAYMENT_SHOW_OTP_AFTER_PROFILE_KEY = "payment_show_otp_after_profile";
 
+function formatDateToLocalYmd(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 function stepFromParam(param: string | null): PaymentStepId {
   return param && VALID_STEPS.includes(param as PaymentStepId)
     ? (param as PaymentStepId)
@@ -76,7 +83,7 @@ const PaymentMain = ({
   const [nextPaymentDateYmd, setNextPaymentDateYmd] = useState(() => {
     const d = new Date();
     d.setMonth(d.getMonth() + 1);
-    return d.toISOString().slice(0, 10);
+    return formatDateToLocalYmd(d);
   });
 
   console.log("checkoutData", checkoutData);

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { getUserId } from "@/lib/get-user-id";
 import { useAuthStore } from "@/store/auth-store";
-import { ArrowLeft,  Settings } from "lucide-react";
+import { ArrowLeft, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   LockKeyHoleIcon,
@@ -17,7 +17,7 @@ import { ViewLinkModal } from "@/components/_core/dashboard/portfolio/view-link-
 import CreateClassic from "@/components/_core/dashboard/portfolio/template/classic";
 
 const TEMPLATES = [
-  { id: "classic", label: "Classic",comingSoon: false },
+  { id: "classic", label: "Classic", comingSoon: false },
   { id: "bold", label: "Bold", comingSoon: true },
   { id: "simple", label: "Simple", comingSoon: true },
   // { id: "highlight", label: "Highlight", comingSoon: true },
@@ -55,9 +55,9 @@ function TemplatePreview({
           "flex shrink-0 flex-col items-center gap-2 min-h-35 text-left rounded-xl w-full max-w-30",
           comingSoon ? "cursor-not-allowed" : "transition-colors",
           !comingSoon &&
-            (selected
-              ? "border-primary bg-primary/5"
-              : "border-zinc-200 bg-white hover:border-zinc-300"),
+          (selected
+            ? "border-primary bg-primary/5"
+            : "border-zinc-200 bg-white hover:border-zinc-300"),
         )}
         aria-pressed={selected}
         aria-label={comingSoon ? `${label} (Coming soon)` : `Template: ${label}`}
@@ -71,9 +71,9 @@ function TemplatePreview({
                 "h-full min-h-35 w-full object-cover object-top border-2 rounded-xl",
                 comingSoon && "blur-xs",
                 !comingSoon &&
-                  (selected
-                    ? "border-primary bg-primary/5"
-                    : "border-zinc-200 bg-white hover:border-zinc-300"),
+                (selected
+                  ? "border-primary bg-primary/5"
+                  : "border-zinc-200 bg-white hover:border-zinc-300"),
               )}
               onError={() => setImgError(true)}
             />
@@ -110,78 +110,83 @@ function TemplatePreview({
 export default function PortfolioPage() {
   const user = useAuthStore((s) => s.user);
   const userId = getUserId(user);
+  const portfolioHref = userId != null ? `/portfolio/${userId}` : "/portfolio";
   const [selectedTemplate, setSelectedTemplate] = useState<string>("classic");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [viewLinkOpen, setViewLinkOpen] = useState(false);
 
   return (
     <div className="h-full flex flex-col">
-      <header className="flex items-center justify-between w-full border-b border-zinc-200 bg-white py-4 px-0">
-        <Link
-          href="/dashboard-dev"
-          className="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-700 transition-colors"
-        >
-          <ArrowLeft className="size-4" aria-hidden />
-          Back
-        </Link>
-        <div className="flex items-center gap-2">
-          <Link href={"portfolio/create-portfolio"}>
+      <div className="bg-white shadow rounded-2xl p-5">
+        <header className="flex items-center justify-between w-full bg-white py-4 px-0">
+          <Link
+            href="/dashboard-dev"
+            className="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-700 transition-colors"
+          >
+            <ArrowLeft className="size-4" aria-hidden />
+            Back
+          </Link>
+          <div className="flex items-center gap-2">
+            <Link href={"portfolio/create-portfolio"}>
+              <Button
+                type="button"
+                variant="secondary"
+                className="rounded-lg bg-[#F1F5F9] text-zinc-700 hover:bg-zinc-200 border-0"
+              >
+                <PencilFilledIcon />
+                Edit details
+              </Button>
+            </Link>
+            <Button
+              type="button"
+              className="rounded-lg bg-primary text-white hover:bg-primary/90"
+              onClick={() => setViewLinkOpen(true)}
+            >
+              Share portfolio
+              <ShareFilledIcon />
+            </Button>
             <Button
               type="button"
               variant="secondary"
-              className="rounded-lg bg-[#F1F5F9] text-zinc-700 hover:bg-zinc-200 border-0"
+              size="icon"
+              className="rounded-full bg-[#F1F5F9] text-zinc-700 hover:bg-zinc-200 border-0 size-9"
+              aria-label="Settings"
+              onClick={() => setSettingsOpen(true)}
             >
-              <PencilFilledIcon />
-              Edit details
+              <Settings className="size-4" aria-hidden />
             </Button>
-          </Link>
-          <Button
-            type="button"
-            className="rounded-lg bg-primary text-white hover:bg-primary/90"
-            onClick={() => setViewLinkOpen(true)}
-          >
-            Share portfolio
-            <ShareFilledIcon />
-          </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            size="icon"
-            className="rounded-full bg-[#F1F5F9] text-zinc-700 hover:bg-zinc-200 border-0 size-9"
-            aria-label="Settings"
-            onClick={() => setSettingsOpen(true)}
-          >
-            <Settings className="size-4" aria-hidden />
-          </Button>
-        </div>
-      </header>
+          </div>
+        </header>
+
+        <section className="py-6" aria-label="Portfolio template">
+          <div className="overflow-x-auto overflow-y-hidden pb-2 -mx-1 px-1">
+            <div className="flex gap-4">
+              {TEMPLATES.map((t) => (
+                <TemplatePreview
+                  key={t.id}
+                  id={t.id}
+                  label={t.label}
+                  selected={selectedTemplate === t.id}
+                  comingSoon={t.comingSoon ?? false}
+                  onClick={() => setSelectedTemplate(t.id)}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      </div>
 
       <PortfolioSettingsModal
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
+        portfolioHref={portfolioHref}
       />
       <ViewLinkModal
         open={viewLinkOpen}
         onOpenChange={setViewLinkOpen}
-        href={userId != null ? `/portfolio/${userId}` : "/portfolio"}
+        href={portfolioHref}
       />
 
-      <section className="py-6" aria-label="Portfolio template">
-        <div className="overflow-x-auto overflow-y-hidden pb-2 -mx-1 px-1">
-          <div className="flex gap-4">
-            {TEMPLATES.map((t) => (
-              <TemplatePreview
-                key={t.id}
-                id={t.id}
-                label={t.label}
-                selected={selectedTemplate === t.id}
-                comingSoon={t.comingSoon ?? false}
-                onClick={() => setSelectedTemplate(t.id)}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
 
       <CreateClassic />
     </div>

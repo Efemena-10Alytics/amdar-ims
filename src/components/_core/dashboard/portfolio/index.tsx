@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import confetti from "canvas-confetti";
 import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PersonalInfo, {
@@ -34,6 +36,7 @@ import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { useGetTools } from "@/features/portfolio/use-get-tools";
 
 export function CreatePortfolioForm() {
+  const router = useRouter();
   const { updateProject, isUpdating, errorMessage } = useUpdatePortfolio();
   const {
     addTools,
@@ -260,6 +263,17 @@ export function CreatePortfolioForm() {
     if (step === 8) {
       const ok = await saveEducationBackground(educationData);
       if (!ok) return;
+      const colors = ["#0F4652", "#156374", "#22c55e", "#C8DDE3"];
+      confetti({
+        particleCount: 80,
+        spread: 75,
+        origin: { y: 0.6 },
+        colors,
+      });
+      setTimeout(() => {
+        router.push("/dashboard/portfolio");
+      }, 700);
+      return;
     }
     setStep((s) => Math.min(STEPS.length, s + 1));
   };
