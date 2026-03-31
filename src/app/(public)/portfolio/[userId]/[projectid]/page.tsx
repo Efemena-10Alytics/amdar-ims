@@ -9,7 +9,7 @@ import {
   mapProjectToViewData,
   stableProjectListId,
   type OtherProjectLink,
-} from "@/app/dashboard-dev/portfolio/add-project/[id]/view-project-content";
+} from "@/app/dashboard/portfolio/add-project/[id]/view-project-content";
 import { useGetProjectByUserId } from "@/features/portfolio/use-get-project-by-id";
 import { useGetPortfolioByUserId } from "@/features/portfolio/use-get-portfolio-by-id";
 import { getImageUrl } from "@/lib/utils";

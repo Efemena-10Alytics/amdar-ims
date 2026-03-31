@@ -25,7 +25,7 @@ import {
   educationBackgroundToPayload,
 } from "./education-background";
 import Aside, { STEPS } from "./aside";
-import { useUpdateProject } from "@/features/portfolio/use-update-portfolio";
+import { useUpdatePortfolio } from "@/features/portfolio/use-update-portfolio";
 import { useAddTools } from "@/features/portfolio/use-add-tools";
 import { useInitializePortfolio } from "@/features/portfolio/use-initialize-portfolio";
 import { useUpdateUser } from "@/features/user/use-update-user-details";
@@ -34,7 +34,7 @@ import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { useGetTools } from "@/features/portfolio/use-get-tools";
 
 export function CreatePortfolioForm() {
-  const { updateProject, isUpdating, errorMessage } = useUpdateProject();
+  const { updateProject, isUpdating, errorMessage } = useUpdatePortfolio();
   const {
     addTools,
     isSubmitting: isToolsSubmitting,
@@ -120,7 +120,7 @@ export function CreatePortfolioForm() {
       });
       return result !== undefined;
     } catch {
-      // errorMessage set by useUpdateProject
+      // errorMessage set by useUpdatePortfolio
       return false;
     }
   };
@@ -193,7 +193,7 @@ export function CreatePortfolioForm() {
       });
       return result !== undefined;
     } catch {
-      // errorMessage set by useUpdateProject
+      // errorMessage set by useUpdatePortfolio
       return false;
     }
   };
@@ -208,7 +208,7 @@ export function CreatePortfolioForm() {
       });
       return result !== undefined;
     } catch {
-      // errorMessage set by useUpdateProject
+      // errorMessage set by useUpdatePortfolio
       return false;
     }
   };
@@ -223,7 +223,7 @@ export function CreatePortfolioForm() {
       });
       return result !== undefined;
     } catch {
-      // errorMessage set by useUpdateProject
+      // errorMessage set by useUpdatePortfolio
       return false;
     }
   };

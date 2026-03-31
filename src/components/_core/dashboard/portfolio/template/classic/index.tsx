@@ -56,6 +56,8 @@ const DEFAULT_HERO = {
   projectsCount: "",
   yearsExperience: "",
   countryName: "",
+  avatarUrl: undefined as string | undefined,
+  showAvatar: true,
   toolBadge: undefined as string | undefined,
   toolBadgeIconUrl: undefined as string | undefined,
 };
@@ -82,6 +84,8 @@ const CreateClassic = () => {
       yearsExperience: b?.yearsOfExperience || "",
       countryName: country?.name ?? p?.location ?? "",
       countryFlagUrl: country?.flag,
+      avatarUrl: getImageUrl(p?.image) || undefined,
+      showAvatar: portfolio.setting?.showProfilePicture ?? true,
       toolBadge: firstTool?.name || undefined,
       toolBadgeIconUrl: toolBadgeIconUrl || undefined,
     };
@@ -193,7 +197,11 @@ const CreateClassic = () => {
       />
       <MyWorkExperience items={workItems} />
       <MySpecialization specializations={specializations} softSkills={softSkills} />
-      <MyTools tools={tools} title={categoryTitle} />
+      <MyTools
+        tools={tools}
+        title={categoryTitle}
+        showToolsRate={portfolio?.setting?.showToolsRate ?? true}
+      />
       <MyEducationBackground entries={educationEntries} />
       <Footer
         contact={footerContact}

@@ -22,6 +22,7 @@ type MyToolsProps = {
   tools?: ToolItem[];
   /** Large faded title on the right (e.g. "Product Designer"). */
   title?: string;
+  showToolsRate?: boolean;
 };
 
 /** Higher skillLevel first; items without skillLevel rank by percentage after all rated ones. */
@@ -37,6 +38,7 @@ function compareToolsBySkill(a: ToolItem, b: ToolItem): number {
 export function MyTools({
   tools = [],
   title = "Product Designer",
+  showToolsRate = true,
 }: MyToolsProps) {
   const trimmed = title.trim();
   const spaceIdx = trimmed.indexOf(" ");
@@ -87,9 +89,11 @@ export function MyTools({
                     <h3 className="flex-1 min-w-0 text-sm font-semibold font-clash-display! text-[#092A31]">
                       {tool.name}
                     </h3>
-                    <h2 className="text-lg text-[#B6CFD4] font-black tabular-nums group-hover:text-primary">
-                      {pct}%
-                    </h2>
+                    {showToolsRate ? (
+                      <h2 className="text-lg text-[#B6CFD4] font-black tabular-nums group-hover:text-primary">
+                        {pct}%
+                      </h2>
+                    ) : null}
                   </div>
                 </li>
               );

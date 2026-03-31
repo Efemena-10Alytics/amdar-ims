@@ -43,7 +43,6 @@ const Internship = () => {
     }));
   }, [programs]);
 
-  console.log("careerItems", careerItems)
 
   return (
     <div>
