@@ -55,6 +55,7 @@ const PaymentMain = ({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const promoCode = searchParams.get("promo_code") ?? DEFAULT_PROMO_CODE;
+  const normalizedPromoCode = promoCode.trim().toUpperCase();
   const activeStep = stepFromParam(searchParams.get("step"));
   const statusParam = searchParams.get("status") ?? "";
   const statusSuccess =
@@ -185,6 +186,7 @@ const PaymentMain = ({
           <Checkout
             checkoutData={checkoutData}
             program={program}
+            promoCode={promoCode}
             onProceed={(selections) => {
               setCheckoutSelections(selections);
               if (user != null) {
@@ -217,7 +219,8 @@ const PaymentMain = ({
           />
         )}
       </div>
-      {activeStep !== "complete-profile" && (
+      {activeStep !== "complete-profile" &&
+        !(activeStep === "personal" && normalizedPromoCode === "BBAMD26") && (
         <div className="lg:sticky lg:top-48 lg:self-start shrink-0">
           <Coupon
             discount={

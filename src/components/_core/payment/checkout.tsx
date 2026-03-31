@@ -113,11 +113,17 @@ function getPaymentPlansFromPricing(
 interface CheckoutProps {
   checkoutData?: CheckoutData;
   program?: InternshipProgram;
+  promoCode?: string;
   /** Parent calls this with selections; parent is responsible for navigating to next step (or e.g. opening sign-in). */
   onProceed?: (selections: CheckoutSelections) => void;
 }
 
-const Checkout = ({ checkoutData, program, onProceed }: CheckoutProps) => {
+const Checkout = ({
+  checkoutData,
+  program,
+  promoCode,
+  onProceed,
+}: CheckoutProps) => {
   const firstCurrency = checkoutData?.pricings?.[0]?.currency ?? "USD";
   const {
     selectedCohort,
@@ -145,8 +151,16 @@ const Checkout = ({ checkoutData, program, onProceed }: CheckoutProps) => {
     const plans = selectedPricing
       ? getPaymentPlansFromPricing(selectedPricing)
       : [];
-    return plans.filter((p) => p.id !== "2-installments");
-  }, [selectedPricing]);
+    const normalizedPromoCode = promoCode?.trim().toUpperCase();
+
+    return plans.filter((p) => {
+      if (p.id === "2-installments") return false;
+      if (normalizedPromoCode === "BBAMD26" && p.id === "3-installments") {
+        return false;
+      }
+      return true;
+    });
+  }, [promoCode, selectedPricing]);
 
   useEffect(() => {
     const currencies = checkoutData?.pricings?.map((p) => p.currency) ?? [];
@@ -155,12 +169,12 @@ const Checkout = ({ checkoutData, program, onProceed }: CheckoutProps) => {
     }
   }, [checkoutData?.pricings, currency]);
 
-  // If 2-installments is hidden but was selected, switch to first available plan
+  // If a hidden payment plan was previously selected, switch to the first available plan.
   useEffect(() => {
     if (
-      selectedPlan === "2-installments" &&
+      selectedPlan &&
       paymentPlans.length > 0 &&
-      !paymentPlans.some((p) => p.id === "2-installments")
+      !paymentPlans.some((p) => p.id === selectedPlan)
     ) {
       setSelectedPlan(paymentPlans[0].id);
     }
