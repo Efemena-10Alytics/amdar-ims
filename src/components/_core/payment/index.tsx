@@ -55,7 +55,6 @@ const PaymentMain = ({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const promoCode = searchParams.get("promo_code") ?? DEFAULT_PROMO_CODE;
-  const normalizedPromoCode = promoCode.trim().toUpperCase();
   const activeStep = stepFromParam(searchParams.get("step"));
   const statusParam = searchParams.get("status") ?? "";
   const statusSuccess =
