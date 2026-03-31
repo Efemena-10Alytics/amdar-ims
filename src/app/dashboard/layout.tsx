@@ -21,7 +21,7 @@ const DashboardLayout = ({
       <AppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
-        <div className="flex flex-1 flex-col p-4 lg:p-6 shadow rounded-2xl">{children}</div>
+        <div className="flex flex-1 flex-col shadow rounded-2xl">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

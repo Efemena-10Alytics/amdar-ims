@@ -13,6 +13,13 @@ interface ChangeDateProps {
     onChange: (ymd: string) => void;
 }
 
+function formatDateToLocalYmd(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
+
 export const ChangeDate = ({ value, onChange }: ChangeDateProps) => {
     const [calendarOpen, setCalendarOpen] = useState(false);
 
@@ -41,7 +48,7 @@ export const ChangeDate = ({ value, onChange }: ChangeDateProps) => {
                     }
                     onSelect={(date) => {
                         if (date) {
-                            onChange(date.toISOString().slice(0, 10));
+                            onChange(formatDateToLocalYmd(date));
                             setCalendarOpen(false);
                         }
                     }}
