@@ -17,17 +17,20 @@ import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 type PortfolioSettingsModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  portfolioHref: string;
 };
 
 export function PortfolioSettingsModal({
   open,
   onOpenChange,
+  portfolioHref,
 }: PortfolioSettingsModalProps) {
   const { updateProject, isUpdating, errorMessage } = useUpdatePortfolio();
   const { data: portfolioData } = useGetPortfolio();
   const [availableToWork, setAvailableToWork] = useState(true);
   const [showProfilePicture, setShowProfilePicture] = useState(true);
   const [showToolsRate, setShowToolsRate] = useState(true);
+  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
 
   useEffect(() => {
     if (!open) return;
@@ -46,20 +49,37 @@ export function PortfolioSettingsModal({
     setAvailableToWork(setting.availableToWork ?? true);
     setShowProfilePicture(setting.showProfilePicture ?? true);
     setShowToolsRate(setting.showToolsRate ?? true);
+    setCopyStatus("idle");
   }, [open, portfolioData]);
 
-  const handleSaveSettings = async () => {
+  const updateSetting = async (
+    key: "availableToWork" | "showProfilePicture" | "showToolsRate",
+    nextValue: boolean,
+    setValue: (value: boolean) => void,
+    previousValue: boolean,
+  ) => {
+    setValue(nextValue);
     try {
-      const result = await updateProject({
+      await updateProject({
         setting: {
-          availableToWork,
-          showProfilePicture,
-          showToolsRate,
+          [key]: nextValue,
         },
       });
-      if (result) onOpenChange(false);
     } catch {
-      // handled by hook errorMessage
+      setValue(previousValue);
+    }
+  };
+
+  const handleCopyPortfolioHref = async () => {
+    try {
+      const valueToCopy =
+        typeof window !== "undefined" && portfolioHref.startsWith("/")
+          ? `${window.location.origin}${portfolioHref}`
+          : portfolioHref;
+      await navigator.clipboard.writeText(valueToCopy);
+      setCopyStatus("copied");
+    } catch {
+      setCopyStatus("failed");
     }
   };
 
@@ -80,10 +100,19 @@ export function PortfolioSettingsModal({
               type="button"
               role="switch"
               aria-checked={availableToWork}
-              onClick={() => setAvailableToWork((v) => !v)}
+              onClick={() =>
+                void updateSetting(
+                  "availableToWork",
+                  !availableToWork,
+                  setAvailableToWork,
+                  availableToWork,
+                )
+              }
+              disabled={isUpdating}
               className={cn(
                 "relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors",
-                availableToWork ? "bg-primary" : "bg-zinc-200"
+                availableToWork ? "bg-primary" : "bg-zinc-200",
+                isUpdating && "cursor-not-allowed opacity-70",
               )}
             >
               <span
@@ -100,10 +129,19 @@ export function PortfolioSettingsModal({
               type="button"
               role="switch"
               aria-checked={showProfilePicture}
-              onClick={() => setShowProfilePicture((v) => !v)}
+              onClick={() =>
+                void updateSetting(
+                  "showProfilePicture",
+                  !showProfilePicture,
+                  setShowProfilePicture,
+                  showProfilePicture,
+                )
+              }
+              disabled={isUpdating}
               className={cn(
                 "relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors",
-                showProfilePicture ? "bg-primary" : "bg-zinc-200"
+                showProfilePicture ? "bg-primary" : "bg-zinc-200",
+                isUpdating && "cursor-not-allowed opacity-70",
               )}
             >
               <span
@@ -120,10 +158,19 @@ export function PortfolioSettingsModal({
               type="button"
               role="switch"
               aria-checked={showToolsRate}
-              onClick={() => setShowToolsRate((v) => !v)}
+              onClick={() =>
+                void updateSetting(
+                  "showToolsRate",
+                  !showToolsRate,
+                  setShowToolsRate,
+                  showToolsRate,
+                )
+              }
+              disabled={isUpdating}
               className={cn(
                 "relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors",
-                showToolsRate ? "bg-primary" : "bg-zinc-200"
+                showToolsRate ? "bg-primary" : "bg-zinc-200",
+                isUpdating && "cursor-not-allowed opacity-70",
               )}
             >
               <span
@@ -137,7 +184,9 @@ export function PortfolioSettingsModal({
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">View portfolio site</span>
             <a
-              href="#"
+              href={portfolioHref}
+              target="_blank"
+              rel="noreferrer"
               className="flex size-9 items-center justify-center rounded-full text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"
               aria-label="View portfolio site"
             >
@@ -147,11 +196,14 @@ export function PortfolioSettingsModal({
         </div>
         <Button
           type="button"
-          onClick={handleSaveSettings}
-          disabled={isUpdating}
+          onClick={() => void handleCopyPortfolioHref()}
           className="w-full bg-primary text-white hover:bg-primary/90 mt-2"
         >
-          {isUpdating ? "Saving..." : "Save settings"}
+          {copyStatus === "copied"
+            ? "Portfolio link copied"
+            : copyStatus === "failed"
+              ? "Copy failed"
+              : "Copy portfolio link"}
         </Button>
         {errorMessage ? (
           <p className="mt-2 text-sm text-red-600" role="alert">

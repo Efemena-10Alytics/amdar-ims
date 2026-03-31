@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { LinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,14 +24,43 @@ export function ViewLinkModal({
   onOpenChange,
   href,
 }: ViewLinkModalProps) {
+  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
+
+  useEffect(() => {
+    if (open) {
+      setCopyStatus("idle");
+    }
+  }, [open]);
+
+  const handleCopyHref = async () => {
+    if (!href) return;
+
+    try {
+      const valueToCopy =
+        typeof window !== "undefined" && href.startsWith("/")
+          ? `${window.location.origin}${href}`
+          : href;
+      await navigator.clipboard.writeText(valueToCopy);
+      setCopyStatus("copied");
+    } catch {
+      setCopyStatus("failed");
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md text-center" showCloseButton>
         <DialogHeader className="flex flex-col items-center justify-center text-center sm:block sm:text-left">
           <div className="flex justify-center mb-2">
-            <span className="flex size-12 items-center justify-center rounded-full bg-zinc-100 text-primary">
+            <button
+              type="button"
+              onClick={() => void handleCopyHref()}
+              disabled={!href}
+              className="flex size-12 items-center justify-center rounded-full bg-zinc-100 text-primary transition-colors hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-60"
+              aria-label="Copy portfolio link"
+            >
               <LinkIcon className="size-6" aria-hidden />
-            </span>
+            </button>
           </div>
           <DialogTitle className="text-center mt-4">View link</DialogTitle>
           <DialogDescription className="text-center mt-2">
@@ -63,6 +93,18 @@ export function ViewLinkModal({
             </Button>
           )}
         </DialogFooter>
+        {copyStatus !== "idle" ? (
+          <p
+            className={`text-sm text-center ${
+              copyStatus === "copied" ? "text-green-600" : "text-red-600"
+            }`}
+            role="status"
+          >
+            {copyStatus === "copied"
+              ? "Portfolio link copied."
+              : "Could not copy the portfolio link."}
+          </p>
+        ) : null}
       </DialogContent>
     </Dialog>
   );

@@ -8,9 +8,9 @@ import { useGetUserInfo, getAvatarUrlFromUser } from "@/features/auth/use-get-us
 import { UserAvatar } from "../../landing-pages/internship-program/svg";
 
 const pathToTitle: Record<string, string> = {
-  "/dashboard-dev": "Dashboard",
-  "/dashboard-dev/internship": "Internship Program",
-  "/dashboard-dev/portfolio": "Portfolio",
+  "/dashboard": "Dashboard",
+  "/dashboard/internship": "Internship Program",
+  "/dashboard/portfolio": "Portfolio",
 };
 
 function getHeaderTitle(pathname: string): string {

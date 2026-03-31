@@ -110,6 +110,7 @@ function TemplatePreview({
 export default function PortfolioPage() {
   const user = useAuthStore((s) => s.user);
   const userId = getUserId(user);
+  const portfolioHref = userId != null ? `/portfolio/${userId}` : "/portfolio";
   const [selectedTemplate, setSelectedTemplate] = useState<string>("classic");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [viewLinkOpen, setViewLinkOpen] = useState(false);
@@ -159,11 +160,12 @@ export default function PortfolioPage() {
       <PortfolioSettingsModal
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
+        portfolioHref={portfolioHref}
       />
       <ViewLinkModal
         open={viewLinkOpen}
         onOpenChange={setViewLinkOpen}
-        href={userId != null ? `/portfolio/${userId}` : "/portfolio"}
+        href={portfolioHref}
       />
 
       <section className="py-6" aria-label="Portfolio template">
