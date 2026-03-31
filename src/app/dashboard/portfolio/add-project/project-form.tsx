@@ -219,7 +219,7 @@ export function ProjectForm({
   };
 
   return (
-    <div className="min-h-full flex flex-col">
+    <div className="min-h-full flex flex-col p-5">
       <header className="border-b border-zinc-200 bg-white py-4">
         <Link
           href={backHref}

@@ -30,9 +30,9 @@ import { Leaf } from "lucide-react";
 
 const navMain = [
   { title: "Dashboard", url: "/dashboard", icon: DashboardFilledIcon },
-  { title: "Internship program", url: "/dashboard-dev/internship", icon: InternshipProgramIcon },
+  { title: "Internship program", url: "/dashboard/internship", icon: InternshipProgramIcon },
   { title: "Project vault", url: "/dashboard-projects/dashboard-project-paths/filter", icon: ProjectVaultIcon },
-  // { title: "Interview prep", url: "/dashboard-dev/portfolio", icon: InterviewPrepIcon },
+  // { title: "Interview prep", url: "/dashboard/portfolio", icon: InterviewPrepIcon },
   { title: "Job board", url: "/job-board", icon: InterviewPrepIcon },
   { title: "Portfolio", url: "/dashboard/portfolio", icon: PortfolioIcon },
   { title: "Hackathons", url: "/live-hackathon", icon: HackathonIcon },

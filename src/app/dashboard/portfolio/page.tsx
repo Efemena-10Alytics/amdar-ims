@@ -120,7 +120,7 @@ export default function PortfolioPage() {
       <div className="bg-white shadow rounded-2xl p-5">
         <header className="flex items-center justify-between w-full bg-white py-4 px-0">
           <Link
-            href="/dashboard-dev"
+            href="/dashboard"
             className="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-700 transition-colors"
           >
             <ArrowLeft className="size-4" aria-hidden />

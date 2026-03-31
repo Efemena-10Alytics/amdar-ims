@@ -63,7 +63,7 @@ export default function ViewProjectPage() {
       })
       .filter((p) => p.id !== idParam)
       .map((p) => ({
-        href: `/dashboard-dev/portfolio/add-project/${encodeURIComponent(p.id)}`,
+        href: `/dashboard/portfolio/add-project/${encodeURIComponent(p.id)}`,
         title: p.title,
         coverImageUrl: p.coverImageUrl,
         tag: p.tag,
@@ -73,7 +73,7 @@ export default function ViewProjectPage() {
   const handleEdit = () => {
     if (idParam) {
       router.push(
-        `/dashboard-dev/portfolio/add-project/${encodeURIComponent(idParam)}/edit`,
+        `/dashboard/portfolio/add-project/${encodeURIComponent(idParam)}/edit`,
       );
     }
   };
@@ -86,7 +86,7 @@ export default function ViewProjectPage() {
     }
     const result = await deleteProject(idParam);
     if (result.ok) {
-      router.push("/dashboard-dev/portfolio");
+      router.push("/dashboard/portfolio");
     } else {
       window.alert(result.message);
     }
@@ -97,7 +97,7 @@ export default function ViewProjectPage() {
       <div className="app-width flex min-h-[40vh] flex-col items-center justify-center gap-2 px-4">
         <p className="text-sm text-zinc-600">Invalid project link.</p>
         <Link
-          href="/dashboard-dev/portfolio"
+          href="/dashboard/portfolio"
           className="text-sm font-medium text-primary hover:underline"
         >
           Back to portfolio
@@ -136,7 +136,7 @@ export default function ViewProjectPage() {
       <div className="app-width flex min-h-[40vh] flex-col items-center justify-center gap-2 px-4">
         <p className="text-sm text-red-600 text-center">{message}</p>
         <Link
-          href="/dashboard-dev/portfolio"
+          href="/dashboard/portfolio"
           className="text-sm font-medium text-primary hover:underline"
         >
           Back to portfolio
