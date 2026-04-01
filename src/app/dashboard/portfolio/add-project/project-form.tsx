@@ -8,7 +8,7 @@ import {
   type FormEvent,
 } from "react";
 import Link from "next/link";
-import { ArrowLeft, Check, Cloud, Link2, Square, X } from "lucide-react";
+import { ArrowLeft, CameraIcon, Check, Cloud, Link2, Square, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { YourToolsData } from "@/components/_core/dashboard/portfolio/your-tools";
@@ -72,6 +72,7 @@ export function ProjectForm({
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [remoteCoverUrl, setRemoteCoverUrl] = useState<string | null>(null);
   const [existingGalleryUrls, setExistingGalleryUrls] = useState<string[]>([]);
+  const [selectedGalleryKey, setSelectedGalleryKey] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const projectFilesInputRef = useRef<HTMLInputElement>(null);
@@ -178,6 +179,39 @@ export function ProjectForm({
   }, [projectFiles]);
 
   const coverDisplaySrc = coverPreview ?? remoteCoverUrl;
+  const galleryItems = useMemo(
+    () => [
+      ...existingGalleryUrls.map((url, index) => ({
+        key: `ex-${index}`,
+        src: url,
+        remove: () => removeExistingGalleryImage(index),
+        removeLabel: "Remove image from list",
+      })),
+      ...projectPreviews.map((src, index) => ({
+        key: `new-${index}`,
+        src,
+        remove: () => removeProjectFile(index),
+        removeLabel: `Remove ${projectFiles[index]?.name ?? "image"}`,
+      })),
+    ],
+    [existingGalleryUrls, projectFiles, projectPreviews],
+  );
+  useEffect(() => {
+    if (galleryItems.length === 0) {
+      setSelectedGalleryKey(null);
+      return;
+    }
+
+    if (
+      selectedGalleryKey == null ||
+      !galleryItems.some((item) => item.key === selectedGalleryKey)
+    ) {
+      setSelectedGalleryKey(galleryItems[0].key);
+    }
+  }, [galleryItems, selectedGalleryKey]);
+
+  const mainGalleryItem =
+    galleryItems.find((item) => item.key === selectedGalleryKey) ?? galleryItems[0];
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -481,63 +515,85 @@ export function ProjectForm({
               onChange={onProjectFilesChange}
               className="hidden"
             />
-            <button
-              type="button"
-              onClick={() => projectFilesInputRef.current?.click()}
-              disabled={!canAddMoreFiles}
-              className={cn(
-                "w-full rounded-lg bg-[#E8EFF1] min-h-30 flex flex-col items-center justify-center gap-2 text-zinc-500 hover:bg-zinc-100 hover:border-zinc-300 transition-colors disabled:opacity-50 disabled:pointer-events-none",
-              )}
-            >
-              <Cloud className="size-10" aria-hidden />
-              <span className="text-sm font-medium">Add Project files</span>
-              <span className="text-xs">PNG, JPEG, GIF, WebP (max 5mb)</span>
-            </button>
-            {(existingGalleryUrls.length > 0 || projectFiles.length > 0) && (
-              <div className="mt-2 flex flex-wrap gap-3">
-                {existingGalleryUrls.map((url, i) => (
-                  <div
-                    key={`ex-${i}`}
-                    className="relative shrink-0 size-25 rounded-lg overflow-hidden bg-zinc-100 border border-zinc-200"
+            {mainGalleryItem ? (
+              <div className="space-y-3">
+                <div className="relative overflow-hidden rounded-lg border border-zinc-200 bg-zinc-100 min-h-52">
+                  <img
+                    src={mainGalleryItem.src}
+                    alt=""
+                    className="h-full max-h-50 w-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={mainGalleryItem.remove}
+                    className="absolute right-2 top-2 flex size-8 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-red-600"
+                    aria-label={mainGalleryItem.removeLabel}
                   >
-                    <img
-                      src={url}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeExistingGalleryImage(i)}
-                      className="absolute top-0.5 right-0.5 flex size-6 items-center justify-center rounded-full bg-black/60 text-white hover:bg-red-600 transition-colors"
-                      aria-label="Remove image from list"
+                    <X className="size-4" aria-hidden />
+                  </button>
+                </div>
+                <div className="flex justify-center flex-wrap gap-3">
+                  {galleryItems.map((item) => (
+                    <div
+                      key={item.key}
+                      className={cn(
+                        "relative shrink-0 size-25 rounded-lg overflow-hidden bg-zinc-100 border transition-colors",
+                        selectedGalleryKey === item.key
+                          ? "border-primary ring-2 ring-primary/20"
+                          : "border-zinc-200 hover:border-zinc-300",
+                      )}
                     >
-                      <X className="size-3.5" aria-hidden />
-                    </button>
-                  </div>
-                ))}
-                {projectFiles.map((file, i) => (
-                  <div
-                    key={`new-${i}`}
-                    className="relative shrink-0 size-25 rounded-lg overflow-hidden bg-zinc-100 border border-zinc-200"
-                  >
-                    {projectPreviews[i] && (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedGalleryKey(item.key)}
+                        className="h-full w-full"
+                        aria-label="Preview image"
+                      >
                       <img
-                        src={projectPreviews[i]}
+                        src={item.src}
                         alt=""
                         className="w-full h-full object-cover"
                       />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          item.remove();
+                        }}
+                        className="absolute top-0.5 right-0.5 flex size-6 items-center justify-center rounded-full bg-black/60 text-white hover:bg-red-600 transition-colors"
+                        aria-label={item.removeLabel}
+                      >
+                        <X className="size-3.5" aria-hidden />
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => projectFilesInputRef.current?.click()}
+                    disabled={!canAddMoreFiles}
+                    className={cn(
+                      "shrink-0 size-25 rounded-lg border border-dashed border-zinc-300 bg-[#E8EFF1] flex flex-col items-center justify-center gap-1 text-zinc-500 transition-colors hover:bg-zinc-100 hover:border-zinc-400 disabled:opacity-50 disabled:pointer-events-none",
                     )}
-                    <button
-                      type="button"
-                      onClick={() => removeProjectFile(i)}
-                      className="absolute top-0.5 right-0.5 flex size-6 items-center justify-center rounded-full bg-black/60 text-white hover:bg-red-600 transition-colors"
-                      aria-label={`Remove ${file.name}`}
-                    >
-                      <X className="size-3.5" aria-hidden />
-                    </button>
-                  </div>
-                ))}
+                  >
+                    <CameraIcon className="size-6" aria-hidden />
+                    
+                  </button>
+                </div>
               </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => projectFilesInputRef.current?.click()}
+                disabled={!canAddMoreFiles}
+                className={cn(
+                  "w-full rounded-lg bg-[#E8EFF1] min-h-30 flex flex-col items-center justify-center gap-2 text-zinc-500 hover:bg-zinc-100 hover:border-zinc-300 transition-colors disabled:opacity-50 disabled:pointer-events-none",
+                )}
+              >
+                <Cloud className="size-10" aria-hidden />
+                <span className="text-sm font-medium">Add Project files</span>
+                <span className="text-xs">PNG, JPEG, GIF, WebP (max 5mb)</span>
+              </button>
             )}
           </div>
 
