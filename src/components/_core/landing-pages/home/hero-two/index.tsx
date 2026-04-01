@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
 import { ArrowUpRight, PlayIcon } from "lucide-react";
 import Aos from "aos";
 import LearnMoreVideo from "../learn-more-video";
-import WordDrop from "../hero/word-drop";
-import Slider from "../hero/slider";
+import WordDrop from "./word-drop";
+import Slider from "./slider";
 import Flag from "../hero/flag";
 import ServiceCard from "../hero/service-card";
 
@@ -36,8 +36,8 @@ const HERO_FLOATING_ICONS = [
 ] as const;
 
 const HERO_ORBIT_LAYERS = [
-  { name: "outer", radius: 720, duration: 42, angleOffset: 0, direction: "reverse" },
-  { name: "inner", radius: 590, duration: 30, angleOffset: 9, direction: "normal" },
+  { name: "outer", radius: 720, duration: 72, angleOffset: 0, direction: "reverse" },
+  { name: "inner", radius: 590, duration: 56, angleOffset: 9, direction: "normal" },
 ] as const;
 
 const InternshipHeroTwo = () => {
@@ -85,17 +85,17 @@ const InternshipHeroTwo = () => {
                   >
                     <div
                       className={cn(
-                        "hero-two-icon-spin rounded-full border border-white/10 bg-white/8 backdrop-blur-[2px] flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
+                        "hero-two-icon-spin rounded-full border border-white/8 bg-white/6 opacity-45 flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.08)]",
                         icon.sizeClass,
                       )}
                     >
-                      <div className="flex size-[62%] items-center justify-center rounded-full bg-white/12">
+                      <div className="flex size-[62%] items-center justify-center rounded-full bg-white/10">
                         <Image
                           src={icon.src}
                           alt={icon.alt}
                           width={28}
                           height={28}
-                          className="h-auto w-[58%] object-contain"
+                          className="h-auto w-[58%] object-contain blur-[0.6px]"
                         />
                       </div>
                     </div>
