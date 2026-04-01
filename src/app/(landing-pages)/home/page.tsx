@@ -7,12 +7,12 @@ import RoadMap from "@/components/_core/landing-pages/home/road-map/index";
 import SuccessStories from "@/components/_core/landing-pages/home/success-stories/index";
 import CareerNeeds from "@/components/_core/landing-pages/home/career-needs";
 import JobReady from "@/components/_core/landing-pages/internship-program/job-ready";
-import NewHero from "@/components/_core/landing-pages/home/new-hero";
+import InternshipHeroTwo from "@/components/_core/landing-pages/home/hero-two";
 
 const InternShipProgram = () => {
   return (
     <div>
-      <NewHero />
+      <InternshipHeroTwo />
       <WhatWeOffer />
       <Partners />
       <CareerNeeds />
