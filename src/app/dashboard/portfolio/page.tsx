@@ -97,7 +97,7 @@ function TemplatePreview({
       <span
         className={cn(
           "text-sm font-medium",
-          comingSoon && "text-[#C19A5B] font-bold",
+          comingSoon && "text-[#C19A5B] font-medium",
           !comingSoon && (selected ? "text-primary" : "text-zinc-700"),
         )}
       >

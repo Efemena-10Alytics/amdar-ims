@@ -29,7 +29,10 @@ export function NavMain({
         <SidebarMenu>
           {items.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.url;
+            const isPortfolioItem = item.url === "/dashboard/portfolio";
+            const isActive = isPortfolioItem
+              ? pathname.startsWith("/dashboard/portfolio")
+              : pathname === item.url;
             return (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton
