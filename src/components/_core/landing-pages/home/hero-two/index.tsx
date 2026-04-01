@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight, PlayIcon } from "lucide-react";
@@ -10,6 +11,34 @@ import WordDrop from "../hero/word-drop";
 import Slider from "../hero/slider";
 import Flag from "../hero/flag";
 import ServiceCard from "../hero/service-card";
+
+const HERO_FLOATING_ICONS = [
+  { src: "/images/svgs/tools/figma.svg", alt: "Figma", sizeClass: "size-12" },
+  { src: "/images/svgs/tools/canva.svg", alt: "Canva", sizeClass: "size-14" },
+  { src: "/images/svgs/tools/jira.svg", alt: "Jira", sizeClass: "size-12" },
+  { src: "/images/svgs/tools/trello.svg", alt: "Trello", sizeClass: "size-13" },
+  { src: "/images/svgs/tools/notion.svg", alt: "Notion", sizeClass: "size-12" },
+  { src: "/images/svgs/tools/sketch.svg", alt: "Sketch", sizeClass: "size-14" },
+  { src: "/images/svgs/tools/photoshop.svg", alt: "Photoshop", sizeClass: "size-14" },
+  { src: "/images/svgs/tools/adobe-illustrator.svg", alt: "Adobe Illustrator", sizeClass: "size-12" },
+  { src: "/images/svgs/tools/figma.svg", alt: "Figma 2", sizeClass: "size-13" },
+  { src: "/images/svgs/tools/canva.svg", alt: "Canva 2", sizeClass: "size-12" },
+  { src: "/images/svgs/tools/jira.svg", alt: "Jira 2", sizeClass: "size-14" },
+  { src: "/images/svgs/tools/trello.svg", alt: "Trello 2", sizeClass: "size-12" },
+  { src: "/images/svgs/tools/notion.svg", alt: "Notion 2", sizeClass: "size-13" },
+  { src: "/images/svgs/tools/sketch.svg", alt: "Sketch 2", sizeClass: "size-12" },
+  { src: "/images/svgs/tools/photoshop.svg", alt: "Photoshop 2", sizeClass: "size-13" },
+  { src: "/images/svgs/tools/adobe-illustrator.svg", alt: "Adobe Illustrator 2", sizeClass: "size-12" },
+  { src: "/images/svgs/tools/figma.svg", alt: "Figma 3", sizeClass: "size-14" },
+  { src: "/images/svgs/tools/trello.svg", alt: "Trello 3", sizeClass: "size-12" },
+  { src: "/images/svgs/tools/canva.svg", alt: "Canva 3", sizeClass: "size-13" },
+  { src: "/images/svgs/tools/jira.svg", alt: "Jira 3", sizeClass: "size-12" },
+] as const;
+
+const HERO_ORBIT_LAYERS = [
+  { name: "outer", radius: 720, duration: 42, angleOffset: 0, direction: "reverse" },
+  { name: "inner", radius: 590, duration: 30, angleOffset: 9, direction: "normal" },
+] as const;
 
 const InternshipHeroTwo = () => {
     const [showPopUpVid, setShowPopUpVid] = React.useState(false);
@@ -32,6 +61,51 @@ const InternshipHeroTwo = () => {
           backgroundSize: "cover",
         }}
       />
+      <div className="pointer-events-none absolute inset-0 z-2 hidden lg:flex items-center justify-center">
+        <div className="hero-two-orbit-stage relative h-360 w-[min(calc(100vw-24px),1580px)] max-w-none">
+          {HERO_ORBIT_LAYERS.map((layer) => (
+            <div
+              key={layer.name}
+              className="absolute inset-0"
+            >
+              {HERO_FLOATING_ICONS.map((icon, index) => {
+                const angle =
+                  (index / HERO_FLOATING_ICONS.length) * 360 + layer.angleOffset;
+
+                return (
+                  <div
+                    key={`${layer.name}-${icon.alt}`}
+                    className="hero-two-orbit-item absolute left-1/2 top-1/2"
+                    style={{
+                      ["--hero-orbit-angle" as string]: `${angle}deg`,
+                      ["--hero-orbit-radius" as string]: `${layer.radius}px`,
+                      animationDuration: `${layer.duration}s`,
+                      animationDirection: layer.direction,
+                    }}
+                  >
+                    <div
+                      className={cn(
+                        "hero-two-icon-spin rounded-full border border-white/10 bg-white/8 backdrop-blur-[2px] flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
+                        icon.sizeClass,
+                      )}
+                    >
+                      <div className="flex size-[62%] items-center justify-center rounded-full bg-white/12">
+                        <Image
+                          src={icon.src}
+                          alt={icon.alt}
+                          width={28}
+                          height={28}
+                          className="h-auto w-[58%] object-contain"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Hero Section */}
       <div className="relative z-10 max-w-325 mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-20 lg:py-24">
@@ -127,6 +201,41 @@ const InternshipHeroTwo = () => {
       </div>
 
       <LearnMoreVideo setShowPopUpVid={setShowPopUpVid} showPopUpVid={showPopUpVid} />
+      <style jsx>{`
+        .hero-two-orbit-stage {
+          transform: translateY(10px);
+        }
+
+        .hero-two-orbit-item {
+          margin-left: -28px;
+          margin-top: -28px;
+          animation: hero-two-item-orbit linear infinite;
+        }
+
+        .hero-two-icon-spin {
+          animation: hero-two-icon-spin 9s linear infinite;
+        }
+
+        @keyframes hero-two-item-orbit {
+          from {
+            transform: rotate(var(--hero-orbit-angle))
+              translateY(calc(-1 * var(--hero-orbit-radius)));
+          }
+          to {
+            transform: rotate(calc(var(--hero-orbit-angle) + 360deg))
+              translateY(calc(-1 * var(--hero-orbit-radius)));
+          }
+        }
+
+        @keyframes hero-two-icon-spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
     </div>
   );
 };
