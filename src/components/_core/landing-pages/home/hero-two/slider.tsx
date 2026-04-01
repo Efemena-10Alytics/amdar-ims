@@ -60,7 +60,7 @@ const Slider = () => {
         {slidesItem.map((item, index) => (
           <CarouselItem key={index} className="pt-0">
             <div
-              className="text-white lg:whitespace-nowrap gap-3 flex items-start justify-start shrink-0"
+              className="text-amdari-yellow lg:whitespace-nowrap gap-3 flex items-start justify-center shrink-0"
               style={{ lineHeight: "1.2em" }}
             >
               <h1>{item} </h1>
