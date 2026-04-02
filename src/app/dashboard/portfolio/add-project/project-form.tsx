@@ -817,6 +817,12 @@ const TOOL_FILTER_CATEGORIES = [
   "SOC Analyst",
   "Ethical Hacking",
   "Data Engineering",
+  "GRC",
+  "Business Analysis",
+  "Data Science",
+  "Product Design",
+  "DevOps",
+  "App/Cloud Security",
 ] as const;
 
 const TOOL_CATEGORY_LOOKUP: Record<(typeof TOOL_FILTER_CATEGORIES)[number], Set<string>> = {
@@ -876,6 +882,92 @@ const TOOL_CATEGORY_LOOKUP: Record<(typeof TOOL_FILTER_CATEGORIES)[number], Set<
     "sql",
     "apache kafka",
     "python",
+  ]),
+  GRC: new Set([
+    "servicenow platform",
+    "vivantio",
+    "nist cybersecurity framework (csf)",
+    "iso 27001",
+    "pci dss",
+    "hipaa",
+    "eramba",
+    "gdpr framework",
+    "service now grc",
+    "jira service management",
+    "power bi",
+  ]),
+  "Business Analysis": new Set([
+    "salesforce",
+    "power apps",
+    "power automate",
+    "figma",
+    "draw.io",
+    "monday.com",
+    "mirror",
+  ]),
+  "Data Science": new Set([
+    "postgresql / mysql",
+    "apis (rest)",
+    "aws s3 - data lake (raw + processed)",
+    "snowflake / bigquery / redshift",
+    "sql",
+    "python",
+    "pandas / numpy",
+    "jupyter notebook",
+    "matplotlib / seaborn",
+    "scikit-learn",
+    "xgboost / lightgbm",
+    "pytorch",
+    "mlflow",
+    "model deployment",
+    "fastapi",
+    "docker containerization",
+    "aws sagemaker",
+    "apache airflow",
+    "git + github",
+    "github actions",
+    "prometheus / cloudwatch",
+  ]),
+  "Product Design": new Set([
+    "figma",
+    "adobe xd",
+    "sketch",
+    "miro",
+    "figjam",
+    "notion",
+    "maze",
+    "usabilityhub",
+    "zeplin",
+    "design systems & style guides",
+  ]),
+  DevOps: new Set([
+    "linux",
+    "git & github",
+    "docker",
+    "kubernetes",
+    "terraform",
+    "ansible",
+    "jenkins",
+    "github actions",
+    "aws",
+    "azure",
+    "google cloud platform (gcp)",
+    "prometheus",
+    "grafana",
+    "nginx",
+  ]),
+  "App/Cloud Security": new Set([
+    "sonarqube",
+    "checkmarx",
+    "owasp zap",
+    "burp suite",
+    "aws inspector",
+    "prisma cloud",
+    "aws",
+    "azure",
+    "gcp",
+    "openscap",
+    "falco",
   ]),
 };
 
@@ -1011,20 +1103,18 @@ function AddProjectToolsSection({
           />
           <Popover>
             <PopoverTrigger asChild>
-              <Button
+              <button
                 type="button"
-                variant="outline"
+                aria-label="Filter tools by category"
                 className={cn(
-                  "justify-center gap-2",
+                  "inline-flex h-9 items-center justify-center rounded-md border border-input bg-transparent px-3 text-sm font-medium shadow-xs transition-[color,box-shadow] outline-none hover:bg-accent hover:text-accent-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
                   selectedCategory !== "all" && "border-primary text-primary",
                 )}
-                aria-label="Filter tools by category"
               >
-                <SlidersHorizontal className="size-4" />
-                Filter
-              </Button>
+                <SlidersHorizontal className="size-4" /> Filter
+              </button>
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-64 p-2">
+            <PopoverContent align="end" className="w-64 p-2 h-50 overflow-y-auto!">
               <div className="space-y-1">
                 {TOOL_FILTER_CATEGORIES.map((categoryOption) => {
                   const isActive = selectedCategory === categoryOption;
