@@ -20,6 +20,15 @@ const CATEGORIES = [
     "Ethical Hacking",
     "Product Design",
     "Project management",
+    "Project Management",
+    "Governance Risk & Compliance",
+    "GRC",
+    "Soc Analysis",
+    "SOC Analyst",
+    "Business Analysis",
+    "Apps and Cloud",
+    "App/Cloud Security",
+    "DevOps",
 ] as const;
 
 const SPECIALIZATIONS_BY_CATEGORY: Record<string, string[]> = {
@@ -62,6 +71,60 @@ const SPECIALIZATIONS_BY_CATEGORY: Record<string, string[]> = {
         "Scrum",
         "Stakeholder management",
         "Resource planning",
+    ],
+    "Project Management": [
+        "Agile",
+        "Scrum",
+        "Stakeholder management",
+        "Resource planning",
+    ],
+    "Governance Risk & Compliance": [
+        "Policy development",
+        "Risk assessment",
+        "Control monitoring",
+        "Compliance reporting",
+    ],
+    GRC: [
+        "Policy development",
+        "Risk assessment",
+        "Control monitoring",
+        "Compliance reporting",
+    ],
+    "Soc Analysis": [
+        "Threat monitoring",
+        "Incident triage",
+        "SIEM analysis",
+        "Alert investigation",
+    ],
+    "SOC Analyst": [
+        "Threat monitoring",
+        "Incident triage",
+        "SIEM analysis",
+        "Alert investigation",
+    ],
+    "Business Analysis": [
+        "Requirements gathering",
+        "Process mapping",
+        "Stakeholder analysis",
+        "Documentation",
+    ],
+    "Apps and Cloud": [
+        "Cloud security posture",
+        "Application security testing",
+        "Identity and access management",
+        "Vulnerability management",
+    ],
+    "App/Cloud Security": [
+        "Cloud security posture",
+        "Application security testing",
+        "Identity and access management",
+        "Vulnerability management",
+    ],
+    DevOps: [
+        "CI/CD pipelines",
+        "Infrastructure as code",
+        "Container orchestration",
+        "Monitoring and observability",
     ],
 };
 
