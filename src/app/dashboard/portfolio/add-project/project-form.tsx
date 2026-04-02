@@ -78,7 +78,7 @@ export function ProjectForm({
   const [summary, setSummary] = useState("");
   const [problem, setProblem] = useState("");
   const [role, setRole] = useState("");
-  const [featuresInput, setFeaturesInput] = useState("");
+  const [features, setFeatures] = useState<string[]>([""]);
   const [challengesAndSolutions, setChallengesAndSolutions] = useState("");
   const [impactAndOutcomes, setImpactAndOutcomes] = useState("");
   const [durationBreakdown, setDurationBreakdown] = useState("");
@@ -122,7 +122,11 @@ export function ProjectForm({
     setSummary(initialProject.summary?.trim() ?? "");
     setProblem(initialProject.problem?.trim() ?? "");
     setRole(initialProject.role?.trim() ?? "");
-    setFeaturesInput((initialProject.features ?? []).join("\n"));
+    setFeatures(
+      initialProject.features && initialProject.features.length > 0
+        ? initialProject.features
+        : [""],
+    );
     setChallengesAndSolutions(
       initialProject.challengesAndSolutions?.trim() ?? "",
     );
@@ -260,10 +264,7 @@ export function ProjectForm({
       summary,
       problem,
       role,
-      features: featuresInput
-        .split("\n")
-        .map((item) => item.trim())
-        .filter(Boolean),
+      features: features.map((item) => item.trim()).filter(Boolean),
       challengesAndSolutions,
       impactAndOutcomes,
       durationBreakdown,
@@ -492,14 +493,44 @@ export function ProjectForm({
             >
               Project key features & highlights
             </label>
-            <textarea
-              id="project-features"
-              placeholder="Enter one feature per line"
-              value={featuresInput}
-              onChange={(e) => setFeaturesInput(e.target.value)}
-              rows={4}
-              className={cn(portfolioInputStyle, "min-h-25 resize-y")}
-            />
+            <div className="space-y-2">
+              {features.map((feature, index) => (
+                <div key={`feature-${index}`} className="flex items-center gap-2">
+                  <Input
+                    id={index === 0 ? "project-features" : undefined}
+                    placeholder={`Feature ${index + 1}`}
+                    value={feature}
+                    onChange={(e) =>
+                      setFeatures((prev) =>
+                        prev.map((item, i) =>
+                          i === index ? e.target.value : item,
+                        ),
+                      )
+                    }
+                    className={portfolioInputStyle}
+                  />
+                  {features.length > 1 ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="shrink-0"
+                      onClick={() =>
+                        setFeatures((prev) => prev.filter((_, i) => i !== index))
+                      }
+                    >
+                      Remove
+                    </Button>
+                  ) : null}
+                </div>
+              ))}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setFeatures((prev) => [...prev, ""])}
+              >
+                Add feature
+              </Button>
+            </div>
           </div>
 
           <div className="space-y-2">
