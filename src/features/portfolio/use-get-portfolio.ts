@@ -48,6 +48,7 @@ export type UserPortfolioSetting = {
 
 export type UserPortfolioTool = {
   name?: string;
+  title?: string;
   image?: string | null;
   url?: string | null;
   skillLevel?: string | number | null;
@@ -74,14 +75,18 @@ export type UserPortfolioProject = {
   coverImage?: string | null;
   title?: string | null;
   category?: string | null;
+  duration?: string | null;
   overview?: string | null;
-  rationale?: string | null;
-  aim?: string | null;
-  scope?: string | null;
-  excerpt?: string | null;
+  summary?: string | null;
+  problem?: string | null;
+  role?: string | null;
+  features?: string[] | null;
+  challengesAndSolutions?: string | null;
+  impactAndOutcomes?: string | null;
+  durationBreakdown?: string | null;
   solutionUrl?: string | null;
-  mediaLink?: string | null;
-  image?: string[];
+  mediaUrl?: string | null;
+  projectFiles?: string[];
 };
 
 export type UserPortfolioData = {

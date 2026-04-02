@@ -23,15 +23,19 @@ export type ViewProjectData = {
   title: string;
   tags?: string[];
   coverImageUrl?: string;
+  duration?: string;
   overview?: string;
   tools?: { name: string; iconUrl?: string }[];
-  excerpt?: string;
-  rationale?: string;
-  aim?: string;
-  scope?: string;
+  summary?: string;
+  problem?: string;
+  role?: string;
+  features?: string[];
+  challengesAndSolutions?: string;
+  impactAndOutcomes?: string;
+  durationBreakdown?: string;
   projectImages?: string[];
   solutionUrl?: string;
-  mediaLink?: string;
+  mediaUrl?: string;
 };
 
 type ViewProjectContentProps = {
@@ -64,24 +68,28 @@ export function mapProjectToViewData(
     title: data.title?.trim() || "Untitled",
     tags: category ? [category] : undefined,
     coverImageUrl: getImageUrl(data.coverImage) || undefined,
+    duration: data.duration?.trim() || undefined,
     overview: data.overview?.trim() || undefined,
     tools: (data.tools ?? [])
       .map((t) => {
-        const name = t.name?.trim();
+        const name = (t.title ?? t.name)?.trim();
         if (!name) return null;
         const iconUrl = getImageUrl(t.image ?? t.url ?? undefined) || undefined;
         return { name, ...(iconUrl && { iconUrl }) };
       })
       .filter((t): t is { name: string; iconUrl?: string } => t != null),
-    excerpt: data.excerpt?.trim() || undefined,
-    rationale: data.rationale?.trim() || undefined,
-    aim: data.aim?.trim() || undefined,
-    scope: data.scope?.trim() || undefined,
-    projectImages: (data.image ?? [])
+    summary: data.summary?.trim() || undefined,
+    problem: data.problem?.trim() || undefined,
+    role: data.role?.trim() || undefined,
+    features: data.features?.filter(Boolean) || undefined,
+    challengesAndSolutions: data.challengesAndSolutions?.trim() || undefined,
+    impactAndOutcomes: data.impactAndOutcomes?.trim() || undefined,
+    durationBreakdown: data.durationBreakdown?.trim() || undefined,
+    projectImages: (data.projectFiles ?? [])
       .map((img) => getImageUrl(img))
       .filter((img): img is string => !!img),
     solutionUrl: data.solutionUrl?.trim() || undefined,
-    mediaLink: data.mediaLink?.trim() || undefined,
+    mediaUrl: data.mediaUrl?.trim() || undefined,
   };
 }
 
@@ -220,46 +228,92 @@ export function ViewProjectContent({
           </div>
 
 
-          {project.aim && (
+          {project.duration && (
             <section>
               <h2 className="text-lg font-semibold text-[#092A31] mb-3">
-                Aim of project
+                Duration
               </h2>
               <p className="text-sm text-zinc-600 leading-relaxed">
-                {project.aim}
+                {project.duration}
               </p>
             </section>
           )}
 
-          {project.excerpt && (
+          {project.summary && (
             <section>
               <h2 className="text-lg font-semibold text-[#092A31] mb-3">
-                Project excerpt
+                Summary
               </h2>
               <p className="text-sm text-zinc-600 leading-relaxed">
-                {project.excerpt}
+                {project.summary}
               </p>
             </section>
           )}
 
-          {project.rationale && (
+          {project.problem && (
             <section>
               <h2 className="text-lg font-semibold text-[#092A31] mb-3">
-                Project rationale
+                Problem
               </h2>
               <p className="text-sm text-zinc-600 leading-relaxed">
-                {project.rationale}
+                {project.problem}
               </p>
             </section>
           )}
 
-          {project.scope && (
+          {project.role && (
             <section>
               <h2 className="text-lg font-semibold text-[#092A31] mb-3">
-                Project scope
+                Role
               </h2>
               <p className="text-sm text-zinc-600 leading-relaxed">
-                {project.scope}
+                {project.role}
+              </p>
+            </section>
+          )}
+
+          {project.features && project.features.length > 0 && (
+            <section>
+              <h2 className="text-lg font-semibold text-[#092A31] mb-3">
+                Features
+              </h2>
+              <ul className="list-disc pl-5 space-y-1 text-sm text-zinc-600 leading-relaxed">
+                {project.features.map((feature) => (
+                  <li key={feature}>{feature}</li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {project.challengesAndSolutions && (
+            <section>
+              <h2 className="text-lg font-semibold text-[#092A31] mb-3">
+                Challenges and solutions
+              </h2>
+              <p className="text-sm text-zinc-600 leading-relaxed">
+                {project.challengesAndSolutions}
+              </p>
+            </section>
+          )}
+
+          {project.impactAndOutcomes && (
+            <section>
+              <h2 className="text-lg font-semibold text-[#092A31] mb-3">
+                Impact and outcomes
+              </h2>
+              <p className="text-sm text-zinc-600 leading-relaxed">
+                {project.impactAndOutcomes}
+              </p>
+            </section>
+          )}
+
+          {project.durationBreakdown && (
+            <section>
+              <h2 className="text-lg font-semibold text-[#092A31] mb-3">
+                Duration breakdown
+              </h2>
+              <p className="text-sm text-zinc-600 leading-relaxed whitespace-pre-line">
+                {project.durationBreakdown}
               </p>
             </section>
           )}
@@ -334,22 +388,22 @@ export function ViewProjectContent({
                   </span>
                 </div>
               )}
-              {project.mediaLink ? (
+              {project.mediaUrl ? (
                 <a
-                  href={project.mediaLink}
+                  href={project.mediaUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-start justify-between gap-3 hover:bg-[#dde8eb] transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 >
                   <div className="min-w-0 flex-1 text-left">
                     <div className="text-sm font-medium text-[#092A31]">
-                      Media link
+                      Media URL
                     </div>
                     <p
                       className="text-sm text-primary mt-1 break-all sm:wrap-break-word line-clamp-2 group-hover:underline"
-                      title={project.mediaLink}
+                      title={project.mediaUrl}
                     >
-                      {project.mediaLink}
+                      {project.mediaUrl}
                     </p>
                   </div>
                   <span
@@ -363,7 +417,7 @@ export function ViewProjectContent({
                 <div className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-center justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <span className="text-sm font-medium text-[#092A31]">
-                      Media link
+                      Media URL
                     </span>
                     <p className="text-sm text-zinc-400 mt-1">—</p>
                   </div>
