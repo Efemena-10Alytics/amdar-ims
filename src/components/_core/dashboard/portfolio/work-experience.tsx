@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Calendar as CalendarIcon, X } from "lucide-react";
+import { Calendar as CalendarIcon, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar } from "@/components/ui/calendar";
@@ -210,9 +210,6 @@ type WorkExperienceProps = {
 
 export function WorkExperience({ value, onChange }: WorkExperienceProps) {
     const { data: portfolioData } = useGetPortfolio();
-    const [jobDescriptionDrafts, setJobDescriptionDrafts] = useState<
-        Record<number, string>
-    >({});
     useEffect(() => {
         if (!portfolioData?.workExperience?.length) return;
         const isEmpty = value.entries.every(
@@ -246,29 +243,34 @@ export function WorkExperience({ value, onChange }: WorkExperienceProps) {
         onChange({ entries: next });
     };
 
-    const updateJobDescriptionDraft = (index: number, draft: string) => {
-        setJobDescriptionDrafts((prev) => ({
-            ...prev,
-            [index]: draft,
-        }));
-    };
-
     const addJobDescription = (index: number) => {
-        const nextDescription = jobDescriptionDrafts[index]?.trim();
-        if (!nextDescription) return;
         const nextEntries = value.entries.map((entry, i) =>
             i === index
                 ? {
                     ...entry,
-                    jobDescription: [...entry.jobDescription, nextDescription],
+                    jobDescription: [...entry.jobDescription, ""],
                 }
                 : entry,
         );
         onChange({ entries: nextEntries });
-        setJobDescriptionDrafts((prev) => ({
-            ...prev,
-            [index]: "",
-        }));
+    };
+
+    const updateJobDescription = (
+        index: number,
+        descriptionIndex: number,
+        nextValue: string,
+    ) => {
+        const nextEntries = value.entries.map((entry, i) =>
+            i === index
+                ? {
+                    ...entry,
+                    jobDescription: entry.jobDescription.map((description, itemIndex) =>
+                        itemIndex === descriptionIndex ? nextValue : description,
+                    ),
+                }
+                : entry,
+        );
+        onChange({ entries: nextEntries });
     };
 
     const removeJobDescription = (index: number, descriptionIndex: number) => {
@@ -368,55 +370,53 @@ export function WorkExperience({ value, onChange }: WorkExperienceProps) {
                                 >
                                     Job description
                                 </label>
-                                <div className="flex gap-2">
-                                    <Input
-                                        id={`job-desc-${index}`}
-                                        value={jobDescriptionDrafts[index] ?? ""}
-                                        onChange={(e) =>
-                                            updateJobDescriptionDraft(index, e.target.value)
-                                        }
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter") {
-                                                e.preventDefault();
-                                                addJobDescription(index);
-                                            }
-                                        }}
-                                        placeholder="e.g. Created wireframes"
-                                        className={portfolioInputStyle}
-                                    />
+                                <div className="space-y-2">
+                                    {(entry.jobDescription.length > 0
+                                        ? entry.jobDescription
+                                        : [""]).map((description, descriptionIndex) => (
+                                            <div key={`${index}-${descriptionIndex}`} className="flex gap-2">
+                                                <Input
+                                                    id={
+                                                        descriptionIndex === 0
+                                                            ? `job-desc-${index}`
+                                                            : undefined
+                                                    }
+                                                    value={description}
+                                                    onChange={(e) =>
+                                                        updateJobDescription(
+                                                            index,
+                                                            descriptionIndex,
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    placeholder="e.g. Created wireframes"
+                                                    className={portfolioInputStyle}
+                                                />
+                                                {entry.jobDescription.length > 1 ? (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            removeJobDescription(
+                                                                index,
+                                                                descriptionIndex,
+                                                            )
+                                                        }
+                                                        className="shrink-0 rounded-full p-2 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
+                                                        aria-label="Remove job description"
+                                                    >
+                                                        <Trash2 className="size-4" aria-hidden />
+                                                    </button>
+                                                ) : null}
+                                            </div>
+                                        ))}
                                     <button
                                         type="button"
                                         onClick={() => addJobDescription(index)}
-                                        className="shrink-0 rounded-lg bg-primary px-4 text-sm font-medium text-white hover:bg-primary/90"
+                                        className="text-sm text-[#3B82F6] hover:underline focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:ring-offset-1 rounded"
                                     >
-                                        Add
+                                        Add description
                                     </button>
                                 </div>
-                                {entry.jobDescription.length > 0 ? (
-                                    <div className="space-y-2 pt-1">
-                                        {entry.jobDescription.map((description, descriptionIndex) => (
-                                            <div
-                                                key={`${index}-${descriptionIndex}-${description}`}
-                                                className="flex items-start justify-between gap-3 border-b border-zinc-200 pb-2 text-sm text-[#092A31]"
-                                            >
-                                                <span className="flex-1">{description}</span>
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        removeJobDescription(
-                                                            index,
-                                                            descriptionIndex,
-                                                        )
-                                                    }
-                                                    className="shrink-0 rounded-full p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
-                                                    aria-label={`Remove ${description}`}
-                                                >
-                                                    <X className="size-4" aria-hidden />
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                ) : null}
                             </div>
 
                             <div className="space-y-2">

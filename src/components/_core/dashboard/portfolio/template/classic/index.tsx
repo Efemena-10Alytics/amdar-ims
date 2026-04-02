@@ -99,7 +99,13 @@ const CreateClassic = () => {
           : String(p.coverImage ?? p.title ?? index),
       title: p.title || "Untitled",
       tags: p.category ? [p.category] : [],
-      imageUrl: getImageUrl(p.coverImage ?? (Array.isArray(p.image) && p.image[0] ? String(p.image[0]) : null)) || undefined,
+      imageUrl:
+        getImageUrl(
+          p.coverImage ??
+            (Array.isArray(p.projectFiles) && p.projectFiles[0]
+              ? String(p.projectFiles[0])
+              : null),
+        ) || undefined,
     }));
   }, [portfolio?.projects]);
 

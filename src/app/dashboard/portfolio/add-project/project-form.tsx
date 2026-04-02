@@ -8,7 +8,7 @@ import {
   type FormEvent,
 } from "react";
 import Link from "next/link";
-import { ArrowLeft, CameraIcon, Check, Cloud, Link2, Square, X } from "lucide-react";
+import { ArrowLeft, CameraIcon, Check, Cloud, FileText, Link2, Square, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { YourToolsData } from "@/components/_core/dashboard/portfolio/your-tools";
@@ -30,6 +30,19 @@ const TOOL_IMAGES: Record<string, string> = {
   Trello: "/images/svgs/tools/trello.svg",
   "Light room": "/images/svgs/tools/light-room.svg",
 };
+
+function isPdfAsset(src: string): boolean {
+  return src.toLowerCase().includes(".pdf");
+}
+
+function isPdfFile(file: File): boolean {
+  return file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+}
+
+function openPdfInNewTab(src: string) {
+  if (typeof window === "undefined") return;
+  window.open(src, "_blank", "noopener,noreferrer");
+}
 
 export type ProjectFormProps = {
   headline: { title: string; subtitle: string };
@@ -60,13 +73,17 @@ export function ProjectForm({
   });
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
+  const [duration, setDuration] = useState("");
   const [overview, setOverview] = useState("");
-  const [rationale, setRationale] = useState("");
-  const [aim, setAim] = useState("");
-  const [scope, setScope] = useState("");
-  const [expert, setExpert] = useState("");
+  const [summary, setSummary] = useState("");
+  const [problem, setProblem] = useState("");
+  const [role, setRole] = useState("");
+  const [features, setFeatures] = useState<string[]>([""]);
+  const [challengesAndSolutions, setChallengesAndSolutions] = useState("");
+  const [impactAndOutcomes, setImpactAndOutcomes] = useState("");
+  const [durationBreakdown, setDurationBreakdown] = useState("");
   const [solutionUrl, setSolutionUrl] = useState("");
-  const [mediaLink, setMediaLink] = useState("");
+  const [mediaUrl, setMediaUrl] = useState("");
   const [projectFiles, setProjectFiles] = useState<File[]>([]);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
@@ -100,18 +117,28 @@ export function ProjectForm({
 
     setTitle(initialProject.title?.trim() ?? "");
     setCategory(initialProject.category?.trim() ?? "");
+    setDuration(initialProject.duration?.trim() ?? "");
     setOverview(initialProject.overview?.trim() ?? "");
-    setRationale(initialProject.rationale?.trim() ?? "");
-    setAim(initialProject.aim?.trim() ?? "");
-    setScope(initialProject.scope?.trim() ?? "");
-    setExpert(initialProject.excerpt?.trim() ?? "");
+    setSummary(initialProject.summary?.trim() ?? "");
+    setProblem(initialProject.problem?.trim() ?? "");
+    setRole(initialProject.role?.trim() ?? "");
+    setFeatures(
+      initialProject.features && initialProject.features.length > 0
+        ? initialProject.features
+        : [""],
+    );
+    setChallengesAndSolutions(
+      initialProject.challengesAndSolutions?.trim() ?? "",
+    );
+    setImpactAndOutcomes(initialProject.impactAndOutcomes?.trim() ?? "");
+    setDurationBreakdown(initialProject.durationBreakdown?.trim() ?? "");
     setSolutionUrl(initialProject.solutionUrl?.trim() ?? "");
-    setMediaLink(initialProject.mediaLink?.trim() ?? "");
+    setMediaUrl(initialProject.mediaUrl?.trim() ?? "");
 
     const names: string[] = [];
     const custom: Record<string, string> = {};
     for (const t of initialProject.tools ?? []) {
-      const n = t.name?.trim();
+      const n = (t.title ?? t.name)?.trim();
       if (!n) continue;
       names.push(n);
       const img = getImageUrl(t.image ?? t.url ?? undefined);
@@ -127,7 +154,7 @@ export function ProjectForm({
     setCoverFile(null);
     setCoverPreview(null);
     setProjectFiles([]);
-    const gallery = (initialProject.image ?? [])
+    const gallery = (initialProject.projectFiles ?? [])
       .map((u) => getImageUrl(u))
       .filter((u): u is string => !!u);
     setExistingGalleryUrls(gallery);
@@ -184,12 +211,16 @@ export function ProjectForm({
       ...existingGalleryUrls.map((url, index) => ({
         key: `ex-${index}`,
         src: url,
+        isPdf: isPdfAsset(url),
+        label: url.split("/").pop() ?? "PDF file",
         remove: () => removeExistingGalleryImage(index),
         removeLabel: "Remove image from list",
       })),
       ...projectPreviews.map((src, index) => ({
         key: `new-${index}`,
         src,
+        isPdf: !!projectFiles[index] && isPdfFile(projectFiles[index]),
+        label: projectFiles[index]?.name ?? "PDF file",
         remove: () => removeProjectFile(index),
         removeLabel: `Remove ${projectFiles[index]?.name ?? "image"}`,
       })),
@@ -228,20 +259,24 @@ export function ProjectForm({
     const ok = await onSubmit({
       title,
       category,
+      duration,
       overview,
-      rationale,
-      aim,
-      scope,
-      expert,
+      summary,
+      problem,
+      role,
+      features: features.map((item) => item.trim()).filter(Boolean),
+      challengesAndSolutions,
+      impactAndOutcomes,
+      durationBreakdown,
       solutionUrl,
-      mediaLink,
+      mediaUrl,
       tools,
       coverFile,
       projectFiles,
       retainCoverImageUrl:
         !coverFile &&
-        remoteCoverUrl &&
-        !remoteCoverUrl.startsWith("blob:")
+          remoteCoverUrl &&
+          !remoteCoverUrl.startsWith("blob:")
           ? remoteCoverUrl
           : undefined,
       retainImageUrls:
@@ -332,22 +367,24 @@ export function ProjectForm({
             )}
           </div>
 
+          <div className="space-y-2">
+            <label
+              htmlFor="project-title"
+              className="block text-sm font-semibold text-zinc-900"
+            >
+              Project title
+            </label>
+            <Input
+              id="project-title"
+              placeholder="Enter project title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className={portfolioInputStyle}
+            />
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label
-                htmlFor="project-title"
-                className="block text-sm font-semibold text-zinc-900"
-              >
-                Project title
-              </label>
-              <Input
-                id="project-title"
-                placeholder="Enter project title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className={portfolioInputStyle}
-              />
-            </div>
+
             <div className="space-y-2">
               <label
                 htmlFor="project-category"
@@ -363,7 +400,23 @@ export function ProjectForm({
                 className={portfolioInputStyle}
               />
             </div>
+            <div className="space-y-2">
+              <label
+                htmlFor="project-duration"
+                className="block text-sm font-semibold text-zinc-900"
+              >
+               Project Duration
+              </label>
+              <Input
+                id="project-duration"
+                placeholder="Eg 4 Weeks"
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
+                className={portfolioInputStyle}
+              />
+            </div>
           </div>
+
 
           <div className="space-y-2">
             <label
@@ -384,16 +437,16 @@ export function ProjectForm({
 
           <div className="space-y-2">
             <label
-              htmlFor="project-rationale"
+              htmlFor="project-summary"
               className="block text-sm font-semibold text-zinc-900"
             >
-              Project rationale
+              Project summary
             </label>
             <textarea
-              id="project-rationale"
-              placeholder="Explain what you did during this project"
-              value={rationale}
-              onChange={(e) => setRationale(e.target.value)}
+              id="project-summary"
+              placeholder="Summarize the project and what it accomplishes"
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
               rows={4}
               className={cn(portfolioInputStyle, "min-h-25 resize-y")}
             />
@@ -401,16 +454,16 @@ export function ProjectForm({
 
           <div className="space-y-2">
             <label
-              htmlFor="project-aim"
+              htmlFor="project-problem"
               className="block text-sm font-semibold text-zinc-900"
             >
-              Aim of project
+              Project problem & context
             </label>
             <textarea
-              id="project-aim"
-              placeholder="Explain what you did during this project"
-              value={aim}
-              onChange={(e) => setAim(e.target.value)}
+              id="project-problem"
+              placeholder="Describe the problem this project solves"
+              value={problem}
+              onChange={(e) => setProblem(e.target.value)}
               rows={4}
               className={cn(portfolioInputStyle, "min-h-25 resize-y")}
             />
@@ -418,16 +471,16 @@ export function ProjectForm({
 
           <div className="space-y-2">
             <label
-              htmlFor="project-scope"
+              htmlFor="project-role"
               className="block text-sm font-semibold text-zinc-900"
             >
-              Project scope
+              Project  role & responsibilities
             </label>
             <textarea
-              id="project-scope"
-              placeholder="Explain what you did during this project"
-              value={scope}
-              onChange={(e) => setScope(e.target.value)}
+              id="project-role"
+              placeholder="Describe your role in the project"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
               rows={4}
               className={cn(portfolioInputStyle, "min-h-25 resize-y")}
             />
@@ -435,16 +488,97 @@ export function ProjectForm({
 
           <div className="space-y-2">
             <label
-              htmlFor="project-expert"
+              htmlFor="project-features"
               className="block text-sm font-semibold text-zinc-900"
             >
-              Project expert
+              Project key features & highlights
+            </label>
+            <div className="space-y-2">
+              {features.map((feature, index) => (
+                <div key={`feature-${index}`} className="flex items-center gap-2">
+                  <Input
+                    id={index === 0 ? "project-features" : undefined}
+                    placeholder={`Feature ${index + 1}`}
+                    value={feature}
+                    onChange={(e) =>
+                      setFeatures((prev) =>
+                        prev.map((item, i) =>
+                          i === index ? e.target.value : item,
+                        ),
+                      )
+                    }
+                    className={portfolioInputStyle}
+                  />
+                  {features.length > 1 ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="shrink-0"
+                      onClick={() =>
+                        setFeatures((prev) => prev.filter((_, i) => i !== index))
+                      }
+                    >
+                      Remove
+                    </Button>
+                  ) : null}
+                </div>
+              ))}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setFeatures((prev) => [...prev, ""])}
+              >
+                Add feature
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label
+              htmlFor="project-challenges"
+              className="block text-sm font-semibold text-zinc-900"
+            >
+              Project challenges & solutions
             </label>
             <textarea
-              id="project-expert"
-              placeholder="Explain what you did during this project"
-              value={expert}
-              onChange={(e) => setExpert(e.target.value)}
+              id="project-challenges"
+              placeholder="Describe the challenges faced and how they were solved"
+              value={challengesAndSolutions}
+              onChange={(e) => setChallengesAndSolutions(e.target.value)}
+              rows={4}
+              className={cn(portfolioInputStyle, "min-h-25 resize-y")}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label
+              htmlFor="project-impact"
+              className="block text-sm font-semibold text-zinc-900"
+            >
+             Project Impact and outcomes
+            </label>
+            <textarea
+              id="project-impact"
+              placeholder="Describe the impact and outcomes of the project"
+              value={impactAndOutcomes}
+              onChange={(e) => setImpactAndOutcomes(e.target.value)}
+              rows={4}
+              className={cn(portfolioInputStyle, "min-h-25 resize-y")}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label
+              htmlFor="project-duration-breakdown"
+              className="block text-sm font-semibold text-zinc-900"
+            >
+            Project Duration breakdown
+            </label>
+            <textarea
+              id="project-duration-breakdown"
+              placeholder={"Week 1: Research and Planning\nWeek 2: Design and Layout"}
+              value={durationBreakdown}
+              onChange={(e) => setDurationBreakdown(e.target.value)}
               rows={4}
               className={cn(portfolioInputStyle, "min-h-25 resize-y")}
             />
@@ -478,7 +612,7 @@ export function ProjectForm({
               htmlFor="media-link"
               className="block text-sm font-semibold text-zinc-900"
             >
-              Media link{" "}
+              Media URL{" "}
               <span className="text-zinc-500 font-normal">(Optional)</span>
             </label>
             <div className="relative">
@@ -486,8 +620,8 @@ export function ProjectForm({
                 id="media-link"
                 type="url"
                 placeholder="Paste link"
-                value={mediaLink}
-                onChange={(e) => setMediaLink(e.target.value)}
+                value={mediaUrl}
+                onChange={(e) => setMediaUrl(e.target.value)}
                 className={cn(portfolioInputStyle, "pr-10")}
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none">
@@ -498,7 +632,7 @@ export function ProjectForm({
 
           <div className="space-y-2">
             <label className="block text-sm font-semibold text-zinc-900">
-              Project image{" "}
+              Project files{" "}
               <span className="text-zinc-500 font-normal">(Max 6 files)</span>
             </label>
             {existingGalleryUrls.length > 0 && (
@@ -510,7 +644,7 @@ export function ProjectForm({
             <input
               ref={projectFilesInputRef}
               type="file"
-              accept="image/*"
+              accept="image/*,application/pdf"
               multiple
               onChange={onProjectFilesChange}
               className="hidden"
@@ -518,11 +652,27 @@ export function ProjectForm({
             {mainGalleryItem ? (
               <div className="space-y-3">
                 <div className="relative overflow-hidden rounded-lg border border-zinc-200 bg-zinc-100 min-h-52">
-                  <img
-                    src={mainGalleryItem.src}
-                    alt=""
-                    className="h-full max-h-50 w-full object-cover"
-                  />
+                  {mainGalleryItem.isPdf ? (
+                    <div className="flex h-full min-h-52 w-full flex-col items-center justify-center gap-3 bg-[#E8EFF1] px-6 text-center text-zinc-600">
+                      <FileText className="size-12 text-primary" aria-hidden />
+                      <span className="max-w-full truncate text-sm font-medium">
+                        {mainGalleryItem.label}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => openPdfInNewTab(mainGalleryItem.src)}
+                        className="text-xs font-medium text-primary underline underline-offset-2"
+                      >
+                        Click to read
+                      </button>
+                    </div>
+                  ) : (
+                    <img
+                      src={mainGalleryItem.src}
+                      alt=""
+                      className="h-full max-h-50 w-full object-cover"
+                    />
+                  )}
                   <button
                     type="button"
                     onClick={mainGalleryItem.remove}
@@ -549,12 +699,33 @@ export function ProjectForm({
                         className="h-full w-full"
                         aria-label="Preview image"
                       >
-                      <img
-                        src={item.src}
-                        alt=""
-                        className="w-full h-full object-cover"
-                      />
+                        {item.isPdf ? (
+                          <div className="flex h-full w-full flex-col items-center justify-center gap-1 bg-[#E8EFF1] px-2 text-zinc-600">
+                            <FileText className="size-6 text-primary" aria-hidden />
+                            <span className="w-full truncate text-[10px] font-medium">
+                              {item.label}
+                            </span>
+                          </div>
+                        ) : (
+                          <img
+                            src={item.src}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
+                        )}
                       </button>
+                      {item.isPdf ? (
+                        <button
+                          type="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            openPdfInNewTab(item.src);
+                          }}
+                          className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded bg-white/90 px-0.5 py-0.5 text-[9px] font-medium text-primary underline underline-offset-2"
+                        >
+                          Click to read
+                        </button>
+                      ) : null}
                       <button
                         type="button"
                         onClick={(event) => {
@@ -577,7 +748,7 @@ export function ProjectForm({
                     )}
                   >
                     <CameraIcon className="size-6" aria-hidden />
-                    
+
                   </button>
                 </div>
               </div>
@@ -592,7 +763,9 @@ export function ProjectForm({
               >
                 <Cloud className="size-10" aria-hidden />
                 <span className="text-sm font-medium">Add Project files</span>
-                <span className="text-xs">PNG, JPEG, GIF, WebP (max 5mb)</span>
+                <span className="text-xs">
+                  PNG, JPEG, GIF, WebP, PDF (max 5mb)
+                </span>
               </button>
             )}
           </div>
@@ -763,7 +936,7 @@ function AddProjectToolsSection({
                 "bg-[#E8EFF1] border-[#E8EFF1] text-[#2c4652]",
                 "hover:bg-[#dce4e8] hover:border-[#dce4e8]",
                 selected &&
-                  "bg-primary border-primary text-white hover:bg-primary hover:border-primary",
+                "bg-primary border-primary text-white hover:bg-primary hover:border-primary",
               )}
             >
               <ToolIcon
