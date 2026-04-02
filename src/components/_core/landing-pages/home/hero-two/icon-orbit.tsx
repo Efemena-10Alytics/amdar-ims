@@ -34,8 +34,8 @@ const HERO_FLOATING_ICONS = [
 ] as const;
 
 const HERO_ORBIT_LAYERS = [
-    { name: "outer", radius: 720, duration: 72, angleOffset: 0, direction: "reverse", sizeClass: "size-16" },
-    { name: "inner", radius: 590, duration: 56, angleOffset: 9, direction: "normal", sizeClass: "size-14" },
+    { name: "outer", radius: 720, duration: 72, angleOffset: 0, direction: "reverse", sizeClass: "size-20" },
+    { name: "inner", radius: 590, duration: 56, angleOffset: 9, direction: "normal", sizeClass: "size-16" },
 ] as const;
 
 const IconOrbit = () => {

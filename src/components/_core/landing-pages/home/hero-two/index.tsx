@@ -12,13 +12,9 @@ import Flag from "../hero/flag";
 import ServiceCard from "../hero/service-card";
 import IconOrbit from "./icon-orbit";
 
-
-
-
-
 const InternshipHeroTwo = () => {
-    const [showPopUpVid, setShowPopUpVid] = React.useState(false);
-  
+  const [showPopUpVid, setShowPopUpVid] = React.useState(false);
+
   React.useEffect(() => {
     Aos.init({ duration: 600 });
   }, []);
@@ -37,7 +33,7 @@ const InternshipHeroTwo = () => {
           backgroundSize: "cover",
         }}
       />
-     <IconOrbit />
+      <IconOrbit />
 
       {/* Hero Section */}
       <div className="relative z-10 max-w-325 mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-20 lg:py-24">
@@ -77,7 +73,7 @@ const InternshipHeroTwo = () => {
               </div>
             </Button>
             <Button
-            onClick={() => setShowPopUpVid(true)}
+              onClick={() => setShowPopUpVid(true)}
               className={cn(
                 "group bg-[#448290] hover:bg-[#0F4652] text-white rounded-full h-12 py-6 text-base",
                 "flex items-center gap-8 px-5",
@@ -113,7 +109,7 @@ const InternshipHeroTwo = () => {
             description="Industry-relevant projects that replicate real-world challenges, helping you build practical skills."
             buttonText="Get me started"
             dataAos="fade-up"
-            // dataAosDuration="00"
+          // dataAosDuration="00"
           />
           <ServiceCard
             title="Work Experience Internship"
