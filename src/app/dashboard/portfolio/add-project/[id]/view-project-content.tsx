@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Pencil, Trash2, LinkIcon } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2, LinkIcon, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   CardClipPathDef,
@@ -91,6 +91,10 @@ export function mapProjectToViewData(
     solutionUrl: data.solutionUrl?.trim() || undefined,
     mediaUrl: data.mediaUrl?.trim() || undefined,
   };
+}
+
+function isPdfAsset(url: string): boolean {
+  return url.toLowerCase().includes(".pdf");
 }
 
 const TOOL_ICONS: Record<string, string> = {
@@ -329,11 +333,28 @@ export function ViewProjectContent({
                     key={`${imageUrl}-${index}`}
                     className="overflow-hidden rounded-2xl border border-zinc-200 bg-[#F8FAFC]"
                   >
-                    <img
-                      src={imageUrl}
-                      alt=""
-                      className="h-56 w-full object-cover"
-                    />
+                    {isPdfAsset(imageUrl) ? (
+                      <a
+                        href={imageUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex h-56 w-full flex-col items-center justify-center gap-3 bg-[#E8EFF1] px-4 text-center text-zinc-600 hover:bg-[#dde8eb] transition-colors"
+                      >
+                        <FileText className="size-10 text-primary" aria-hidden />
+                        <span className="max-w-full truncate text-sm font-medium">
+                          PDF document
+                        </span>
+                        <span className="text-xs font-medium text-primary underline underline-offset-2">
+                          Click to read
+                        </span>
+                      </a>
+                    ) : (
+                      <img
+                        src={imageUrl}
+                        alt=""
+                        className="h-56 w-full object-cover"
+                      />
+                    )}
                   </div>
                 ))}
               </div>
