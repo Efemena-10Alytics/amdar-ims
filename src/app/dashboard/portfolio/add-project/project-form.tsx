@@ -8,9 +8,20 @@ import {
   type FormEvent,
 } from "react";
 import Link from "next/link";
-import { ArrowLeft, CameraIcon, Check, Cloud, FileText, Link2, Square, X } from "lucide-react";
+import {
+  ArrowLeft,
+  CameraIcon,
+  Check,
+  Cloud,
+  FileText,
+  Link2,
+  SlidersHorizontal,
+  Square,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { YourToolsData } from "@/components/_core/dashboard/portfolio/your-tools";
 import { ToolIcon } from "@/components/_core/dashboard/portfolio/your-tools";
 import { AddToolsPopover } from "@/components/_core/dashboard/portfolio/add-tools-popover";
@@ -799,6 +810,74 @@ const FALLBACK_TOOLS = [
   "Light room",
 ];
 const PROJECT_FORM_TOOLS_PER_PAGE = 12;
+const TOOL_FILTER_CATEGORIES = [
+  "all",
+  "Project Management",
+  "Data Analytics",
+  "SOC Analyst",
+  "Ethical Hacking",
+  "Data Engineering",
+] as const;
+
+const TOOL_CATEGORY_LOOKUP: Record<(typeof TOOL_FILTER_CATEGORIES)[number], Set<string>> = {
+  all: new Set(),
+  "Project Management": new Set([
+    "slack",
+    "microsoft excel",
+    "confluence",
+    "asana",
+    "jira",
+    "trello",
+    "microsoft project",
+    "google workspace",
+    "microsoft office suite",
+  ]),
+  "Data Analytics": new Set([
+    "sql",
+    "microsoft excel",
+    "power bi",
+    "powerbi",
+    "tableau",
+    "looker studio",
+    "mysql",
+    "postgresql",
+    "aws",
+    "azure",
+    "gcp",
+    "databricks",
+    "amazon athena",
+    "amazon redshift",
+  ]),
+  "SOC Analyst": new Set([
+    "misp",
+    "wazuh",
+    "splunk",
+    "microsoft sentinel",
+    "ubuntu",
+    "qualys",
+    "nessus",
+    "kali linux",
+  ]),
+  "Ethical Hacking": new Set([
+    "gophish",
+    "bloodhound",
+    "john the ripper",
+    "netexec",
+  ]),
+  "Data Engineering": new Set([
+    "apache airflow",
+    "docker",
+    "terraform",
+    "microsoft azure",
+    "google cloud platform (gcp)",
+    "google cloud platform",
+    "amazon web services (aws)",
+    "amazon web services",
+    "sql",
+    "apache kafka",
+    "python",
+  ]),
+};
 
 function getDisplayToolName(name: string): string {
   return name === "Adobe illustration" ? "Adobe Illustration" : name;
@@ -813,6 +892,8 @@ function AddProjectToolsSection({
 }) {
   const [addToolsOpen, setAddToolsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] =
+    useState<(typeof TOOL_FILTER_CATEGORIES)[number]>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const { data: apiTools = [] } = useGetTools();
 
@@ -839,12 +920,18 @@ function AddProjectToolsSection({
   ];
   const filteredTools = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
-    if (!query) return displayedTools;
+    const categorySet = TOOL_CATEGORY_LOOKUP[selectedCategory];
+
     return displayedTools.filter((name) => {
+      const normalizedName = name.trim().toLowerCase();
       const displayName = getDisplayToolName(name).toLowerCase();
-      return name.toLowerCase().includes(query) || displayName.includes(query);
+      const matchesCategory =
+        selectedCategory === "all" || categorySet.has(normalizedName);
+      if (!matchesCategory) return false;
+      if (!query) return true;
+      return normalizedName.includes(query) || displayName.includes(query);
     });
-  }, [displayedTools, searchTerm]);
+  }, [displayedTools, searchTerm, selectedCategory]);
   const totalPages = Math.max(
     1,
     Math.ceil(filteredTools.length / PROJECT_FORM_TOOLS_PER_PAGE),
@@ -857,7 +944,7 @@ function AddProjectToolsSection({
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, selectedCategory]);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -914,13 +1001,55 @@ function AddProjectToolsSection({
         >
           Search tools
         </label>
-        <Input
-          id="project-tool-search"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search by tool name"
-          className="border-zinc-200 bg-white"
-        />
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto]">
+          <Input
+            id="project-tool-search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by tool name"
+            className="border-zinc-200 bg-white"
+          />
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                className={cn(
+                  "justify-center gap-2",
+                  selectedCategory !== "all" && "border-primary text-primary",
+                )}
+                aria-label="Filter tools by category"
+              >
+                <SlidersHorizontal className="size-4" />
+                Filter
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-64 p-2">
+              <div className="space-y-1">
+                {TOOL_FILTER_CATEGORIES.map((categoryOption) => {
+                  const isActive = selectedCategory === categoryOption;
+                  const label =
+                    categoryOption === "all" ? "All categories" : categoryOption;
+                  return (
+                    <button
+                      key={categoryOption}
+                      type="button"
+                      onClick={() => setSelectedCategory(categoryOption)}
+                      className={cn(
+                        "w-full rounded-md px-2 py-1.5 text-left text-sm transition-colors",
+                        isActive
+                          ? "bg-primary text-white"
+                          : "text-[#092A31] hover:bg-zinc-100",
+                      )}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
       <div className="flex flex-wrap gap-2">
         {paginatedTools.map((name) => {
