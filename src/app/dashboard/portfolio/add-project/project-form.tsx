@@ -193,9 +193,12 @@ export function ProjectForm({
 
   const onProjectFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
-    const room = MAX_PROJECT_FILES - existingGalleryUrls.length - projectFiles.length;
-    if (room <= 0) return;
-    setProjectFiles((prev) => [...prev, ...files].slice(0, room));
+    if (files.length === 0) return;
+    setProjectFiles((prev) => {
+      const room = MAX_PROJECT_FILES - existingGalleryUrls.length - prev.length;
+      if (room <= 0) return prev;
+      return [...prev, ...files.slice(0, room)];
+    });
     if (projectFilesInputRef.current) projectFilesInputRef.current.value = "";
   };
   const removeProjectFile = (index: number) => {
@@ -750,17 +753,17 @@ export function ProjectForm({
                       </button>
                     </div>
                   ))}
-                  <button
-                    type="button"
-                    onClick={() => projectFilesInputRef.current?.click()}
-                    disabled={!canAddMoreFiles}
-                    className={cn(
-                      "shrink-0 size-25 rounded-lg border border-dashed border-zinc-300 bg-[#E8EFF1] flex flex-col items-center justify-center gap-1 text-zinc-500 transition-colors hover:bg-zinc-100 hover:border-zinc-400 disabled:opacity-50 disabled:pointer-events-none",
-                    )}
-                  >
-                    <CameraIcon className="size-6" aria-hidden />
-
-                  </button>
+                  {canAddMoreFiles ? (
+                    <button
+                      type="button"
+                      onClick={() => projectFilesInputRef.current?.click()}
+                      className={cn(
+                        "shrink-0 size-25 rounded-lg border border-dashed border-zinc-300 bg-[#E8EFF1] flex flex-col items-center justify-center gap-1 text-zinc-500 transition-colors hover:bg-zinc-100 hover:border-zinc-400",
+                      )}
+                    >
+                      <CameraIcon className="size-6" aria-hidden />
+                    </button>
+                  ) : null}
                 </div>
               </div>
             ) : (
