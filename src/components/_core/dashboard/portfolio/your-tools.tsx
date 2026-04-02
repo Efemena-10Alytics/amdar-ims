@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
-import { Check, Square } from "lucide-react";
+import { Check, SlidersHorizontal, Square } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { AddToolsPopover } from "./add-tools-popover";
 import { cn } from "@/lib/utils";
 import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
@@ -23,6 +24,75 @@ const TOOLS = [
   "Trello",
   "Light room",
 ];
+
+const TOOL_FILTER_CATEGORIES = [
+  "all",
+  "Project Management",
+  "Data Analytics",
+  "SOC Analyst",
+  "Ethical Hacking",
+  "Data Engineering",
+] as const;
+
+const TOOL_CATEGORY_LOOKUP: Record<(typeof TOOL_FILTER_CATEGORIES)[number], Set<string>> = {
+  all: new Set(),
+  "Project Management": new Set([
+    "slack",
+    "microsoft excel",
+    "confluence",
+    "asana",
+    "jira",
+    "trello",
+    "microsoft project",
+    "google workspace",
+    "microsoft office suite",
+  ]),
+  "Data Analytics": new Set([
+    "sql",
+    "microsoft excel",
+    "power bi",
+    "powerbi",
+    "tableau",
+    "looker studio",
+    "mysql",
+    "postgresql",
+    "aws",
+    "azure",
+    "gcp",
+    "databricks",
+    "amazon athena",
+    "amazon redshift",
+  ]),
+  "SOC Analyst": new Set([
+    "misp",
+    "wazuh",
+    "splunk",
+    "microsoft sentinel",
+    "ubuntu",
+    "qualys",
+    "nessus",
+    "kali linux",
+  ]),
+  "Ethical Hacking": new Set([
+    "gophish",
+    "bloodhound",
+    "john the ripper",
+    "netexec",
+  ]),
+  "Data Engineering": new Set([
+    "apache airflow",
+    "docker",
+    "terraform",
+    "microsoft azure",
+    "google cloud platform (gcp)",
+    "google cloud platform",
+    "amazon web services (aws)",
+    "amazon web services",
+    "sql",
+    "apache kafka",
+    "python",
+  ]),
+};
 
 const TOOL_IMAGES: Record<string, string> = {
   Figma: "/images/svgs/tools/figma.svg",
@@ -137,6 +207,8 @@ type YourToolsProps = {
 export function YourTools({ value, onChange }: YourToolsProps) {
   const [addToolsOpen, setAddToolsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] =
+    useState<(typeof TOOL_FILTER_CATEGORIES)[number]>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const { data: portfolioData } = useGetPortfolio();
   const { data: apiTools = [] } = useGetTools();
@@ -187,12 +259,17 @@ export function YourTools({ value, onChange }: YourToolsProps) {
   }, [baseToolNames, portfolioToolNames, value.selectedTools]);
   const filteredTools = useMemo((): string[] => {
     const query = searchTerm.trim().toLowerCase();
-    if (!query) return displayedTools;
     return displayedTools.filter((name) => {
+      const normalizedName = name.trim().toLowerCase();
       const displayName = getDisplayToolName(name).toLowerCase();
-      return name.toLowerCase().includes(query) || displayName.includes(query);
+      const categorySet = TOOL_CATEGORY_LOOKUP[selectedCategory];
+      const matchesCategory =
+        selectedCategory === "all" || categorySet.has(normalizedName);
+      if (!matchesCategory) return false;
+      if (!query) return true;
+      return normalizedName.includes(query) || displayName.includes(query);
     });
-  }, [displayedTools, searchTerm]);
+  }, [displayedTools, searchTerm, selectedCategory]);
   const totalPages = Math.max(1, Math.ceil(filteredTools.length / TOOLS_PER_PAGE));
   const paginatedTools = useMemo((): string[] => {
     const start = (currentPage - 1) * TOOLS_PER_PAGE;
@@ -202,7 +279,7 @@ export function YourTools({ value, onChange }: YourToolsProps) {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, selectedCategory]);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -320,13 +397,56 @@ export function YourTools({ value, onChange }: YourToolsProps) {
               >
                 Search tools
               </label>
-              <Input
-                id="tool-search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search by tool name"
-                className="border-zinc-200 bg-white"
-              />
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto]">
+                <Input
+                  id="tool-search"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search by tool name"
+                  className="border-zinc-200 bg-white"
+                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label="Filter tools by category"
+                      className={cn(
+                        "inline-flex h-9 items-center justify-center rounded-md border border-input bg-transparent px-3 text-sm font-medium shadow-xs transition-[color,box-shadow] outline-none hover:bg-accent hover:text-accent-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+                        selectedCategory !== "all" && "border-primary text-primary",
+                      )}
+                    >
+                      <SlidersHorizontal className="size-4" /> {" "}
+                      Filter
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent align="end" className="w-64 p-2">
+                    <div className="space-y-1">
+                      {TOOL_FILTER_CATEGORIES.map((categoryOption) => {
+                        const isActive = selectedCategory === categoryOption;
+                        const label =
+                          categoryOption === "all"
+                            ? "All categories"
+                            : categoryOption;
+                        return (
+                          <button
+                            key={categoryOption}
+                            type="button"
+                            onClick={() => setSelectedCategory(categoryOption)}
+                            className={cn(
+                              "w-full rounded-md px-2 py-1.5 text-left text-sm transition-colors",
+                              isActive
+                                ? "bg-primary text-white"
+                                : "text-[#092A31] hover:bg-zinc-100",
+                            )}
+                          >
+                            {label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-2">
