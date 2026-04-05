@@ -49,6 +49,15 @@ const HOW_DID_YOU_HEAR_OPTIONS = [
   { value: "Tochi", label: "Tochi" },
   { value: "Fireside chat", label: "Fireside Chat" },
   { value: "IWD Conferencechat", label: "IWD ConferenceChat" },
+  {
+    value: "Dike Uzo",
+    label: "Dike Uzo",
+  },
+   {
+    value: "Kelvin Ossai",
+    label: "Kelvin Ossai",
+  },
+  { value: "Clarity Session", label: "Clarity Session",  },
 ];
 
 const REASON_OPTIONS = [
