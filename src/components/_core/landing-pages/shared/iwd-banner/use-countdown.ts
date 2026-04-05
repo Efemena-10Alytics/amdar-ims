@@ -5,14 +5,14 @@ import { useState, useEffect } from "react";
 const TEN_HOURS_MS = 10 * 60 * 60 * 1000;
 
 /**
- * Default IWD campaign countdown: 10h cycles from March 7 00:00, campaign ends April 4 23:59:59.
+ * Default IWD campaign countdown: 10h cycles from March 7 00:00, campaign ends April 11 23:59:59.
  * Returns the next cycle end date, or null if campaign has ended.
  */
 export function getDefaultCountdownEnd(): Date | null {
   const now = new Date();
   const year = now.getFullYear();
   const campaignStart = new Date(year, 2, 7, 0, 0, 0, 0); // March 7
-  const campaignEnd = new Date(year, 3, 4, 23, 59, 59, 999); // April 4
+  const campaignEnd = new Date(year, 3, 11, 23, 59, 59, 999); // April 11
 
   if (now.getTime() >= campaignEnd.getTime()) return null;
   if (now.getTime() < campaignStart.getTime()) return campaignStart;
