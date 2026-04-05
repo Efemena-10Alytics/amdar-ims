@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Menu, LogOut } from "lucide-react";
@@ -60,6 +60,8 @@ function MoreProgramOnTealNav() {
 const Navbar = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
+  const [useGlassNav, setUseGlassNav] = useState(false);
+  const navBarRef = useRef<HTMLElement>(null);
 
   const pathname = usePathname();
   const { user, logout } = useAuthStore();
@@ -86,6 +88,21 @@ const Navbar = () => {
     };
   }, [isDrawerOpen]);
 
+  useEffect(() => {
+    const updateGlass = () => {
+      const h = navBarRef.current?.getBoundingClientRect().height ?? 96;
+      const threshold = Math.max(4, Math.round(h * 0.92));
+      setUseGlassNav(window.scrollY >= threshold);
+    };
+    updateGlass();
+    window.addEventListener("scroll", updateGlass, { passive: true });
+    window.addEventListener("resize", updateGlass);
+    return () => {
+      window.removeEventListener("scroll", updateGlass);
+      window.removeEventListener("resize", updateGlass);
+    };
+  }, []);
+
   const navLinks: { label: string; href: string }[] = [
     { label: "Real World Project", href: "/projects" },
     { label: "Internship Program", href: "/internship" },
@@ -98,15 +115,26 @@ const Navbar = () => {
       {showSalesBanner && <SalesBanner />}
       <div className="sticky top-0 left-0 right-0 z-50">
         <nav
+          ref={navBarRef}
           className={cn(
-            "relative w-full border-b border-t-0! border-t-transparent border-b-white/25 shadow-sm",
-            "bg-[#0F4652] backdrop-blur-xl backdrop-saturate-150",
-            "supports-backdrop-filter:bg-[#0F4652]/15",
-            // "[box-shadow:inset_0_1px_0_0_rgba(255,255,255,0.12)]",
+            "relative w-full border-b border-t-0! border-primary shadow-sm",
+            "transition-[background-color,backdrop-filter,border-b-color,box-shadow] duration-300 ease-out",
+            useGlassNav
+              ? cn(
+                  "border-b-white/25 bg-[#0F4652]/20 backdrop-blur-xl backdrop-saturate-150",
+                  "supports-backdrop-filter:bg-[#0F4652]/15",
+                  // "[box-shadow:inset_0_1px_0_0_rgba(255,255,255,0.12)]",
+                )
+              : cn(
+                  "border-white/15 bg-transparent backdrop-blur-none",
+                ),
           )}
         >
           <div
-            className="pointer-events-none absolute inset-0 overflow-hidden"
+            className={cn(
+              "pointer-events-none absolute inset-0 overflow-hidden transition-opacity duration-300",
+              useGlassNav ? "opacity-100" : "opacity-0",
+            )}
             aria-hidden
           >
             <div className="absolute -left-[12%] top-1/2 size-[min(55vw,400px)] -translate-y-1/2 rounded-full bg-white/6 blur-3xl" />
@@ -115,14 +143,14 @@ const Navbar = () => {
           </div>
 
           <div className="app-width relative z-10">
-            <div className="flex h-20 items-center justify-between gap-3">
-              <Link href="/home" className="flex shrink-0 items-center gap-2 bg-white/10 p-1 rounded">
+            <div className="flex h-25 items-center justify-between gap-3">
+              <Link href="/home" className="flex shrink-0 items-center gap-2 bg-primary/15 p-2 rounded">
                 <Image
-                  src="/logo.svg"
-                  height={22}
-                  width={154}
+                  src="/logo-white.svg"
+                  height={26}
+                  width={182}
                   alt="Amdari"
-                  className="h-5.5 w-auto"
+                  className="h-6 w-auto"
                 />
               </Link>
 
@@ -158,15 +186,15 @@ const Navbar = () => {
                       <TooltipTrigger asChild>
                         <Link
                           href="https://www.amdari.io/dashboard"
-                          className="flex size-10 items-center justify-center overflow-hidden rounded-full bg-white/15 transition-colors hover:bg-white/25 xl:size-11"
+                          className="flex size-11 items-center justify-center overflow-hidden rounded-full bg-white/15 transition-colors hover:bg-white/25 xl:size-12"
                           aria-label="Profile"
                         >
                           {avatarUrl ? (
                             <Image
                               src={avatarUrl}
                               alt="Profile"
-                              width={44}
-                              height={44}
+                              width={48}
+                              height={48}
                               className="size-full object-cover"
                               unoptimized={avatarUrl.startsWith("http")}
                             />
@@ -182,7 +210,7 @@ const Navbar = () => {
                     <button
                       type="button"
                       onClick={() => setConfirmLogoutOpen(true)}
-                      className="group flex h-10 w-10 items-center justify-center gap-2 overflow-hidden rounded-full bg-[#B6CFD4] text-[#0f4d5a] transition-[width,color] duration-200 hover:bg-[#FAC5C5] hover:px-3 xl:h-11 xl:w-11"
+                      className="group flex h-11 w-11 items-center justify-center gap-2 overflow-hidden rounded-full bg-[#B6CFD4] text-[#0f4d5a] transition-[width,color] duration-200 hover:bg-[#FAC5C5] hover:px-3 xl:h-12 xl:w-12"
                       aria-label="Log out"
                     >
                       <LogOut className="size-5 shrink-0 group-hover:hidden" />
@@ -202,7 +230,7 @@ const Navbar = () => {
                       </Button>
                     </Link>
                     <Link href="/auth/sign-up">
-                      <Button className="h-10 rounded-full border-0 bg-white px-8 text-[#0F4652] hover:bg-white/90 xl:h-11 xl:px-12">
+                      <Button className="h-11 rounded-full border-0 bg-white px-8 text-[#0F4652] hover:bg-white/90 xl:h-12 xl:px-12">
                         Get Started
                       </Button>
                     </Link>
