@@ -12,17 +12,6 @@ export const SESSION_OPTIONS = [
     key: "info",
   },
   {
-    value: "Info Session with Kelvin Ossai",
-    label: "Info Session with Kelvin Ossai",
-    key: "kelvin-ossai",
-  },
-  {
-    value: "Info Session Dike Uzo",
-    label: "Info Session Dike Uzo",
-    key: "dike-uzo",
-  },
-  { value: "Clarity Session", label: "Clarity Session", key: "clarity" },
-  {
     value: "1 Week Free Internship",
     label: "1 Week Free Internship",
     key: "one-week",
