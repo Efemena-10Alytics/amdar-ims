@@ -20,7 +20,7 @@ const InternshipHeroTwo = () => {
   }, []);
 
   return (
-    <div className="text-white relative overflow-hidden">
+    <div className="text-white relative overflow-hidden -translate-y-20">
       {/* Primary Color Background */}
       <div className="absolute inset-0 bg-primary z-0" />
       {/* Ellipse Overlay */}
@@ -36,7 +36,7 @@ const InternshipHeroTwo = () => {
       <IconOrbit />
 
       {/* Hero Section */}
-      <div className="relative z-10 max-w-325 mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-20 lg:py-24">
+      <div className="relative mt-20 z-10 max-w-325 mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-20 lg:py-24">
         <div className="text-center max-w-202.5 mx-auto">
           {/* Main Headline */}
           <h1 className="text-4xl sm:text-5xl lg:text-[48px] font-semibold mb-6 leading-12 md:leading-16">
