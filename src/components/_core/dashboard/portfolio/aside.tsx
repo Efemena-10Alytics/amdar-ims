@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 export const STEPS = [
   { id: 1, label: "Personal Information" },
-  { id: 2, label: "Your Social" },
+  { id: 2, label: "Your Socials & Image" },
   { id: 3, label: "Your Bio" },
   { id: 4, label: "Your Specialization" },
   { id: 5, label: "Your Skills" },

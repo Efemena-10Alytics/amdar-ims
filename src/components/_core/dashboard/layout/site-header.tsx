@@ -1,11 +1,22 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Bell, ChevronRight } from "lucide-react";
+import { Bell, ChevronRight, LogOut } from "lucide-react";
 import { usePathname } from "next/navigation";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useGetUserInfo, getAvatarUrlFromUser } from "@/features/auth/use-get-user-info";
 import { UserAvatar } from "../../landing-pages/internship-program/svg";
+import { ConfirmLogout } from "../../landing-pages/shared/navbar/confirm-logout";
+import { useAuthStore } from "@/store/auth-store";
 
 const pathToTitle: Record<string, string> = {
   "/dashboard": "Dashboard",
@@ -22,9 +33,11 @@ function getHeaderTitle(pathname: string): string {
 }
 
 export function SiteHeader() {
+  const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
   const pathname = usePathname();
   const title = getHeaderTitle(pathname);
   const { data: userInfo } = useGetUserInfo();
+  const logout = useAuthStore((s) => s.logout);
   const avatarUrl = getAvatarUrlFromUser(userInfo ?? null);
 
 
@@ -69,15 +82,39 @@ export function SiteHeader() {
               aria-hidden
             />
           </button>
-          <button
-            type="button"
-            aria-label="Menu"
-            className="flex items-center justify-end rounded-xl  px-1 py-2 text-zinc-600"
-          >
-            <ChevronRight className="size-5" />
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                aria-label="Menu"
+                className="flex items-center justify-end rounded-xl px-1 py-2 text-zinc-600"
+              >
+                <ChevronRight className="size-5" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-60 px-2">
+              <DropdownMenuLabel>Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => setConfirmLogoutOpen(true)}
+              >
+                <LogOut className="size-4" />
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
+      <ConfirmLogout
+        open={confirmLogoutOpen}
+        onOpenChange={setConfirmLogoutOpen}
+        reloadOnConfirm={false}
+        onConfirm={() => {
+          logout();
+          window.location.replace("/home");
+        }}
+      />
     </header>
   );
 }

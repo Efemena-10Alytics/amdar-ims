@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { getUserId } from "@/lib/get-user-id";
 import { useAuthStore } from "@/store/auth-store";
-import { ArrowLeft, Settings } from "lucide-react";
+import { ArrowLeft, Loader2, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   LockKeyHoleIcon,
@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { PortfolioSettingsModal } from "@/components/_core/dashboard/portfolio/portfolio-settings-modal";
 import { ViewLinkModal } from "@/components/_core/dashboard/portfolio/view-link-modal";
 import CreateClassic from "@/components/_core/dashboard/portfolio/template/classic";
+import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 
 const TEMPLATES = [
   { id: "classic", label: "Classic", comingSoon: false },
@@ -108,12 +109,29 @@ function TemplatePreview({
 }
 
 export default function PortfolioPage() {
+  const { isLoading, error } = useGetPortfolio();
   const user = useAuthStore((s) => s.user);
   const userId = getUserId(user);
   const portfolioHref = userId != null ? `/portfolio/${userId}` : "/portfolio";
   const [selectedTemplate, setSelectedTemplate] = useState<string>("classic");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [viewLinkOpen, setViewLinkOpen] = useState(false);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <Loader2 className="size-12 animate-spin text-primary" aria-hidden />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex min-h-[50vh] max-w-md text-center mx-auto items-center justify-center">
+        <p className="text-sm text-red-600">You have not created and Portfolio hence will be redirect to create portfolio page.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full flex flex-col">

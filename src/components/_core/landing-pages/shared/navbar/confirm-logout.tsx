@@ -16,17 +16,21 @@ interface ConfirmLogoutProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
+  reloadOnConfirm?: boolean;
 }
 
 export function ConfirmLogout({
   open,
   onOpenChange,
   onConfirm,
+  reloadOnConfirm = true,
 }: ConfirmLogoutProps) {
   const handleConfirm = () => {
     onConfirm(); // clears amdari_user (auth store)
     onOpenChange(false);
-    window.location.reload();
+    if (reloadOnConfirm) {
+      window.location.reload();
+    }
   };
 
   return (

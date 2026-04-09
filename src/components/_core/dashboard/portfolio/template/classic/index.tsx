@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import { Loader2 } from "lucide-react";
 import { getImageUrl } from "@/lib/utils";
 import { MyTools } from "./my-tools";
 import { MyEducationBackground } from "./my-education-background";
@@ -63,7 +62,7 @@ const DEFAULT_HERO = {
 };
 
 const CreateClassic = () => {
-  const { data: portfolio, isLoading, error } = useGetPortfolio();
+  const { data: portfolio } = useGetPortfolio();
   const { data: countries = [] } = useCountries();
 
   const heroData = useMemo(() => {
@@ -176,22 +175,6 @@ const CreateClassic = () => {
     if (p?.email) links.push({ type: "mail", href: `mailto:${p.email}`, label: "Email" });
     return links.length > 0 ? links : undefined;
   }, [portfolio?.social, portfolio?.personalInfo]);
-
-  if (isLoading) {
-    return (
-      <div className="flex min-h-[50vh] items-center justify-center">
-        <Loader2 className="size-12 animate-spin text-primary" aria-hidden />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex min-h-[50vh] items-center justify-center">
-        <p className="text-sm text-red-600">Failed to load portfolio. Please try again.</p>
-      </div>
-    );
-  }
 
   return (
     <div className="overflow-hidden bg-white shadow rounded-2xl p-5">

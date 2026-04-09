@@ -402,7 +402,7 @@ export function CreatePortfolioForm() {
           className="mb-3 -ml-2 h-8 px-2 text-zinc-600 hover:text-zinc-900"
         >
           <ArrowLeft className="mr-1 size-4" />
-          Back
+          To Portfolio
         </Button>
         <div className="flex items-center justify-between">
           <h1 className="text-xl md:text-2xl font-semibold text-zinc-900">
