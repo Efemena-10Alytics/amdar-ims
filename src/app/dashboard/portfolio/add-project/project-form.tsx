@@ -226,6 +226,44 @@ export function ProjectForm({
   }, [projectFiles]);
 
   const coverDisplaySrc = coverPreview ?? remoteCoverUrl;
+  const isCreateMode = !initialProject;
+  const hasAtLeastOneProjectFile = totalGalleryCount > 0;
+  const hasRequiredCreateFields = useMemo(() => {
+    const hasText = (value: string) => value.trim().length > 0;
+    const hasFeature = features.some((item) => item.trim().length > 0);
+    return (
+      hasText(title) &&
+      hasText(category) &&
+      hasText(duration) &&
+      hasText(overview) &&
+      hasText(summary) &&
+      hasText(problem) &&
+      hasText(role) &&
+      hasFeature &&
+      hasText(challengesAndSolutions) &&
+      hasText(impactAndOutcomes) &&
+      hasText(durationBreakdown) &&
+      toolsData.selectedTools.length > 0 &&
+      !!coverDisplaySrc &&
+      hasAtLeastOneProjectFile
+    );
+  }, [
+    title,
+    category,
+    duration,
+    overview,
+    summary,
+    problem,
+    role,
+    features,
+    challengesAndSolutions,
+    impactAndOutcomes,
+    durationBreakdown,
+    toolsData.selectedTools,
+    coverDisplaySrc,
+    hasAtLeastOneProjectFile,
+  ]);
+  const isSubmitDisabled = isSubmitting || (isCreateMode && !hasRequiredCreateFields);
   const galleryItems = useMemo(
     () => [
       ...existingGalleryUrls.map((url, index) => ({
@@ -266,6 +304,7 @@ export function ProjectForm({
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (isCreateMode && !hasRequiredCreateFields) return;
     const tools = toolsData.selectedTools.map((name) => {
       const fromCustom = toolsData.customToolImages?.[name];
       const image =
@@ -805,7 +844,7 @@ export function ProjectForm({
           )}
           <Button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitDisabled}
             className="w-full bg-primary text-white hover:bg-primary/90 h-11 rounded-lg font-medium mt-4"
           >
             {isSubmitting ? submittingLabel : submitLabel}
