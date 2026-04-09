@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import type { UserPortfolioData } from "./use-get-portfolio";
+import type { UserPortfolioData } from "../features/portfolio/use-get-portfolio";
 
 type Options = {
   portfolio: UserPortfolioData | null | undefined;

@@ -16,7 +16,7 @@ import { PortfolioSettingsModal } from "@/components/_core/dashboard/portfolio/p
 import { ViewLinkModal } from "@/components/_core/dashboard/portfolio/view-link-modal";
 import CreateClassic from "@/components/_core/dashboard/portfolio/template/classic";
 import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
-import { usePortfolioCompletionRedirect } from "@/features/portfolio/use-portfolio-completion-redirect";
+import { usePortfolioCompletionRedirect } from "@/hooks/use-portfolio-completion-redirect";
 
 const TEMPLATES = [
   { id: "classic", label: "Classic", comingSoon: false },

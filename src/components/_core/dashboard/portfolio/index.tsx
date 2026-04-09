@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import confetti from "canvas-confetti";
 import { ArrowLeft } from "lucide-react";
@@ -47,7 +47,7 @@ export function CreatePortfolioForm() {
     useInitializePortfolio();
   const { updateUser, errorMessage: userDetailsErrMessage } = useUpdateUser();
   const { data: countries = [] } = useCountries();
-  const { data: portfolioData } = useGetPortfolio();
+  const { data: portfolioData, error: portfolioErrorMessage } = useGetPortfolio();
   const { data: apiTools = [] } = useGetTools();
 
   const toolIconMap: ToolIconMap = useMemo(() => {
@@ -85,6 +85,8 @@ export function CreatePortfolioForm() {
   const [educationData, setEducationData] = useState({
     entries: [{ schoolName: "", qualification: "" }],
   });
+  const [warningToast, setWarningToast] = useState<string | null>(null);
+  const warningTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const selectedCountry = countries.find(
     (c) => c.code === personalInfo.countryCode,
@@ -182,6 +184,25 @@ export function CreatePortfolioForm() {
     () => new Set(completedStepIds),
     [completedStepIds],
   );
+
+  const showWarningToast = (message: string) => {
+    setWarningToast(message);
+    if (warningTimerRef.current) {
+      clearTimeout(warningTimerRef.current);
+    }
+    warningTimerRef.current = setTimeout(() => {
+      setWarningToast(null);
+      warningTimerRef.current = null;
+    }, 3500);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (warningTimerRef.current) {
+        clearTimeout(warningTimerRef.current);
+      }
+    };
+  }, []);
 
   const savePersonalInfo = async (): Promise<boolean> => {
     const location = selectedCountry?.name ?? personalInfo.countryCode ?? "";
@@ -377,6 +398,13 @@ export function CreatePortfolioForm() {
   };
 
   const handleStepChange = (targetStep: number) => {
+    if (portfolioErrorMessage && step === 1 && targetStep === 2) {
+      showWarningToast(
+        'Use "Save & continue" on step 1 to initialize portfolio first.',
+      );
+      return;
+    }
+
     if (targetStep <= step) {
       setStep(targetStep);
       return;
@@ -492,6 +520,15 @@ export function CreatePortfolioForm() {
               {errorMessage || initErrorMessage || addToolsErrorMessage}
             </p>
           )}
+          {warningToast ? (
+            <div
+              role="status"
+              aria-live="polite"
+              className="fixed right-4 top-4 z-50 max-w-sm rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 shadow-lg"
+            >
+              {warningToast}
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
