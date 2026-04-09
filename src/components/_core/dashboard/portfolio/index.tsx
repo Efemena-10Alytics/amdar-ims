@@ -177,6 +177,7 @@ export function CreatePortfolioForm() {
 
   const isFirstStep = step === 1;
   const isLastStep = step === STEPS.length;
+  const areAllStepsCompleted = completedStepIds.length === STEPS.length;
   const completedStepSet = useMemo(
     () => new Set(completedStepIds),
     [completedStepIds],
@@ -405,7 +406,7 @@ export function CreatePortfolioForm() {
         </Button>
         <div className="flex items-center justify-between">
           <h1 className="text-xl md:text-2xl font-semibold text-zinc-900">
-            Let&apos;s Create Your Portfolio
+            Let’s {areAllStepsCompleted ? "Update" : "Create"} Your Portfolio
           </h1>
           <span className="rounded-full bg-[#C7B0E4] px-2.5 py-1 text-xs font-medium text-[#340078]">
             Consultant
@@ -479,8 +480,8 @@ export function CreatePortfolioForm() {
             >
               {isLastStep
                 ? isUpdating
-                  ? "Creating…"
-                  : "Create Portfolio"
+                  ? "Updating…"
+                  : "Update Portfolio"
                 : isUpdating || isInitializing || isToolsSubmitting
                   ? "Saving…"
                   : "Save & continue"}
