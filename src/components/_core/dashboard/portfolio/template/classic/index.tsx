@@ -70,7 +70,7 @@ const CreateClassic = () => {
     if (!portfolio) return DEFAULT_HERO;
     const p = portfolio.personalInfo;
     const b = portfolio.bio;
-    const country = countries.find((c) => c.code === p?.countryCode);
+    const country = countries.find((c) => c.name.toLowerCase() === p?.location?.toLowerCase());
     const firstTool = portfolio.tools?.[0];
     const toolBadgeIconUrl =
       firstTool && (firstTool.image || firstTool.url)
@@ -84,7 +84,7 @@ const CreateClassic = () => {
       yearsExperience: b?.yearsOfExperience || "",
       countryName: country?.name ?? p?.location ?? "",
       countryFlagUrl: country?.flag,
-      avatarUrl: getImageUrl(p?.image) || undefined,
+      avatarUrl: p?.image || undefined,
       showAvatar: portfolio.setting?.showProfilePicture ?? true,
       toolBadge: firstTool?.name || undefined,
       toolBadgeIconUrl: toolBadgeIconUrl || undefined,
@@ -102,9 +102,9 @@ const CreateClassic = () => {
       imageUrl:
         getImageUrl(
           p.coverImage ??
-            (Array.isArray(p.projectFiles) && p.projectFiles[0]
-              ? String(p.projectFiles[0])
-              : null),
+          (Array.isArray(p.projectFiles) && p.projectFiles[0]
+            ? String(p.projectFiles[0])
+            : null),
         ) || undefined,
     }));
   }, [portfolio?.projects]);

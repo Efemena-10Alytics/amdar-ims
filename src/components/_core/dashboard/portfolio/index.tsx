@@ -90,7 +90,6 @@ export function CreatePortfolioForm() {
     (c) => c.code === personalInfo.countryCode,
   );
 
-  const isFirstStep = step === 1;
   const isLastStep = step === STEPS.length;
 
   const savePersonalInfo = async (): Promise<boolean> => {
@@ -278,6 +277,14 @@ export function CreatePortfolioForm() {
     setStep((s) => Math.min(STEPS.length, s + 1));
   };
 
+  const handleBack = () => {
+    if (step === 1) {
+      router.push("/dashboard/portfolio");
+      return;
+    }
+    setStep((s) => Math.max(1, s - 1));
+  };
+
   return (
     <div className="flex flex-col h-full min-h-0">
       <div className="flex items-center justify-between mb-6 md:mb-8">
@@ -336,8 +343,7 @@ export function CreatePortfolioForm() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => setStep((s) => Math.max(1, s - 1))}
-              disabled={isFirstStep}
+              onClick={handleBack}
               className="flex-1 h-10 rounded-lg bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
             >
               Back
