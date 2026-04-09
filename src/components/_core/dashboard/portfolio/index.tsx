@@ -34,6 +34,7 @@ import { useUpdateUser } from "@/features/user/use-update-user-details";
 import { useCountries } from "@/features/portfolio/use-countries";
 import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { useGetTools } from "@/features/portfolio/use-get-tools";
+import { usePortfolioCompletedSteps } from "@/hooks/use-portfolio-completed-steps";
 
 export function CreatePortfolioForm() {
   const router = useRouter();
@@ -92,90 +93,17 @@ export function CreatePortfolioForm() {
     (c) => c.code === personalInfo.countryCode,
   );
 
-  const completedStepIds = useMemo(() => {
-    const hasText = (value: string | null | undefined) => !!value?.trim();
-    const p = portfolioData;
-    const profile = p?.personalInfo;
-    const backendPersonalInfoCompleted =
-      hasText(profile?.firstName) ||
-      hasText(profile?.lastName) ||
-      hasText(profile?.email) ||
-      hasText(profile?.countryCode) ||
-      hasText(profile?.location);
-    const backendSocialCompleted =
-      hasText(p?.social?.linkedIn) || hasText(p?.social?.twitter);
-    const backendBioCompleted =
-      hasText(p?.bio?.jobTitle) ||
-      hasText(p?.bio?.yearsOfExperience) ||
-      hasText(p?.bio?.projectCount) ||
-      hasText(p?.bio?.bio);
-    const backendSpecializationCompleted =
-      hasText(p?.category?.title) ||
-      (p?.category?.specializationData?.length ?? 0) > 0;
-    const backendSkillsCompleted = (p?.category?.skills?.length ?? 0) > 0;
-    const backendToolsCompleted = (p?.tools?.length ?? 0) > 0;
-    const backendWorkExperienceCompleted = (p?.workExperience?.length ?? 0) > 0;
-    const backendEducationCompleted = (p?.educationalBackground?.length ?? 0) > 0;
-
-    const isPersonalInfoCompleted =
-      hasText(personalInfo.firstName) ||
-      hasText(personalInfo.lastName) ||
-      hasText(personalInfo.email) ||
-      hasText(personalInfo.phone) ||
-      hasText(personalInfo.countryCode) ||
-      backendPersonalInfoCompleted;
-    const isSocialCompleted =
-      hasText(socialData.linkedIn) ||
-      hasText(socialData.twitter) ||
-      backendSocialCompleted;
-    const isBioCompleted =
-      hasText(bioData.jobTitle) ||
-      hasText(bioData.yearsOfExperience) ||
-      hasText(bioData.lifeProjectsCount) ||
-      hasText(bioData.bio) ||
-      backendBioCompleted;
-    const isSpecializationCompleted =
-      hasText(specializationData.category) ||
-      specializationData.selectedSpecializations.length > 0 ||
-      backendSpecializationCompleted;
-    const isSkillsCompleted =
-      skillsData.selectedSkills.length > 0 || backendSkillsCompleted;
-    const isToolsCompleted =
-      toolsData.selectedTools.length > 0 || backendToolsCompleted;
-    const isWorkExperienceCompleted = workExperienceData.entries.some(
-      (entry) =>
-        hasText(entry.companyName) ||
-        hasText(entry.jobTitle) ||
-        hasText(entry.industry) ||
-        entry.jobDescription.some((line) => hasText(line)) ||
-        hasText(entry.startDate) ||
-        hasText(entry.endDate),
-    ) || backendWorkExperienceCompleted;
-    const isEducationCompleted = educationData.entries.some(
-      (entry) => hasText(entry.schoolName) || hasText(entry.qualification),
-    ) || backendEducationCompleted;
-
-    return [
-      isPersonalInfoCompleted ? 1 : null,
-      isSocialCompleted ? 2 : null,
-      isBioCompleted ? 3 : null,
-      isSpecializationCompleted ? 4 : null,
-      isSkillsCompleted ? 5 : null,
-      isToolsCompleted ? 6 : null,
-      isWorkExperienceCompleted ? 7 : null,
-      isEducationCompleted ? 8 : null,
-    ].filter((stepId): stepId is number => stepId !== null);
-  }, [
+  const completedStepIds = usePortfolioCompletedSteps({
     personalInfo,
     socialData,
     bioData,
     specializationData,
-    skillsData.selectedSkills,
-    toolsData.selectedTools,
-    workExperienceData.entries,
-    educationData.entries,
+    skillsData,
+    toolsData,
+    workExperienceData,
+    educationData,
     portfolioData,
-  ]);
+  });
 
   const isFirstStep = step === 1;
   const isLastStep = step === STEPS.length;
@@ -184,6 +112,95 @@ export function CreatePortfolioForm() {
     () => new Set(completedStepIds),
     [completedStepIds],
   );
+  const canContinueCurrentStep = useMemo(() => {
+    const hasText = (value: string | null | undefined) => !!value?.trim();
+
+    if (step === 1) {
+      return (
+        hasText(personalInfo.firstName) &&
+        hasText(personalInfo.lastName) &&
+        hasText(personalInfo.email) &&
+        hasText(personalInfo.phone) &&
+        hasText(personalInfo.countryCode)
+      );
+    }
+
+    if (step === 2) {
+      return hasText(socialData.linkedIn) && hasText(socialData.twitter);
+    }
+
+    if (step === 3) {
+      return (
+        hasText(bioData.jobTitle) &&
+        hasText(bioData.yearsOfExperience) &&
+        hasText(bioData.lifeProjectsCount) &&
+        hasText(bioData.bio)
+      );
+    }
+
+    if (step === 4) {
+      return (
+        hasText(specializationData.category) &&
+        specializationData.selectedSpecializations.length > 0
+      );
+    }
+
+    if (step === 5) {
+      return skillsData.selectedSkills.length > 0;
+    }
+
+    if (step === 6) {
+      return toolsData.selectedTools.length > 0;
+    }
+
+    if (step === 7) {
+      const entries = workExperienceData.entries;
+      const isEntryComplete = (entry: (typeof entries)[number]) =>
+        hasText(entry.companyName) &&
+        hasText(entry.jobTitle) &&
+        hasText(entry.industry) &&
+        entry.jobDescription.some((line) => hasText(line)) &&
+        hasText(entry.startDate) &&
+        (entry.currentlyWorkHere || hasText(entry.endDate));
+
+      const nonEmptyEntries = entries.filter(
+        (entry) =>
+          hasText(entry.companyName) ||
+          hasText(entry.jobTitle) ||
+          hasText(entry.industry) ||
+          entry.jobDescription.some((line) => hasText(line)) ||
+          hasText(entry.startDate) ||
+          hasText(entry.endDate) ||
+          entry.currentlyWorkHere,
+      );
+
+      if (nonEmptyEntries.length === 0) return false;
+      return nonEmptyEntries.every(isEntryComplete);
+    }
+
+    if (step === 8) {
+      const entries = educationData.entries;
+      const nonEmptyEntries = entries.filter(
+        (entry) => hasText(entry.schoolName) || hasText(entry.qualification),
+      );
+      if (nonEmptyEntries.length === 0) return false;
+      return nonEmptyEntries.every(
+        (entry) => hasText(entry.schoolName) && hasText(entry.qualification),
+      );
+    }
+
+    return true;
+  }, [
+    step,
+    personalInfo,
+    socialData,
+    bioData,
+    specializationData,
+    skillsData.selectedSkills,
+    toolsData.selectedTools,
+    workExperienceData.entries,
+    educationData.entries,
+  ]);
 
   const showWarningToast = (message: string) => {
     setWarningToast(message);
@@ -503,7 +520,12 @@ export function CreatePortfolioForm() {
             <Button
               type="button"
               onClick={handleNext}
-              disabled={isUpdating || isInitializing || isToolsSubmitting}
+              disabled={
+                isUpdating ||
+                isInitializing ||
+                isToolsSubmitting ||
+                !canContinueCurrentStep
+              }
               className="h-10 rounded-lg bg-primary text-white hover:bg-primary/90 flex-1"
             >
               {isLastStep
