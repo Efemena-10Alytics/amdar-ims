@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import confetti from "canvas-confetti";
-import { ChevronRight } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PersonalInfo, {
   defaultPersonalInfo,
@@ -89,6 +89,91 @@ export function CreatePortfolioForm() {
   const selectedCountry = countries.find(
     (c) => c.code === personalInfo.countryCode,
   );
+
+  const completedStepIds = useMemo(() => {
+    const hasText = (value: string | null | undefined) => !!value?.trim();
+    const p = portfolioData;
+    const profile = p?.personalInfo;
+    const backendPersonalInfoCompleted =
+      hasText(profile?.firstName) ||
+      hasText(profile?.lastName) ||
+      hasText(profile?.email) ||
+      hasText(profile?.countryCode) ||
+      hasText(profile?.location);
+    const backendSocialCompleted =
+      hasText(p?.social?.linkedIn) || hasText(p?.social?.twitter);
+    const backendBioCompleted =
+      hasText(p?.bio?.jobTitle) ||
+      hasText(p?.bio?.yearsOfExperience) ||
+      hasText(p?.bio?.projectCount) ||
+      hasText(p?.bio?.bio);
+    const backendSpecializationCompleted =
+      hasText(p?.category?.title) ||
+      (p?.category?.specializationData?.length ?? 0) > 0;
+    const backendSkillsCompleted = (p?.category?.skills?.length ?? 0) > 0;
+    const backendToolsCompleted = (p?.tools?.length ?? 0) > 0;
+    const backendWorkExperienceCompleted = (p?.workExperience?.length ?? 0) > 0;
+    const backendEducationCompleted = (p?.educationalBackground?.length ?? 0) > 0;
+
+    const isPersonalInfoCompleted =
+      hasText(personalInfo.firstName) ||
+      hasText(personalInfo.lastName) ||
+      hasText(personalInfo.email) ||
+      hasText(personalInfo.phone) ||
+      hasText(personalInfo.countryCode) ||
+      backendPersonalInfoCompleted;
+    const isSocialCompleted =
+      hasText(socialData.linkedIn) ||
+      hasText(socialData.twitter) ||
+      backendSocialCompleted;
+    const isBioCompleted =
+      hasText(bioData.jobTitle) ||
+      hasText(bioData.yearsOfExperience) ||
+      hasText(bioData.lifeProjectsCount) ||
+      hasText(bioData.bio) ||
+      backendBioCompleted;
+    const isSpecializationCompleted =
+      hasText(specializationData.category) ||
+      specializationData.selectedSpecializations.length > 0 ||
+      backendSpecializationCompleted;
+    const isSkillsCompleted =
+      skillsData.selectedSkills.length > 0 || backendSkillsCompleted;
+    const isToolsCompleted =
+      toolsData.selectedTools.length > 0 || backendToolsCompleted;
+    const isWorkExperienceCompleted = workExperienceData.entries.some(
+      (entry) =>
+        hasText(entry.companyName) ||
+        hasText(entry.jobTitle) ||
+        hasText(entry.industry) ||
+        entry.jobDescription.some((line) => hasText(line)) ||
+        hasText(entry.startDate) ||
+        hasText(entry.endDate),
+    ) || backendWorkExperienceCompleted;
+    const isEducationCompleted = educationData.entries.some(
+      (entry) => hasText(entry.schoolName) || hasText(entry.qualification),
+    ) || backendEducationCompleted;
+
+    return [
+      isPersonalInfoCompleted ? 1 : null,
+      isSocialCompleted ? 2 : null,
+      isBioCompleted ? 3 : null,
+      isSpecializationCompleted ? 4 : null,
+      isSkillsCompleted ? 5 : null,
+      isToolsCompleted ? 6 : null,
+      isWorkExperienceCompleted ? 7 : null,
+      isEducationCompleted ? 8 : null,
+    ].filter((stepId): stepId is number => stepId !== null);
+  }, [
+    personalInfo,
+    socialData,
+    bioData,
+    specializationData,
+    skillsData.selectedSkills,
+    toolsData.selectedTools,
+    workExperienceData.entries,
+    educationData.entries,
+    portfolioData,
+  ]);
 
   const isFirstStep = step === 1;
   const isLastStep = step === STEPS.length;
@@ -278,19 +363,42 @@ export function CreatePortfolioForm() {
     setStep((s) => Math.min(STEPS.length, s + 1));
   };
 
+  const handleBack = () => {
+    if (step === 1) {
+      router.push("/dashboard/portfolio");
+      return;
+    }
+    setStep((s) => Math.max(1, s - 1));
+  };
+
   return (
     <div className="flex flex-col h-full min-h-0">
-      <div className="flex items-center justify-between mb-6 md:mb-8">
-        <h1 className="text-xl md:text-2xl font-semibold text-zinc-900">
-          Let&apos;s Create Your Portfolio
-        </h1>
-        <span className="rounded-full bg-[#C7B0E4] px-2.5 py-1 text-xs font-medium text-[#340078]">
-          Consultant
-        </span>
+      <div className="mb-6 md:mb-8">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => router.push("/dashboard/portfolio")}
+          className="mb-3 -ml-2 h-8 px-2 text-zinc-600 hover:text-zinc-900"
+        >
+          <ArrowLeft className="mr-1 size-4" />
+          Back
+        </Button>
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl md:text-2xl font-semibold text-zinc-900">
+            Let&apos;s Create Your Portfolio
+          </h1>
+          <span className="rounded-full bg-[#C7B0E4] px-2.5 py-1 text-xs font-medium text-[#340078]">
+            Consultant
+          </span>
+        </div>
       </div>
 
       <div className="flex flex-col lg:flex-row flex-1 min-h-0 gap-6 md:gap-10">
-        <Aside step={step} onStepChange={setStep} />
+        <Aside
+          step={step}
+          completedStepIds={completedStepIds}
+          onStepChange={setStep}
+        />
 
         <div className="flex-1 min-w-0 flex flex-col">
           <div className="flex-1">
@@ -333,20 +441,21 @@ export function CreatePortfolioForm() {
           </div>
 
           <div className="flex items-center max-w-md w-full gap-3 mt-16 ">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setStep((s) => Math.max(1, s - 1))}
-              disabled={isFirstStep}
-              className="flex-1 h-10 rounded-lg bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
-            >
-              Back
-            </Button>
+            {!isFirstStep ? (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleBack}
+                className="flex-1 h-10 rounded-lg bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
+              >
+                Back
+              </Button>
+            ) : null}
             <Button
               type="button"
               onClick={handleNext}
               disabled={isUpdating || isInitializing || isToolsSubmitting}
-              className="flex-1 h-10 rounded-lg bg-primary text-white hover:bg-primary/90"
+              className="h-10 rounded-lg bg-primary text-white hover:bg-primary/90 flex-1"
             >
               {isLastStep
                 ? isUpdating

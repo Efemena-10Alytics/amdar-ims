@@ -27,6 +27,7 @@ export function SiteHeader() {
   const { data: userInfo } = useGetUserInfo();
   const avatarUrl = getAvatarUrlFromUser(userInfo ?? null);
 
+
   return (
     <header className="flex h-22 shrink-0 items-center gap-4 rounded-b-2xl bg-white px-4 lg:px-6 shadow-sm">
       <SidebarTrigger

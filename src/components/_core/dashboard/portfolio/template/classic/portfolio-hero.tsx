@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { initClassicAos } from "./init-classic-aos";
 import { useCountUp } from "@/hooks/use-count-up";
+import { useCountries } from "@/features/portfolio/use-countries";
 
 export type PortfolioHeroData = {
   name: string;
@@ -31,9 +32,22 @@ type PortfolioHeroProps = {
 };
 
 export function PortfolioHero({ value, id }: PortfolioHeroProps) {
+  const { data: countries = [] } = useCountries();
   const toolIcon =
     value.toolBadgeIconUrl ||
     (value.toolBadge ? TOOL_ICONS[value.toolBadge] : null);
+  const resolvedCountryFlagUrl = useMemo(() => {
+    if (value.countryFlagUrl?.trim()) return value.countryFlagUrl;
+    const normalizedCountry = value.countryName?.trim().toLowerCase();
+    if (!normalizedCountry) return undefined;
+
+    const country = countries.find((c) => {
+      const name = c.name?.trim().toLowerCase();
+      const code = c.code?.trim().toLowerCase();
+      return name === normalizedCountry || code === normalizedCountry;
+    });
+    return country?.flag;
+  }, [countries, value.countryFlagUrl, value.countryName]);
 
   const projectsNum = parseInt(value.projectsCount?.replace(/\D/g, "") ?? "0", 10);
   const projectsSuffix = value.projectsCount?.includes("+") ? "+" : "";
@@ -46,6 +60,8 @@ export function PortfolioHero({ value, id }: PortfolioHeroProps) {
   useEffect(() => {
     initClassicAos();
   }, []);
+
+  console.log(value.avatarUrl)
 
   return (
     <section id={id} className="text-center mt-16">
@@ -130,12 +146,12 @@ export function PortfolioHero({ value, id }: PortfolioHeroProps) {
             </>
           )}
           {value.countryName && (
-            <div className="grid text-left text-sm text-[#64748B]">
-              {value.countryFlagUrl ? (
+            <div className="grid gap-2 text-left text-sm text-[#64748B]">
+              {resolvedCountryFlagUrl ? (
                 <img
-                  src={value.countryFlagUrl}
+                  src={resolvedCountryFlagUrl}
                   alt=""
-                  className="size-5 shrink-0 rounded-sm object-cover"
+                  className="size-5 shrink-0 rounded-full object-cover"
                   aria-hidden
                 />
               ) : (

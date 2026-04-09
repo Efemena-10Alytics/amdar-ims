@@ -19,7 +19,6 @@ const CATEGORIES = [
     "Data Science",
     "Ethical Hacking",
     "Product Design",
-    "Project management",
     "Project Management",
     "Governance Risk & Compliance",
     "GRC",
@@ -65,12 +64,6 @@ const SPECIALIZATIONS_BY_CATEGORY: Record<string, string[]> = {
         "UI/UX design",
         "Interaction design",
         "Design systems",
-    ],
-    "Project management": [
-        "Agile",
-        "Scrum",
-        "Stakeholder management",
-        "Resource planning",
     ],
     "Project Management": [
         "Agile",

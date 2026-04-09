@@ -15,13 +15,11 @@ import {
   Cloud,
   FileText,
   Link2,
-  SlidersHorizontal,
   Square,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { YourToolsData } from "@/components/_core/dashboard/portfolio/your-tools";
 import { ToolIcon } from "@/components/_core/dashboard/portfolio/your-tools";
 import { AddToolsPopover } from "@/components/_core/dashboard/portfolio/add-tools-popover";
@@ -90,6 +88,7 @@ export function ProjectForm({
   const [problem, setProblem] = useState("");
   const [role, setRole] = useState("");
   const [features, setFeatures] = useState<string[]>([""]);
+  const [shouldFocusNewFeature, setShouldFocusNewFeature] = useState(false);
   const [challengesAndSolutions, setChallengesAndSolutions] = useState("");
   const [impactAndOutcomes, setImpactAndOutcomes] = useState("");
   const [durationBreakdown, setDurationBreakdown] = useState("");
@@ -104,6 +103,7 @@ export function ProjectForm({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const projectFilesInputRef = useRef<HTMLInputElement>(null);
+  const firstFeatureInputRef = useRef<HTMLInputElement>(null);
   const prefilledKeyRef = useRef<string | null>(null);
 
   const { data: apiTools = [] } = useGetTools();
@@ -170,6 +170,12 @@ export function ProjectForm({
       .filter((u): u is string => !!u);
     setExistingGalleryUrls(gallery);
   }, [initialProject, prefillKey]);
+
+  useEffect(() => {
+    if (!shouldFocusNewFeature) return;
+    firstFeatureInputRef.current?.focus();
+    setShouldFocusNewFeature(false);
+  }, [features, shouldFocusNewFeature]);
 
   const onCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -326,7 +332,11 @@ export function ProjectForm({
           <p className="text-sm text-zinc-500 mt-1 mb-4">
             Select the tools you used in this project
           </p>
-          <AddProjectToolsSection value={toolsData} onChange={setToolsData} />
+          <AddProjectToolsSection
+            value={toolsData}
+            onChange={setToolsData}
+            projectCategory={category}
+          />
         </div>
 
         <div className="space-y-6">
@@ -511,6 +521,7 @@ export function ProjectForm({
               {features.map((feature, index) => (
                 <div key={`feature-${index}`} className="flex items-center gap-2">
                   <Input
+                    ref={index === 0 ? firstFeatureInputRef : undefined}
                     id={index === 0 ? "project-features" : undefined}
                     placeholder={`Feature ${index + 1}`}
                     value={feature}
@@ -540,7 +551,10 @@ export function ProjectForm({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setFeatures((prev) => [...prev, ""])}
+                onClick={() => {
+                  setShouldFocusNewFeature(true);
+                  setFeatures((prev) => ["", ...prev]);
+                }}
               >
                 Add feature
               </Button>
@@ -981,14 +995,14 @@ function getDisplayToolName(name: string): string {
 function AddProjectToolsSection({
   value,
   onChange,
+  projectCategory,
 }: {
   value: YourToolsData;
   onChange: (data: YourToolsData) => void;
+  projectCategory: string;
 }) {
   const [addToolsOpen, setAddToolsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] =
-    useState<(typeof TOOL_FILTER_CATEGORIES)[number]>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const { data: apiTools = [] } = useGetTools();
 
@@ -1013,20 +1027,36 @@ function AddProjectToolsSection({
     ...baseToolNames,
     ...value.selectedTools.filter((t) => !baseToolNames.includes(t)),
   ];
+  const prioritizedTools = useMemo(() => {
+    const normalizedCategory = projectCategory.trim().toLowerCase();
+    const matchedCategory = TOOL_FILTER_CATEGORIES.find(
+      (item) => item.toLowerCase() === normalizedCategory,
+    );
+    if (!matchedCategory || matchedCategory === "all") return displayedTools;
+    const categorySet = TOOL_CATEGORY_LOOKUP[matchedCategory];
+    const matchingTools: string[] = [];
+    const otherTools: string[] = [];
+
+    for (const name of displayedTools) {
+      const normalizedName = name.trim().toLowerCase();
+      if (categorySet.has(normalizedName)) {
+        matchingTools.push(name);
+      } else {
+        otherTools.push(name);
+      }
+    }
+    return [...matchingTools, ...otherTools];
+  }, [displayedTools, projectCategory]);
+
   const filteredTools = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
-    const categorySet = TOOL_CATEGORY_LOOKUP[selectedCategory];
-
-    return displayedTools.filter((name) => {
+    return prioritizedTools.filter((name) => {
       const normalizedName = name.trim().toLowerCase();
       const displayName = getDisplayToolName(name).toLowerCase();
-      const matchesCategory =
-        selectedCategory === "all" || categorySet.has(normalizedName);
-      if (!matchesCategory) return false;
       if (!query) return true;
       return normalizedName.includes(query) || displayName.includes(query);
     });
-  }, [displayedTools, searchTerm, selectedCategory]);
+  }, [prioritizedTools, searchTerm]);
   const totalPages = Math.max(
     1,
     Math.ceil(filteredTools.length / PROJECT_FORM_TOOLS_PER_PAGE),
@@ -1039,7 +1069,7 @@ function AddProjectToolsSection({
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, selectedCategory]);
+  }, [searchTerm, projectCategory]);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -1096,53 +1126,13 @@ function AddProjectToolsSection({
         >
           Search tools
         </label>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto]">
-          <Input
-            id="project-tool-search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by tool name"
-            className="border-zinc-200 bg-white"
-          />
-          <Popover>
-            <PopoverTrigger asChild>
-              <button
-                type="button"
-                aria-label="Filter tools by category"
-                className={cn(
-                  "inline-flex h-9 items-center justify-center rounded-md border border-input bg-transparent px-3 text-sm font-medium shadow-xs transition-[color,box-shadow] outline-none hover:bg-accent hover:text-accent-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-                  selectedCategory !== "all" && "border-primary text-primary",
-                )}
-              >
-                <SlidersHorizontal className="size-4" /> Filter
-              </button>
-            </PopoverTrigger>
-            <PopoverContent align="end" className="w-64 p-2 h-50 overflow-y-auto!">
-              <div className="space-y-1">
-                {TOOL_FILTER_CATEGORIES.map((categoryOption) => {
-                  const isActive = selectedCategory === categoryOption;
-                  const label =
-                    categoryOption === "all" ? "All categories" : categoryOption;
-                  return (
-                    <button
-                      key={categoryOption}
-                      type="button"
-                      onClick={() => setSelectedCategory(categoryOption)}
-                      className={cn(
-                        "w-full rounded-md px-2 py-1.5 text-left text-sm transition-colors",
-                        isActive
-                          ? "bg-primary text-white"
-                          : "text-[#092A31] hover:bg-zinc-100",
-                      )}
-                    >
-                      {label}
-                    </button>
-                  );
-                })}
-              </div>
-            </PopoverContent>
-          </Popover>
-        </div>
+        <Input
+          id="project-tool-search"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search by tool name"
+          className="border-zinc-200 bg-white"
+        />
       </div>
       <div className="flex flex-wrap gap-2">
         {paginatedTools.map((name) => {

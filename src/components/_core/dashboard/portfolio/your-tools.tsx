@@ -13,6 +13,7 @@ import { useGetTools } from "@/features/portfolio/use-get-tools";
 const DEFAULT_CATEGORY = "Product Design";
 const DEFAULT_SKILL_LEVEL = 60;
 const TOOLS_PER_PAGE = 12;
+const SELECTED_TOOLS_PER_PAGE = 6;
 
 const TOOLS = [
   "Figma",
@@ -302,6 +303,7 @@ export function YourTools({ value, onChange }: YourToolsProps) {
   const [selectedCategory, setSelectedCategory] =
     useState<(typeof TOOL_FILTER_CATEGORIES)[number]>("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedToolsPage, setSelectedToolsPage] = useState(1);
   const { data: portfolioData } = useGetPortfolio();
   const { data: apiTools = [] } = useGetTools();
 
@@ -367,6 +369,14 @@ export function YourTools({ value, onChange }: YourToolsProps) {
     const start = (currentPage - 1) * TOOLS_PER_PAGE;
     return filteredTools.slice(start, start + TOOLS_PER_PAGE);
   }, [currentPage, filteredTools]);
+  const totalSelectedPages = Math.max(
+    1,
+    Math.ceil(value.selectedTools.length / SELECTED_TOOLS_PER_PAGE),
+  );
+  const paginatedSelectedTools = useMemo((): string[] => {
+    const start = (selectedToolsPage - 1) * SELECTED_TOOLS_PER_PAGE;
+    return value.selectedTools.slice(start, start + SELECTED_TOOLS_PER_PAGE);
+  }, [selectedToolsPage, value.selectedTools]);
   const count = value.selectedTools.length;
 
   useEffect(() => {
@@ -378,6 +388,12 @@ export function YourTools({ value, onChange }: YourToolsProps) {
       setCurrentPage(totalPages);
     }
   }, [currentPage, totalPages]);
+
+  useEffect(() => {
+    if (selectedToolsPage > totalSelectedPages) {
+      setSelectedToolsPage(totalSelectedPages);
+    }
+  }, [selectedToolsPage, totalSelectedPages]);
 
   const toggle = (name: string) => {
     const isRemoving = value.selectedTools.includes(name);
@@ -458,7 +474,7 @@ export function YourTools({ value, onChange }: YourToolsProps) {
         Select tools or technologies you excel in
       </p>
       <div className="flex gap-4">
-        <div className="flex-1">
+        <div className="max-w-lg">
           <div className="space-y-1 mb-3 max-w-md">
             <div className="text-sm text-[#092A31]">Category</div>
             <div className="p-2 bg-[#F8FAFC] rounded-lg text-[#092A31]">
@@ -610,10 +626,17 @@ export function YourTools({ value, onChange }: YourToolsProps) {
           </div>
         </div>
         {count > 0 ? (
-          <div className="mt-6 rounded-2xl bg-[#F8FAFC] p-4 sm:p-5">
-            <h3 className="text-sm font-semibold text-[#092A31]">Selected tools</h3>
+          <div className="mt-6 w-full rounded-2xl bg-[#F8FAFC] p-4 sm:p-5">
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-sm font-semibold text-[#092A31]">Selected tools</h3>
+              {value.selectedTools.length > SELECTED_TOOLS_PER_PAGE ? (
+                <span className="text-xs text-zinc-500">
+                  Page {selectedToolsPage} of {totalSelectedPages}
+                </span>
+              ) : null}
+            </div>
             <div className="mt-4 space-y-3">
-              {value.selectedTools.map((name) => {
+              {paginatedSelectedTools.map((name) => {
                 const displayName = getDisplayToolName(name);
                 const skillLevel = normalizeSkillLevel(value.toolSkillLevels?.[name]);
                 return (
@@ -656,7 +679,7 @@ export function YourTools({ value, onChange }: YourToolsProps) {
                           "absolute inset-0 h-1 w-full cursor-pointer appearance-none bg-transparent",
                           "[&::-webkit-slider-runnable-track]:h-1",
                           "[&::-webkit-slider-runnable-track]:bg-transparent",
-                          "[&::-webkit-slider-thumb]:mt-[-5px]",
+                          "[&::-webkit-slider-thumb]:-mt-1.25",
                           "[&::-webkit-slider-thumb]:size-3.5",
                           "[&::-webkit-slider-thumb]:appearance-none",
                           "[&::-webkit-slider-thumb]:rounded-full",
@@ -675,6 +698,32 @@ export function YourTools({ value, onChange }: YourToolsProps) {
                 );
               })}
             </div>
+            {value.selectedTools.length > SELECTED_TOOLS_PER_PAGE ? (
+              <div className="mt-4 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSelectedToolsPage((page) => Math.max(1, page - 1))
+                  }
+                  disabled={selectedToolsPage === 1}
+                  className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-[#092A31] transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSelectedToolsPage((page) =>
+                      Math.min(totalSelectedPages, page + 1),
+                    )
+                  }
+                  disabled={selectedToolsPage === totalSelectedPages}
+                  className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-[#092A31] transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            ) : null}
           </div>
         ) : null}
       </div>
