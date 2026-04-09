@@ -177,6 +177,10 @@ export function CreatePortfolioForm() {
 
   const isFirstStep = step === 1;
   const isLastStep = step === STEPS.length;
+  const completedStepSet = useMemo(
+    () => new Set(completedStepIds),
+    [completedStepIds],
+  );
 
   const savePersonalInfo = async (): Promise<boolean> => {
     const location = selectedCountry?.name ?? personalInfo.countryCode ?? "";
@@ -371,6 +375,22 @@ export function CreatePortfolioForm() {
     setStep((s) => Math.max(1, s - 1));
   };
 
+  const handleStepChange = (targetStep: number) => {
+    if (targetStep <= step) {
+      setStep(targetStep);
+      return;
+    }
+
+    const canJumpForward = Array.from(
+      { length: targetStep - 1 },
+      (_, i) => i + 1,
+    ).every((requiredStep) => completedStepSet.has(requiredStep));
+
+    if (canJumpForward) {
+      setStep(targetStep);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full min-h-0">
       <div className="mb-6 md:mb-8">
@@ -397,7 +417,7 @@ export function CreatePortfolioForm() {
         <Aside
           step={step}
           completedStepIds={completedStepIds}
-          onStepChange={setStep}
+          onStepChange={handleStepChange}
         />
 
         <div className="flex-1 min-w-0 flex flex-col">
