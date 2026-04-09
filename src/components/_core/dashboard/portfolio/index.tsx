@@ -5,11 +5,16 @@ import { useRouter } from "next/navigation";
 import confetti from "canvas-confetti";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import PersonalInfo, {
   defaultPersonalInfo,
   PersonalInfoData,
 } from "./personal-info";
-import { YourSocial, socialToPayload } from "./your-social";
+import {
+  YourSocial,
+  socialToPayload,
+  type YourSocialData,
+} from "./your-social";
 import { YourBio, bioToPayload } from "./your-bio";
 import {
   YourSpecialization,
@@ -33,6 +38,7 @@ import { useInitializePortfolio } from "@/features/portfolio/use-initialize-port
 import { useUpdateUser } from "@/features/user/use-update-user-details";
 import { useCountries } from "@/features/portfolio/use-countries";
 import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
+import { useUpdateProfileImage } from "@/features/portfolio/use-update-profile-image";
 import { useGetTools } from "@/features/portfolio/use-get-tools";
 import { usePortfolioCompletedSteps } from "@/hooks/use-portfolio-completed-steps";
 
@@ -50,6 +56,11 @@ export function CreatePortfolioForm() {
   const { data: countries = [] } = useCountries();
   const { data: portfolioData, error: portfolioErrorMessage } = useGetPortfolio();
   const { data: apiTools = [] } = useGetTools();
+  const {
+    updateProfileImage,
+    isUploading: isProfileImageUploading,
+    errorMessage: profileImageErrorMessage,
+  } = useUpdateProfileImage();
 
   const toolIconMap: ToolIconMap = useMemo(() => {
     const map: Record<string, string> = {};
@@ -63,7 +74,11 @@ export function CreatePortfolioForm() {
   const [step, setStep] = useState(1);
   const [personalInfo, setPersonalInfo] =
     useState<PersonalInfoData>(defaultPersonalInfo);
-  const [socialData, setSocialData] = useState({ linkedIn: "", twitter: "" });
+  const [socialData, setSocialData] = useState<YourSocialData>({
+    linkedIn: "",
+    twitter: "",
+    profileImageFile: null,
+  });
   const [bioData, setBioData] = useState({
     jobTitle: "",
     yearsOfExperience: "",
@@ -314,19 +329,31 @@ export function CreatePortfolioForm() {
     }
   };
 
-  const saveSocial = async (
-    data: Parameters<typeof socialToPayload>[0],
-  ): Promise<boolean> => {
+  const saveSocial = async (data: YourSocialData): Promise<boolean> => {
     const payload = socialToPayload(data);
-    try {
-      const result = await updateProject({
-        social: payload.social,
-      });
-      return result !== undefined;
-    } catch {
-      // errorMessage set by useUpdatePortfolio
-      return false;
-    }
+
+    const socialTask = (async () => {
+      try {
+        const result = await updateProject({
+          social: payload.social,
+        });
+        return result !== undefined;
+      } catch {
+        // errorMessage set by useUpdatePortfolio
+        return false;
+      }
+    })();
+
+    const imageTask =
+      data.profileImageFile != null
+        ? updateProfileImage(data.profileImageFile)
+        : Promise.resolve(true);
+
+    const [socialOk, imageOk] = await Promise.all([socialTask, imageTask]);
+
+    if (!socialOk) return false;
+    if (data.profileImageFile != null && !imageOk) return false;
+    return true;
   };
 
   const saveWorkExperience = async (
@@ -367,6 +394,7 @@ export function CreatePortfolioForm() {
     if (step === 2) {
       const ok = await saveSocial(socialData);
       if (!ok) return;
+      setSocialData((prev) => ({ ...prev, profileImageFile: null }));
     }
     if (step === 3) {
       const ok = await saveBio(bioData);
@@ -524,6 +552,7 @@ export function CreatePortfolioForm() {
                 isUpdating ||
                 isInitializing ||
                 isToolsSubmitting ||
+                isProfileImageUploading ||
                 !canContinueCurrentStep
               }
               className="h-10 rounded-lg bg-primary text-white hover:bg-primary/90 flex-1"
@@ -532,24 +561,36 @@ export function CreatePortfolioForm() {
                 ? isUpdating
                   ? "Updating…"
                   : "Update Portfolio"
-                : isUpdating || isInitializing || isToolsSubmitting
+                : isUpdating ||
+                    isInitializing ||
+                    isToolsSubmitting ||
+                    isProfileImageUploading
                   ? "Saving…"
                   : "Save & continue"}
             </Button>
           </div>
-          {(errorMessage || initErrorMessage || addToolsErrorMessage) && (
+          {(errorMessage ||
+            initErrorMessage ||
+            addToolsErrorMessage ||
+            profileImageErrorMessage) && (
             <p className="mt-3 text-sm text-red-600" role="alert">
-              {errorMessage || initErrorMessage || addToolsErrorMessage}
+              {errorMessage ||
+                initErrorMessage ||
+                addToolsErrorMessage ||
+                profileImageErrorMessage}
             </p>
           )}
           {warningToast ? (
-            <div
-              role="status"
-              aria-live="polite"
-              className="fixed right-4 top-4 z-50 max-w-sm rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 shadow-lg"
-            >
-              {warningToast}
-            </div>
+            <InfoToastBanner
+              message={warningToast}
+              onDismiss={() => {
+                if (warningTimerRef.current) {
+                  clearTimeout(warningTimerRef.current);
+                  warningTimerRef.current = null;
+                }
+                setWarningToast(null);
+              }}
+            />
           ) : null}
         </div>
       </div>

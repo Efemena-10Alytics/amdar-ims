@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Calendar as CalendarIcon, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import { Calendar } from "@/components/ui/calendar";
 import {
     Popover,
@@ -286,9 +287,12 @@ export function WorkExperience({ value, onChange }: WorkExperienceProps) {
             i === index
                 ? {
                     ...entry,
-                    jobDescription: entry.jobDescription.map((description, itemIndex) =>
-                        itemIndex === descriptionIndex ? nextValue : description,
-                    ),
+            jobDescription:
+              entry.jobDescription.length === 0
+                ? [nextValue]
+                : entry.jobDescription.map((description, itemIndex) =>
+                    itemIndex === descriptionIndex ? nextValue : description,
+                  ),
                 }
                 : entry,
         );
@@ -526,13 +530,16 @@ export function WorkExperience({ value, onChange }: WorkExperienceProps) {
                 </button>
             </div>
             {warningToast ? (
-                <div
-                    role="status"
-                    aria-live="polite"
-                    className="fixed right-4 top-4 z-50 max-w-sm rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 shadow-lg"
-                >
-                    {warningToast}
-                </div>
+                <InfoToastBanner
+                    message={warningToast}
+                    onDismiss={() => {
+                        if (warningTimerRef.current) {
+                            clearTimeout(warningTimerRef.current);
+                            warningTimerRef.current = null;
+                        }
+                        setWarningToast(null);
+                    }}
+                />
             ) : null}
         </div>
     );

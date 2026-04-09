@@ -6,6 +6,7 @@ import { getUserId } from "@/lib/get-user-id";
 import { useAuthStore } from "@/store/auth-store";
 import { ArrowLeft, Loader2, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import {
   LockKeyHoleIcon,
   PencilFilledIcon,
@@ -114,9 +115,11 @@ export default function PortfolioPage() {
   const user = useAuthStore((s) => s.user);
   const userId = getUserId(user);
   const portfolioHref = userId != null ? `/portfolio/${userId}` : "/portfolio";
+  const hasAtLeastOneProject = (portfolio?.projects?.length ?? 0) > 0;
   const [selectedTemplate, setSelectedTemplate] = useState<string>("classic");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [viewLinkOpen, setViewLinkOpen] = useState(false);
+  const [shareWarning, setShareWarning] = useState<string | null>(null);
   const { shouldRedirectToCreate } = usePortfolioCompletionRedirect({
     portfolio,
     isLoading,
@@ -168,7 +171,16 @@ export default function PortfolioPage() {
             <Button
               type="button"
               className="rounded-lg bg-primary text-white hover:bg-primary/90"
-              onClick={() => setViewLinkOpen(true)}
+              onClick={() => {
+                if (!hasAtLeastOneProject) {
+                  setShareWarning(
+                    "User must add at least one project before they can share their portfolio.",
+                  );
+                  setTimeout(() => setShareWarning(null), 3500);
+                  return;
+                }
+                setViewLinkOpen(true);
+              }}
             >
               Share portfolio
               <ShareFilledIcon />
@@ -217,6 +229,12 @@ export default function PortfolioPage() {
 
 
       <CreateClassic />
+      {shareWarning ? (
+        <InfoToastBanner
+          message={shareWarning}
+          onDismiss={() => setShareWarning(null)}
+        />
+      ) : null}
     </div>
   );
 }
