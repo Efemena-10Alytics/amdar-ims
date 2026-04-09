@@ -16,6 +16,7 @@ import { PortfolioSettingsModal } from "@/components/_core/dashboard/portfolio/p
 import { ViewLinkModal } from "@/components/_core/dashboard/portfolio/view-link-modal";
 import CreateClassic from "@/components/_core/dashboard/portfolio/template/classic";
 import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
+import { usePortfolioCompletionRedirect } from "@/features/portfolio/use-portfolio-completion-redirect";
 
 const TEMPLATES = [
   { id: "classic", label: "Classic", comingSoon: false },
@@ -109,13 +110,18 @@ function TemplatePreview({
 }
 
 export default function PortfolioPage() {
-  const { isLoading, error } = useGetPortfolio();
+  const { data: portfolio, isLoading, error } = useGetPortfolio();
   const user = useAuthStore((s) => s.user);
   const userId = getUserId(user);
   const portfolioHref = userId != null ? `/portfolio/${userId}` : "/portfolio";
   const [selectedTemplate, setSelectedTemplate] = useState<string>("classic");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [viewLinkOpen, setViewLinkOpen] = useState(false);
+  const { shouldRedirectToCreate } = usePortfolioCompletionRedirect({
+    portfolio,
+    isLoading,
+    hasError: !!error,
+  });
 
   if (isLoading) {
     return (
@@ -131,6 +137,10 @@ export default function PortfolioPage() {
         <p className="text-sm text-red-600">You have not created and Portfolio hence will be redirect to create portfolio page.</p>
       </div>
     );
+  }
+
+  if (shouldRedirectToCreate) {
+    return null;
   }
 
   return (
