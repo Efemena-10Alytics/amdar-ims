@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import confetti from "canvas-confetti";
-import { ChevronRight } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PersonalInfo, {
   defaultPersonalInfo,
@@ -90,6 +90,7 @@ export function CreatePortfolioForm() {
     (c) => c.code === personalInfo.countryCode,
   );
 
+  const isFirstStep = step === 1;
   const isLastStep = step === STEPS.length;
 
   const savePersonalInfo = async (): Promise<boolean> => {
@@ -287,13 +288,24 @@ export function CreatePortfolioForm() {
 
   return (
     <div className="flex flex-col h-full min-h-0">
-      <div className="flex items-center justify-between mb-6 md:mb-8">
-        <h1 className="text-xl md:text-2xl font-semibold text-zinc-900">
-          Let&apos;s Create Your Portfolio
-        </h1>
-        <span className="rounded-full bg-[#C7B0E4] px-2.5 py-1 text-xs font-medium text-[#340078]">
-          Consultant
-        </span>
+      <div className="mb-6 md:mb-8">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => router.push("/dashboard/portfolio")}
+          className="mb-3 -ml-2 h-8 px-2 text-zinc-600 hover:text-zinc-900"
+        >
+          <ArrowLeft className="mr-1 size-4" />
+          Back
+        </Button>
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl md:text-2xl font-semibold text-zinc-900">
+            Let&apos;s Create Your Portfolio
+          </h1>
+          <span className="rounded-full bg-[#C7B0E4] px-2.5 py-1 text-xs font-medium text-[#340078]">
+            Consultant
+          </span>
+        </div>
       </div>
 
       <div className="flex flex-col lg:flex-row flex-1 min-h-0 gap-6 md:gap-10">
@@ -340,19 +352,21 @@ export function CreatePortfolioForm() {
           </div>
 
           <div className="flex items-center max-w-md w-full gap-3 mt-16 ">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleBack}
-              className="flex-1 h-10 rounded-lg bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
-            >
-              Back
-            </Button>
+            {!isFirstStep ? (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleBack}
+                className="flex-1 h-10 rounded-lg bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
+              >
+                Back
+              </Button>
+            ) : null}
             <Button
               type="button"
               onClick={handleNext}
               disabled={isUpdating || isInitializing || isToolsSubmitting}
-              className="flex-1 h-10 rounded-lg bg-primary text-white hover:bg-primary/90"
+              className="h-10 rounded-lg bg-primary text-white hover:bg-primary/90 flex-1"
             >
               {isLastStep
                 ? isUpdating

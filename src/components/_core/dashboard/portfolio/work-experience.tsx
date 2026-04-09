@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Calendar as CalendarIcon, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -210,6 +210,28 @@ type WorkExperienceProps = {
 
 export function WorkExperience({ value, onChange }: WorkExperienceProps) {
     const { data: portfolioData } = useGetPortfolio();
+    const [warningToast, setWarningToast] = useState<string | null>(null);
+    const warningTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const showWarningToast = (message: string) => {
+        setWarningToast(message);
+        if (warningTimerRef.current) {
+            clearTimeout(warningTimerRef.current);
+        }
+        warningTimerRef.current = setTimeout(() => {
+            setWarningToast(null);
+            warningTimerRef.current = null;
+        }, 3500);
+    };
+
+    useEffect(() => {
+        return () => {
+            if (warningTimerRef.current) {
+                clearTimeout(warningTimerRef.current);
+            }
+        };
+    }, []);
+
     useEffect(() => {
         if (!portfolioData?.workExperience?.length) return;
         const isEmpty = value.entries.every(
@@ -463,12 +485,28 @@ export function WorkExperience({ value, onChange }: WorkExperienceProps) {
                                 <label className="flex items-center justify-end gap-2 cursor-pointer mt-2">
                                     <Checkbox
                                         checked={entry.currentlyWorkHere}
-                                        onCheckedChange={(checked) =>
+                                        onCheckedChange={(checked) => {
+                                            const isChecking = !!checked;
+                                            const currentSelectedCount = value.entries.filter(
+                                                (item) => item.currentlyWorkHere,
+                                            ).length;
+                                            const isAlreadyChecked = entry.currentlyWorkHere;
+
+                                            if (
+                                                isChecking &&
+                                                !isAlreadyChecked &&
+                                                currentSelectedCount >= 1
+                                            ) {
+                                                showWarningToast(
+                                                    "it\u2019s advice to have one work place as current work place",
+                                                );
+                                            }
+
                                             updateEntry(index, {
                                                 currentlyWorkHere: !!checked,
                                                 ...(!!checked && { endDate: "" }),
-                                            })
-                                        }
+                                            });
+                                        }}
                                     />
                                     <span className="text-sm text-zinc-600">
                                         I currently work here
@@ -487,6 +525,15 @@ export function WorkExperience({ value, onChange }: WorkExperienceProps) {
                     Add more
                 </button>
             </div>
+            {warningToast ? (
+                <div
+                    role="status"
+                    aria-live="polite"
+                    className="fixed right-4 top-4 z-50 max-w-sm rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 shadow-lg"
+                >
+                    {warningToast}
+                </div>
+            ) : null}
         </div>
     );
 }
