@@ -20,7 +20,7 @@ export function InfoToastBanner({
       aria-live="polite"
       className={cn(
         "fixed right-4 top-4 z-50 flex max-w-md items-start gap-3 rounded-xl p-4 shadow-lg",
-        "bg-[#D1E3FF] text-[#3E63A8]",
+        "bg-[#D1E3FF] text-[#3E63A8] border border-[#3E63A8]",
         className,
       )}
     >

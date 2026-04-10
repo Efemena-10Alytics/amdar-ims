@@ -25,6 +25,7 @@ import { ToolIcon } from "@/components/_core/dashboard/portfolio/your-tools";
 import { AddToolsPopover } from "@/components/_core/dashboard/portfolio/add-tools-popover";
 import { portfolioInputStyle } from "@/components/_core/dashboard/portfolio/portfolio-styles";
 import { cn, getImageUrl } from "@/lib/utils";
+import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { useGetTools } from "@/features/portfolio/use-get-tools";
 import type { AddProjectFormData } from "@/features/portfolio/build-project-form-data";
 import type { UserPortfolioProjectDetail } from "@/features/portfolio/use-get-project-by-id";
@@ -107,6 +108,7 @@ export function ProjectForm({
   const prefilledKeyRef = useRef<string | null>(null);
 
   const { data: apiTools = [] } = useGetTools();
+  const { data: portfolioData } = useGetPortfolio();
 
   const toolNameToIcon = useMemo(() => {
     const map: Record<string, string> = {};
@@ -374,7 +376,7 @@ export function ProjectForm({
           <AddProjectToolsSection
             value={toolsData}
             onChange={setToolsData}
-            projectCategory={category}
+            portfolioCategory={portfolioData?.category?.title ?? ""}
           />
         </div>
 
@@ -1034,15 +1036,14 @@ function getDisplayToolName(name: string): string {
 function AddProjectToolsSection({
   value,
   onChange,
-  projectCategory,
+  portfolioCategory,
 }: {
   value: YourToolsData;
   onChange: (data: YourToolsData) => void;
-  projectCategory: string;
+  portfolioCategory: string;
 }) {
   const [addToolsOpen, setAddToolsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
   const { data: apiTools = [] } = useGetTools();
 
   const baseToolNames = useMemo(() => {
@@ -1066,55 +1067,28 @@ function AddProjectToolsSection({
     ...baseToolNames,
     ...value.selectedTools.filter((t) => !baseToolNames.includes(t)),
   ];
-  const prioritizedTools = useMemo(() => {
-    const normalizedCategory = projectCategory.trim().toLowerCase();
+  const categoryMatchedTools = useMemo(() => {
+    const normalizedCategory = portfolioCategory.trim().toLowerCase();
     const matchedCategory = TOOL_FILTER_CATEGORIES.find(
       (item) => item.toLowerCase() === normalizedCategory,
     );
     if (!matchedCategory || matchedCategory === "all") return displayedTools;
     const categorySet = TOOL_CATEGORY_LOOKUP[matchedCategory];
-    const matchingTools: string[] = [];
-    const otherTools: string[] = [];
-
-    for (const name of displayedTools) {
-      const normalizedName = name.trim().toLowerCase();
-      if (categorySet.has(normalizedName)) {
-        matchingTools.push(name);
-      } else {
-        otherTools.push(name);
-      }
-    }
-    return [...matchingTools, ...otherTools];
-  }, [displayedTools, projectCategory]);
+    return displayedTools.filter((name) =>
+      categorySet.has(name.trim().toLowerCase()),
+    );
+  }, [displayedTools, portfolioCategory]);
 
   const filteredTools = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
-    return prioritizedTools.filter((name) => {
+    return categoryMatchedTools.filter((name) => {
       const normalizedName = name.trim().toLowerCase();
       const displayName = getDisplayToolName(name).toLowerCase();
       if (!query) return true;
       return normalizedName.includes(query) || displayName.includes(query);
     });
-  }, [prioritizedTools, searchTerm]);
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredTools.length / PROJECT_FORM_TOOLS_PER_PAGE),
-  );
-  const paginatedTools = useMemo(() => {
-    const start = (currentPage - 1) * PROJECT_FORM_TOOLS_PER_PAGE;
-    return filteredTools.slice(start, start + PROJECT_FORM_TOOLS_PER_PAGE);
-  }, [currentPage, filteredTools]);
+  }, [categoryMatchedTools, searchTerm]);
   const count = value.selectedTools.length;
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, projectCategory]);
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
-    }
-  }, [currentPage, totalPages]);
 
   const toggle = (name: string) => {
     const isRemoving = value.selectedTools.includes(name);
@@ -1174,7 +1148,7 @@ function AddProjectToolsSection({
         />
       </div>
       <div className="flex flex-wrap gap-2">
-        {paginatedTools.map((name) => {
+        {filteredTools.map((name) => {
           const selected = value.selectedTools.includes(name);
           const displayName = getDisplayToolName(name);
           return (
@@ -1209,33 +1183,7 @@ function AddProjectToolsSection({
       </div>
       {filteredTools.length === 0 ? (
         <p className="text-sm text-zinc-500">No tools match your search.</p>
-      ) : (
-        <div className="flex items-center justify-between gap-3 pt-2">
-          <span className="text-sm text-zinc-500">
-            Page {currentPage} of {totalPages}
-          </span>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-              disabled={currentPage === 1}
-              className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-[#092A31] transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Previous
-            </button>
-            <button
-              type="button"
-              onClick={() =>
-                setCurrentPage((page) => Math.min(totalPages, page + 1))
-              }
-              disabled={currentPage === totalPages}
-              className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-[#092A31] transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
+      ) : null}
     </div>
   );
 }
