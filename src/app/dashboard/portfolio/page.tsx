@@ -114,7 +114,7 @@ export default function PortfolioPage() {
   const { data: portfolio, isLoading, error } = useGetPortfolio();
   const user = useAuthStore((s) => s.user);
   const userId = getUserId(user);
-  const portfolioHref = userId != null ? `/portfolio/${userId}` : "/portfolio";
+  const portfolioHref = userId != null ? `/p/${userId}` : "/portfolio";
   const hasAtLeastOneProject = (portfolio?.projects?.length ?? 0) > 0;
   const [selectedTemplate, setSelectedTemplate] = useState<string>("classic");
   const [settingsOpen, setSettingsOpen] = useState(false);
