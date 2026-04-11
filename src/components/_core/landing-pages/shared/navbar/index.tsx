@@ -115,7 +115,7 @@ const Navbr = () => {
   const logoImg = isHomePageRoute ? "/logo.svg" : "/logo.svg";
   return (
     <>
-      {showSalesBanner && <SalesBanner />}
+      {/* {showSalesBanner && <SalesBanner />} */}
       <div className="sticky top-0 left-0 right-0 z-50">
         <nav
           className={cn(

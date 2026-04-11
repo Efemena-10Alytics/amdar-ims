@@ -79,12 +79,12 @@ const Right = ({ program }: RightProps) => {
   return (
     <div className="space-y-6">
       {/* Video Player Section */}
-      <div className="hidden lg:block">
+      {/* <div className="hidden lg:block">
         <IWDPayment
           claimHref={`/payment/${program?.id}`}
           offersHref="/internship"
         />
-      </div>
+      </div> */}
       <div
         role="button"
         tabIndex={0}

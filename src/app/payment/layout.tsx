@@ -8,12 +8,12 @@ const LandingPageLayout = ({
   return (
     <div>
       <Navbr />
-      <IWDBanner
+      {/* <IWDBanner
         registeredCount={24}
         viewingNow={87}
         slotsLeft={6}
         offersHref="/internship"
-      />
+      /> */}
       <div className="pt-10">{children}</div>
     </div>
   );
