@@ -2,9 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
-import { Check, SlidersHorizontal, Square } from "lucide-react";
+import { Check, Square } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { AddToolsPopover } from "./add-tools-popover";
 import { cn } from "@/lib/utils";
 import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
@@ -12,7 +11,6 @@ import { useGetTools } from "@/features/portfolio/use-get-tools";
 
 const DEFAULT_CATEGORY = "Product Design";
 const DEFAULT_SKILL_LEVEL = 60;
-const TOOLS_PER_PAGE = 12;
 
 const TOOLS = [
   "Figma",
@@ -299,9 +297,6 @@ type YourToolsProps = {
 export function YourTools({ value, onChange }: YourToolsProps) {
   const [addToolsOpen, setAddToolsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] =
-    useState<(typeof TOOL_FILTER_CATEGORIES)[number]>("all");
-  const [currentPage, setCurrentPage] = useState(1);
   const { data: portfolioData } = useGetPortfolio();
   const { data: apiTools = [] } = useGetTools();
 
@@ -349,35 +344,30 @@ export function YourTools({ value, onChange }: YourToolsProps) {
     );
     return [...portfolioToolNames, ...rest, ...custom];
   }, [baseToolNames, portfolioToolNames, value.selectedTools]);
+  const matchedCategory = useMemo(() => {
+    const categoryTitle = portfolioData?.category?.title?.trim().toLowerCase();
+    if (!categoryTitle) return undefined;
+    return TOOL_FILTER_CATEGORIES.find(
+      (categoryOption) =>
+        categoryOption !== "all" &&
+        categoryOption.trim().toLowerCase() === categoryTitle,
+    );
+  }, [portfolioData?.category?.title]);
+
   const filteredTools = useMemo((): string[] => {
     const query = searchTerm.trim().toLowerCase();
+    const categorySet = matchedCategory
+      ? TOOL_CATEGORY_LOOKUP[matchedCategory]
+      : undefined;
     return displayedTools.filter((name) => {
       const normalizedName = name.trim().toLowerCase();
       const displayName = getDisplayToolName(name).toLowerCase();
-      const categorySet = TOOL_CATEGORY_LOOKUP[selectedCategory];
-      const matchesCategory =
-        selectedCategory === "all" || categorySet.has(normalizedName);
-      if (!matchesCategory) return false;
+      if (categorySet && !categorySet.has(normalizedName)) return false;
       if (!query) return true;
       return normalizedName.includes(query) || displayName.includes(query);
     });
-  }, [displayedTools, searchTerm, selectedCategory]);
-  const totalPages = Math.max(1, Math.ceil(filteredTools.length / TOOLS_PER_PAGE));
-  const paginatedTools = useMemo((): string[] => {
-    const start = (currentPage - 1) * TOOLS_PER_PAGE;
-    return filteredTools.slice(start, start + TOOLS_PER_PAGE);
-  }, [currentPage, filteredTools]);
+  }, [displayedTools, searchTerm, matchedCategory]);
   const count = value.selectedTools.length;
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, selectedCategory]);
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
-    }
-  }, [currentPage, totalPages]);
 
   const toggle = (name: string) => {
     const isRemoving = value.selectedTools.includes(name);
@@ -458,7 +448,7 @@ export function YourTools({ value, onChange }: YourToolsProps) {
         Select tools or technologies you excel in
       </p>
       <div className="flex gap-4">
-        <div className="flex-1">
+        <div className="max-w-lg">
           <div className="space-y-1 mb-3 max-w-md">
             <div className="text-sm text-[#092A31]">Category</div>
             <div className="p-2 bg-[#F8FAFC] rounded-lg text-[#092A31]">
@@ -489,60 +479,17 @@ export function YourTools({ value, onChange }: YourToolsProps) {
               >
                 Search tools
               </label>
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto]">
-                <Input
-                  id="tool-search"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search by tool name"
-                  className="border-zinc-200 bg-white"
-                />
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <button
-                      type="button"
-                      aria-label="Filter tools by category"
-                      className={cn(
-                        "inline-flex h-9 items-center justify-center rounded-md border border-input bg-transparent px-3 text-sm font-medium shadow-xs transition-[color,box-shadow] outline-none hover:bg-accent hover:text-accent-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-                        selectedCategory !== "all" && "border-primary text-primary",
-                      )}
-                    >
-                      <SlidersHorizontal className="size-4" /> {" "}
-                      Filter
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent align="end" className="w-64 p-2 h-50 overflow-y-auto">
-                    <div className="space-y-1">
-                      {TOOL_FILTER_CATEGORIES.map((categoryOption) => {
-                        const isActive = selectedCategory === categoryOption;
-                        const label =
-                          categoryOption === "all"
-                            ? "All categories"
-                            : categoryOption;
-                        return (
-                          <button
-                            key={categoryOption}
-                            type="button"
-                            onClick={() => setSelectedCategory(categoryOption)}
-                            className={cn(
-                              "w-full rounded-md px-2 py-1.5 text-left text-sm transition-colors",
-                              isActive
-                                ? "bg-primary text-white"
-                                : "text-[#092A31] hover:bg-zinc-100",
-                            )}
-                          >
-                            {label}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
+              <Input
+                id="tool-search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search by tool name"
+                className="border-zinc-200 bg-white"
+              />
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {paginatedTools.map((name) => {
+              {filteredTools.map((name) => {
                 const selected = value.selectedTools.includes(name);
                 const displayName = getDisplayToolName(name);
                 return (
@@ -580,37 +527,11 @@ export function YourTools({ value, onChange }: YourToolsProps) {
               <p className="text-sm text-zinc-500">
                 No tools match your search.
               </p>
-            ) : (
-              <div className="flex items-center justify-between gap-3 pt-2">
-                <span className="text-sm text-zinc-500">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-                    disabled={currentPage === 1}
-                    className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-[#092A31] transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setCurrentPage((page) => Math.min(totalPages, page + 1))
-                    }
-                    disabled={currentPage === totalPages}
-                    className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-[#092A31] transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
-            )}
+            ) : null}
           </div>
         </div>
         {count > 0 ? (
-          <div className="mt-6 rounded-2xl bg-[#F8FAFC] p-4 sm:p-5">
+          <div className="mt-6 w-full rounded-2xl bg-[#F8FAFC] p-4 sm:p-5">
             <h3 className="text-sm font-semibold text-[#092A31]">Selected tools</h3>
             <div className="mt-4 space-y-3">
               {value.selectedTools.map((name) => {
@@ -656,7 +577,7 @@ export function YourTools({ value, onChange }: YourToolsProps) {
                           "absolute inset-0 h-1 w-full cursor-pointer appearance-none bg-transparent",
                           "[&::-webkit-slider-runnable-track]:h-1",
                           "[&::-webkit-slider-runnable-track]:bg-transparent",
-                          "[&::-webkit-slider-thumb]:mt-[-5px]",
+                          "[&::-webkit-slider-thumb]:-mt-1.25",
                           "[&::-webkit-slider-thumb]:size-3.5",
                           "[&::-webkit-slider-thumb]:appearance-none",
                           "[&::-webkit-slider-thumb]:rounded-full",

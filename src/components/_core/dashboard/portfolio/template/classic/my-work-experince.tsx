@@ -79,9 +79,12 @@ export function MyWorkExperience({
 
                 </div>
                 <ArrowUpRight
-                  className={cn("size-5 transition-transform text-[#092A31] group-hover:text-white", isExpanded ? "rotate-45" : "rotate-0")}
+                  className={cn("size-5 transition-transform text-[#092A31] group-hover:hidden", isExpanded ? "rotate-45" : "rotate-0")}
                   aria-hidden
                 />
+                <div className="hidden group-hover:flex text-primary bg-amdari-yellow p-1 rounded-full text-[10px] text-center h-10 w-10 flex items-center justify-center">
+                  {isExpanded ? "Close" : "View"}
+                </div>
               </button>
 
               {item.descriptions && item.descriptions.length > 0 ? (

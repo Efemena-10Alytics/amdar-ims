@@ -13,6 +13,8 @@ import {
 import { useGetProjectByUserId } from "@/features/portfolio/use-get-project-by-id";
 import { useGetPortfolioByUserId } from "@/features/portfolio/use-get-portfolio-by-id";
 import { getImageUrl } from "@/lib/utils";
+import { useGetPortfolioBySharePathname } from "@/features/portfolio/use-get-portfolio-share";
+import { useGetProjectBySharePathname } from "@/features/portfolio/use-get-portfolio-project-share";
 
 function paramPart(
   value: string | string[] | undefined,
@@ -27,11 +29,11 @@ export default function PublicProjectDetailsPage() {
   const userId = paramPart(params?.userId);
   const projectId = paramPart(params?.projectid);
 
-  const { data, isLoading, isError, error } = useGetProjectByUserId(
+  const { data, isLoading, isError, error } = useGetProjectBySharePathname(
     userId ?? null,
     projectId ?? null,
   );
-  const { data: portfolioData } = useGetPortfolioByUserId(userId ?? null);
+  const { data: portfolioData } = useGetPortfolioBySharePathname(userId ?? null);
 
   const project = useMemo(
     () => (data ? mapProjectToViewData(data) : null),
@@ -53,7 +55,7 @@ export default function PublicProjectDetailsPage() {
       })
       .filter((p) => p.id !== projectId)
       .map((p) => ({
-        href: `/portfolio/${encodeURIComponent(userId)}/${encodeURIComponent(p.id)}`,
+        href: `/p/${encodeURIComponent(userId)}/${encodeURIComponent(p.id)}`,
         title: p.title,
         coverImageUrl: p.coverImageUrl,
         tag: p.tag,
@@ -62,7 +64,7 @@ export default function PublicProjectDetailsPage() {
 
   const backHref =
     userId != null && userId !== ""
-      ? `/portfolio/${encodeURIComponent(userId)}`
+      ? `/p/${encodeURIComponent(userId)}`
       : "/portfolio";
 
   if (!userId || !projectId) {

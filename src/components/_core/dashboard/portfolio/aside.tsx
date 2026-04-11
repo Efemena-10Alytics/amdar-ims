@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 export const STEPS = [
   { id: 1, label: "Personal Information" },
-  { id: 2, label: "Your Social" },
+  { id: 2, label: "Your Socials & Image" },
   { id: 3, label: "Your Bio" },
   { id: 4, label: "Your Specialization" },
   { id: 5, label: "Your Skills" },
@@ -14,17 +14,18 @@ export const STEPS = [
 
 type AsideProps = {
   step: number;
+  completedStepIds?: number[];
   onStepChange: (step: number) => void;
 };
 
-const Aside = ({ step, onStepChange }: AsideProps) => {
+const Aside = ({ step, completedStepIds = [], onStepChange }: AsideProps) => {
   return (
     <aside className="w-full lg:max-w-75 shrink-0 flex flex-col">
       <nav className="rounded-xl w-full bg-[#F8FAFC] p-4" aria-label="Portfolio steps">
         <ul className="space-y-1 flex flex-row lg:flex-col overflow-x-auto">
           {STEPS.map((s, i) => {
             const isActive = step === s.id;
-            const isCompleted = i < step - 1;
+            const isCompleted = completedStepIds.includes(s.id);
             return (
               <li key={s.id}>
                 <button

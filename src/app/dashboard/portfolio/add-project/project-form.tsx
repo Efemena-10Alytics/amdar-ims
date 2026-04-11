@@ -15,18 +15,17 @@ import {
   Cloud,
   FileText,
   Link2,
-  SlidersHorizontal,
   Square,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { YourToolsData } from "@/components/_core/dashboard/portfolio/your-tools";
 import { ToolIcon } from "@/components/_core/dashboard/portfolio/your-tools";
 import { AddToolsPopover } from "@/components/_core/dashboard/portfolio/add-tools-popover";
 import { portfolioInputStyle } from "@/components/_core/dashboard/portfolio/portfolio-styles";
 import { cn, getImageUrl } from "@/lib/utils";
+import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { useGetTools } from "@/features/portfolio/use-get-tools";
 import type { AddProjectFormData } from "@/features/portfolio/build-project-form-data";
 import type { UserPortfolioProjectDetail } from "@/features/portfolio/use-get-project-by-id";
@@ -90,6 +89,7 @@ export function ProjectForm({
   const [problem, setProblem] = useState("");
   const [role, setRole] = useState("");
   const [features, setFeatures] = useState<string[]>([""]);
+  const [shouldFocusNewFeature, setShouldFocusNewFeature] = useState(false);
   const [challengesAndSolutions, setChallengesAndSolutions] = useState("");
   const [impactAndOutcomes, setImpactAndOutcomes] = useState("");
   const [durationBreakdown, setDurationBreakdown] = useState("");
@@ -104,9 +104,11 @@ export function ProjectForm({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const projectFilesInputRef = useRef<HTMLInputElement>(null);
+  const firstFeatureInputRef = useRef<HTMLInputElement>(null);
   const prefilledKeyRef = useRef<string | null>(null);
 
   const { data: apiTools = [] } = useGetTools();
+  const { data: portfolioData } = useGetPortfolio();
 
   const toolNameToIcon = useMemo(() => {
     const map: Record<string, string> = {};
@@ -171,6 +173,12 @@ export function ProjectForm({
     setExistingGalleryUrls(gallery);
   }, [initialProject, prefillKey]);
 
+  useEffect(() => {
+    if (!shouldFocusNewFeature) return;
+    firstFeatureInputRef.current?.focus();
+    setShouldFocusNewFeature(false);
+  }, [features, shouldFocusNewFeature]);
+
   const onCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -220,6 +228,44 @@ export function ProjectForm({
   }, [projectFiles]);
 
   const coverDisplaySrc = coverPreview ?? remoteCoverUrl;
+  const isCreateMode = !initialProject;
+  const hasAtLeastOneProjectFile = totalGalleryCount > 0;
+  const hasRequiredCreateFields = useMemo(() => {
+    const hasText = (value: string) => value.trim().length > 0;
+    const hasFeature = features.some((item) => item.trim().length > 0);
+    return (
+      hasText(title) &&
+      hasText(category) &&
+      hasText(duration) &&
+      hasText(overview) &&
+      hasText(summary) &&
+      hasText(problem) &&
+      hasText(role) &&
+      hasFeature &&
+      hasText(challengesAndSolutions) &&
+      hasText(impactAndOutcomes) &&
+      hasText(durationBreakdown) &&
+      toolsData.selectedTools.length > 0 &&
+      !!coverDisplaySrc &&
+      hasAtLeastOneProjectFile
+    );
+  }, [
+    title,
+    category,
+    duration,
+    overview,
+    summary,
+    problem,
+    role,
+    features,
+    challengesAndSolutions,
+    impactAndOutcomes,
+    durationBreakdown,
+    toolsData.selectedTools,
+    coverDisplaySrc,
+    hasAtLeastOneProjectFile,
+  ]);
+  const isSubmitDisabled = isSubmitting || (isCreateMode && !hasRequiredCreateFields);
   const galleryItems = useMemo(
     () => [
       ...existingGalleryUrls.map((url, index) => ({
@@ -260,6 +306,7 @@ export function ProjectForm({
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (isCreateMode && !hasRequiredCreateFields) return;
     const tools = toolsData.selectedTools.map((name) => {
       const fromCustom = toolsData.customToolImages?.[name];
       const image =
@@ -326,7 +373,11 @@ export function ProjectForm({
           <p className="text-sm text-zinc-500 mt-1 mb-4">
             Select the tools you used in this project
           </p>
-          <AddProjectToolsSection value={toolsData} onChange={setToolsData} />
+          <AddProjectToolsSection
+            value={toolsData}
+            onChange={setToolsData}
+            portfolioCategory={portfolioData?.category?.title ?? ""}
+          />
         </div>
 
         <div className="space-y-6">
@@ -511,6 +562,7 @@ export function ProjectForm({
               {features.map((feature, index) => (
                 <div key={`feature-${index}`} className="flex items-center gap-2">
                   <Input
+                    ref={index === 0 ? firstFeatureInputRef : undefined}
                     id={index === 0 ? "project-features" : undefined}
                     placeholder={`Feature ${index + 1}`}
                     value={feature}
@@ -540,7 +592,10 @@ export function ProjectForm({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setFeatures((prev) => [...prev, ""])}
+                onClick={() => {
+                  setShouldFocusNewFeature(true);
+                  setFeatures((prev) => ["", ...prev]);
+                }}
               >
                 Add feature
               </Button>
@@ -791,7 +846,7 @@ export function ProjectForm({
           )}
           <Button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitDisabled}
             className="w-full bg-primary text-white hover:bg-primary/90 h-11 rounded-lg font-medium mt-4"
           >
             {isSubmitting ? submittingLabel : submitLabel}
@@ -981,15 +1036,14 @@ function getDisplayToolName(name: string): string {
 function AddProjectToolsSection({
   value,
   onChange,
+  portfolioCategory,
 }: {
   value: YourToolsData;
   onChange: (data: YourToolsData) => void;
+  portfolioCategory: string;
 }) {
   const [addToolsOpen, setAddToolsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] =
-    useState<(typeof TOOL_FILTER_CATEGORIES)[number]>("all");
-  const [currentPage, setCurrentPage] = useState(1);
   const { data: apiTools = [] } = useGetTools();
 
   const baseToolNames = useMemo(() => {
@@ -1013,39 +1067,28 @@ function AddProjectToolsSection({
     ...baseToolNames,
     ...value.selectedTools.filter((t) => !baseToolNames.includes(t)),
   ];
+  const categoryMatchedTools = useMemo(() => {
+    const normalizedCategory = portfolioCategory.trim().toLowerCase();
+    const matchedCategory = TOOL_FILTER_CATEGORIES.find(
+      (item) => item.toLowerCase() === normalizedCategory,
+    );
+    if (!matchedCategory || matchedCategory === "all") return displayedTools;
+    const categorySet = TOOL_CATEGORY_LOOKUP[matchedCategory];
+    return displayedTools.filter((name) =>
+      categorySet.has(name.trim().toLowerCase()),
+    );
+  }, [displayedTools, portfolioCategory]);
+
   const filteredTools = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
-    const categorySet = TOOL_CATEGORY_LOOKUP[selectedCategory];
-
-    return displayedTools.filter((name) => {
+    return categoryMatchedTools.filter((name) => {
       const normalizedName = name.trim().toLowerCase();
       const displayName = getDisplayToolName(name).toLowerCase();
-      const matchesCategory =
-        selectedCategory === "all" || categorySet.has(normalizedName);
-      if (!matchesCategory) return false;
       if (!query) return true;
       return normalizedName.includes(query) || displayName.includes(query);
     });
-  }, [displayedTools, searchTerm, selectedCategory]);
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredTools.length / PROJECT_FORM_TOOLS_PER_PAGE),
-  );
-  const paginatedTools = useMemo(() => {
-    const start = (currentPage - 1) * PROJECT_FORM_TOOLS_PER_PAGE;
-    return filteredTools.slice(start, start + PROJECT_FORM_TOOLS_PER_PAGE);
-  }, [currentPage, filteredTools]);
+  }, [categoryMatchedTools, searchTerm]);
   const count = value.selectedTools.length;
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, selectedCategory]);
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
-    }
-  }, [currentPage, totalPages]);
 
   const toggle = (name: string) => {
     const isRemoving = value.selectedTools.includes(name);
@@ -1096,56 +1139,16 @@ function AddProjectToolsSection({
         >
           Search tools
         </label>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto]">
-          <Input
-            id="project-tool-search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by tool name"
-            className="border-zinc-200 bg-white"
-          />
-          <Popover>
-            <PopoverTrigger asChild>
-              <button
-                type="button"
-                aria-label="Filter tools by category"
-                className={cn(
-                  "inline-flex h-9 items-center justify-center rounded-md border border-input bg-transparent px-3 text-sm font-medium shadow-xs transition-[color,box-shadow] outline-none hover:bg-accent hover:text-accent-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-                  selectedCategory !== "all" && "border-primary text-primary",
-                )}
-              >
-                <SlidersHorizontal className="size-4" /> Filter
-              </button>
-            </PopoverTrigger>
-            <PopoverContent align="end" className="w-64 p-2 h-50 overflow-y-auto!">
-              <div className="space-y-1">
-                {TOOL_FILTER_CATEGORIES.map((categoryOption) => {
-                  const isActive = selectedCategory === categoryOption;
-                  const label =
-                    categoryOption === "all" ? "All categories" : categoryOption;
-                  return (
-                    <button
-                      key={categoryOption}
-                      type="button"
-                      onClick={() => setSelectedCategory(categoryOption)}
-                      className={cn(
-                        "w-full rounded-md px-2 py-1.5 text-left text-sm transition-colors",
-                        isActive
-                          ? "bg-primary text-white"
-                          : "text-[#092A31] hover:bg-zinc-100",
-                      )}
-                    >
-                      {label}
-                    </button>
-                  );
-                })}
-              </div>
-            </PopoverContent>
-          </Popover>
-        </div>
+        <Input
+          id="project-tool-search"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search by tool name"
+          className="border-zinc-200 bg-white"
+        />
       </div>
       <div className="flex flex-wrap gap-2">
-        {paginatedTools.map((name) => {
+        {filteredTools.map((name) => {
           const selected = value.selectedTools.includes(name);
           const displayName = getDisplayToolName(name);
           return (
@@ -1180,33 +1183,7 @@ function AddProjectToolsSection({
       </div>
       {filteredTools.length === 0 ? (
         <p className="text-sm text-zinc-500">No tools match your search.</p>
-      ) : (
-        <div className="flex items-center justify-between gap-3 pt-2">
-          <span className="text-sm text-zinc-500">
-            Page {currentPage} of {totalPages}
-          </span>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-              disabled={currentPage === 1}
-              className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-[#092A31] transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Previous
-            </button>
-            <button
-              type="button"
-              onClick={() =>
-                setCurrentPage((page) => Math.min(totalPages, page + 1))
-              }
-              disabled={currentPage === totalPages}
-              className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-[#092A31] transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
+      ) : null}
     </div>
   );
 }

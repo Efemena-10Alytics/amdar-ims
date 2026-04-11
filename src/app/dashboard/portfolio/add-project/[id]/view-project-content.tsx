@@ -21,7 +21,7 @@ export type OtherProjectLink = {
 
 export type ViewProjectData = {
   title: string;
-  tags?: string[];
+  category?: string;
   coverImageUrl?: string;
   duration?: string;
   overview?: string;
@@ -66,7 +66,7 @@ export function mapProjectToViewData(
   const category = data.category?.trim();
   return {
     title: data.title?.trim() || "Untitled",
-    tags: category ? [category] : undefined,
+    category: category ? category : undefined,
     coverImageUrl: getImageUrl(data.coverImage) || undefined,
     duration: data.duration?.trim() || undefined,
     overview: data.overview?.trim() || undefined,
@@ -174,18 +174,22 @@ export function ViewProjectContent({
           <h1 className="text-2xl md:text-3xl font-semibold text-white">
             {project.title}
           </h1>
-          {project.tags && project.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-2">
-              {project.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full bg-[#E8EFF1] px-3 py-1 text-sm text-center flex justify-center items-center font-medium text-primary h-10"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
+          <div className="flex flex-wrap gap-2 mt-2">
+            {project.category && (
+              <span
+                className="rounded-full bg-[#E8EFF1] px-3 py-1 text-sm text-center flex justify-center items-center font-medium text-primary h-10"
+              >
+                {project.category}
+              </span>
+            )}
+            {project.duration && (
+              <span
+                className="rounded-full min-w-25 bg-[#E8EFF1] px-3 py-1 text-sm text-center flex justify-center items-center font-medium text-primary h-10"
+              >
+                {project.duration}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
@@ -197,7 +201,7 @@ export function ViewProjectContent({
 
             {project.overview && (
               <section>
-                <h2 className="text-lg font-semibold text-[#092A31] mb-3">Overview</h2>
+                <h2 className="text-lg font-semibold text-[#092A31] mb-3 uppercase">Project Overview</h2>
                 <p className="text-sm text-zinc-600 leading-relaxed">
                   {project.overview}
                 </p>
@@ -232,21 +236,10 @@ export function ViewProjectContent({
           </div>
 
 
-          {project.duration && (
-            <section>
-              <h2 className="text-lg font-semibold text-[#092A31] mb-3">
-                Duration
-              </h2>
-              <p className="text-sm text-zinc-600 leading-relaxed">
-                {project.duration}
-              </p>
-            </section>
-          )}
-
           {project.summary && (
             <section>
-              <h2 className="text-lg font-semibold text-[#092A31] mb-3">
-                Summary
+              <h2 className="text-lg uppercase font-semibold text-[#092A31] mb-3">
+               Project Summary
               </h2>
               <p className="text-sm text-zinc-600 leading-relaxed">
                 {project.summary}
@@ -257,7 +250,7 @@ export function ViewProjectContent({
           {project.problem && (
             <section>
               <h2 className="text-lg font-semibold text-[#092A31] mb-3">
-                Problem
+                PROBLEM & CONTEXT
               </h2>
               <p className="text-sm text-zinc-600 leading-relaxed">
                 {project.problem}
@@ -268,7 +261,7 @@ export function ViewProjectContent({
           {project.role && (
             <section>
               <h2 className="text-lg font-semibold text-[#092A31] mb-3">
-                Role
+                ROLE & RESPONSIBILITIES
               </h2>
               <p className="text-sm text-zinc-600 leading-relaxed">
                 {project.role}
@@ -279,7 +272,7 @@ export function ViewProjectContent({
           {project.features && project.features.length > 0 && (
             <section>
               <h2 className="text-lg font-semibold text-[#092A31] mb-3">
-                Features
+                KEY FEATURES & HIGHLIGHTS
               </h2>
               <ul className="list-disc pl-5 space-y-1 text-sm text-zinc-600 leading-relaxed">
                 {project.features.map((feature) => (
@@ -292,7 +285,7 @@ export function ViewProjectContent({
           {project.challengesAndSolutions && (
             <section>
               <h2 className="text-lg font-semibold text-[#092A31] mb-3">
-                Challenges and solutions
+                CHALLENGES & SOLUTIONS
               </h2>
               <p className="text-sm text-zinc-600 leading-relaxed">
                 {project.challengesAndSolutions}
@@ -303,7 +296,7 @@ export function ViewProjectContent({
           {project.impactAndOutcomes && (
             <section>
               <h2 className="text-lg font-semibold text-[#092A31] mb-3">
-                Impact and outcomes
+                OUTCOME & IMPACT
               </h2>
               <p className="text-sm text-zinc-600 leading-relaxed">
                 {project.impactAndOutcomes}
@@ -314,9 +307,9 @@ export function ViewProjectContent({
           {project.durationBreakdown && (
             <section>
               <h2 className="text-lg font-semibold text-[#092A31] mb-3">
-                Duration breakdown
+                PROJECT TIMELINE
               </h2>
-              <p className="text-sm text-zinc-600 leading-relaxed whitespace-pre-line">
+              <p className="text-sm capitalize text-zinc-600 leading-relaxed whitespace-pre-line">
                 {project.durationBreakdown}
               </p>
             </section>
@@ -324,9 +317,9 @@ export function ViewProjectContent({
 
           {project.projectImages && project.projectImages.length > 0 && (
             <section>
-              <h2 className="text-lg font-semibold text-[#092A31] mb-4">
+              {/* <h2 className="text-lg font-semibold text-[#092A31] mb-4">
                 Project images
-              </h2>
+              </h2> */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {project.projectImages.map((imageUrl, index) => (
                   <div

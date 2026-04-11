@@ -4,8 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { getUserId } from "@/lib/get-user-id";
 import { useAuthStore } from "@/store/auth-store";
-import { ArrowLeft, Settings } from "lucide-react";
+import { ArrowLeft, Loader2, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import {
   LockKeyHoleIcon,
   PencilFilledIcon,
@@ -15,6 +16,8 @@ import { cn } from "@/lib/utils";
 import { PortfolioSettingsModal } from "@/components/_core/dashboard/portfolio/portfolio-settings-modal";
 import { ViewLinkModal } from "@/components/_core/dashboard/portfolio/view-link-modal";
 import CreateClassic from "@/components/_core/dashboard/portfolio/template/classic";
+import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
+import { usePortfolioCompletionRedirect } from "@/hooks/use-portfolio-completion-redirect";
 
 const TEMPLATES = [
   { id: "classic", label: "Classic", comingSoon: false },
@@ -108,12 +111,40 @@ function TemplatePreview({
 }
 
 export default function PortfolioPage() {
+  const { data: portfolio, isLoading, error } = useGetPortfolio();
   const user = useAuthStore((s) => s.user);
   const userId = getUserId(user);
-  const portfolioHref = userId != null ? `/portfolio/${userId}` : "/portfolio";
+  const portfolioHref = userId != null ? `/p/${portfolio?.pathname}` : "/portfolio";
+  const hasAtLeastOneProject = (portfolio?.projects?.length ?? 0) > 0;
   const [selectedTemplate, setSelectedTemplate] = useState<string>("classic");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [viewLinkOpen, setViewLinkOpen] = useState(false);
+  const [shareWarning, setShareWarning] = useState<string | null>(null);
+  const { shouldRedirectToCreate } = usePortfolioCompletionRedirect({
+    portfolio,
+    isLoading,
+    hasError: !!error,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <Loader2 className="size-12 animate-spin text-primary" aria-hidden />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex min-h-[50vh] max-w-md text-center mx-auto items-center justify-center">
+        <p className="text-sm text-red-600">You have not created and Portfolio hence will be redirect to create portfolio page.</p>
+      </div>
+    );
+  }
+
+  if (shouldRedirectToCreate) {
+    return null;
+  }
 
   return (
     <div className="h-full flex flex-col">
@@ -140,7 +171,16 @@ export default function PortfolioPage() {
             <Button
               type="button"
               className="rounded-lg bg-primary text-white hover:bg-primary/90"
-              onClick={() => setViewLinkOpen(true)}
+              onClick={() => {
+                if (!hasAtLeastOneProject) {
+                  setShareWarning(
+                    "User must add at least one project before they can share their portfolio.",
+                  );
+                  setTimeout(() => setShareWarning(null), 3500);
+                  return;
+                }
+                setViewLinkOpen(true);
+              }}
             >
               Share portfolio
               <ShareFilledIcon />
@@ -189,6 +229,12 @@ export default function PortfolioPage() {
 
 
       <CreateClassic />
+      {shareWarning ? (
+        <InfoToastBanner
+          message={shareWarning}
+          onDismiss={() => setShareWarning(null)}
+        />
+      ) : null}
     </div>
   );
 }

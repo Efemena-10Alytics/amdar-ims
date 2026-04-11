@@ -7,7 +7,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 
 const SAMPLE_PROJECT: ViewProjectData = {
   title: "Project title",
-  tags: ["Education", "4 weeks"],
+  category: "Education",
   coverImageUrl: undefined, // set to image URL when available
   duration: "4 Weeks",
   overview:

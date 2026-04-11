@@ -1,15 +1,20 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import confetti from "canvas-confetti";
-import { ChevronRight } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import PersonalInfo, {
   defaultPersonalInfo,
   PersonalInfoData,
 } from "./personal-info";
-import { YourSocial, socialToPayload } from "./your-social";
+import {
+  YourSocial,
+  socialToPayload,
+  type YourSocialData,
+} from "./your-social";
 import { YourBio, bioToPayload } from "./your-bio";
 import {
   YourSpecialization,
@@ -33,7 +38,9 @@ import { useInitializePortfolio } from "@/features/portfolio/use-initialize-port
 import { useUpdateUser } from "@/features/user/use-update-user-details";
 import { useCountries } from "@/features/portfolio/use-countries";
 import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
+import { useUpdateProfileImage } from "@/features/portfolio/use-update-profile-image";
 import { useGetTools } from "@/features/portfolio/use-get-tools";
+import { usePortfolioCompletedSteps } from "@/hooks/use-portfolio-completed-steps";
 
 export function CreatePortfolioForm() {
   const router = useRouter();
@@ -47,8 +54,13 @@ export function CreatePortfolioForm() {
     useInitializePortfolio();
   const { updateUser, errorMessage: userDetailsErrMessage } = useUpdateUser();
   const { data: countries = [] } = useCountries();
-  const { data: portfolioData } = useGetPortfolio();
+  const { data: portfolioData, error: portfolioErrorMessage } = useGetPortfolio();
   const { data: apiTools = [] } = useGetTools();
+  const {
+    updateProfileImage,
+    isUploading: isProfileImageUploading,
+    errorMessage: profileImageErrorMessage,
+  } = useUpdateProfileImage();
 
   const toolIconMap: ToolIconMap = useMemo(() => {
     const map: Record<string, string> = {};
@@ -62,7 +74,11 @@ export function CreatePortfolioForm() {
   const [step, setStep] = useState(1);
   const [personalInfo, setPersonalInfo] =
     useState<PersonalInfoData>(defaultPersonalInfo);
-  const [socialData, setSocialData] = useState({ linkedIn: "", twitter: "" });
+  const [socialData, setSocialData] = useState<YourSocialData>({
+    linkedIn: "",
+    twitter: "",
+    profileImageFile: null,
+  });
   const [bioData, setBioData] = useState({
     jobTitle: "",
     yearsOfExperience: "",
@@ -85,13 +101,140 @@ export function CreatePortfolioForm() {
   const [educationData, setEducationData] = useState({
     entries: [{ schoolName: "", qualification: "" }],
   });
+  const [warningToast, setWarningToast] = useState<string | null>(null);
+  const warningTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const selectedCountry = countries.find(
     (c) => c.code === personalInfo.countryCode,
   );
 
+  const completedStepIds = usePortfolioCompletedSteps({
+    personalInfo,
+    socialData,
+    bioData,
+    specializationData,
+    skillsData,
+    toolsData,
+    workExperienceData,
+    educationData,
+    portfolioData,
+  });
+
   const isFirstStep = step === 1;
   const isLastStep = step === STEPS.length;
+  const areAllStepsCompleted = completedStepIds.length === STEPS.length;
+  const completedStepSet = useMemo(
+    () => new Set(completedStepIds),
+    [completedStepIds],
+  );
+  const canContinueCurrentStep = useMemo(() => {
+    const hasText = (value: string | null | undefined) => !!value?.trim();
+
+    if (step === 1) {
+      return (
+        hasText(personalInfo.firstName) &&
+        hasText(personalInfo.lastName) &&
+        hasText(personalInfo.email) &&
+        hasText(personalInfo.phone) &&
+        hasText(personalInfo.countryCode)
+      );
+    }
+
+    if (step === 2) {
+      return hasText(socialData.linkedIn) && hasText(socialData.twitter);
+    }
+
+    if (step === 3) {
+      return (
+        hasText(bioData.jobTitle) &&
+        hasText(bioData.yearsOfExperience) &&
+        hasText(bioData.lifeProjectsCount) &&
+        hasText(bioData.bio)
+      );
+    }
+
+    if (step === 4) {
+      return (
+        hasText(specializationData.category) &&
+        specializationData.selectedSpecializations.length > 0
+      );
+    }
+
+    if (step === 5) {
+      return skillsData.selectedSkills.length > 0;
+    }
+
+    if (step === 6) {
+      return toolsData.selectedTools.length > 0;
+    }
+
+    if (step === 7) {
+      const entries = workExperienceData.entries;
+      const isEntryComplete = (entry: (typeof entries)[number]) =>
+        hasText(entry.companyName) &&
+        hasText(entry.jobTitle) &&
+        hasText(entry.industry) &&
+        entry.jobDescription.some((line) => hasText(line)) &&
+        hasText(entry.startDate) &&
+        (entry.currentlyWorkHere || hasText(entry.endDate));
+
+      const nonEmptyEntries = entries.filter(
+        (entry) =>
+          hasText(entry.companyName) ||
+          hasText(entry.jobTitle) ||
+          hasText(entry.industry) ||
+          entry.jobDescription.some((line) => hasText(line)) ||
+          hasText(entry.startDate) ||
+          hasText(entry.endDate) ||
+          entry.currentlyWorkHere,
+      );
+
+      if (nonEmptyEntries.length === 0) return false;
+      return nonEmptyEntries.every(isEntryComplete);
+    }
+
+    if (step === 8) {
+      const entries = educationData.entries;
+      const nonEmptyEntries = entries.filter(
+        (entry) => hasText(entry.schoolName) || hasText(entry.qualification),
+      );
+      if (nonEmptyEntries.length === 0) return false;
+      return nonEmptyEntries.every(
+        (entry) => hasText(entry.schoolName) && hasText(entry.qualification),
+      );
+    }
+
+    return true;
+  }, [
+    step,
+    personalInfo,
+    socialData,
+    bioData,
+    specializationData,
+    skillsData.selectedSkills,
+    toolsData.selectedTools,
+    workExperienceData.entries,
+    educationData.entries,
+  ]);
+
+  const showWarningToast = (message: string) => {
+    setWarningToast(message);
+    if (warningTimerRef.current) {
+      clearTimeout(warningTimerRef.current);
+    }
+    warningTimerRef.current = setTimeout(() => {
+      setWarningToast(null);
+      warningTimerRef.current = null;
+    }, 3500);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (warningTimerRef.current) {
+        clearTimeout(warningTimerRef.current);
+      }
+    };
+  }, []);
 
   const savePersonalInfo = async (): Promise<boolean> => {
     const location = selectedCountry?.name ?? personalInfo.countryCode ?? "";
@@ -186,19 +329,31 @@ export function CreatePortfolioForm() {
     }
   };
 
-  const saveSocial = async (
-    data: Parameters<typeof socialToPayload>[0],
-  ): Promise<boolean> => {
+  const saveSocial = async (data: YourSocialData): Promise<boolean> => {
     const payload = socialToPayload(data);
-    try {
-      const result = await updateProject({
-        social: payload.social,
-      });
-      return result !== undefined;
-    } catch {
-      // errorMessage set by useUpdatePortfolio
-      return false;
-    }
+
+    const socialTask = (async () => {
+      try {
+        const result = await updateProject({
+          social: payload.social,
+        });
+        return result !== undefined;
+      } catch {
+        // errorMessage set by useUpdatePortfolio
+        return false;
+      }
+    })();
+
+    const imageTask =
+      data.profileImageFile != null
+        ? updateProfileImage(data.profileImageFile)
+        : Promise.resolve(true);
+
+    const [socialOk, imageOk] = await Promise.all([socialTask, imageTask]);
+
+    if (!socialOk) return false;
+    if (data.profileImageFile != null && !imageOk) return false;
+    return true;
   };
 
   const saveWorkExperience = async (
@@ -239,6 +394,7 @@ export function CreatePortfolioForm() {
     if (step === 2) {
       const ok = await saveSocial(socialData);
       if (!ok) return;
+      setSocialData((prev) => ({ ...prev, profileImageFile: null }));
     }
     if (step === 3) {
       const ok = await saveBio(bioData);
@@ -278,19 +434,65 @@ export function CreatePortfolioForm() {
     setStep((s) => Math.min(STEPS.length, s + 1));
   };
 
+  const handleBack = () => {
+    if (step === 1) {
+      router.push("/dashboard/portfolio");
+      return;
+    }
+    setStep((s) => Math.max(1, s - 1));
+  };
+
+  const handleStepChange = (targetStep: number) => {
+    if (portfolioErrorMessage && step === 1 && targetStep === 2) {
+      showWarningToast(
+        'Use "Save & continue" on step 1 to initialize portfolio first.',
+      );
+      return;
+    }
+
+    if (targetStep <= step) {
+      setStep(targetStep);
+      return;
+    }
+
+    const canJumpForward = Array.from(
+      { length: targetStep - 1 },
+      (_, i) => i + 1,
+    ).every((requiredStep) => completedStepSet.has(requiredStep));
+
+    if (canJumpForward) {
+      setStep(targetStep);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full min-h-0">
-      <div className="flex items-center justify-between mb-6 md:mb-8">
-        <h1 className="text-xl md:text-2xl font-semibold text-zinc-900">
-          Let&apos;s Create Your Portfolio
-        </h1>
-        <span className="rounded-full bg-[#C7B0E4] px-2.5 py-1 text-xs font-medium text-[#340078]">
-          Consultant
-        </span>
+      <div className="mb-6 md:mb-8">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => router.push("/dashboard/portfolio")}
+          className="mb-3 -ml-2 h-8 px-2 text-zinc-600 hover:text-zinc-900"
+        >
+          <ArrowLeft className="mr-1 size-4" />
+          To Portfolio
+        </Button>
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl md:text-2xl font-semibold text-zinc-900">
+            Let’s {areAllStepsCompleted ? "Update" : "Create"} Your Portfolio
+          </h1>
+          <span className="rounded-full bg-[#C7B0E4] px-2.5 py-1 text-xs font-medium text-[#340078]">
+            Consultant
+          </span>
+        </div>
       </div>
 
       <div className="flex flex-col lg:flex-row flex-1 min-h-0 gap-6 md:gap-10">
-        <Aside step={step} onStepChange={setStep} />
+        <Aside
+          step={step}
+          completedStepIds={completedStepIds}
+          onStepChange={handleStepChange}
+        />
 
         <div className="flex-1 min-w-0 flex flex-col">
           <div className="flex-1">
@@ -333,35 +535,63 @@ export function CreatePortfolioForm() {
           </div>
 
           <div className="flex items-center max-w-md w-full gap-3 mt-16 ">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setStep((s) => Math.max(1, s - 1))}
-              disabled={isFirstStep}
-              className="flex-1 h-10 rounded-lg bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
-            >
-              Back
-            </Button>
+            {!isFirstStep ? (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleBack}
+                className="flex-1 h-10 rounded-lg bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
+              >
+                Back
+              </Button>
+            ) : null}
             <Button
               type="button"
               onClick={handleNext}
-              disabled={isUpdating || isInitializing || isToolsSubmitting}
-              className="flex-1 h-10 rounded-lg bg-primary text-white hover:bg-primary/90"
+              disabled={
+                isUpdating ||
+                isInitializing ||
+                isToolsSubmitting ||
+                isProfileImageUploading ||
+                !canContinueCurrentStep
+              }
+              className="h-10 rounded-lg bg-primary text-white hover:bg-primary/90 flex-1"
             >
               {isLastStep
                 ? isUpdating
-                  ? "Creating…"
-                  : "Create Portfolio"
-                : isUpdating || isInitializing || isToolsSubmitting
+                  ? "Updating…"
+                  : "Update Portfolio"
+                : isUpdating ||
+                    isInitializing ||
+                    isToolsSubmitting ||
+                    isProfileImageUploading
                   ? "Saving…"
                   : "Save & continue"}
             </Button>
           </div>
-          {(errorMessage || initErrorMessage || addToolsErrorMessage) && (
+          {(errorMessage ||
+            initErrorMessage ||
+            addToolsErrorMessage ||
+            profileImageErrorMessage) && (
             <p className="mt-3 text-sm text-red-600" role="alert">
-              {errorMessage || initErrorMessage || addToolsErrorMessage}
+              {errorMessage ||
+                initErrorMessage ||
+                addToolsErrorMessage ||
+                profileImageErrorMessage}
             </p>
           )}
+          {warningToast ? (
+            <InfoToastBanner
+              message={warningToast}
+              onDismiss={() => {
+                if (warningTimerRef.current) {
+                  clearTimeout(warningTimerRef.current);
+                  warningTimerRef.current = null;
+                }
+                setWarningToast(null);
+              }}
+            />
+          ) : null}
         </div>
       </div>
     </div>

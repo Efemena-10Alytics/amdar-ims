@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Link2 } from "lucide-react";
+import { Link2, Plus, User } from "lucide-react";
 import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
-import { cn } from "@/lib/utils";
+import { cn, getImageUrl } from "@/lib/utils";
 import { portfolioInputStyle } from "./portfolio-styles";
 
 export type YourSocialData = {
   linkedIn: string;
   twitter: string;
+  /** Staged locally; uploaded when the user saves step 2. */
+  profileImageFile?: File | null;
 };
 
 export type SocialPayload = {
@@ -35,7 +37,7 @@ export function payloadToSocial(payload: {
     linkedIn?: string | null;
     twitter?: string | null;
   };
-}): YourSocialData {
+}): Omit<YourSocialData, "profileImageFile"> {
   const s = payload.social;
   return {
     linkedIn: s?.linkedIn ?? "",
@@ -64,6 +66,27 @@ const LINK_ERROR = "Please enter a valid link (e.g. https://...)";
 
 export function YourSocial({ value, onChange }: YourSocialProps) {
   const { data: portfolioData } = useGetPortfolio();
+  const [profileError, setProfileError] = useState<string | null>(null);
+  const profileInputRef = useRef<HTMLInputElement>(null);
+
+  const fileObjectUrl = useMemo(() => {
+    if (!value.profileImageFile) return null;
+    return URL.createObjectURL(value.profileImageFile);
+  }, [value.profileImageFile]);
+
+  useEffect(() => {
+    return () => {
+      if (fileObjectUrl?.startsWith("blob:")) {
+        URL.revokeObjectURL(fileObjectUrl);
+      }
+    };
+  }, [fileObjectUrl]);
+
+  const serverImageUrl = getImageUrl(
+    portfolioData?.personalInfo?.image ?? undefined,
+  );
+  const profileDisplaySrc = fileObjectUrl ?? serverImageUrl ?? null;
+
   useEffect(() => {
     if (!portfolioData?.social) return;
     const isEmpty = !value.linkedIn.trim() && !value.twitter.trim();
@@ -77,13 +100,71 @@ export function YourSocial({ value, onChange }: YourSocialProps) {
   const twitterInvalid = value.twitter.trim() !== "" && !isValidUrl(value.twitter);
   const linkedInVerified = value.linkedIn.trim() !== "" && isValidUrl(value.linkedIn);
   const twitterVerified = value.twitter.trim() !== "" && isValidUrl(value.twitter);
+  const MAX_PROFILE_SIZE_BYTES = 3 * 1024 * 1024;
+
+  const onProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setProfileError("Please select an image file.");
+      e.target.value = "";
+      return;
+    }
+    if (file.size > MAX_PROFILE_SIZE_BYTES) {
+      setProfileError("Profile image must be 3MB or less.");
+      e.target.value = "";
+      return;
+    }
+    setProfileError(null);
+    onChange({ ...value, profileImageFile: file });
+    e.target.value = "";
+  };
 
   return (
     <div className="max-w-md">
-      <h2 className="text-lg font-semibold text-zinc-900">Your Socials</h2>
+      {profileError ? (
+        <p className="mb-4 text-sm text-red-500 text-center" role="alert">
+          {profileError}
+        </p>
+      ) : null}
+      <h2 className="text-lg font-semibold text-zinc-900">Your Socials & Image</h2>
       <p className="mt-1 text-sm text-zinc-500 mb-6">
-        Provide the links to your social profile
+        Provide your profile image and links to your socials
       </p>
+      <input
+        ref={profileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={onProfileChange}
+        className="hidden"
+        aria-label="Upload profile picture"
+      />
+      <button
+        type="button"
+        onClick={() => profileInputRef.current?.click()}
+        className="mb-6 mx-auto flex w-full flex-col items-center"
+      >
+        <div className="relative size-30 overflow-visible">
+          <div className="size-full rounded-full border-2 border-dashed border-[#C7DCE2] bg-[#F1F8FA] flex items-center justify-center overflow-hidden">
+            {profileDisplaySrc ? (
+              <img
+                src={profileDisplaySrc}
+                alt=""
+                className="size-full object-cover"
+              />
+            ) : (
+              <User className="size-10 text-[#B6CFD4]" />
+            )}
+          </div>
+          <span className="absolute z-50 bottom-2 -right-0.5 flex size-8 items-center justify-center rounded-full bg-primary text-white shadow-sm ring-2 ring-white">
+            <Plus className="size-4" />
+          </span>
+        </div>
+        <span className="mt-3 text-sm text-[#A1A8B1] font-medium">
+          Upload profile picture (max 3mb)
+        </span>
+      </button>
+
       <div className="space-y-4">
         <div className="space-y-2">
           <label

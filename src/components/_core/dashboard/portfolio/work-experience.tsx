@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Calendar as CalendarIcon, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import { Calendar } from "@/components/ui/calendar";
 import {
     Popover,
@@ -210,6 +211,28 @@ type WorkExperienceProps = {
 
 export function WorkExperience({ value, onChange }: WorkExperienceProps) {
     const { data: portfolioData } = useGetPortfolio();
+    const [warningToast, setWarningToast] = useState<string | null>(null);
+    const warningTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const showWarningToast = (message: string) => {
+        setWarningToast(message);
+        if (warningTimerRef.current) {
+            clearTimeout(warningTimerRef.current);
+        }
+        warningTimerRef.current = setTimeout(() => {
+            setWarningToast(null);
+            warningTimerRef.current = null;
+        }, 3500);
+    };
+
+    useEffect(() => {
+        return () => {
+            if (warningTimerRef.current) {
+                clearTimeout(warningTimerRef.current);
+            }
+        };
+    }, []);
+
     useEffect(() => {
         if (!portfolioData?.workExperience?.length) return;
         const isEmpty = value.entries.every(
@@ -264,9 +287,12 @@ export function WorkExperience({ value, onChange }: WorkExperienceProps) {
             i === index
                 ? {
                     ...entry,
-                    jobDescription: entry.jobDescription.map((description, itemIndex) =>
-                        itemIndex === descriptionIndex ? nextValue : description,
-                    ),
+            jobDescription:
+              entry.jobDescription.length === 0
+                ? [nextValue]
+                : entry.jobDescription.map((description, itemIndex) =>
+                    itemIndex === descriptionIndex ? nextValue : description,
+                  ),
                 }
                 : entry,
         );
@@ -463,12 +489,28 @@ export function WorkExperience({ value, onChange }: WorkExperienceProps) {
                                 <label className="flex items-center justify-end gap-2 cursor-pointer mt-2">
                                     <Checkbox
                                         checked={entry.currentlyWorkHere}
-                                        onCheckedChange={(checked) =>
+                                        onCheckedChange={(checked) => {
+                                            const isChecking = !!checked;
+                                            const currentSelectedCount = value.entries.filter(
+                                                (item) => item.currentlyWorkHere,
+                                            ).length;
+                                            const isAlreadyChecked = entry.currentlyWorkHere;
+
+                                            if (
+                                                isChecking &&
+                                                !isAlreadyChecked &&
+                                                currentSelectedCount >= 1
+                                            ) {
+                                                showWarningToast(
+                                                    "it\u2019s advice to have one work place as current work place",
+                                                );
+                                            }
+
                                             updateEntry(index, {
                                                 currentlyWorkHere: !!checked,
                                                 ...(!!checked && { endDate: "" }),
-                                            })
-                                        }
+                                            });
+                                        }}
                                     />
                                     <span className="text-sm text-zinc-600">
                                         I currently work here
@@ -487,6 +529,18 @@ export function WorkExperience({ value, onChange }: WorkExperienceProps) {
                     Add more
                 </button>
             </div>
+            {warningToast ? (
+                <InfoToastBanner
+                    message={warningToast}
+                    onDismiss={() => {
+                        if (warningTimerRef.current) {
+                            clearTimeout(warningTimerRef.current);
+                            warningTimerRef.current = null;
+                        }
+                        setWarningToast(null);
+                    }}
+                />
+            ) : null}
         </div>
     );
 }

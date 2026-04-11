@@ -14,7 +14,7 @@ import { portfolioInputStyle } from "./portfolio-styles";
 
 const MAX_FILE_SIZE_MB = 1;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
-const ACCEPTED_TYPES = "image/jpeg,image/jpg";
+const ACCEPTED_TYPES = "image/jpeg,image/jpg,image/png";
 
 type AddToolsPopoverProps = {
   open: boolean;
@@ -52,8 +52,8 @@ export function AddToolsPopover({
 
   const setFileFromFile = (file: File) => {
     setUploadError(null);
-    if (!file.type.match(/^image\/(jpeg|jpg)$/)) {
-      setUploadError("Please use a JPEG image.");
+    if (!file.type.match(/^image\/(jpeg|jpg|png)$/)) {
+      setUploadError("Please use a JPEG or PNG image.");
       return;
     }
     if (file.size > MAX_FILE_SIZE_BYTES) {
@@ -141,7 +141,7 @@ export function AddToolsPopover({
             {previewUrl ? "Change image" : "Upload image"}
           </span>
           <span className="text-xs text-zinc-500 mt-0.5">
-            Jpeg (max {MAX_FILE_SIZE_MB}mb)
+            JPEG/PNG (max {MAX_FILE_SIZE_MB}mb)
           </span>
           {uploadError && (
             <span className="text-xs text-red-600 mt-1">{uploadError}</span>
