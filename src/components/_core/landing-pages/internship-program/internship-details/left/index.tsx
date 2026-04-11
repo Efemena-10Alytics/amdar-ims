@@ -49,9 +49,9 @@ const Left = ({ program }: LeftProps) => {
 
   return (
     <div className="pb-12">
-      <div className="lg:hidden mb-4">
+      {/* <div className="lg:hidden mb-4">
         <IWDPayment claimHref="/internship" offersHref="/internship" />
-      </div>
+      </div> */}
       {/* Header Section */}
       <div className="mb-8">
         <h1 className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] mb-4">
