@@ -90,6 +90,7 @@ export type UserPortfolioProject = {
 };
 
 export type UserPortfolioData = {
+  pathname: string | null;
   personalInfo?: UserPortfolioPersonalInfo;
   social?: UserPortfolioSocial;
   bio?: UserPortfolioBio;
