@@ -106,7 +106,7 @@ export function ProjectCard({
     (showAddProject && hasProjectId
       ? `/dashboard/portfolio/add-project/${encodeURIComponent(String(project.id))}`
       : publicPortfolioUserId && hasProjectId
-        ? `/portfolio/${encodeURIComponent(publicPortfolioUserId)}/${encodeURIComponent(String(project.id))}`
+        ? `/p/${encodeURIComponent(publicPortfolioUserId)}/${encodeURIComponent(String(project.id))}`
         : undefined);
 
   const actionClassName = cn(
