@@ -359,14 +359,25 @@ export function YourTools({ value, onChange }: YourToolsProps) {
     const categorySet = matchedCategory
       ? TOOL_CATEGORY_LOOKUP[matchedCategory]
       : undefined;
-    return displayedTools.filter((name) => {
+    const selectedTools = value.selectedTools.filter((name) => {
+      if (!query) return true;
+      const normalizedName = name.trim().toLowerCase();
+      const displayName = getDisplayToolName(name).toLowerCase();
+      return normalizedName.includes(query) || displayName.includes(query);
+    });
+
+    const filteredCatalogTools = displayedTools.filter((name) => {
+      if (value.selectedTools.includes(name)) return false;
       const normalizedName = name.trim().toLowerCase();
       const displayName = getDisplayToolName(name).toLowerCase();
       if (categorySet && !categorySet.has(normalizedName)) return false;
       if (!query) return true;
       return normalizedName.includes(query) || displayName.includes(query);
     });
-  }, [displayedTools, searchTerm, matchedCategory]);
+
+    // Keep existing selected tools visible at top, then append filtered list.
+    return [...selectedTools, ...filteredCatalogTools];
+  }, [displayedTools, searchTerm, matchedCategory, value.selectedTools]);
   const count = value.selectedTools.length;
 
   const toggle = (name: string) => {

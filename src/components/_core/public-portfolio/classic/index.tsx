@@ -104,9 +104,9 @@ const Classic = ({ portfolio, isLoading, error, portfolioUserId }: ClassicProps)
       imageUrl:
         getImageUrl(
           p.coverImage ??
-            (Array.isArray(p.projectFiles) && p.projectFiles[0]
-              ? String(p.projectFiles[0])
-              : null),
+          (Array.isArray(p.projectFiles) && p.projectFiles[0]
+            ? String(p.projectFiles[0])
+            : null),
         ) || undefined,
     }));
   }, [portfolio?.projects]);
@@ -199,14 +199,16 @@ const Classic = ({ portfolio, isLoading, error, portfolioUserId }: ClassicProps)
   return (
     <div className="app-width">
       <header className="flex items-center justify-between py-4 mb-20">
-        <div className="inline-flex items-center gap-2 rounded-full bg-[#C7F5D8] px-2.5 py-4 border border-[#ACF0C5]">
-          <span
-            className="h-2 w-2 shrink-0 rounded-full bg-[#1F5D36]"
-            aria-hidden
-          />
-          <span className="text-xs font-medium text-[#1F5D36]">
-          {!portfolio?.setting?.availableToWork && "Not"}  Available to work
-          </span>
+        <div>
+          {portfolio?.setting?.availableToWork && <div className="inline-flex items-center gap-2 rounded-full bg-[#C7F5D8] px-2.5 py-4 border border-[#ACF0C5]">
+            <span
+              className="h-2 w-2 shrink-0 rounded-full bg-[#1F5D36]"
+              aria-hidden
+            />
+            <span className="text-xs font-medium text-[#1F5D36]">
+              Available to work
+            </span>
+          </div>}
         </div>
 
         <nav className="flex items-center gap-8" aria-label="Main">
@@ -241,14 +243,14 @@ const Classic = ({ portfolio, isLoading, error, portfolioUserId }: ClassicProps)
           avatarUrl: undefined,
           showAvatar: true,
           toolBadge: undefined,
-          
+
         }}
       />
 
       <MyProjects
         id="projects"
         projects={projects}
-        onAddProject={() => {}}
+        onAddProject={() => { }}
         publicPortfolioUserId={portfolioUserId ?? undefined}
       />
       <MyWorkExperience items={workItems} />
