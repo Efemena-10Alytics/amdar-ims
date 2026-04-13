@@ -164,10 +164,11 @@ export function YourSpecialization({ value, onChange }: YourSpecializationProps)
 
     const displayedSpecializations = useMemo(() => {
         const base = SPECIALIZATIONS_BY_CATEGORY[value.category] ?? [];
-        const custom = value.selectedSpecializations.filter(
-            (s) => !base.includes(s),
-        );
-        return [...base, ...custom];
+        const selected = [...new Set(value.selectedSpecializations)];
+        const filteredBase = base.filter((s) => !selected.includes(s));
+
+        // Keep existing selected values (including backend-prefilled) visible at the top.
+        return [...selected, ...filteredBase];
     }, [value.category, value.selectedSpecializations]);
     const count = value.selectedSpecializations.length;
 
@@ -187,7 +188,7 @@ export function YourSpecialization({ value, onChange }: YourSpecializationProps)
     const handleCategoryChange = (category: string) => {
         onChange({
             category,
-            selectedSpecializations: [],
+            selectedSpecializations: value.selectedSpecializations,
         });
         setCategoryOpen(false);
         setCategorySearch("");

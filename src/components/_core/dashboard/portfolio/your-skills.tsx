@@ -84,9 +84,9 @@ export function YourSkills({ value, onChange }: YourSkillsProps) {
   }, [portfolioData]);
 
   const displayedSkills = useMemo(() => {
-    const base = [...SKILLS];
-    const custom = value.selectedSkills.filter((s) => !base.includes(s));
-    return [...base, ...custom];
+    const selected = [...new Set(value.selectedSkills)];
+    const base = SKILLS.filter((skill) => !selected.includes(skill));
+    return [...selected, ...base];
   }, [value.selectedSkills]);
   const count = value.selectedSkills.length;
 
