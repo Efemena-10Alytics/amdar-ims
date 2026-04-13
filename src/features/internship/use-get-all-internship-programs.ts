@@ -20,9 +20,12 @@ export function useGetInternshipPrograms() {
     queryKey: INTERNSHIP_PROGRAMS_QUERY_KEY,
     queryFn: async () => {
       const { data } = await axiosInstance.get("/internship-programs-all");
-      const programs = Array.isArray(data) ? data : (data as { data?: unknown[] })?.data ?? [];
+      const programs = Array.isArray(data)
+        ? data
+        : ((data as { data?: unknown[] })?.data ?? []);
       const filtered = programs.filter(
-        (p: { slug?: string }) => !EXCLUDED_PROGRAM_SLUGS.includes(p?.slug ?? "")
+        (p: { slug?: string }) =>
+          !EXCLUDED_PROGRAM_SLUGS.includes(p?.slug ?? ""),
       );
       return Array.isArray(data) ? filtered : { ...data, data: filtered };
     },
