@@ -38,6 +38,26 @@ const HERO_ORBIT_LAYERS = [
     { name: "inner", radius: 590, duration: 56, angleOffset: 9, direction: "normal", sizeClass: "size-16" },
 ] as const;
 
+const EMPTY_ICON_COUNT = 6;
+
+function createPseudoRandomIndexSet(total: number, count: number): Set<number> {
+    const limit = Math.min(Math.max(0, count), total);
+    const selected = new Set<number>();
+    let seed = 20260413;
+
+    while (selected.size < limit) {
+        seed = (seed * 1664525 + 1013904223) % 4294967296;
+        selected.add(seed % total);
+    }
+
+    return selected;
+}
+
+const EMPTY_ICON_INDEXES = createPseudoRandomIndexSet(
+    HERO_FLOATING_ICONS.length,
+    EMPTY_ICON_COUNT,
+);
+
 const IconOrbit = () => {
     return (
         <>
@@ -51,6 +71,7 @@ const IconOrbit = () => {
                             {HERO_FLOATING_ICONS.map((icon, index) => {
                                 const angle =
                                     (index / HERO_FLOATING_ICONS.length) * 360 + layer.angleOffset;
+                                const isEmptySlot = EMPTY_ICON_INDEXES.has(index);
 
                                 return (
                                     <div
@@ -70,13 +91,20 @@ const IconOrbit = () => {
                                             )}
                                         >
                                             <div className="flex size-[62%] items-center justify-center rounded-full ">
-                                                <Image
-                                                    src={icon.src}
-                                                    alt={icon.alt}
-                                                    width={28}
-                                                    height={28}
-                                                    className="h-auto w-[58%] object-contain blur-[0.4px] grayscale"
-                                                />
+                                                {isEmptySlot ? (
+                                                    <span
+                                                        className="block size-[58%] rounded-full bg-white/1"
+                                                        aria-hidden
+                                                    />
+                                                ) : (
+                                                    <Image
+                                                        src={icon.src}
+                                                        alt={icon.alt}
+                                                        width={28}
+                                                        height={28}
+                                                        className="h-auto w-[58%] object-contain blur-[0.4px] grayscale"
+                                                    />
+                                                )}
                                             </div>
                                         </div>
                                     </div>
