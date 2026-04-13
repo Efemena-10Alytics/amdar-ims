@@ -20,7 +20,7 @@ type AsideProps = {
 
 const Aside = ({ step, completedStepIds = [], onStepChange }: AsideProps) => {
   return (
-    <aside className="w-full lg:max-w-75 shrink-0 flex flex-col">
+    <aside className="w-full lg:max-w-75 shrink-0 flex flex-col lg:sticky lg:top-6 lg:self-start">
       <nav className="rounded-xl w-full bg-[#F8FAFC] p-4" aria-label="Portfolio steps">
         <ul className="space-y-1 flex flex-row lg:flex-col overflow-x-auto">
           {STEPS.map((s, i) => {

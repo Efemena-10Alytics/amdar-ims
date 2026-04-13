@@ -7,8 +7,11 @@ const EXCLUDED_PROGRAM_SLUGS = [
   "hr-analytics-career-experience-internship-hacei",
   "cybersecurity-career-experience-internship-ccei",
   "financial-analytics-career-experience-internship-facei",
-  // "devops-career-experience-internship-dcei",
-  // "product-design-career-experience-internship-pdcei",
+  "devops-career-experience-internship-dcei",
+  "product-design-career-experience-internship-pdcei",
+  "ethical-hacking-career-experience-internship",
+  "devops-career-experience-internship-dcei",
+  
   // "data-engineering-career-experience-internship-decei",
 ];
 
