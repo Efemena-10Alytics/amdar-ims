@@ -20,7 +20,7 @@ const InternshipHeroTwo = () => {
   }, []);
 
   return (
-    <div className="text-white relative overflow-hidden -translate-y-25">
+    <div id="home-hero-section" className="text-white relative overflow-hidden -translate-y-25">
       {/* Primary Color Background */}
       <div className="absolute inset-0 bg-primary z-0" />
       {/* Ellipse Overlay */}
