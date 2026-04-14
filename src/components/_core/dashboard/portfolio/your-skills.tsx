@@ -5,24 +5,9 @@ import { Check, Square } from "lucide-react";
 import { AddMorePopover } from "./add-more-popover";
 import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { cn } from "@/lib/utils";
+import { SKILLS } from "@/constants/skills-data";
 
-const SKILLS = [
-  "Prototyping",
-  "Interface design",
-  "User research",
-  "Qualitative research",
-  "Quantitative research",
-  "Brain storming",
-  "Wireframing",
-  "Presentations",
-  "Slides",
-  "Animation",
-  "Mood board",
-  "Business intelligence",
-  "Reporting",
-  "Statistical analysis",
-  "Dashboard design",
-];
+
 
 export type YourSkillsData = {
   selectedSkills: string[];
@@ -85,9 +70,15 @@ export function YourSkills({ value, onChange }: YourSkillsProps) {
 
   const displayedSkills = useMemo(() => {
     const selected = [...new Set(value.selectedSkills)];
-    const base = SKILLS.filter((skill) => !selected.includes(skill));
+    const activeCategoryName = portfolioData?.category?.title?.trim();
+    const categorySkills =
+      SKILLS.find((category) => category.name === activeCategoryName)?.data ??
+      SKILLS.flatMap((category) => category.data);
+    const base = [...new Set(categorySkills)].filter(
+      (skill) => !selected.includes(skill),
+    );
     return [...selected, ...base];
-  }, [value.selectedSkills]);
+  }, [value.selectedSkills, portfolioData?.category?.title]);
   const count = value.selectedSkills.length;
 
   const toggle = (name: string) => {

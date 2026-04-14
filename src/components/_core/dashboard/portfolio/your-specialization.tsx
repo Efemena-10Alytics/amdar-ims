@@ -12,93 +12,27 @@ import { AddMorePopover } from "./add-more-popover";
 import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { cn } from "@/lib/utils";
 import { portfolioInputStyle } from "./portfolio-styles";
+import { SPECIALIZATION } from "@/constants/specialization-data";
 
-const CATEGORIES = [
-    "Data Analytics",
-    "Data Engineering",
-    "Data Science",
-    "Ethical Hacking",
-    "Product Design",
-    "Project Management",
-    "Governance Risk & Compliance",
-    "SOC Analyst",
-    "Business Analysis",
-    "App/Cloud Security",
-    "DevOps",
-] as const;
+const getSpecializationCategoryTitle = (
+    item: (typeof SPECIALIZATION)[number],
+) => (("category" in item ? item.category : item.name) ?? "").trim();
 
-const SPECIALIZATIONS_BY_CATEGORY: Record<string, string[]> = {
-    "Data Analytics": [
-        "Business intelligence",
-        "Reporting",
-        "Statistical analysis",
-        "Dashboard design",
-    ],
-    "Data Engineering": [
-        "ETL",
-        "Data pipelines",
-        "Data warehousing",
-        "Big data",
-    ],
-    "Data Science": [
-        "Machine learning",
-        "Analytics",
-        "Data engineering",
-        "Visualization",
-    ],
-    "Ethical Hacking": [
-        "Penetration testing",
-        "Security auditing",
-        "Vulnerability assessment",
-    ],
-    "Product Design": [
-        "Graphics design",
-        "Product design",
-        "Brand design",
-        "Fliers",
-        "Architecture",
-        "Foundation design",
-        "UI/UX design",
-        "Interaction design",
-        "Design systems",
-    ],
-    "Project Management": [
-        "Agile",
-        "Scrum",
-        "Stakeholder management",
-        "Resource planning",
-    ],
-    "Governance Risk & Compliance": [
-        "Policy development",
-        "Risk assessment",
-        "Control monitoring",
-        "Compliance reporting",
-    ],
-    "SOC Analyst": [
-        "Threat monitoring",
-        "Incident triage",
-        "SIEM analysis",
-        "Alert investigation",
-    ],
-    "Business Analysis": [
-        "Requirements gathering",
-        "Process mapping",
-        "Stakeholder analysis",
-        "Documentation",
-    ],
-    "App/Cloud Security": [
-        "Cloud security posture",
-        "Application security testing",
-        "Identity and access management",
-        "Vulnerability management",
-    ],
-    DevOps: [
-        "CI/CD pipelines",
-        "Infrastructure as code",
-        "Container orchestration",
-        "Monitoring and observability",
-    ],
-};
+const CATEGORIES = SPECIALIZATION.map(getSpecializationCategoryTitle).filter(Boolean);
+
+const SPECIALIZATIONS_BY_CATEGORY: Record<string, string[]> = SPECIALIZATION.reduce(
+    (acc, item) => {
+        const title = getSpecializationCategoryTitle(item);
+        if (!title) return acc;
+        acc[title] = item.data.map((specialization) => specialization.trim());
+        return acc;
+    },
+    {} as Record<string, string[]>,
+);
+
+
+
+
 
 export type YourSpecializationData = {
     category: string;
