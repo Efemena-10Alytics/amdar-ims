@@ -97,7 +97,9 @@ export function YourSpecialization({ value, onChange }: YourSpecializationProps)
     }, [portfolioData]);
 
     const displayedSpecializations = useMemo(() => {
-        const base = SPECIALIZATIONS_BY_CATEGORY[value.category] ?? [];
+        const base = [
+            ...new Set(SPECIALIZATIONS_BY_CATEGORY[value.category] ?? []),
+        ];
         const selected = [...new Set(value.selectedSpecializations)];
         const filteredBase = base.filter((s) => !selected.includes(s));
 
