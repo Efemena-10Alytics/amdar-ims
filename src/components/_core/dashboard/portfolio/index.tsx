@@ -141,7 +141,7 @@ export function CreatePortfolioForm() {
     }
 
     if (step === 2) {
-      return hasText(socialData.linkedIn) && hasText(socialData.twitter);
+      return hasText(socialData.linkedIn);
     }
 
     if (step === 3) {
