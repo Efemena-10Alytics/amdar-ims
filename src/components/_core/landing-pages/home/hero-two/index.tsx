@@ -50,7 +50,7 @@ const InternshipHeroTwo = () => {
 
           {/* Description */}
           <p
-            data-aos="zoom-in"
+            // data-aos="zoom-out"
             className="text-lg sm:text-xl text-white/90 max-w-3xl mx-auto mb-10"
           >
             Join the Work Experience Platform Trusted by Aspiring Tech

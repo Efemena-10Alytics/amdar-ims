@@ -78,13 +78,16 @@ const Navbar = () => {
   const isLoggedIn = user != null;
   const isHomePageRoute = pathname === "/home";
   const shouldStickNav = !isHomePageRoute || isPastHomeHero;
+  const shouldUseScrolledNavStyles = isHomePageRoute
+    ? shouldStickNav
+    : useGlassNav;
   const showWhiteNav = useGlassNav && shouldStickNav;
-  const logoImg = useGlassNav
+  const logoImg = shouldUseScrolledNavStyles
     ? "/logo.svg"
     : isHomePageRoute
       ? "/logo-white.svg"
       : "/logo.svg";
-  const useWhiteNavLinkText = isHomePageRoute && !useGlassNav;
+  const useWhiteNavLinkText = isHomePageRoute && !shouldUseScrolledNavStyles;
   const isInternshipProgramRoute =
     pathname === "/internship" ||
     pathname.startsWith("/payment") ||
@@ -189,12 +192,12 @@ const Navbar = () => {
           </div>
 
           <div className="app-width relative z-10">
-            <div className="flex h-25 items-center justify-between gap-3">
+            <div className="flex h-20 lg:h-25 items-center justify-between gap-3">
               <Link
                 href="/home"
                 className={cn(
                   "flex shrink-0 items-center gap-2 p-2 rounded",
-                  useGlassNav ? "bg-transparent" : "",
+                    shouldUseScrolledNavStyles ? "bg-transparent" : "",
                 )}
               >
                 <Image
@@ -243,7 +246,7 @@ const Navbar = () => {
                           href="https://www.amdari.io/dashboard"
                           className={cn(
                             "flex size-11 items-center justify-center overflow-hidden rounded-full transition-colors xl:size-12",
-                            useGlassNav
+                            shouldUseScrolledNavStyles
                               ? "bg-[#156374] hover:bg-[#156374]/80"
                               : "bg-white/15 hover:bg-white/25",
                           )}
@@ -286,7 +289,7 @@ const Navbar = () => {
                         variant="outline"
                         className={cn(
                           "h-10 rounded-full px-8 xl:h-11 xl:px-12",
-                          useGlassNav
+                          shouldUseScrolledNavStyles
                             ? "border-[#156374] text-[#156374] bg-white hover:bg-[#156374]/5 hover:border-[#0f4d5a] hover:text-[#0f4d5a]"
                             : "border-white bg-transparent text-white hover:bg-white/10 hover:text-white",
                         )}
@@ -298,7 +301,7 @@ const Navbar = () => {
                       <Button
                         className={cn(
                           "h-11 rounded-full border-0 px-8 xl:h-12 xl:px-12",
-                          useGlassNav
+                          shouldUseScrolledNavStyles
                             ? "bg-[#156374] text-white hover:bg-amdari-yellow hover:text-primary"
                             : "bg-white text-[#0F4652] hover:bg-white/90",
                         )}
@@ -315,7 +318,7 @@ const Navbar = () => {
                 onClick={() => setIsDrawerOpen(true)}
                 className={cn(
                   "p-2 transition-colors lg:hidden",
-                  useGlassNav
+                  shouldUseScrolledNavStyles
                     ? "text-[#156374] hover:text-[#0f4d5a]"
                     : "text-white hover:text-white/80",
                 )}
