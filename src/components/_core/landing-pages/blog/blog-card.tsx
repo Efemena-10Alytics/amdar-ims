@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { baseUrl, imageStorageUrl, imageUrl } from "@/lib/utils";
+import {  imageStorageUrl,  } from "@/lib/utils";
 
 export type BlogCardData = {
     id: string | number;
