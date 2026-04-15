@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { LinkIcon } from "lucide-react";
+import { Copy, LinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -25,6 +25,10 @@ export function ViewLinkModal({
   href,
 }: ViewLinkModalProps) {
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
+  const resolvedHref =
+    typeof window !== "undefined" && href?.startsWith("/")
+      ? `${window.location.origin}${href}`
+      : href;
 
   useEffect(() => {
     if (open) {
@@ -36,11 +40,7 @@ export function ViewLinkModal({
     if (!href) return;
 
     try {
-      const valueToCopy =
-        typeof window !== "undefined" && href.startsWith("/")
-          ? `${window.location.origin}${href}`
-          : href;
-      await navigator.clipboard.writeText(valueToCopy);
+      await navigator.clipboard.writeText(resolvedHref ?? "");
       setCopyStatus("copied");
     } catch {
       setCopyStatus("failed");
@@ -52,21 +52,34 @@ export function ViewLinkModal({
       <DialogContent className="sm:max-w-md text-center" showCloseButton>
         <DialogHeader className="flex flex-col items-center justify-center text-center sm:block sm:text-left">
           <div className="flex justify-center mb-2">
-            <button
-              type="button"
-              onClick={() => void handleCopyHref()}
-              disabled={!href}
-              className="flex size-12 items-center justify-center rounded-full bg-zinc-100 text-primary transition-colors hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-60"
-              aria-label="Copy portfolio link"
-            >
+            <span className="flex size-12 items-center justify-center rounded-full bg-zinc-100 text-primary">
               <LinkIcon className="size-6" aria-hidden />
-            </button>
+            </span>
           </div>
           <DialogTitle className="text-center mt-4">View link</DialogTitle>
           <DialogDescription className="text-center mt-2">
             This link will take you to another site. Do you want to continue?
           </DialogDescription>
         </DialogHeader>
+        <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 flex items-center gap-2">
+          <p
+            className="text-sm text-primary break-all text-left flex-1"
+            title={resolvedHref}
+          >
+            {resolvedHref ?? "No link available"}
+          </p>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => void handleCopyHref()}
+            disabled={!href}
+            className="size-8 shrink-0 text-zinc-600 hover:text-primary cursor-pointer"
+            aria-label="Copy link"
+          >
+            <Copy className="size-4" aria-hidden />
+          </Button>
+        </div>
         <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button
             type="button"
@@ -101,8 +114,8 @@ export function ViewLinkModal({
             role="status"
           >
             {copyStatus === "copied"
-              ? "Portfolio link copied."
-              : "Could not copy the portfolio link."}
+              ? "Link copied."
+              : "Could not copy link."}
           </p>
         ) : null}
       </DialogContent>

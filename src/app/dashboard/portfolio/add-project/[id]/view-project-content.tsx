@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Pencil, Trash2, LinkIcon, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ViewLinkModal } from "@/components/_core/dashboard/portfolio/view-link-modal";
 import {
   CardClipPathDef,
   ProjectCard,
@@ -120,6 +122,13 @@ export function ViewProjectContent({
   otherProjects = [],
 }: ViewProjectContentProps) {
   const showActions = onEdit != null || onDelete != null;
+  const [viewLinkOpen, setViewLinkOpen] = useState(false);
+  const [activeLinkHref, setActiveLinkHref] = useState<string | undefined>(undefined);
+
+  const openViewLinkModal = (href: string) => {
+    setActiveLinkHref(href);
+    setViewLinkOpen(true);
+  };
 
   return (
     <div className="min-h-full flex flex-col p-5">
@@ -365,10 +374,9 @@ export function ViewProjectContent({
             </h2>
             <div className="space-y-3">
               {project.solutionUrl ? (
-                <a
-                  href={project.solutionUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  type="button"
+                  onClick={() => openViewLinkModal(project.solutionUrl!)}
                   className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-start justify-between gap-3 hover:bg-[#dde8eb] transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 >
                   <div className="min-w-0 flex-1 text-left">
@@ -388,7 +396,7 @@ export function ViewProjectContent({
                   >
                     <LinkIcon className="size-4" />
                   </span>
-                </a>
+                </button>
               ) : (
                 <div className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-center justify-between gap-3">
                   <div className="min-w-0 flex-1">
@@ -403,10 +411,9 @@ export function ViewProjectContent({
                 </div>
               )}
               {project.mediaUrl ? (
-                <a
-                  href={project.mediaUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  type="button"
+                  onClick={() => openViewLinkModal(project.mediaUrl!)}
                   className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-start justify-between gap-3 hover:bg-[#dde8eb] transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 >
                   <div className="min-w-0 flex-1 text-left">
@@ -426,7 +433,7 @@ export function ViewProjectContent({
                   >
                     <LinkIcon className="size-4" />
                   </span>
-                </a>
+                </button>
               ) : (
                 <div className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-center justify-between gap-3">
                   <div className="min-w-0 flex-1">
@@ -471,6 +478,11 @@ export function ViewProjectContent({
           </div>
         </section>
       ) : null}
+      <ViewLinkModal
+        open={viewLinkOpen}
+        onOpenChange={setViewLinkOpen}
+        href={activeLinkHref}
+      />
     </div>
   );
 }
