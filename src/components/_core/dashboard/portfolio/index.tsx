@@ -41,6 +41,7 @@ import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { useUpdateProfileImage } from "@/features/portfolio/use-update-profile-image";
 import { useGetTools } from "@/features/portfolio/use-get-tools";
 import { usePortfolioCompletedSteps } from "@/hooks/use-portfolio-completed-steps";
+import { useCanContinuePortfolioStep } from "@/hooks/use-can-continue-portfolio-step";
 import { UnsavedChangesModal } from "./unsaved-changes-modal";
 
 export function CreatePortfolioForm() {
@@ -134,95 +135,18 @@ export function CreatePortfolioForm() {
     () => new Set(completedStepIds),
     [completedStepIds],
   );
-  const canContinueCurrentStep = useMemo(() => {
-    const hasText = (value: string | null | undefined) => !!value?.trim();
 
-    if (step === 1) {
-      return (
-        hasText(personalInfo.firstName) &&
-        hasText(personalInfo.lastName) &&
-        hasText(personalInfo.email) &&
-        hasText(personalInfo.phone) &&
-        hasText(personalInfo.countryCode)
-      );
-    }
-
-    if (step === 2) {
-      return hasText(socialData.linkedIn);
-    }
-
-    if (step === 3) {
-      return (
-        hasText(bioData.jobTitle) &&
-        hasText(bioData.yearsOfExperience) &&
-        hasText(bioData.lifeProjectsCount) &&
-        hasText(bioData.bio)
-      );
-    }
-
-    if (step === 4) {
-      return (
-        hasText(specializationData.category) &&
-        specializationData.selectedSpecializations.length > 0
-      );
-    }
-
-    if (step === 5) {
-      return skillsData.selectedSkills.length > 0;
-    }
-
-    if (step === 6) {
-      return toolsData.selectedTools.length > 0;
-    }
-
-    if (step === 7) {
-      const entries = workExperienceData.entries;
-      const isEntryComplete = (entry: (typeof entries)[number]) =>
-        hasText(entry.companyName) &&
-        hasText(entry.jobTitle) &&
-        hasText(entry.industry) &&
-        entry.jobDescription.some((line) => hasText(line)) &&
-        hasText(entry.startDate) &&
-        (entry.currentlyWorkHere || hasText(entry.endDate));
-
-      const nonEmptyEntries = entries.filter(
-        (entry) =>
-          hasText(entry.companyName) ||
-          hasText(entry.jobTitle) ||
-          hasText(entry.industry) ||
-          entry.jobDescription.some((line) => hasText(line)) ||
-          hasText(entry.startDate) ||
-          hasText(entry.endDate) ||
-          entry.currentlyWorkHere,
-      );
-
-      if (nonEmptyEntries.length === 0) return false;
-      return nonEmptyEntries.every(isEntryComplete);
-    }
-
-    if (step === 8) {
-      const entries = educationData.entries;
-      const nonEmptyEntries = entries.filter(
-        (entry) => hasText(entry.schoolName) || hasText(entry.qualification),
-      );
-      if (nonEmptyEntries.length === 0) return false;
-      return nonEmptyEntries.every(
-        (entry) => hasText(entry.schoolName) && hasText(entry.qualification),
-      );
-    }
-
-    return true;
-  }, [
+  const canContinueCurrentStep = useCanContinuePortfolioStep({
     step,
     personalInfo,
     socialData,
     bioData,
     specializationData,
-    skillsData.selectedSkills,
-    toolsData.selectedTools,
-    workExperienceData.entries,
-    educationData.entries,
-  ]);
+    skillsData,
+    toolsData,
+    workExperienceData,
+    educationData,
+  });
 
   const showWarningToast = (message: string) => {
     setWarningToast(message);
@@ -578,22 +502,24 @@ export function CreatePortfolioForm() {
   return (
     <div className="flex flex-col h-full min-h-0">
       <div className="mb-6 md:mb-8">
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={() => {
-            if (hasUnsavedChanges) {
-              setPendingPortfolioNavigation(true);
-              setUnsavedModalOpen(true);
-              return;
-            }
-            router.push("/dashboard/portfolio");
-          }}
-          className="mb-3 -ml-2 h-8 px-2 text-zinc-600 hover:text-zinc-900"
-        >
-          <ArrowLeft className="mr-1 size-4" />
-          To Portfolio
-        </Button>
+        {areAllStepsCompleted ? (
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => {
+              if (hasUnsavedChanges) {
+                setPendingPortfolioNavigation(true);
+                setUnsavedModalOpen(true);
+                return;
+              }
+              router.push("/dashboard/portfolio");
+            }}
+            className="mb-3 -ml-2 h-8 px-2 text-zinc-600 hover:text-zinc-900"
+          >
+            <ArrowLeft className="mr-1 size-4" />
+            To Portfolio
+          </Button>
+        ) : null}
         <div className="flex items-center justify-between">
           <h1 className="text-xl md:text-2xl font-semibold text-zinc-900">
             Let’s {areAllStepsCompleted ? "Update" : "Create"} Your Portfolio
