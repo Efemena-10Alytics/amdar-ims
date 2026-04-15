@@ -14,7 +14,6 @@ import {
 } from "@/components/_core/dashboard/svg";
 import { cn } from "@/lib/utils";
 import { PortfolioSettingsModal } from "@/components/_core/dashboard/portfolio/portfolio-settings-modal";
-import { ViewLinkModal } from "@/components/_core/dashboard/portfolio/view-link-modal";
 import CreateClassic from "@/components/_core/dashboard/portfolio/template/classic";
 import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { usePortfolioCompletionRedirect } from "@/hooks/use-portfolio-completion-redirect";
@@ -118,7 +117,6 @@ export default function PortfolioPage() {
   const hasAtLeastOneProject = (portfolio?.projects?.length ?? 0) > 0;
   const [selectedTemplate, setSelectedTemplate] = useState<string>("classic");
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [viewLinkOpen, setViewLinkOpen] = useState(false);
   const [shareWarning, setShareWarning] = useState<string | null>(null);
   const { shouldRedirectToCreate } = usePortfolioCompletionRedirect({
     portfolio,
@@ -171,7 +169,7 @@ export default function PortfolioPage() {
             <Button
               type="button"
               className="rounded-lg bg-primary text-white hover:bg-primary/90"
-              onClick={() => {
+              onClick={async () => {
                 if (!hasAtLeastOneProject) {
                   setShareWarning(
                     "User must add at least one project before they can share their portfolio.",
@@ -179,10 +177,17 @@ export default function PortfolioPage() {
                   setTimeout(() => setShareWarning(null), 3500);
                   return;
                 }
-                setViewLinkOpen(true);
+                const shareUrl = `${window.location.origin}${portfolioHref}`;
+                try {
+                  await navigator.clipboard.writeText(shareUrl);
+                  setShareWarning("Portfolio link copied to clipboard.");
+                } catch {
+                  setShareWarning("Could not copy link. Please try again.");
+                }
+                setTimeout(() => setShareWarning(null), 3500);
               }}
             >
-              Share portfolio
+              Copy link
               <ShareFilledIcon />
             </Button>
             <Button
@@ -221,12 +226,6 @@ export default function PortfolioPage() {
         onOpenChange={setSettingsOpen}
         portfolioHref={portfolioHref}
       />
-      <ViewLinkModal
-        open={viewLinkOpen}
-        onOpenChange={setViewLinkOpen}
-        href={portfolioHref}
-      />
-
 
       <CreateClassic />
       {shareWarning ? (
