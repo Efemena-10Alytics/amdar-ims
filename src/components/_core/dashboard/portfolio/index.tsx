@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type SyntheticEvent } from "react";
 import { useRouter } from "next/navigation";
 import confetti from "canvas-confetti";
 import { ArrowLeft } from "lucide-react";
@@ -41,6 +41,7 @@ import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { useUpdateProfileImage } from "@/features/portfolio/use-update-profile-image";
 import { useGetTools } from "@/features/portfolio/use-get-tools";
 import { usePortfolioCompletedSteps } from "@/hooks/use-portfolio-completed-steps";
+import { UnsavedChangesModal } from "./unsaved-changes-modal";
 
 export function CreatePortfolioForm() {
   const router = useRouter();
@@ -103,6 +104,12 @@ export function CreatePortfolioForm() {
   });
   const [warningToast, setWarningToast] = useState<string | null>(null);
   const warningTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [lastSavedSnapshot, setLastSavedSnapshot] = useState<string | null>(null);
+  const [hasUserEditedForm, setHasUserEditedForm] = useState(false);
+  const [unsavedModalOpen, setUnsavedModalOpen] = useState(false);
+  const [pendingStepTarget, setPendingStepTarget] = useState<number | null>(null);
+  const [pendingPortfolioNavigation, setPendingPortfolioNavigation] = useState(false);
+  const lastInteractionAtRef = useRef(0);
 
   const selectedCountry = countries.find(
     (c) => c.code === personalInfo.countryCode,
@@ -235,6 +242,64 @@ export function CreatePortfolioForm() {
       }
     };
   }, []);
+
+  const createFormSnapshot = useMemo(
+    () =>
+      JSON.stringify({
+        personalInfo,
+        socialData: {
+          linkedIn: socialData.linkedIn,
+          twitter: socialData.twitter,
+          profileImageFile: socialData.profileImageFile
+            ? {
+                name: socialData.profileImageFile.name,
+                size: socialData.profileImageFile.size,
+                lastModified: socialData.profileImageFile.lastModified,
+              }
+            : null,
+        },
+        bioData,
+        specializationData,
+        skillsData,
+        toolsData,
+        workExperienceData,
+        educationData,
+      }),
+    [
+      personalInfo,
+      socialData,
+      bioData,
+      specializationData,
+      skillsData,
+      toolsData,
+      workExperienceData,
+      educationData,
+    ],
+  );
+
+  useEffect(() => {
+    if (lastSavedSnapshot === null) {
+      setLastSavedSnapshot(createFormSnapshot);
+    }
+  }, [createFormSnapshot, lastSavedSnapshot]);
+
+  const hasUnsavedChanges =
+    hasUserEditedForm &&
+    lastSavedSnapshot !== null &&
+    createFormSnapshot !== lastSavedSnapshot;
+
+  const handleFormInteraction = (event: SyntheticEvent) => {
+    if (!event.nativeEvent.isTrusted) return;
+    lastInteractionAtRef.current = Date.now();
+    setHasUserEditedForm(true);
+  };
+
+  const flagInteractionTrigger = () => {
+    lastInteractionAtRef.current = Date.now();
+  };
+
+  const wasRecentlyTriggeredByUser = () =>
+    Date.now() - lastInteractionAtRef.current < 1500;
 
   const savePersonalInfo = async (): Promise<boolean> => {
     const location = selectedCountry?.name ?? personalInfo.countryCode ?? "";
@@ -394,7 +459,6 @@ export function CreatePortfolioForm() {
     if (step === 2) {
       const ok = await saveSocial(socialData);
       if (!ok) return;
-      setSocialData((prev) => ({ ...prev, profileImageFile: null }));
     }
     if (step === 3) {
       const ok = await saveBio(bioData);
@@ -419,6 +483,8 @@ export function CreatePortfolioForm() {
     if (step === 8) {
       const ok = await saveEducationBackground(educationData);
       if (!ok) return;
+      setLastSavedSnapshot(createFormSnapshot);
+      setHasUserEditedForm(false);
       const colors = ["#0F4652", "#156374", "#22c55e", "#C8DDE3"];
       confetti({
         particleCount: 80,
@@ -431,11 +497,47 @@ export function CreatePortfolioForm() {
       }, 700);
       return;
     }
+    setLastSavedSnapshot(createFormSnapshot);
+    setHasUserEditedForm(false);
     setStep((s) => Math.min(STEPS.length, s + 1));
+  };
+
+  const saveCurrentStep = async (): Promise<boolean> => {
+    if (step === 1) return savePersonalInfo();
+    if (step === 2) return saveSocial(socialData);
+    if (step === 3) return saveBio(bioData);
+    if (step === 4) return saveCategory(specializationData);
+    if (step === 5) return saveSkills(skillsData);
+    if (step === 6) return saveTools(toolsData);
+    if (step === 7) return saveWorkExperience(workExperienceData);
+    if (step === 8) return saveEducationBackground(educationData);
+    return true;
+  };
+
+  const resetPendingNavigation = () => {
+    setPendingStepTarget(null);
+    setPendingPortfolioNavigation(false);
+  };
+
+  const proceedPendingNavigation = () => {
+    if (pendingPortfolioNavigation) {
+      router.push("/dashboard/portfolio");
+      resetPendingNavigation();
+      return;
+    }
+    if (pendingStepTarget !== null) {
+      setStep(pendingStepTarget);
+      resetPendingNavigation();
+    }
   };
 
   const handleBack = () => {
     if (step === 1) {
+      if (hasUnsavedChanges) {
+        setPendingPortfolioNavigation(true);
+        setUnsavedModalOpen(true);
+        return;
+      }
       router.push("/dashboard/portfolio");
       return;
     }
@@ -443,6 +545,14 @@ export function CreatePortfolioForm() {
   };
 
   const handleStepChange = (targetStep: number) => {
+    if (targetStep === step) return;
+
+    if (hasUnsavedChanges) {
+      setPendingStepTarget(targetStep);
+      setUnsavedModalOpen(true);
+      return;
+    }
+
     if (portfolioErrorMessage && step === 1 && targetStep === 2) {
       showWarningToast(
         'Use "Save & continue" on step 1 to initialize portfolio first.',
@@ -471,7 +581,14 @@ export function CreatePortfolioForm() {
         <Button
           type="button"
           variant="ghost"
-          onClick={() => router.push("/dashboard/portfolio")}
+          onClick={() => {
+            if (hasUnsavedChanges) {
+              setPendingPortfolioNavigation(true);
+              setUnsavedModalOpen(true);
+              return;
+            }
+            router.push("/dashboard/portfolio");
+          }}
           className="mb-3 -ml-2 h-8 px-2 text-zinc-600 hover:text-zinc-900"
         >
           <ArrowLeft className="mr-1 size-4" />
@@ -495,7 +612,13 @@ export function CreatePortfolioForm() {
         />
 
         <div className="flex-1 min-w-0 flex flex-col">
-          <div className="flex-1">
+          <div
+            className="flex-1"
+            onPointerDownCapture={flagInteractionTrigger}
+            onKeyDownCapture={flagInteractionTrigger}
+            onInputCapture={handleFormInteraction}
+            onChangeCapture={handleFormInteraction}
+          >
             {step === 1 && (
               <PersonalInfo
                 personalInfo={personalInfo}
@@ -507,18 +630,41 @@ export function CreatePortfolioForm() {
             {step === 2 && (
               <YourSocial value={socialData} onChange={setSocialData} />
             )}
-            {step === 3 && <YourBio value={bioData} onChange={setBioData} />}
+            {step === 3 && (
+              <YourBio value={bioData} onChange={setBioData} />
+            )}
             {step === 4 && (
               <YourSpecialization
                 value={specializationData}
-                onChange={setSpecializationData}
+                onChange={(nextValue) => {
+                  if (wasRecentlyTriggeredByUser()) {
+                    setHasUserEditedForm(true);
+                  }
+                  setSpecializationData(nextValue);
+                }}
               />
             )}
             {step === 5 && (
-              <YourSkills value={skillsData} onChange={setSkillsData} />
+              <YourSkills
+                value={skillsData}
+                onChange={(nextValue) => {
+                  if (wasRecentlyTriggeredByUser()) {
+                    setHasUserEditedForm(true);
+                  }
+                  setSkillsData(nextValue);
+                }}
+              />
             )}
             {step === 6 && (
-              <YourTools value={toolsData} onChange={setToolsData} />
+              <YourTools
+                value={toolsData}
+                onChange={(nextValue) => {
+                  if (wasRecentlyTriggeredByUser()) {
+                    setHasUserEditedForm(true);
+                  }
+                  setToolsData(nextValue);
+                }}
+              />
             )}
             {step === 7 && (
               <WorkExperience
@@ -592,6 +738,33 @@ export function CreatePortfolioForm() {
               }}
             />
           ) : null}
+          <UnsavedChangesModal
+            open={unsavedModalOpen}
+            onOpenChange={(open) => {
+              setUnsavedModalOpen(open);
+              if (!open) {
+                resetPendingNavigation();
+              }
+            }}
+            onCancel={() => {
+              setUnsavedModalOpen(false);
+              resetPendingNavigation();
+            }}
+            onLeaveWithoutSaving={() => {
+              setLastSavedSnapshot(createFormSnapshot);
+              setHasUserEditedForm(false);
+              setUnsavedModalOpen(false);
+              proceedPendingNavigation();
+            }}
+            onSaveAndLeave={async () => {
+              const ok = await saveCurrentStep();
+              if (!ok) return;
+              setLastSavedSnapshot(createFormSnapshot);
+              setHasUserEditedForm(false);
+              setUnsavedModalOpen(false);
+              proceedPendingNavigation();
+            }}
+          />
         </div>
       </div>
     </div>
