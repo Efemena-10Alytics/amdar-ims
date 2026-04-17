@@ -46,18 +46,30 @@ const ChoosePath = () => {
         </div>
 
         {isPending ? (
-          <div
-            className="flex flex-col items-center justify-center py-16 gap-4"
-            role="status"
-            aria-live="polite"
-          >
-            <Loader2
-              className="size-12 animate-spin text-[#156374]"
-              aria-hidden
-            />
-            <p className="text-[#64748B] text-sm font-medium">
-              Loading career paths...
-            </p>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div
+                key={`internship-skeleton-${index}`}
+                className="rounded-xl border border-gray-200 bg-[#E8EFF1] p-4 md:p-6"
+                role="status"
+                aria-live="polite"
+                aria-label="Loading career path"
+              >
+                <div className="h-48 w-full animate-pulse rounded-md bg-gray-300" />
+                <div className="mt-4 space-y-3">
+                  <div className="h-6 w-3/4 animate-pulse rounded bg-gray-300" />
+                  <div className="h-4 w-full animate-pulse rounded bg-gray-300" />
+                  <div className="h-4 w-5/6 animate-pulse rounded bg-gray-300" />
+                  <div className="flex items-center justify-between pt-2">
+                    <div className="space-y-2">
+                      <div className="h-3 w-24 animate-pulse rounded bg-gray-300" />
+                      <div className="h-4 w-20 animate-pulse rounded bg-gray-300" />
+                    </div>
+                    <div className="h-9 w-24 animate-pulse rounded-full bg-gray-300" />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : (
           <>
