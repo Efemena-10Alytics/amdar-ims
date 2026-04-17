@@ -1,9 +1,9 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "Amdari Internship Program",
+  name: "Tech Internships, Real Work Experience in UK/US/Canada",
   description:
-    " Amdari Data Strategists | Data Strategy Consulting & Training ",
+    " Get structured tech internships with real projects, mentorship, and career guidance to help you get hired in the UK/US/Canada, CV Revamp, Work Reference Letter etc",
   mainNav: [
     {
       title: "Internship Program",
