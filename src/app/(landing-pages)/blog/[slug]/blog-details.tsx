@@ -1,17 +1,15 @@
-"use client";
-
-import { useMemo } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import BlogCard, {
     type BlogCardData,
 } from "@/components/_core/landing-pages/blog/blog-card";
-import { useGetBlog } from "@/features/blog/use-get-blog";
-import { useGetAllBlog } from "@/features/blog/use-get-all-blog";
+import type { BlogDetail } from "@/features/blog/use-get-blog";
 import { imageStorageUrl } from "@/lib/utils";
 
 type BlogDetailsProps = {
     slug: string;
+    blog: BlogDetail | null;
+    recommendedPosts: BlogCardData[];
 };
 
 const PARAGRAPH =
@@ -30,10 +28,7 @@ function formatBlogDate(value: string | null | undefined): string {
     });
 }
 
-export default function BlogDetails({ slug }: BlogDetailsProps) {
-    const { data: blog, isLoading, isError } = useGetBlog(slug);
-    const { data: allBlogsResponse } = useGetAllBlog({ page: 1 });
-
+export default function BlogDetails({ slug, blog, recommendedPosts }: BlogDetailsProps) {
     const title = blog?.title
     const author = blog?.author
     const date = formatBlogDate(
@@ -46,41 +41,7 @@ export default function BlogDetails({ slug }: BlogDetailsProps) {
             ? blog.text
             : PARAGRAPH;
 
-    const recommendedPosts = useMemo<BlogCardData[]>(() => {
-        const items = allBlogsResponse?.data ?? [];
-        return items
-            .filter((item) => item.slug?.toString().trim() !== slug)
-            .slice(0, 3)
-            .map((item, index) => {
-                const itemSlug = item.slug?.toString().trim();
-                const imagePath = item.image?.toString().trim();
-                return {
-                    id: item.id ?? `recommended-${index}`,
-                    title: item.title?.toString().trim() || "Untitled blog post",
-                    category:
-                        item.category?.toString().trim().replace(/-/g, " ") || "General",
-                    date: formatBlogDate(
-                        (item.date as string | null | undefined) ??
-                        ((item as { created_at?: string } | null)?.created_at ?? null),
-                    ),
-                    href: itemSlug ? `/blog/${itemSlug}` : "#",
-                    image: imagePath
-                        ? imagePath
-                        : FALLBACK_BLOG_IMAGE,
-                };
-            });
-    }, [allBlogsResponse?.data, slug]);
-
-
-    if (isLoading) {
-        return (
-            <main className="app-width py-10">
-                <p className="text-sm text-[#7D8F98]">Loading blog post...</p>
-            </main>
-        );
-    }
-
-    if (isError || !blog) {
+    if (!blog) {
         return (
             <main className="app-width py-10">
                 <p className="text-sm text-red-600">Unable to load this blog post.</p>
