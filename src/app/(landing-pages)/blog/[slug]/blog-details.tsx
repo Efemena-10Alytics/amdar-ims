@@ -90,7 +90,7 @@ export default function BlogDetails({ slug }: BlogDetailsProps) {
 
     return (
         <main className="app-width py-10">
-            <div className="grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
+            <div className="grid gap-10 lg:gap-20 lg:grid-cols-[260px_minmax(0,1fr)]">
                 <aside className="space-y-8 pt-2">
                     <Link
                         href="/blog"
@@ -126,7 +126,7 @@ export default function BlogDetails({ slug }: BlogDetailsProps) {
 
                 <section className="min-w-0 space-y-6">
                     <header className="space-y-4">
-                        <h1 className="max-w-3xl text-xl xl:text-4xl font-semibold leading-tight text-[#092A31]">
+                        <h1 className="max-w-3xl text-xl sm:text-2xl md:text-4xl font-semibold leading-tight text-[#092A31]">
                             {title}
                         </h1>
                         <div className="overflow-hidden rounded-xl">

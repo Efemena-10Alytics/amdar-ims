@@ -76,6 +76,7 @@ const Navbr = () => {
     pathname === "/internship" ||
     pathname.startsWith("/payment") ||
     pathname.startsWith("/internship");
+  const isMoreProgramRoute = pathname.startsWith("/blog");
 
   const showSalesBanner =
     !pathname.startsWith("/internship/") && !pathname.startsWith("/payment");
@@ -197,7 +198,10 @@ const Navbr = () => {
                     </Link>
                   );
                 })}
-                <MoreDropdown showWhiteNav={showWhiteNav} />
+                <MoreDropdown
+                  showWhiteNav={showWhiteNav}
+                  isActive={isMoreProgramRoute}
+                />
               </div>
 
               {/* Action Buttons - Desktop */}
