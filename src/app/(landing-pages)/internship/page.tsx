@@ -1,48 +1,12 @@
-"use client";
+import type { Metadata } from "next";
+import InternshipPageClient from "@/components/_core/landing-pages/internship-program/internship-page-client";
 
-import { Suspense, useEffect } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import ChoosePath from "@/components/_core/landing-pages/internship-program/choose-path";
-import WhyTakeTheInternship from "@/components/_core/landing-pages/internship-program/why-take-the-internship";
-import JobReady from "@/components/_core/landing-pages/internship-program/job-ready";
-import {
-  getSessionOptionByKey,
-  SESSION_INFLUENCED_STORAGE_KEY,
-} from "@/features/payment/session-options";
-
-function SessionParamCapture() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const session = searchParams.get("session");
-    if (session == null) return;
-
-    if (typeof window !== "undefined" && getSessionOptionByKey(session)) {
-      window.localStorage.setItem(SESSION_INFLUENCED_STORAGE_KEY, session);
-    }
-
-    const next = new URLSearchParams(searchParams.toString());
-    next.delete("session");
-    const nextQuery = next.toString();
-    router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname);
-  }, [pathname, router, searchParams]);
-
-  return null;
-}
-
-const ChoosePathPage = () => {
-  return (
-    <div>
-      <Suspense fallback={null}>
-        <SessionParamCapture />
-      </Suspense>
-      <ChoosePath />
-      <WhyTakeTheInternship />
-      <JobReady />
-    </div>
-  );
+export const metadata: Metadata = {
+  title: "Work experience that helps you land tech jobs easily",
+  description:
+    "Gain real work experience in Data, Cybersecurity, Project Management, Business Analysis & Product Design",
 };
 
-export default ChoosePathPage;
+export default function ChoosePathPage() {
+  return <InternshipPageClient />;
+}

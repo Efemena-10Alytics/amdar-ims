@@ -3,6 +3,7 @@ import type { BlogCardData } from "@/components/_core/landing-pages/blog/blog-ca
 import { apiBaseURL } from "@/lib/axios-instance";
 import type { BlogDetail } from "@/features/blog/use-get-blog";
 import type { AllBlogsResponse, BlogItem } from "@/features/blog/use-get-all-blog";
+import type { Metadata } from "next";
 
 type BlogDetailsPageProps = {
   params: Promise<{ slug: string }>;
@@ -79,6 +80,47 @@ async function getAllBlogsFirstPage(): Promise<BlogItem[]> {
   }
 }
 
+function stripHtml(value: string): string {
+  return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+export async function generateMetadata({
+  params,
+}: BlogDetailsPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const blog = await getBlog(slug);
+
+  const defaultTitle = "Blog | Amdari";
+  const seoTitle =
+    typeof (blog as { seo_title?: unknown } | null)?.seo_title === "string"
+      ? ((blog as { seo_title?: string }).seo_title ?? "").trim()
+      : "";
+  const title = seoTitle || blog?.title?.toString().trim() || defaultTitle;
+
+  const descriptionSource =
+    typeof (blog as { seo_description?: unknown } | null)?.seo_description === "string" &&
+      ((blog as { seo_description?: string }).seo_description ?? "").trim().length > 0
+      ? ((blog as { seo_description?: string }).seo_description ?? "")
+      : typeof blog?.excerpt === "string" && blog.excerpt.trim().length > 0
+        ? blog.excerpt
+        : typeof blog?.content === "string" && blog.content.trim().length > 0
+          ? blog.content
+          : typeof (blog as { text?: unknown } | null)?.text === "string"
+            ? ((blog as { text?: string }).text ?? "")
+            : "";
+
+  const normalizedDescription = stripHtml(descriptionSource).slice(0, 160);
+  const description =
+    normalizedDescription.length > 0
+      ? normalizedDescription
+      : "Read this blog post on Amdari.";
+
+  return {
+    title,
+    description,
+  };
+}
+
 export default async function BlogDetailsPage({ params }: BlogDetailsPageProps) {
   const { slug } = await params;
   const [blog, allBlogs] = await Promise.all([getBlog(slug), getAllBlogsFirstPage()]);
@@ -95,7 +137,7 @@ export default async function BlogDetailsPage({ params }: BlogDetailsPageProps) 
         category: item.category?.toString().trim().replace(/-/g, " ") || "General",
         date: formatBlogDate(
           (item.date as string | null | undefined) ??
-            ((item as { created_at?: string } | null)?.created_at ?? null),
+          ((item as { created_at?: string } | null)?.created_at ?? null),
         ),
         href: itemSlug ? `/blog/${itemSlug}` : "#",
         image: imagePath ? imagePath : FALLBACK_BLOG_IMAGE,
