@@ -114,7 +114,7 @@ export default function BlogDetails({ slug, blog, recommendedPosts }: BlogDetail
                 </section>
             </div>
             <section className="space-y-4 pt-6">
-                <h3 className="text-sm font-semibold text-[#092A31]">Recommanded Post</h3>
+                <h3 className="text-sm font-semibold text-[#092A31]">Recommended Post</h3>
                 <div className="grid gap-4 md:grid-cols-3">
                     {recommendedPosts.map((post) => (
                         <BlogCard key={post.id} post={post} />
