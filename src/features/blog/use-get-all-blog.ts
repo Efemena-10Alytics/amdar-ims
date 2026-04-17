@@ -1,8 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
 
-export const ALL_BLOGS_QUERY_KEY = (page: number) =>
-  ["blogs", "all", page] as const;
+export const ALL_BLOGS_QUERY_KEY = (
+  page: number,
+  search: string,
+  categories: string,
+) => ["blogs", "all", page, search, categories] as const;
 
 export type BlogItem = {
   id?: string | number | null;
@@ -44,17 +47,30 @@ type AllBlogsApiResponse = AllBlogsResponse | { data?: AllBlogsResponse } | Blog
 type UseGetAllBlogOptions = {
   enabled?: boolean;
   page?: number;
+  search?: string;
+  categories?: string[];
 };
 
 export function useGetAllBlog(options: UseGetAllBlogOptions = {}) {
-  const { enabled = true, page = 1 } = options;
+  const { enabled = true, page = 1, search = "", categories = [] } = options;
+  const normalizedSearch = search.trim();
+  const normalizedCategories = categories
+    .map((category) => category.trim())
+    .filter(Boolean)
+    .join(",");
 
   return useQuery({
-    queryKey: ALL_BLOGS_QUERY_KEY(page),
+    queryKey: ALL_BLOGS_QUERY_KEY(page, normalizedSearch, normalizedCategories),
     queryFn: async (): Promise<AllBlogsResponse> => {
       const { data } = await axiosInstance.get<AllBlogsApiResponse>(
         "/blogs/all",
-        { params: { page } },
+        {
+          params: {
+            page,
+            ...(normalizedSearch ? { search: normalizedSearch } : {}),
+            ...(normalizedCategories ? { categories: normalizedCategories } : {}),
+          },
+        },
       );
 
       // Backward compatibility if API returns a plain array.

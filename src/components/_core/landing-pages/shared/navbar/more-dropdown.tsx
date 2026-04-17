@@ -50,6 +50,7 @@ export type MoreDropdownProps = {
   gridItems?: MoreGridItem[];
   footerItem?: { title: string; description: string; href: string };
   showWhiteNav?: boolean;
+  isActive?: boolean;
   className?: string;
 };
 
@@ -59,6 +60,7 @@ export function MoreDropdown({
   gridItems = DEFAULT_GRID_ITEMS,
   footerItem = DEFAULT_FOOTER_ITEM,
   showWhiteNav = true,
+  isActive = false,
   className,
 }: MoreDropdownProps) {
   const [open, setOpen] = useState(false);
@@ -81,7 +83,7 @@ export function MoreDropdown({
   const triggerClass = cn(
     "text-sm transition-colors relative pb-0.5 flex items-center gap-0.5",
     "after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-0.5 after:bg-current after:transition-[width] after:duration-300 after:ease-out",
-    open ? "after:w-full" : "after:w-0 hover:after:w-full",
+    open || isActive ? "after:w-full" : "after:w-0 hover:after:w-full",
     showWhiteNav
       ? "text-[#156374] hover:text-[#0f4d5a]"
       : "text-primary hover:text-[#0f4d5a]",
