@@ -61,7 +61,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={navMain} />
       </SidebarContent>
-      <SidebarFooter>
+      {/* <SidebarFooter>
         <div
           className="mx-2 mb-2 rounded-xl p-3 text-primary-foreground"
           style={{
@@ -89,7 +89,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <Link href="#">Book session</Link>
           </Button>
         </div>
-      </SidebarFooter>
+      </SidebarFooter> */}
     </Sidebar>
   );
 }
