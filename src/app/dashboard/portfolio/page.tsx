@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { getUserId } from "@/lib/get-user-id";
 import { useAuthStore } from "@/store/auth-store";
@@ -16,17 +16,25 @@ import { cn } from "@/lib/utils";
 import { PortfolioSettingsModal } from "@/components/_core/dashboard/portfolio/portfolio-settings-modal";
 import CreateClassic from "@/components/_core/dashboard/portfolio/template/classic";
 import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
+import { useChangeTemplate } from "@/features/portfolio/use-change-template";
 import { usePortfolioCompletionRedirect } from "@/hooks/use-portfolio-completion-redirect";
+import BoldTemplate from "@/components/_core/dashboard/portfolio/template/bold";
 
 const TEMPLATES = [
   { id: "classic", label: "Classic", comingSoon: false },
-  { id: "bold", label: "Bold", comingSoon: true },
+  { id: "bold", label: "Bold", comingSoon: false },
   { id: "simple", label: "Simple", comingSoon: true },
   // { id: "highlight", label: "Highlight", comingSoon: true },
   // { id: "whole", label: "Whole", comingSoon: true },
   // { id: "dark", label: "Dark", comingSoon: true },
   // { id: "square", label: "Square", comingSoon: true },
 ] as const;
+
+const AVAILABLE_TEMPLATE_IDS: Set<string> = new Set(
+  TEMPLATES.filter((template) => !template.comingSoon).map((template) => template.id),
+);
+
+type AvailableTemplateId = "classic" | "bold";
 
 // Template images from public/pngs/template/ (e.g. classic.png, bold.png, ...)
 const TEMPLATE_IMAGE_BASE = "/images/pngs/template";
@@ -36,12 +44,16 @@ function TemplatePreview({
   label,
   selected,
   comingSoon,
+  isLoading,
+  disabled,
   onClick,
 }: {
   id: string;
   label: string;
   selected: boolean;
   comingSoon?: boolean;
+  isLoading?: boolean;
+  disabled?: boolean;
   onClick: () => void;
 }) {
   const [imgError, setImgError] = useState(false);
@@ -51,11 +63,11 @@ function TemplatePreview({
     <div className="space-y-2">
       <button
         type="button"
-        onClick={comingSoon ? undefined : onClick}
-        disabled={comingSoon}
+        onClick={comingSoon || disabled ? undefined : onClick}
+        disabled={comingSoon || disabled}
         className={cn(
           "flex shrink-0 flex-col items-center gap-2 min-h-35 text-left rounded-xl w-full max-w-30",
-          comingSoon ? "cursor-not-allowed" : "transition-colors",
+          comingSoon || disabled ? "cursor-not-allowed" : "transition-colors",
           !comingSoon &&
           (selected
             ? "border-primary bg-primary/5"
@@ -94,6 +106,14 @@ function TemplatePreview({
               </div>
             </div>
           )}
+          {isLoading && !comingSoon && (
+            <div
+              className="absolute inset-0 flex items-center justify-center bg-white/70"
+              aria-hidden
+            >
+              <Loader2 className="size-5 animate-spin text-primary" />
+            </div>
+          )}
         </div>
       </button>
       <span
@@ -111,11 +131,17 @@ function TemplatePreview({
 
 export default function PortfolioPage() {
   const { data: portfolio, isLoading, error } = useGetPortfolio();
+  const {
+    changeTemplate,
+    isChangingTemplate,
+    errorMessage: changeTemplateError,
+  } = useChangeTemplate();
   const user = useAuthStore((s) => s.user);
   const userId = getUserId(user);
   const portfolioHref = userId != null ? `/p/${portfolio?.pathname}` : "/portfolio";
   const hasAtLeastOneProject = (portfolio?.projects?.length ?? 0) > 0;
-  const [selectedTemplate, setSelectedTemplate] = useState<string>("classic");
+  const [selectedTemplate, setSelectedTemplate] = useState<AvailableTemplateId>("classic");
+  const [pendingTemplateId, setPendingTemplateId] = useState<AvailableTemplateId | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [shareWarning, setShareWarning] = useState<string | null>(null);
   const { shouldRedirectToCreate } = usePortfolioCompletionRedirect({
@@ -123,6 +149,18 @@ export default function PortfolioPage() {
     isLoading,
     hasError: !!error,
   });
+
+  const templateFromPortfolio = useMemo<AvailableTemplateId>(() => {
+    const template = portfolio?.setting?.template?.trim().toLowerCase();
+    if (!template || !AVAILABLE_TEMPLATE_IDS.has(template)) {
+      return "classic";
+    }
+    return template as AvailableTemplateId;
+  }, [portfolio?.setting?.template]);
+
+  useEffect(() => {
+    setSelectedTemplate(templateFromPortfolio);
+  }, [templateFromPortfolio]);
 
   if (isLoading) {
     return (
@@ -213,7 +251,23 @@ export default function PortfolioPage() {
                   label={t.label}
                   selected={selectedTemplate === t.id}
                   comingSoon={t.comingSoon ?? false}
-                  onClick={() => setSelectedTemplate(t.id)}
+                  isLoading={pendingTemplateId === t.id}
+                  disabled={isChangingTemplate}
+                  onClick={async () => {
+                    if (!AVAILABLE_TEMPLATE_IDS.has(t.id)) return;
+                    const templateId = t.id as AvailableTemplateId;
+                    if (templateId === selectedTemplate || isChangingTemplate) return;
+
+                    setPendingTemplateId(templateId);
+                    try {
+                      const didChange = await changeTemplate({ template: templateId });
+                      if (didChange) {
+                        setSelectedTemplate(templateId);
+                      }
+                    } finally {
+                      setPendingTemplateId(null);
+                    }
+                  }}
                 />
               ))}
             </div>
@@ -227,11 +281,21 @@ export default function PortfolioPage() {
         portfolioHref={portfolioHref}
       />
 
-      <CreateClassic />
+      {selectedTemplate === "bold" ? (
+        <BoldTemplate portfolio={portfolio} />
+      ) : (
+        <CreateClassic />
+      )}
       {shareWarning ? (
         <InfoToastBanner
           message={shareWarning}
           onDismiss={() => setShareWarning(null)}
+        />
+      ) : null}
+      {changeTemplateError ? (
+        <InfoToastBanner
+          message={changeTemplateError}
+          onDismiss={() => { }}
         />
       ) : null}
     </div>

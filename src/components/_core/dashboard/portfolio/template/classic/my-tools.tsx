@@ -23,6 +23,7 @@ type MyToolsProps = {
   /** Large faded title on the right (e.g. "Product Designer"). */
   title?: string;
   showToolsRate?: boolean;
+  temp?: string;
 };
 
 /** Higher skillLevel first; items without skillLevel rank by percentage after all rated ones. */
@@ -39,6 +40,7 @@ export function MyTools({
   tools = [],
   title = "Product Designer",
   showToolsRate = true,
+  temp
 }: MyToolsProps) {
   const trimmed = title.trim();
   const spaceIdx = trimmed.indexOf(" ");
@@ -61,18 +63,18 @@ export function MyTools({
     <div data-aos="fade-up" className="mt-20">
       <div className="text-xl font-semibold text-[#A1A8B1] mb-4">My Tools</div>
       <section
-        className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-20 items-center"
+        className="flex flex-col md:flex-row gap-8 md:gap-20 items-center"
         aria-label="My tools"
       >
         {/* Left: My Tools list */}
-        <div>
+        <div className="flex-1 w-full">
           <ul className="">
             {displayedTools.map((tool, index) => {
               const iconSrc = tool.iconUrl ?? DEFAULT_TOOL_ICONS[tool.name];
               const pct = tool.skillLevel ?? tool.percentage ?? 80;
               return (
                 <li key={tool.name + index} className="hover:bg-[#B6CFD4] hover:px-4 group cursor-alias">
-                  <div className="flex items-center gap-3 py-3">
+                  <div className="flex justify-between flex-1 md:items-center gap-3 py-3">
                     <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded bg-white border border-zinc-100">
                       {iconSrc ? (
                         <img
@@ -102,7 +104,7 @@ export function MyTools({
         </div>
 
         {/* Right: Large faded title */}
-        <div className="flex w-full items-center justify-center h-full md:min-h-0">
+        {temp !== "bold" &&<div className="flex-1 flex w-full items-center justify-center h-full md:min-h-0">
           <div className="">
             <h1
             data-aos="fade-right"
@@ -119,7 +121,7 @@ export function MyTools({
               {restLine}
             </h1>
           </div>
-        </div>
+        </div>}
       </section>
     </div>
   );

@@ -51,7 +51,7 @@ export function MyWorkExperience({
 
               <button
                 type="button"
-                className={cn("flex p-4 cursor-pointer group text-left transition-colors justify-between w-full", isExpanded? "": "hover:bg-[#156374]"
+                className={cn("flex p-4 cursor-pointer group text-left transition-all duration-300 justify-between w-full", isExpanded? "": "hover:bg-[#156374]"
                 )}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -62,14 +62,14 @@ export function MyWorkExperience({
               >
                 <div>
                   <div className="flex items-center gap-2 flex-wrap text-left">
-                    <h2 className={cn("text-2xl font-semibold text-[#092A31] transition-colors", isExpanded ? "": "group-hover:text-white")}>
+                    <h2 className={cn("text-2xl font-semibold text-[#092A31] transition-all duration-300", isExpanded ? "": "group-hover:text-white")}>
                       {item.company}
                     </h2>
-                    <h3 className={cn("text-sm md:text-base font-semibold text-[#B6CFD4] transition-colors", isExpanded ? "": "group-hover:text-[#D6E8EC]")}>
+                    <h3 className={cn("text-sm md:text-base font-semibold text-[#B6CFD4] transition-all duration-300", isExpanded ? "": "group-hover:text-[#D6E8EC]")}>
                       {item.category}
                     </h3>
                   </div>
-                  <p className={cn("mt-0.5 text-sm text-[#64748B] transition-colors ", isExpanded ? "": "group-hover:text-white")}>
+                  <p className={cn("mt-0.5 text-sm text-[#64748B] transition-all duration-300", isExpanded ? "": "group-hover:text-white")}>
                     {item.role}
                     <span className="mx-1.5" aria-hidden>
                       ·

@@ -1,27 +1,24 @@
 "use client";
 
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { getImageUrl } from "@/lib/utils";
+import { cn, getImageUrl } from "@/lib/utils";
 import { useCountries } from "@/features/portfolio/use-countries";
 import type { UserPortfolioData } from "@/features/portfolio/use-get-portfolio";
-import { PortfolioHero } from "../../dashboard/portfolio/template/classic/portfolio-hero";
-import { MyProjects } from "../../dashboard/portfolio/template/classic/my-project";
+import BoldHero from "../../dashboard/portfolio/template/bold/hero";
+import MyProjects from "../../dashboard/portfolio/template/bold/my-projects";
 import { MyWorkExperience } from "../../dashboard/portfolio/template/classic/my-work-experince";
+import SkillsAndSpecialization from "../../dashboard/portfolio/template/bold/skills-and-specialization";
 import { MyTools } from "../../dashboard/portfolio/template/classic/my-tools";
 import { MyEducationBackground } from "../../dashboard/portfolio/template/classic/my-education-background";
-import { Footer } from "../../dashboard/portfolio/template/classic/footer";
-import { MySpecialization } from "../../dashboard/portfolio/template/classic/my-specializion";
+import Footer from "../../dashboard/portfolio/template/bold/footer";
+import { NAV_ITEMS } from "../classic";
 
-export const NAV_ITEMS = [
-  { href: "#home", label: "Home" },
-  { href: "#projects", label: "Projects" },
-  { href: "#specialization", label: "Specialization" },
-  { href: "#contact", label: "Contact me" },
-] as const;
-
-function formatDuration(start?: string | null, end?: string | null, currentlyWorkThere?: boolean): string {
+function formatDuration(
+  start?: string | null,
+  end?: string | null,
+  currentlyWorkThere?: boolean,
+): string {
   if (!start) return "";
   const startPart = start.slice(0, 7);
   if (currentlyWorkThere) return `${startPart} - Present`;
@@ -29,15 +26,9 @@ function formatDuration(start?: string | null, end?: string | null, currentlyWor
   return `${startPart} - ${end.slice(0, 7)}`;
 }
 
-function mapSpecializationData(raw: unknown[]): string[] {
-  return raw.map((s) => (typeof s === "string" ? s : String((s as { title?: string })?.title ?? s)));
-}
-
-function mapSkillsData(raw: unknown[]): string[] {
-  return raw.map((s) => (typeof s === "string" ? s : String((s as { title?: string; name?: string })?.title ?? (s as { name?: string })?.name ?? s)));
-}
-
-function normalizeJobDescriptions(raw: string[] | string | null | undefined): string[] {
+function normalizeJobDescriptions(
+  raw: string[] | string | null | undefined,
+): string[] {
   if (Array.isArray(raw)) {
     return raw.map((line) => line.trim()).filter(Boolean);
   }
@@ -50,6 +41,26 @@ function normalizeJobDescriptions(raw: string[] | string | null | undefined): st
   return [];
 }
 
+function mapSpecializationData(raw: unknown[]): string[] {
+  return raw.map((item) =>
+    typeof item === "string"
+      ? item
+      : String((item as { title?: string })?.title ?? item),
+  );
+}
+
+function mapSkillsData(raw: unknown[]): string[] {
+  return raw.map((item) =>
+    typeof item === "string"
+      ? item
+      : String(
+        (item as { title?: string; name?: string })?.title ??
+        (item as { name?: string })?.name ??
+        item,
+      ),
+  );
+}
+
 function normalizeSkillLevel(value: string | number | null | undefined): number {
   const parsed =
     typeof value === "number" ? value : Number.parseInt(String(value ?? ""), 10);
@@ -57,67 +68,75 @@ function normalizeSkillLevel(value: string | number | null | undefined): number 
   return Math.min(100, Math.max(0, Math.round(parsed)));
 }
 
-type ClassicProps = {
+type BoldPublicProps = {
   portfolio?: UserPortfolioData | null;
   isLoading?: boolean;
   error?: Error | null | unknown;
-  /** When set, project cards link to the public project view. */
-  portfolioUserId?: string | null;
 };
 
-const ClassicPublic = ({ portfolio, isLoading, error, portfolioUserId }: ClassicProps) => {
+const BoldPublic = ({ portfolio, isLoading, error }: BoldPublicProps) => {
   const { data: countries = [] } = useCountries();
 
   const heroData = useMemo(() => {
     if (!portfolio) return null;
-    const p = portfolio.personalInfo;
-    const b = portfolio.bio;
-    const country = countries.find((c) => c.code === p?.countryCode);
+    const personalInfo = portfolio.personalInfo;
+    const bio = portfolio.bio;
+    const country = countries.find(
+      (countryItem) => countryItem.code === personalInfo?.countryCode,
+    );
     const firstTool = portfolio.tools?.[0];
     const toolBadgeIconUrl =
       firstTool && (firstTool.image || firstTool.url)
         ? getImageUrl(firstTool.image ?? firstTool.url ?? undefined)
         : undefined;
+
     return {
-      name: [p?.firstName, p?.lastName].filter(Boolean).join(" ") || "—",
-      jobTitle: b?.jobTitle || "Professional",
-      bio: b?.bio || "",
-      projectsCount: b?.projectCount || "",
-      yearsExperience: b?.yearsOfExperience || "",
-      countryName: country?.name ?? p?.location ?? "",
+      name:
+        [personalInfo?.firstName, personalInfo?.lastName]
+          .filter(Boolean)
+          .join(" ") || "—",
+      jobTitle: bio?.jobTitle || "Professional",
+      bio: bio?.bio || "",
+      projectsCount: bio?.projectCount || "",
+      yearsExperience: bio?.yearsOfExperience || "",
+      countryName: country?.name ?? personalInfo?.location ?? "",
       countryFlagUrl: country?.flag,
-      avatarUrl: p?.image || undefined,
+      avatarUrl: personalInfo?.image || undefined,
       showAvatar: portfolio.setting?.showProfilePicture ?? true,
       toolBadge: firstTool?.name || undefined,
       toolBadgeIconUrl: toolBadgeIconUrl || undefined,
     };
-  }, [portfolio, countries]);
+  }, [countries, portfolio]);
 
   const projects = useMemo(() => {
-    return (portfolio?.projects ?? []).map((p, index) => ({
+    return (portfolio?.projects ?? []).map((project, index) => ({
       id:
-        p.id != null && String(p.id).trim() !== ""
-          ? String(p.id)
-          : String(p.coverImage ?? p.title ?? index),
-      title: p.title || "Untitled",
-      tags: p.category ? [p.category] : [],
+        project.id != null && String(project.id).trim() !== ""
+          ? String(project.id)
+          : String(project.coverImage ?? project.title ?? index),
+      title: project.title || "Untitled",
+      tags: project.category ? [project.category] : [],
       imageUrl:
         getImageUrl(
-          p.coverImage ??
-          (Array.isArray(p.projectFiles) && p.projectFiles[0]
-            ? String(p.projectFiles[0])
+          project.coverImage ??
+          (Array.isArray(project.projectFiles) && project.projectFiles[0]
+            ? String(project.projectFiles[0])
             : null),
         ) || undefined,
     }));
   }, [portfolio?.projects]);
 
   const workItems = useMemo(() => {
-    return (portfolio?.workExperience ?? []).map((w) => ({
-      company: w.companyName || "",
-      category: w.industry || "",
-      role: w.jobTitle || "",
-      duration: formatDuration(w.startDate, w.endDate, w.currentlyWorkThere),
-      descriptions: normalizeJobDescriptions(w.jobDescription),
+    return (portfolio?.workExperience ?? []).map((work) => ({
+      company: work.companyName || "",
+      category: work.industry || "",
+      role: work.jobTitle || "",
+      duration: formatDuration(
+        work.startDate,
+        work.endDate,
+        work.currentlyWorkThere,
+      ),
+      descriptions: normalizeJobDescriptions(work.jobDescription),
     }));
   }, [portfolio?.workExperience]);
 
@@ -126,23 +145,23 @@ const ClassicPublic = ({ portfolio, isLoading, error, portfolioUserId }: Classic
     return mapSpecializationData(raw);
   }, [portfolio?.category?.specializationData]);
 
-  const softSkills = useMemo(() => {
+  const skills = useMemo(() => {
     const raw = (portfolio?.category?.skills ?? []) as unknown[];
     return mapSkillsData(raw);
   }, [portfolio?.category?.skills]);
 
   const tools = useMemo(() => {
-    return (portfolio?.tools ?? []).map((t) => ({
-      name: t.name || "",
-      iconUrl: getImageUrl(t.image ?? t.url ?? undefined) || undefined,
-      skillLevel: normalizeSkillLevel(t.skillLevel ?? t.skill_level),
+    return (portfolio?.tools ?? []).map((tool) => ({
+      name: tool.name || "",
+      iconUrl: getImageUrl(tool.image ?? tool.url ?? undefined) || undefined,
+      skillLevel: normalizeSkillLevel(tool.skillLevel ?? tool.skill_level),
     }));
   }, [portfolio?.tools]);
 
   const educationEntries = useMemo(() => {
-    return (portfolio?.educationalBackground ?? []).map((e) => ({
-      institution: e.schoolName || "",
-      degree: e.qualification || "",
+    return (portfolio?.educationalBackground ?? []).map((education) => ({
+      institution: education.schoolName || "",
+      degree: education.qualification || "",
     }));
   }, [portfolio?.educationalBackground]);
 
@@ -150,34 +169,50 @@ const ClassicPublic = ({ portfolio, isLoading, error, portfolioUserId }: Classic
 
   const footerContact = useMemo(() => {
     if (!portfolio?.personalInfo) return undefined;
-    const p = portfolio.personalInfo;
-    const country = countries.find((c) => c.code === p?.countryCode);
-    const phone = p?.phoneNumber?.trim() ?? "";
-    const email = p?.email?.trim() ?? "";
-    const countryName = (country?.name ?? p?.location ?? "").trim();
+    const personalInfo = portfolio.personalInfo;
+    const country = countries.find(
+      (countryItem) => countryItem.code === personalInfo?.countryCode,
+    );
+    const phone = personalInfo?.phoneNumber?.trim() ?? "";
+    const email = personalInfo?.email?.trim() ?? "";
+    const countryName = (country?.name ?? personalInfo?.location ?? "").trim();
     if (!phone && !email && !countryName) return undefined;
+
     return {
       phone: phone || "—",
       email: email || "—",
       country: countryName || "—",
       region: country?.subregion || country?.region || undefined,
-      countryCode: p?.countryCode?.trim() || undefined,
+      countryCode: personalInfo?.countryCode?.trim() || undefined,
     };
-  }, [portfolio?.personalInfo, countries]);
+  }, [countries, portfolio?.personalInfo]);
 
   const footerSocialLinks = useMemo(() => {
-    const s = portfolio?.social;
-    const p = portfolio?.personalInfo;
-    const hasSocial = s?.linkedIn || s?.twitter;
-    const hasContact = p?.phoneNumber || p?.email;
+    const social = portfolio?.social;
+    const personalInfo = portfolio?.personalInfo;
+    const hasSocial = social?.linkedIn || social?.twitter;
+    const hasContact = personalInfo?.phoneNumber || personalInfo?.email;
     if (!hasSocial && !hasContact) return undefined;
+
     const links: { type: "twitter" | "linkedin" | "phone" | "mail"; href: string; label: string }[] = [];
-    if (s?.linkedIn) links.push({ type: "linkedin", href: s.linkedIn, label: "LinkedIn" });
-    if (s?.twitter) links.push({ type: "twitter", href: s.twitter!, label: "X (Twitter)" });
-    if (p?.phoneNumber) links.push({ type: "phone", href: `tel:${p.phoneNumber.replace(/\s/g, "")}`, label: "Phone" });
-    if (p?.email) links.push({ type: "mail", href: `mailto:${p.email}`, label: "Email" });
+    if (social?.linkedIn) {
+      links.push({ type: "linkedin", href: social.linkedIn, label: "LinkedIn" });
+    }
+    if (social?.twitter) {
+      links.push({ type: "twitter", href: social.twitter, label: "X (Twitter)" });
+    }
+    if (personalInfo?.phoneNumber) {
+      links.push({
+        type: "phone",
+        href: `tel:${personalInfo.phoneNumber.replace(/\s/g, "")}`,
+        label: "Phone",
+      });
+    }
+    if (personalInfo?.email) {
+      links.push({ type: "mail", href: `mailto:${personalInfo.email}`, label: "Email" });
+    }
     return links.length > 0 ? links : undefined;
-  }, [portfolio?.social, portfolio?.personalInfo]);
+  }, [portfolio?.personalInfo, portfolio?.social]);
 
   if (isLoading) {
     return (
@@ -231,34 +266,34 @@ const ClassicPublic = ({ portfolio, isLoading, error, portfolioUserId }: Classic
           })}
         </nav>
       </header>
-      <PortfolioHero
+      <BoldHero
         id="home"
-        value={heroData ?? {
-          name: "—",
-          jobTitle: "Professional",
-          bio: "",
-          projectsCount: "",
-          yearsExperience: "",
-          countryName: "",
-          avatarUrl: undefined,
-          showAvatar: true,
-          toolBadge: undefined,
-
-        }}
+        value={
+          heroData ?? {
+            name: "—",
+            jobTitle: "Professional",
+            bio: "",
+            projectsCount: "",
+            yearsExperience: "",
+            countryName: "",
+            avatarUrl: undefined,
+            showAvatar: true,
+            toolBadge: undefined,
+          }
+        }
       />
-
-      <MyProjects
-        id="projects"
-        projects={projects}
-        onAddProject={() => { }}
-        publicPortfolioUserId={portfolioUserId ?? undefined}
-      />
+      <MyProjects id="projects" projects={projects} />
       <MyWorkExperience items={workItems} />
-      <MySpecialization id="specialization" specializations={specializations} softSkills={softSkills} />
+      <SkillsAndSpecialization
+        id="specialization"
+        skills={skills}
+        specializations={specializations}
+      />
       <MyTools
         tools={tools}
         title={categoryTitle}
         showToolsRate={portfolio?.setting?.showToolsRate ?? true}
+        temp="bold"
       />
       <MyEducationBackground entries={educationEntries} />
       <Footer
@@ -270,4 +305,4 @@ const ClassicPublic = ({ portfolio, isLoading, error, portfolioUserId }: Classic
   );
 };
 
-export default ClassicPublic;
+export default BoldPublic;
