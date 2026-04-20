@@ -43,12 +43,12 @@ const ToolsSlider = () => {
         </div>
         {/* Left edge blur/fade - matches section bg #092A31 */}
         <div
-          className="absolute left-0 top-0 bottom-0 w-6 z-10 pointer-events-none bg-gradient-to-r from-[#092A31] via-[#092A31]/60 to-transparent backdrop-blur-sm"
+          className="absolute left-0 top-0 bottom-0 w-6 z-10 pointer-events-none bg-linear-to-r from-[#092A31] via-[#092A31]/60 to-transparent backdrop-blur-sm"
           aria-hidden
         />
         {/* Right edge blur/fade */}
         <div
-          className="absolute right-0 top-0 bottom-0 w-6 z-10 pointer-events-none bg-gradient-to-l from-[#092A31] via-[#092A31]/60 to-transparent backdrop-blur-sm"
+          className="absolute right-0 top-0 bottom-0 w-6 z-10 pointer-events-none bg-linear-to-l from-[#092A31] via-[#092A31]/60 to-transparent backdrop-blur-sm"
           aria-hidden
         />
       </div>
