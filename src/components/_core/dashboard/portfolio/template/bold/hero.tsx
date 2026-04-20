@@ -27,7 +27,7 @@ export function BoldHero({ value, id }: BoldHeroProps) {
   return (
     <section id={id} className="mt-16">
       {/* Top row: text + avatar */}
-      <div className="flex items-center justify-between gap-6 max-w-270">
+      <div className="flex items-center justify-between gap-6 max-w-300">
         <div className="flex-1">
           <h1
             data-aos="fade-right"
@@ -58,8 +58,8 @@ export function BoldHero({ value, id }: BoldHeroProps) {
             <Image
               src={value.avatarUrl}
               alt={`${value.name || "Profile"} avatar`}
-              width={60}
-              height={60}
+              width={54}
+              height={54}
               className="size-20 md:size-24 rounded-full object-cover border-4 border-[#E8EFF1] shadow-sm"
             />
           </div>
