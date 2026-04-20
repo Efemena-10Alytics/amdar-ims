@@ -24,7 +24,7 @@ const InternshipHeroTwo = () => {
       {/* Primary Color Background */}
       <div className="absolute inset-0 bg-primary z-0" />
       {/* Ellipse Overlay */}
-      <div
+      {/* <div
         className="absolute inset-0 z-1"
         style={{
           backgroundImage: "url(/images/svgs/hero-ellipse.svg)",
@@ -32,7 +32,7 @@ const InternshipHeroTwo = () => {
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
         }}
-      />
+      /> */}
       <IconOrbit />
 
       {/* Hero Section */}
