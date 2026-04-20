@@ -3,34 +3,28 @@ import Image from 'next/image';
 
 
 const HERO_FLOATING_ICONS = [
-    { src: "/images/svgs/tools/figma.svg", alt: "Figma", sizeClass: "size-12" },
-    { src: "/images/svgs/tools/canva.svg", alt: "Canva", sizeClass: "size-16" },
-    { src: "/images/svgs/tools/jira.svg", alt: "Jira", sizeClass: "size-12" },
-    { src: "/images/svgs/tools/trello.svg", alt: "Trello", sizeClass: "size-13" },
-    { src: "/images/svgs/tools/notion.svg", alt: "Notion", sizeClass: "size-12" },
-    { src: "/images/svgs/tools/sketch.svg", alt: "Sketch", sizeClass: "size-16" },
-    { src: "/images/svgs/tools/photoshop.svg", alt: "Photoshop", sizeClass: "size-16" },
-    { src: "/images/svgs/tools/adobe-illustrator.svg", alt: "Adobe Illustrator", sizeClass: "size-12" },
-    { src: "/images/svgs/tools/figma.svg", alt: "Figma 2", sizeClass: "size-13" },
-    { src: "/images/svgs/tools/canva.svg", alt: "Canva 2", sizeClass: "size-12" },
-    { src: "/images/svgs/tools/jira.svg", alt: "Jira 2", sizeClass: "size-16" },
-    { src: "/images/svgs/tools/trello.svg", alt: "Trello 2", sizeClass: "size-12" },
-    { src: "/images/svgs/tools/notion.svg", alt: "Notion 2", sizeClass: "size-13" },
-    { src: "/images/svgs/tools/sketch.svg", alt: "Sketch 2", sizeClass: "size-12" },
-    { src: "/images/svgs/tools/photoshop.svg", alt: "Photoshop 2", sizeClass: "size-13" },
-    { src: "/images/svgs/tools/adobe-illustrator.svg", alt: "Adobe Illustrator 2", sizeClass: "size-12" },
-    { src: "/images/svgs/tools/figma.svg", alt: "Figma 3", sizeClass: "size-16" },
-    { src: "/images/svgs/tools/trello.svg", alt: "Trello 3", sizeClass: "size-12" },
-    { src: "/images/svgs/tools/canva.svg", alt: "Canva 3", sizeClass: "size-13" },
-    { src: "/images/svgs/tools/jira.svg", alt: "Jira 3", sizeClass: "size-12" },
-    { src: "/images/svgs/tools/notion.svg", alt: "Notion 3", sizeClass: "size-12" },
-    { src: "/images/svgs/tools/sketch.svg", alt: "Sketch 3", sizeClass: "size-16" },
-    { src: "/images/svgs/tools/photoshop.svg", alt: "Photoshop 3", sizeClass: "size-16" },
-    { src: "/images/svgs/tools/adobe-illustrator.svg", alt: "Adobe Illustrator 3", sizeClass: "size-12" },
-    { src: "/images/svgs/tools/figma.svg", alt: "Figma 4", sizeClass: "size-16" },
-    { src: "/images/svgs/tools/canva.svg", alt: "Canva 4", sizeClass: "size-13" },
-    { src: "/images/svgs/tools/jira.svg", alt: "Jira 4", sizeClass: "size-12" },
-    { src: "/images/svgs/tools/trello.svg", alt: "Trello 4", sizeClass: "size-12" },
+    { src: "/images/svgs/hero-two-icons/figma.svg.svg", alt: "Figma", sizeClass: "size-12" },
+    { src: "/images/svgs/hero-two-icons/microsoft.svg", alt: "Microsoft", sizeClass: "size-16" },
+    { src: "/images/svgs/hero-two-icons/atlassian_symbol.svg", alt: "Atlassian", sizeClass: "size-12" },
+    { src: "/images/svgs/hero-two-icons/salesforce_logo.svg", alt: "Salesforce", sizeClass: "size-13" },
+    { src: "/images/svgs/hero-two-icons/notion.svg.svg", alt: "Notion", sizeClass: "size-12" },
+    { src: "/images/svgs/hero-two-icons/Ubuntu.svg", alt: "Ubuntu", sizeClass: "size-16" },
+    { src: "/images/svgs/hero-two-icons/figma.svg-1.svg", alt: "Figma 2", sizeClass: "size-13" },
+    { src: "/images/svgs/hero-two-icons/microsoft.svg", alt: "Microsoft 2", sizeClass: "size-12" },
+    { src: "/images/svgs/hero-two-icons/atlassian_symbol.svg", alt: "Atlassian 2", sizeClass: "size-16" },
+    { src: "/images/svgs/hero-two-icons/salesforce_logo.svg", alt: "Salesforce 2", sizeClass: "size-12" },
+    { src: "/images/svgs/hero-two-icons/notion.svg.svg", alt: "Notion 2", sizeClass: "size-13" },
+    { src: "/images/svgs/hero-two-icons/Ubuntu.svg", alt: "Ubuntu 2", sizeClass: "size-12" },
+    { src: "/images/svgs/hero-two-icons/figma.svg.svg", alt: "Figma 3", sizeClass: "size-16" },
+    { src: "/images/svgs/hero-two-icons/microsoft.svg", alt: "Microsoft 3", sizeClass: "size-12" },
+    { src: "/images/svgs/hero-two-icons/atlassian_symbol.svg", alt: "Atlassian 3", sizeClass: "size-13" },
+    { src: "/images/svgs/hero-two-icons/salesforce_logo.svg", alt: "Salesforce 3", sizeClass: "size-12" },
+    { src: "/images/svgs/hero-two-icons/notion.svg.svg", alt: "Notion 3", sizeClass: "size-12" },
+    { src: "/images/svgs/hero-two-icons/Ubuntu.svg", alt: "Ubuntu 3", sizeClass: "size-16" },
+    { src: "/images/svgs/hero-two-icons/figma.svg.svg", alt: "Figma 4", sizeClass: "size-16" },
+    { src: "/images/svgs/hero-two-icons/microsoft.svg", alt: "Microsoft 4", sizeClass: "size-13" },
+    { src: "/images/svgs/hero-two-icons/atlassian_symbol.svg", alt: "Atlassian 4", sizeClass: "size-12" },
+    { src: "/images/svgs/hero-two-icons/salesforce_logo.svg", alt: "Salesforce 4", sizeClass: "size-12" },
 ] as const;
 
 const HERO_ORBIT_LAYERS = [
@@ -86,14 +80,14 @@ const IconOrbit = () => {
                                     >
                                         <div
                                             className={cn(
-                                                "hero-two-icon-spin rounded-full border border-white/8 bg-white/6 opacity-45 flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.08)]",
+                                                "hero-two-icon-spin rounded-full border border-white/8  flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.08)]",
                                                 layer.sizeClass,
                                             )}
                                         >
                                             <div className="flex size-[62%] items-center justify-center rounded-full ">
                                                 {isEmptySlot ? (
                                                     <span
-                                                        className="block size-[58%] rounded-full bg-white/1"
+                                                        className="block size-[58%] rounded-full "
                                                         aria-hidden
                                                     />
                                                 ) : (
@@ -102,7 +96,7 @@ const IconOrbit = () => {
                                                         alt={icon.alt}
                                                         width={28}
                                                         height={28}
-                                                        className="h-auto w-[58%] object-contain blur-[0.4px] grayscale"
+                                                        className="h-auto w-[58%] object-contain"
                                                     />
                                                 )}
                                             </div>

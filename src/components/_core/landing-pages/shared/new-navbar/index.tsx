@@ -158,7 +158,7 @@ const Navbar = () => {
 
   return (
     <>
-      {showSalesBanner && <SalesBanner />}
+      {/* {showSalesBanner && <SalesBanner />} */}
       <div
         className={cn(
           "top-0 left-0 right-0 z-50 -mt-px",
