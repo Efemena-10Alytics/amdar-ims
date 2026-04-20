@@ -1,9 +1,9 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import Classic from "@/components/_core/public-portfolio/classic";
-import { useGetPortfolioByUserId } from "@/features/portfolio/use-get-portfolio-by-id";
 import { useGetPortfolioBySharePathname } from "@/features/portfolio/use-get-portfolio-share";
+import ClassicPublic from "@/components/_core/public-portfolio/classic";
+import BoldPublic from "@/components/_core/public-portfolio/bold";
 
 export default function PortfolioByUserIdPage() {
   const params = useParams();
@@ -12,11 +12,17 @@ export default function PortfolioByUserIdPage() {
 
   return (
     <div className="mt-10">
-      <Classic
+      {/* <ClassicPublic
         portfolio={portfolio}
         isLoading={isLoading}
         error={error}
         portfolioUserId={userId}
+      /> */}
+      <BoldPublic
+        portfolio={portfolio}
+        isLoading={isLoading}
+        error={error}
+      // portfolioUserId={userId}
       />
     </div>
   );

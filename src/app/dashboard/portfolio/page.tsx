@@ -17,6 +17,7 @@ import { PortfolioSettingsModal } from "@/components/_core/dashboard/portfolio/p
 import CreateClassic from "@/components/_core/dashboard/portfolio/template/classic";
 import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { usePortfolioCompletionRedirect } from "@/hooks/use-portfolio-completion-redirect";
+import BoldTemplate from "@/components/_core/dashboard/portfolio/template/bold";
 
 const TEMPLATES = [
   { id: "classic", label: "Classic", comingSoon: false },
@@ -227,7 +228,8 @@ export default function PortfolioPage() {
         portfolioHref={portfolioHref}
       />
 
-      <CreateClassic />
+      {/* <CreateClassic /> */}
+      <BoldTemplate portfolio={portfolio} />
       {shareWarning ? (
         <InfoToastBanner
           message={shareWarning}
