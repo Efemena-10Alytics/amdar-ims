@@ -108,21 +108,21 @@ const InternshipHeroTwo = () => {
             title="Real-world Projects"
             description="Industry-relevant projects that replicate real-world challenges, helping you build practical skills."
             buttonText="Get me started"
-            dataAos="fade-up"
+            // dataAos="fade-down"
           // dataAosDuration="00"
           />
           <ServiceCard
             title="Work Experience Internship"
             description="Work experience internship with businesses that will connect you with global work opportunities and mentorship"
             buttonText="Apply now"
-            dataAos="fade-up"
+            // dataAos="fade-down"
             dataAosDuration="1000"
           />
           <ServiceCard
             title="Interview Prep"
             description="We help you prepare for interviews by revamping your CV and coaching you on acing technical questions."
             buttonText="I need this"
-            dataAos="fade-up"
+            // dataAos="fade-down"
             dataAosDuration="1200"
           />
         </div>
