@@ -5,6 +5,8 @@ import { getSiteUrl } from "@/lib/site-url";
 export const revalidate = 3600;
 
 const FETCH_INIT = { next: { revalidate: 3600 } } as const;
+const SITEMAP_REQUEST_TIMEOUT_MS = 8000;
+const SITEMAP_MAX_BLOG_PAGES = 20;
 
 type BlogListItem = {
   slug?: string | null;
@@ -84,7 +86,10 @@ async function fetchAllBlogsForSitemap(
   do {
     const res = await fetch(
       `${apiBase}/blogs/all?page=${page}`,
-      FETCH_INIT,
+      {
+        ...FETCH_INIT,
+        signal: AbortSignal.timeout(SITEMAP_REQUEST_TIMEOUT_MS),
+      },
     );
     if (!res.ok) throw new Error(`blogs/all failed: ${res.status}`);
     const payload = (await res.json()) as AllBlogsApiResponse;
@@ -92,7 +97,7 @@ async function fetchAllBlogsForSitemap(
     collected.push(...data);
     lastPage = last_page;
     page += 1;
-  } while (page <= lastPage);
+  } while (page <= lastPage && page <= SITEMAP_MAX_BLOG_PAGES);
 
   return collected;
 }
@@ -119,7 +124,10 @@ function normalizeInternshipProgramsPayload(data: unknown): InternshipProgramRow
 async function fetchInternshipProgramsForSitemap(
   apiBase: string,
 ): Promise<InternshipProgramRow[]> {
-  const res = await fetch(`${apiBase}/internship-programs-all`, FETCH_INIT);
+  const res = await fetch(`${apiBase}/internship-programs-all`, {
+    ...FETCH_INIT,
+    signal: AbortSignal.timeout(SITEMAP_REQUEST_TIMEOUT_MS),
+  });
   if (!res.ok) throw new Error(`internship-programs-all failed: ${res.status}`);
   const json: unknown = await res.json();
   return normalizeInternshipProgramsPayload(json);
@@ -169,8 +177,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let blogEntries: MetadataRoute.Sitemap = [];
   let internshipEntries: MetadataRoute.Sitemap = [];
 
-  try {
-    const blogs = await fetchAllBlogsForSitemap(apiBase);
+  const [blogsResult, programsResult] = await Promise.allSettled([
+    fetchAllBlogsForSitemap(apiBase),
+    fetchInternshipProgramsForSitemap(apiBase),
+  ]);
+
+  if (blogsResult.status === "fulfilled") {
+    const blogs = blogsResult.value;
     const seenSlugs = new Set<string>();
     blogEntries = blogs
       .map((item) => {
@@ -186,12 +199,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         };
       })
       .filter((e): e is NonNullable<typeof e> => e != null);
-  } catch {
+  } else {
     blogEntries = [];
   }
 
-  try {
-    const programs = await fetchInternshipProgramsForSitemap(apiBase);
+  if (programsResult.status === "fulfilled") {
+    const programs = programsResult.value;
     const excludedSlugs = new Set<string>(EXCLUDED_INTERNSHIP_PROGRAM_SLUGS);
     internshipEntries = programs
       .filter(
@@ -215,7 +228,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           priority: 0.6,
         };
       });
-  } catch {
+  } else {
     internshipEntries = [];
   }
 
