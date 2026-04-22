@@ -39,6 +39,7 @@ const HERO_ORBIT_LAYERS = [
 ] as const;
 
 const EMPTY_ICON_COUNT = 6;
+const ACTIVE_COLORED_ICONS_PER_LAYER = 10;
 
 function createPseudoRandomIndexSet(total: number, count: number): Set<number> {
     const limit = Math.min(Math.max(0, count), total);
@@ -82,11 +83,18 @@ const IconOrbit = () => {
                 return;
             }
 
-            const nextSlots = HERO_ORBIT_LAYERS.map((layer) => ({
-                layerName: layer.name,
-                iconIndex:
-                    validIconIndexes[Math.floor(Math.random() * validIconIndexes.length)],
-            }));
+            const slotsPerLayer = Math.min(
+                ACTIVE_COLORED_ICONS_PER_LAYER,
+                validIconIndexes.length,
+            );
+
+            const nextSlots = HERO_ORBIT_LAYERS.flatMap((layer) => {
+                const shuffled = [...validIconIndexes].sort(() => Math.random() - 0.5);
+                return shuffled.slice(0, slotsPerLayer).map((iconIndex) => ({
+                    layerName: layer.name,
+                    iconIndex,
+                }));
+            });
             setActiveColoredSlots(nextSlots);
         };
 
