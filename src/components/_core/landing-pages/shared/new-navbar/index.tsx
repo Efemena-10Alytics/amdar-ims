@@ -49,15 +49,15 @@ const linkClass = (isActive: boolean, useWhiteText: boolean) =>
       : "text-primary hover:text-[#0f4d5a]",
   );
 
-/** White “More Program” trigger on teal bar — styling lives here only (no shared navbar edits). */
-function MoreProgramOnTealNav({ showWhiteNav }: { showWhiteNav: boolean }) {
+/** Keep More Program text color in sync with other top-level nav links. */
+function MoreProgramOnTealNav({ useWhiteText }: { useWhiteText: boolean }) {
   return (
     <MoreDropdown
-      showWhiteNav={showWhiteNav}
+      showWhiteNav={!useWhiteText}
       className={
-        showWhiteNav
-          ? "[&_button]:text-primary! [&_button:hover]:text-[#0f4d5a]!"
-          : "[&_button]:text-white! [&_button:hover]:text-white/90!"
+        useWhiteText
+          ? "[&_button]:text-white! [&_button:hover]:text-white/90!"
+          : "[&_button]:text-primary! [&_button:hover]:text-[#0f4d5a]!"
       }
     />
   );
@@ -78,10 +78,8 @@ const Navbar = () => {
   const isLoggedIn = user != null;
   const isHomePageRoute = pathname === "/home";
   const shouldStickNav = !isHomePageRoute || isPastHomeHero;
-  const shouldUseScrolledNavStyles = isHomePageRoute
-    ? shouldStickNav
-    : useGlassNav;
-  const showWhiteNav = useGlassNav && shouldStickNav;
+  const shouldUseScrolledNavStyles = isHomePageRoute ? shouldStickNav : true;
+  const showWhiteNav = isHomePageRoute ? useGlassNav && shouldStickNav : true;
   const logoImg = shouldUseScrolledNavStyles
     ? "/logo.svg"
     : isHomePageRoute
@@ -109,9 +107,8 @@ const Navbar = () => {
 
   useEffect(() => {
     const updateGlass = () => {
-      const h = navBarRef.current?.getBoundingClientRect().height ?? 96;
-      const threshold = Math.max(4, Math.round(h * 0.92));
-      setUseGlassNav(window.scrollY >= threshold);
+      // Activate nav scrolled styles immediately once user starts scrolling.
+      setUseGlassNav(window.scrollY > 0);
     };
     updateGlass();
     window.addEventListener("scroll", updateGlass, { passive: true });
@@ -161,14 +158,14 @@ const Navbar = () => {
       {/* {showSalesBanner && <SalesBanner />} */}
       <div
         className={cn(
-          "top-0 left-0 right-0 z-50 -mt-px",
+          "top-0 left-0 right-0 z-[120] isolate -mt-px",
           shouldStickNav ? "sticky" : "relative",
         )}
       >
         <nav
           ref={navBarRef}
           className={cn(
-            "relative w-full mt-0 border-b border-t-0 shadow-sm",
+            "relative z-[121] w-full mt-0 border-b border-t-0 shadow-sm",
             "transition-[background-color,backdrop-filter,border-b-color,box-shadow,color] duration-300 ease-out",
             showWhiteNav
               ? cn(
@@ -234,7 +231,7 @@ const Navbar = () => {
                     </Link>
                   );
                 })}
-                <MoreProgramOnTealNav showWhiteNav={useGlassNav} />
+                <MoreProgramOnTealNav useWhiteText={useWhiteNavLinkText} />
               </div>
 
               <div className="hidden shrink-0 items-center gap-3 lg:flex">
