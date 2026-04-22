@@ -4,14 +4,8 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { useAuthStore, type AuthUser } from "@/store/auth-store";
+import { useAuthStore } from "@/store/auth-store";
 import type { CheckoutSelections } from "@/types/payment";
 import {
   INTERNSHIP_FALLBACK_PLAN_TOTAL,
@@ -30,12 +24,12 @@ const PERSONAL_DATA_KEYS: Array<{
   label: string;
   withFlag?: boolean;
 }> = [
-  { key: "firstName", label: "First name" },
-  { key: "lastName", label: "Last name" },
-  { key: "email", label: "Email" },
-  { key: "phoneNumber", label: "Phone number" },
-  { key: "location", label: "Location", withFlag: true },
-];
+    { key: "firstName", label: "First name" },
+    { key: "lastName", label: "Last name" },
+    { key: "email", label: "Email" },
+    { key: "phoneNumber", label: "Phone number" },
+    { key: "location", label: "Location", withFlag: true },
+  ];
 
 /** Get date N months from today as YYYY-MM-DD. Optional dayOfMonth (1–31) for fixed day. */
 function formatDateToLocalYmd(date: Date): string {
@@ -124,7 +118,6 @@ const PaymentDetails = ({
   const [confirmInfo, setConfirmInfo] = useState(false);
   const [confirmTerms, setConfirmTerms] = useState(false);
   const [editDataOpen, setEditDataOpen] = useState(false);
-  const [iwdPdfModalOpen, setIwdPdfModalOpen] = useState(false);
   const [localNextPaymentDateYmd, setLocalNextPaymentDateYmd] = useState(() =>
     getNextPaymentDateYmd(1),
   );
@@ -134,13 +127,13 @@ const PaymentDetails = ({
 
   const isInstallmentPlan =
     checkoutSelections?.planId && checkoutSelections.planId !== "full";
-  const { user, setUser } = useAuthStore();
+  const { user } = useAuthStore();
   const profile =
     user &&
-    typeof user === "object" &&
-    "user" in user &&
-    user.user &&
-    typeof user.user === "object"
+      typeof user === "object" &&
+      "user" in user &&
+      user.user &&
+      typeof user.user === "object"
       ? (user.user as Record<string, unknown>)
       : (user as Record<string, unknown> | null);
   const personalData = useMemo(
@@ -277,7 +270,7 @@ const PaymentDetails = ({
                 </p>
               </div>
               {checkoutSelections?.installmentBreakdown &&
-              checkoutSelections.installmentBreakdown.length > 0 ? (
+                checkoutSelections.installmentBreakdown.length > 0 ? (
                 <div className="space-y-2 border-[#B6CFD4]/50">
                   {checkoutSelections.installmentBreakdown.map((item, i) => (
                     <div key={i} className="flex justify-between text-sm pt-2">
@@ -397,19 +390,8 @@ const PaymentDetails = ({
                 className="font-medium text-primary underline underline-offset-2 hover:text-primary/90"
               >
                 Amdari Terms & Conditions
-              </Link>{" "} and the {" "}
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setIwdPdfModalOpen(true);
-                }}
-                className="font-medium text-primary underline underline-offset-2 hover:text-primary/90 cursor-pointer bg-transparent border-0 p-0 align-baseline"
-              >
-                IWD Terms
-              </button>{" "}
-              attached above and I agree.
+              </Link>
+              {" "} and I agree.
             </span>
           </label>
         </div>
@@ -424,7 +406,7 @@ const PaymentDetails = ({
           className={cn(
             "w-full h-12 text-base font-semibold hidden lg:block",
             (!confirmInfo || !confirmTerms || isProcessingPayment) &&
-              "pointer-events-none opacity-60",
+            "pointer-events-none opacity-60",
           )}
           size="lg"
           disabled={!confirmInfo || !confirmTerms || isProcessingPayment}
@@ -438,7 +420,7 @@ const PaymentDetails = ({
         className={cn(
           "w-full py-6 text-base font-semibold lg:hidden",
           (!confirmInfo || !confirmTerms || isProcessingPayment) &&
-            "pointer-events-none opacity-60",
+          "pointer-events-none opacity-60",
         )}
         size="lg"
         disabled={!confirmInfo || !confirmTerms || isProcessingPayment}
@@ -452,23 +434,6 @@ const PaymentDetails = ({
         onOpenChange={setEditDataOpen}
         initialData={editInitialData}
       />
-
-      <Dialog open={iwdPdfModalOpen} onOpenChange={setIwdPdfModalOpen}>
-        <DialogContent className="max-w-5xl! w-full max-h-[95vh] flex flex-col p-0 gap-0">
-          <DialogHeader className="shrink-0 px-4 py-3 border-b border-gray-200">
-            <DialogTitle className="text-lg font-semibold text-[#092A31]">
-              IWD Terms
-            </DialogTitle>
-          </DialogHeader>
-          <div className="flex-1 min-h-0 p-4">
-            <iframe
-              src="/docs/IWD%202026.pdf"
-              title="IWD Terms PDF"
-              className="w-full h-[82vh] rounded border border-gray-200 bg-gray-100"
-            />
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
