@@ -112,7 +112,7 @@ const TOOL_ICONS: Record<string, string> = {
   "Sales force": "/images/svgs/tools/sales-force.svg",
 };
 
-export function ViewProjectContent({
+export function ViewProjectContentClassic({
   project,
   onEdit,
   onDelete,
@@ -132,7 +132,7 @@ export function ViewProjectContent({
 
   return (
     <div className="min-h-full flex flex-col p-5">
-      <header className="flex items-center justify-between w-full border-b border-zinc-200 bg-white py-4">
+      <header className="flex items-center justify-between w-full bg-white py-4">
         <Link
           href={backHref}
           className="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-700 transition-colors"
@@ -203,7 +203,7 @@ export function ViewProjectContent({
       </div>
 
       {/* Two columns */}
-      <div className="flex-1 py-8 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 lg:gap-12">
+      <div className="flex-1 py-8 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 lg:gap-10">
         {/* Left column */}
         <div className="space-y-8">
           <div>
@@ -217,7 +217,7 @@ export function ViewProjectContent({
               </section>
             )}
             {project.tools && project.tools.length > 0 && (
-              <div className="flex flex-wrap gap-3 mt-2">
+              <div className="flex flex-wrap gap-3 mt-6">
                 {project.tools.map((tool) => {
                   const iconSrc = tool.iconUrl ?? TOOL_ICONS[tool.name];
                   return (
@@ -377,7 +377,7 @@ export function ViewProjectContent({
                 <button
                   type="button"
                   onClick={() => openViewLinkModal(project.solutionUrl!)}
-                  className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-start justify-between gap-3 hover:bg-[#dde8eb] transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                  className="rounded-lg w-full bg-[#E8EFF1] px-4 py-3 flex items-start justify-between gap-3 hover:bg-[#dde8eb] transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 >
                   <div className="min-w-0 flex-1 text-left">
                     <div className="text-sm font-medium text-[#092A31]">
@@ -414,7 +414,7 @@ export function ViewProjectContent({
                 <button
                   type="button"
                   onClick={() => openViewLinkModal(project.mediaUrl!)}
-                  className="rounded-lg bg-[#E8EFF1] px-4 py-3 flex items-start justify-between gap-3 hover:bg-[#dde8eb] transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                  className="rounded-lg w-full bg-[#E8EFF1] px-4 py-3 flex items-start justify-between gap-3 hover:bg-[#dde8eb] transition-colors group outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 >
                   <div className="min-w-0 flex-1 text-left">
                     <div className="text-sm font-medium text-[#092A31]">

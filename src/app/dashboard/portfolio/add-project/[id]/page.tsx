@@ -5,11 +5,12 @@ import { useParams, useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import {
-  ViewProjectContent,
+  ViewProjectContentClassic,
   mapProjectToViewData,
   stableProjectListId,
   type OtherProjectLink,
-} from "./view-project-content";
+} from "../../../../../components/_core/dashboard/portfolio/template/classic/view-project-content-classic";
+import { ViewProjectContentBold } from "../../../../../components/_core/dashboard/portfolio/template/bold/view-project-content-bold";
 import { useGetProjectByUserId } from "@/features/portfolio/use-get-project-by-id";
 import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
 import { getImageUrl } from "@/lib/utils";
@@ -147,13 +148,23 @@ export default function ViewProjectPage() {
 
   return (
     <>
-      <ViewProjectContent
-        project={project}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        isDeletePending={isDeleting}
-        otherProjects={otherProjects}
-      />
+      {portfolioData?.setting?.template?.trim().toLowerCase() === "bold" ? (
+        <ViewProjectContentBold
+          project={project}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          isDeletePending={isDeleting}
+          otherProjects={otherProjects}
+        />
+      ) : (
+        <ViewProjectContentClassic
+          project={project}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          isDeletePending={isDeleting}
+          otherProjects={otherProjects}
+        />
+      )}
       {ConfirmDialog}
     </>
   );

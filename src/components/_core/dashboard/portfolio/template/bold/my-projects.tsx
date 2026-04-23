@@ -63,25 +63,35 @@ export function MyProjects({
   );
 }
 
-function ProjectCard({
+export function ProjectCard({
   project,
+  href,
   showAddProject,
   publicPortfolioUserId,
   dataAosDelay,
 }: {
   project: BoldProjectItem;
+  href?: string;
   showAddProject?: boolean;
   publicPortfolioUserId?: string;
   dataAosDelay?: number;
 }) {
   const hasProjectId = project.id != null && String(project.id).trim() !== "";
   const viewHref =
-    showAddProject && hasProjectId
+    href ??
+    (showAddProject && hasProjectId
       ? `/dashboard/portfolio/add-project/${encodeURIComponent(String(project.id))}`
       : publicPortfolioUserId && hasProjectId
         ? `/p/${encodeURIComponent(publicPortfolioUserId)}/${encodeURIComponent(String(project.id))}`
-        : undefined;
+        : undefined);
   const isClickable = Boolean(viewHref);
+  const aosProps =
+    dataAosDelay !== undefined
+      ? {
+          "data-aos": "fade-up" as const,
+          "data-aos-delay": dataAosDelay,
+        }
+      : {};
 
   const cardContent = (
     <>
@@ -123,8 +133,7 @@ function ProjectCard({
     return (
       <Link
         href={viewHref}
-        data-aos="fade-up"
-        data-aos-delay={dataAosDelay}
+        {...aosProps}
         className="group block min-w-0"
         aria-label={`View ${project.title}`}
       >
@@ -135,8 +144,7 @@ function ProjectCard({
 
   return (
     <article
-      data-aos="fade-up"
-      data-aos-delay={dataAosDelay}
+      {...aosProps}
       className="min-w-0"
     >
       {cardContent}
