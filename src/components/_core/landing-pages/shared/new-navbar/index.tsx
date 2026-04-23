@@ -20,7 +20,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { UserAvatar } from "../../internship-program/svg";
-import { SalesBanner } from "../navbar/sales-banner";
 import { MoreDropdown } from "../navbar/more-dropdown";
 
 const ABOUT_SECTION_PREFIXES = [

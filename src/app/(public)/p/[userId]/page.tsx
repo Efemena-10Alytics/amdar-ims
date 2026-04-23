@@ -25,6 +25,7 @@ export default function PortfolioByUserIdPage() {
           portfolio={portfolio}
           isLoading={isLoading}
           error={error}
+          portfolioUserId={userId}
         />
       ) : (
         <ClassicPublic
