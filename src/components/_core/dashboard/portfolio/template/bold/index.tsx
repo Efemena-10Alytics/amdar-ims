@@ -227,7 +227,7 @@ const BoldTemplate = ({ portfolio }: BoldTemplateProps) => {
     return (
         <div className="overflow-hidden bg-white shadow-md rounded-2xl p-5">
             <BoldHero value={heroData} />
-            <MyProjects projects={projects} />
+            <MyProjects projects={projects} showAddProject />
             <MyWorkExperience items={workItems} />
             <SkillsAndSpecialization skills={skills} specializations={specializations} />
             <MyTools

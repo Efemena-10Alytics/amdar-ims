@@ -72,9 +72,15 @@ type BoldPublicProps = {
   portfolio?: UserPortfolioData | null;
   isLoading?: boolean;
   error?: Error | null | unknown;
+  portfolioUserId?: string | null;
 };
 
-const BoldPublic = ({ portfolio, isLoading, error }: BoldPublicProps) => {
+const BoldPublic = ({
+  portfolio,
+  isLoading,
+  error,
+  portfolioUserId,
+}: BoldPublicProps) => {
   const { data: countries = [] } = useCountries();
 
   const heroData = useMemo(() => {
@@ -282,7 +288,11 @@ const BoldPublic = ({ portfolio, isLoading, error }: BoldPublicProps) => {
           }
         }
       />
-      <MyProjects id="projects" projects={projects} />
+      <MyProjects
+        id="projects"
+        projects={projects}
+        publicPortfolioUserId={portfolioUserId ?? undefined}
+      />
       <MyWorkExperience items={workItems} />
       <SkillsAndSpecialization
         id="specialization"

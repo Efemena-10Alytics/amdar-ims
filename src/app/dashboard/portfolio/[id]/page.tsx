@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ViewProjectContent } from "../add-project/[id]/view-project-content";
-import type { ViewProjectData } from "../add-project/[id]/view-project-content";
+import { ViewProjectContentClassic } from "../../../../components/_core/dashboard/portfolio/template/classic/view-project-content-classic";
+import type { ViewProjectData } from "../../../../components/_core/dashboard/portfolio/template/classic/view-project-content-classic";
 import { useConfirm } from "@/hooks/use-confirm";
 
 const SAMPLE_PROJECT: ViewProjectData = {
@@ -72,7 +72,7 @@ export default function ViewProjectPage() {
 
   return (
     <>
-      <ViewProjectContent
+      <ViewProjectContentClassic
         project={SAMPLE_PROJECT}
         onEdit={handleEdit}
         onDelete={handleDelete}

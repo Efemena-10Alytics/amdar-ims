@@ -5,13 +5,12 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import {
-  ViewProjectContent,
+  ViewProjectContentClassic,
   mapProjectToViewData,
   stableProjectListId,
   type OtherProjectLink,
-} from "@/app/dashboard/portfolio/add-project/[id]/view-project-content";
-import { useGetProjectByUserId } from "@/features/portfolio/use-get-project-by-id";
-import { useGetPortfolioByUserId } from "@/features/portfolio/use-get-portfolio-by-id";
+} from "@/components/_core/dashboard/portfolio/template/classic/view-project-content-classic";
+import { ViewProjectContentBold } from "@/components/_core/dashboard/portfolio/template/bold/view-project-content-bold";
 import { getImageUrl } from "@/lib/utils";
 import { useGetPortfolioBySharePathname } from "@/features/portfolio/use-get-portfolio-share";
 import { useGetProjectBySharePathname } from "@/features/portfolio/use-get-portfolio-project-share";
@@ -108,12 +107,21 @@ export default function PublicProjectDetailsPage() {
 
   return (
     <div className="app-width mt-10">
-      <ViewProjectContent
-        project={project}
-        backHref={backHref}
-        backLabel="Back to portfolio"
-        otherProjects={otherProjects}
-      />
+      {portfolioData?.setting?.template?.trim().toLowerCase() === "bold" ? (
+        <ViewProjectContentBold
+          project={project}
+          backHref={backHref}
+          backLabel="Back to portfolio"
+          otherProjects={otherProjects}
+        />
+      ) : (
+        <ViewProjectContentClassic
+          project={project}
+          backHref={backHref}
+          backLabel="Back to portfolio"
+          otherProjects={otherProjects}
+        />
+      )}
     </div>
   );
 }
