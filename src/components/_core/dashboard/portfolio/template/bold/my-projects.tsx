@@ -110,7 +110,7 @@ export function ProjectCard({
 
         {isClickable && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/35 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-            <span className="flex size-20 items-center justify-center rounded-full bg-[#F4D96A] text-base font-medium text-[#092A31] shadow-md">
+            <span className="flex size-10 items-center justify-center rounded-full bg-[#F4D96A] text-[10px] font-medium text-[#092A31] shadow-md">
               View
             </span>
           </div>
