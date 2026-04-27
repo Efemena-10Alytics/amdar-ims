@@ -1,11 +1,11 @@
-import FooterCta from './content/footer-cta'
+import FooterCta from '../content/footer-cta'
 import React from 'react'
-import Hero from './content/hero'
-import RealIssue from './content/real-issue'
-import RightFit from './content/right-fit'
-import SessionBreakdown from './content/session-breakdown'
-import WhatThisUnlocks from './content/what-this-unlocks'
-import YourOutcome from './content/your-outcome'
+import Hero from '../content/hero'
+import RealIssue from '../content/real-issue'
+import RightFit from '../content/right-fit'
+import SessionBreakdown from '../content/session-breakdown'
+import WhatThisUnlocks from '../content/what-this-unlocks'
+import YourOutcome from '../content/your-outcome'
 
 const RealUkExpPage = () => {
   return (

@@ -15,8 +15,8 @@ const SessionBreakdown = () => {
     <section className="app-width pb-14 pt-6 lg:pb-20">
       <div className="grid gap-8 lg:grid-cols-[1.6fr_1fr] lg:items-center">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.1em] text-[#B9A56B]">- Session Breakdown</p>
-          <h2 className="mt-2 max-w-[640px] text-balance text-4xl font-black leading-tight text-[#F2F7F7] sm:text-6xl">
+          <p className="text-sm font-semibold uppercase tracking-widest text-[#B9A56B]">- Session Breakdown</p>
+          <h2 className="mt-2 max-w-160 text-balance text-4xl font-black leading-tight text-[#F2F7F7] sm:text-6xl">
             What you&apos;ll walk away with
           </h2>
           <p className="mt-3 text-xl text-[#C6D3D8]">Five concrete things you&apos;ll know by the end of this session.</p>
@@ -25,7 +25,7 @@ const SessionBreakdown = () => {
             {breakdownPoints.map((point) => (
               <div
                 key={point}
-                className="flex items-center gap-3 rounded-xl border border-[#4E6B7470] bg-[#182731AB] px-4 py-3 shadow-[inset_0_0_24px_rgba(41,68,77,0.35)]"
+                className="flex min-h-16 items-center gap-3 rounded-xl border border-[#4E6B7470] bg-[#182731AB] px-4 py-3 shadow-[inset_0_0_24px_rgba(41,68,77,0.35)]"
               >
                 <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#395A63] text-[#36D68D]">
                   <Check className="h-4 w-4" />
@@ -42,7 +42,7 @@ const SessionBreakdown = () => {
             alt="Professional woman walking confidently outdoors"
             width={680}
             height={860}
-            className="h-[640px] w-full object-cover"
+            className="h-160 w-full object-cover"
           />
         </div>
       </div>
