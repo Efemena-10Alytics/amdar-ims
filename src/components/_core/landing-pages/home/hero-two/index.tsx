@@ -11,6 +11,7 @@ import Slider from "./slider";
 import Flag from "../hero/flag";
 import ServiceCard from "../hero/service-card";
 import IconOrbit from "./icon-orbit";
+import Link from "next/link";
 
 const InternshipHeroTwo = () => {
   const [showPopUpVid, setShowPopUpVid] = React.useState(false);
@@ -60,18 +61,20 @@ const InternshipHeroTwo = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-            <Button
-              className={cn(
-                "group bg-[#0F4652] text-white hover:bg-amdari-yellow hover:text-primary rounded-full py-6 h-12 text-base",
-                "flex items-center gap-8 px-5",
-                "transition-colors duration-300",
-              )}
-            >
-              Get started
-              <div className="flex h-5 w-5 rounded-full justify-center items-center bg-amdari-yellow group-hover:bg-primary text-primary group-hover:text-white">
-                <ArrowUpRight className="w-3! h-3! text-current" />
-              </div>
-            </Button>
+            <Link href="/internship">
+              <Button
+                className={cn(
+                  "group bg-[#0F4652] text-white hover:bg-amdari-yellow hover:text-primary rounded-full py-6 h-12 text-base",
+                  "flex items-center gap-8 px-5",
+                  "transition-colors duration-300",
+                )}
+              >
+                Get started
+                <div className="flex h-5 w-5 rounded-full justify-center items-center bg-amdari-yellow group-hover:bg-primary text-primary group-hover:text-white">
+                  <ArrowUpRight className="w-3! h-3! text-current" />
+                </div>
+              </Button>
+            </Link>
             <Button
               onClick={() => setShowPopUpVid(true)}
               className={cn(
@@ -108,7 +111,7 @@ const InternshipHeroTwo = () => {
             title="Real-world Projects"
             description="Industry-relevant projects that replicate real-world challenges, helping you build practical skills."
             buttonText="Get me started"
-            // dataAos="fade-down"
+          // dataAos="fade-down"
           // dataAosDuration="00"
           />
           <ServiceCard
