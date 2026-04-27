@@ -44,27 +44,27 @@ const RightFit = () => {
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
         <div className="space-y-6">
-          <div className="rounded-xl border border-[#4D6370] bg-[#1B2A33] p-4 shadow-[0_10px_24px_rgba(0,0,0,0.2)]">
-            <p className="text-4xl font-semibold leading-snug text-[#EAF2F3]">
+          <div className="rounded-xl border border-[#4D6370] bg-white/10 p-4 shadow-[0_10px_24px_rgba(0,0,0,0.2)]">
+            <p className="text-2xl font-semibold leading-snug text-[#EAF2F3]">
               You didn&apos;t come this far to stay in <span className="text-[#32D987]">preparation mode.</span>
             </p>
-            <p className="mt-4 text-4xl font-semibold leading-snug text-[#EAF2F3]">
+            <p className="mt-4 text-2xl font-semibold leading-snug text-[#EAF2F3]">
               At some point, you have to become the person <span className="text-[#32D987]">companies are looking for.</span>
             </p>
             <p className="mt-4 rounded-md bg-[#75858D] px-3 py-2 text-2xl font-medium text-[#EAF2F3]">This is that shift.</p>
           </div>
 
           <div className="rounded-xl border border-[#4D6370] bg-[#1B2A33] p-4 shadow-[0_10px_24px_rgba(0,0,0,0.2)]">
-            <p className="text-4xl font-semibold leading-snug text-[#FF4A4A]">You don&apos;t need more courses.</p>
+            <p className="text-2xl font-semibold leading-snug text-[#FF4A4A]">You don&apos;t need more courses.</p>
             <p className="mt-3 text-2xl font-semibold leading-snug text-[#32D987]">You need:</p>
-            <p className="mt-1 text-4xl font-semibold leading-snug text-[#EAF2F3]">Real experience + the ability to prove it.</p>
+            <p className="mt-1 text-2xl font-semibold leading-snug text-[#EAF2F3]">Real experience + the ability to prove it.</p>
             <p className="mt-4 rounded-md bg-[#75858D] px-3 py-2 text-2xl font-medium text-[#EAF2F3]">
               That&apos;s what changes how the market sees you.
             </p>
           </div>
         </div>
 
-        <div className="ml-auto w-full max-w-110">
+        <div className="ml-auto w-full max-w-120 lg:max-w-136 lg:-mb-24">
           <Image
             src="/images/pngs/ads/man-in-the-mirror.png"
             alt="Man in suit looking at mirror reflection"

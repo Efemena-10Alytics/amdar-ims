@@ -22,15 +22,15 @@ const Hero = () => {
   return (
     <section className="relative overflow-hidden app-width py-14  lg:py-16">
       <Image
-        height={476}
-        width={476}
+        height={676}
+        width={676}
         alt="ellipse"
         src="/images/svgs/ads/ads-ellipse.svg"
         className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
       />
       <Image
-        height={476}
-        width={476}
+        height={676}
+        width={676}
         alt="ellipse"
         src="/images/svgs/ads/ads-ellipse.svg"
         className="pointer-events-none absolute -bottom-28 left-0"
@@ -65,7 +65,7 @@ const Hero = () => {
           </button>
         </div>
 
-        <div className="relative w-full flex-1 rounded-2xl border border-[#00D68F66] bg-[#020E13F5] shadow-[0_0_0_1px_rgba(0,214,143,0.15),0_18px_44px_rgba(0,0,0,0.45)]">
+        <div className="relative w-full flex-1 rounded-2xl border border-[#00D68F66] shadow-[0_0_0_1px_rgba(0,214,143,0.15),0_18px_44px_rgba(0,0,0,0.45)]">
           <div className="flex items-center gap-3 border-b border-[#0E3A4A] p-4">
             <div className="flex items-center gap-2">
               <span className="h-3 w-3 rounded-full bg-[#FF4D6D]" />

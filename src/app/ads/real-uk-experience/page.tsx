@@ -1,3 +1,4 @@
+import FooterCta from './content/footer-cta'
 import React from 'react'
 import Hero from './content/hero'
 import RealIssue from './content/real-issue'
@@ -16,6 +17,7 @@ const RealUkExpPage = () => {
       <WhatThisUnlocks />
       <SessionBreakdown />
       <RightFit />
+      <FooterCta />
     </div>
   )
 }
