@@ -1,6 +1,7 @@
 "use client"
 
 import { ArrowUpRight } from 'lucide-react'
+import Aos from 'aos'
 import Image from 'next/image'
 import React from 'react'
 
@@ -19,6 +20,14 @@ const analyticsKpis = [
 ]
 
 const HeroDataAnalytics = () => {
+  React.useEffect(() => {
+    Aos.init({
+      duration: 800,
+      once: true,
+      easing: 'ease-out-cubic',
+    })
+  }, [])
+
   return (
     <section className="relative overflow-hidden app-width py-12 lg:py-16">
       <Image
@@ -36,8 +45,8 @@ const HeroDataAnalytics = () => {
         className="pointer-events-none absolute -bottom-28 left-0 animate-bounce-6"
       />
       <div className="relative z-10 mx-auto grid items-center gap-10 lg:grid-cols-[1.08fr_0.92fr]">
-        <div>
-          <div className="mb-6 inline-flex rounded-full border border-[#FFE0824A] bg-[#FFF1C8] px-4 py-2 text-sm font-semibold text-[#564103]">
+        <div data-aos="fade-right">
+          <div className="mb-6 inline-flex rounded-full border border-[#FFE0824A] bg-[#FFF1C8] px-4 py-2 text-sm font-bold text-[#564103]">
             Amdari - Free Data Analytics Job Readiness Workshop
           </div>
 
@@ -63,7 +72,11 @@ const HeroDataAnalytics = () => {
           <p className="mt-4 text-[1.75rem] font-semibold tracking-[-0.01em] text-[#E9F0F0]">Free - 60 mins - No fluff</p>
         </div>
 
-        <div className="rounded-[22px] border border-[#00D68F73] bg-[#02131A]/90 shadow-[0_0_0_1px_rgba(0,214,143,0.22),0_24px_48px_rgba(0,0,0,0.45)]">
+        <div
+          className="rounded-[22px] border border-[#00D68F73] bg-[#02131A]/90 shadow-[0_0_0_1px_rgba(0,214,143,0.22),0_24px_48px_rgba(0,0,0,0.45)]"
+          data-aos="fade-left"
+          data-aos-delay="120"
+        >
           <div className="flex items-center gap-3 border-b border-[#0E3D4D] px-5 py-4">
             <div className="flex items-center gap-2">
               <span className="h-3 w-3 rounded-full bg-[#FF4D6D]" />
@@ -76,7 +89,12 @@ const HeroDataAnalytics = () => {
           <div className="space-y-6 p-5">
             <div className="grid gap-3 md:grid-cols-3">
               {analyticsHighlights.map((item) => (
-                <div key={item.label} className="rounded-2xl border border-[#0D3340] bg-[#051A22] p-4 shadow-[0_8px_18px_rgba(0,0,0,0.25)]">
+                <div
+                  key={item.label}
+                  className="rounded-2xl border border-[#0D3340] bg-[#051A22] p-4 shadow-[0_8px_18px_rgba(0,0,0,0.25)]"
+                  data-aos="fade-up"
+                  data-aos-delay="200"
+                >
                   <p className="text-[0.64rem] font-semibold tracking-[0.11em] text-[#5D7580]">{item.label}</p>
                   <div className="mt-2 flex items-end justify-between gap-2">
                     <p className={`text-[2rem] font-black leading-none tracking-[-0.02em] ${item.valueColor}`}>{item.value}</p>

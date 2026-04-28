@@ -59,7 +59,7 @@ const WhatThisUnlocks = ({ content = defaultWhatThisUnlocksContent }: WhatThisUn
     <section className="app-width pb-14 pt-4 lg:pb-20">
       <div className="mb-10" data-aos="fade-up">
         <p className="text-sm font-semibold uppercase tracking-widest text-[#B9A56B]">{content.eyebrow}</p>
-        <h2 className="mt-2 text-balance text-4xl font-black leading-tight text-[#F2F7F7] sm:text-5xl">{content.title}</h2>
+        <h2 className="mt-2 max-w-300 text-balance text-4xl font-black leading-tight text-[#F2F7F7] sm:text-5xl">{content.title}</h2>
       </div>
 
       <div className="relative pt-12">
