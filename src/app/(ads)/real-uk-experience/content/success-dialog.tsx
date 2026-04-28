@@ -7,9 +7,26 @@ import { Dialog, DialogContent } from '@/components/ui/dialog'
 type SuccessDialogProps = {
   isOpen: boolean
   onClose: () => void
+  source: string
 }
 
-const SuccessDialog = ({ isOpen, onClose }: SuccessDialogProps) => {
+const SuccessDialog = ({ isOpen, onClose, source }: SuccessDialogProps) => {
+  const normalizedSource = source.toLowerCase()
+  const isDataSource = normalizedSource.includes('data')
+  const isSocSource = normalizedSource === 'soc'
+
+  const whatsappLink = isDataSource
+    ? 'https://chat.whatsapp.com/IrSIdYZK8Z62zAtnagRJr4'
+    : isSocSource
+      ? 'https://chat.whatsapp.com/Bw8Qd8XTuYqCtNK1gVOurH'
+      : undefined
+
+  const buttonLabel = isDataSource
+    ? 'Join Data Guys WhatsApp Community'
+    : isSocSource
+      ? 'Join SOC WhatsApp Community'
+      : 'Join Whatsapp Community'
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => (open ? null : onClose())}>
       <DialogContent
@@ -27,12 +44,23 @@ const SuccessDialog = ({ isOpen, onClose }: SuccessDialogProps) => {
           Thank you for registering! Our team will be in touch with next steps.
         </p>
 
-        <button
-          type="button"
-          className="mt-7 h-13 w-full rounded-xl bg-[#1E8098] text-lg font-medium text-[#EAF6FA] transition hover:bg-[#2693AD]"
-        >
-          Join Whatsapp Community
-        </button>
+        {whatsappLink ? (
+          <a
+            href={whatsappLink}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-7 inline-flex h-13 w-full items-center justify-center rounded-xl bg-[#1E8098] text-lg font-medium text-[#EAF6FA] transition hover:bg-[#2693AD]"
+          >
+            {buttonLabel}
+          </a>
+        ) : (
+          <button
+            type="button"
+            className="mt-7 h-13 w-full rounded-xl bg-[#1E8098] text-lg font-medium text-[#EAF6FA] transition hover:bg-[#2693AD]"
+          >
+            {buttonLabel}
+          </button>
+        )}
       </DialogContent>
     </Dialog>
   )
