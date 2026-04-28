@@ -132,6 +132,7 @@ const dataScientistFooterCtaContent = {
 const DataScientistPage = () => {
   return (
     <div className='bg-[#021013] min-h-screen'>
+      <div className="p-3 text-center text-[#FFE082] bg-[#FFE0821A] font-semibold">Only 100 spots — This is where you stop learning and start becoming hireable.</div>
       <Hero content={dataScientistHeroContent} />
       <YourOutcome content={dataScientistOutcomeContent} />
       <RealIssuesTwo />
