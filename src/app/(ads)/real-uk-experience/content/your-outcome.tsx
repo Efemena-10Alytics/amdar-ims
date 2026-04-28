@@ -67,7 +67,7 @@ const YourOutcome = ({ content = defaultYourOutcomeContent }: YourOutcomeProps) 
 
           <div className="pointer-events-none absolute inset-y-0 right-0 w-full bg-linear-to-r from-transparent via-[#07172233] to-[#0E2A35CC] lg:w-[48%]" />
 
-          <div className="absolute right-4 top-1/2 z-10 flex w-[calc(100%-2rem)] max-w-120 -translate-y-1/2 flex-col gap-3 sm:right-8">
+          <div className="absolute right-4 top-[36%] z-10 flex w-[calc(100%-2rem)] max-w-120 -translate-y-1/2 flex-col gap-3 sm:right-8">
             {content.outcomes.map((outcomeText, index) => {
               const Icon = outcomeIcons[index % outcomeIcons.length]
 
