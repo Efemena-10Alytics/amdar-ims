@@ -5,6 +5,7 @@ import React from 'react'
 import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog'
 import { useCountries } from '@/features/portfolio/use-countries'
 import SuccessDialog from './success-dialog'
+import { usePathname } from 'next/navigation'
 
 type SaveMySpotProps = {
   isOpen: boolean
@@ -16,6 +17,8 @@ const SaveMySpot = ({ isOpen, onClose }: SaveMySpotProps) => {
   const [selectedCountryCode, setSelectedCountryCode] = React.useState('')
   const [selectedPhoneCountryCode, setSelectedPhoneCountryCode] = React.useState('')
   const [isSuccessOpen, setIsSuccessOpen] = React.useState(false)
+  const pathname = usePathname()
+  const source = pathname.split('/').filter(Boolean).at(-1) ?? ''
 
   React.useEffect(() => {
     if (!countries.length) return
@@ -40,7 +43,7 @@ const SaveMySpot = ({ isOpen, onClose }: SaveMySpotProps) => {
         <DialogContent
           showCloseButton={false}
           overlayClassName="bg-[#02090E]/80 backdrop-blur-[2px]"
-          className="z-200  w-[min(92vw,860px)]! max-w-[min(92vw,860px)]! rounded-3xl border border-[#2B3A4D] bg-[#121E31] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.55)] md:p-8"
+          className="z-200  w-[min(92vw,860px)]! max-w-[min(92vw,860px)]! max-h-[96vh] overflow-y-auto rounded-3xl border border-[#2B3A4D] bg-[#121E31] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.55)] md:p-8"
         >
           <DialogClose
             className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#3B4D66] text-[#C9D6E2] transition hover:bg-[#1A2A3F]"
@@ -131,7 +134,7 @@ const SaveMySpot = ({ isOpen, onClose }: SaveMySpotProps) => {
         </DialogContent>
       </Dialog>
 
-      <SuccessDialog isOpen={isSuccessOpen} onClose={() => setIsSuccessOpen(false)} />
+      <SuccessDialog isOpen={isSuccessOpen} onClose={() => setIsSuccessOpen(false)} source={source} />
     </>
   )
 }
