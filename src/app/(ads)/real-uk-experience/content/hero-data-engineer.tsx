@@ -20,7 +20,11 @@ const heroStats = [
     { value: '1000+', label: 'ATTENDED - MANY NOW WORKING IN\nTECH ROLES' },
 ]
 
-const HeroDataEngineer = () => {
+type HeroDataEngineerProps = {
+    onCtaClick?: () => void
+}
+
+const HeroDataEngineer = ({ onCtaClick }: HeroDataEngineerProps) => {
     React.useEffect(() => {
         Aos.init({
             duration: 800,
@@ -65,6 +69,7 @@ const HeroDataEngineer = () => {
 
                     <button
                         type="button"
+                        onClick={onCtaClick}
                         className="group mt-7 inline-flex cursor-pointer items-center gap-2 rounded-xl bg-amdari-yellow px-6 py-3 text-base font-semibold text-[#0C2730] transition hover:bg-primary hover:text-amdari-yellow"
                     >
                         Save My Spot

@@ -21,7 +21,11 @@ const videoCards = [
   },
 ]
 
-const SocialProof = () => {
+type SocialProofProps = {
+  onCtaClick?: () => void
+}
+
+const SocialProof = ({ onCtaClick }: SocialProofProps) => {
   React.useEffect(() => {
     Aos.init({
       duration: 800,
@@ -97,7 +101,8 @@ const SocialProof = () => {
 
         <button
           type="button"
-          className="group mt-6 inline-flex cursor-pointer items-center gap-2 rounded-xl bg-amdari-yellow px-7 py-3 text-2xl font-semibold text-[#0C2730] transition hover:bg-primary hover:text-amdari-yellow lg:mt-0"
+          onClick={onCtaClick}
+          className="group mt-6 inline-flex cursor-pointer items-center gap-2 rounded-xl bg-amdari-yellow px-7 py-3 font-semibold text-[#0C2730] transition hover:bg-primary hover:text-amdari-yellow lg:mt-0"
         >
           Save My Spot Now
           <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs text-amdari-yellow transition-colors group-hover:bg-amdari-yellow group-hover:text-primary">

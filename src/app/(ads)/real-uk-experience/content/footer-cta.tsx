@@ -21,9 +21,10 @@ const defaultFooterCtaContent: FooterCtaContent = {
 
 type FooterCtaProps = {
   content?: FooterCtaContent
+  onCtaClick?: () => void
 }
 
-const FooterCta = ({ content = defaultFooterCtaContent }: FooterCtaProps) => {
+const FooterCta = ({ content = defaultFooterCtaContent, onCtaClick }: FooterCtaProps) => {
   React.useEffect(() => {
     Aos.init({
       duration: 800,
@@ -56,6 +57,7 @@ const FooterCta = ({ content = defaultFooterCtaContent }: FooterCtaProps) => {
 
           <button
             type="button"
+            onClick={onCtaClick}
             className="group mt-7 inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#F1D779] px-8 py-3 text-lg font-semibold text-[#17363F] transition hover:bg-[#F6E39A]"
             data-aos="fade-up"
             data-aos-delay="180"

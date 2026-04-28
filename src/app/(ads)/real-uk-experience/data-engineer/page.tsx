@@ -1,18 +1,24 @@
+"use client"
+
+import React from 'react'
 import FooterCta from '../content/footer-cta'
 import HeroDataEngineer from '../content/hero-data-engineer'
 import RealIssuesTwo from '../content/real-issues-data-scientist'
+import SaveMySpot from '../content/save-my-spot'
 import SessionBreakdownDataEngineer from '../content/session-breakdown-data-engineer'
 import SocialProof from '../content/social-proof'
 import WhatThisUnlocks from '../content/what-this-unlocks'
 import YourOutcome from '../content/your-outcome'
 
 const DataEngineerPage = () => {
+  const [isSaveMySpotOpen, setIsSaveMySpotOpen] = React.useState(false)
+
   return (
     <div className='bg-[#021013] min-h-screen'>
       <div className="p-3 text-center text-[#FFE082] bg-[#FFE0821A] font-semibold">
         Only 100 spots - This is where you stop learning and start becoming the candidate companies trust.
       </div>
-      <HeroDataEngineer />
+      <HeroDataEngineer onCtaClick={() => setIsSaveMySpotOpen(true)} />
       <YourOutcome />
       <RealIssuesTwo
         title="This Is the Difference Between Learning and Being Hired"
@@ -46,8 +52,9 @@ const DataEngineerPage = () => {
         }}
       />
       <SessionBreakdownDataEngineer />
-      <SocialProof />
+      <SocialProof onCtaClick={() => setIsSaveMySpotOpen(true)} />
       <FooterCta
+        onCtaClick={() => setIsSaveMySpotOpen(true)}
         content={{
           title: 'You Can Keep Learning Or You Can Become Hireable.',
           description:
@@ -56,6 +63,7 @@ const DataEngineerPage = () => {
           metaText: 'Limited seats | Free | Built for results',
         }}
       />
+      <SaveMySpot isOpen={isSaveMySpotOpen} onClose={() => setIsSaveMySpotOpen(false)} />
     </div>
   )
 }
