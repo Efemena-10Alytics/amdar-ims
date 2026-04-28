@@ -94,7 +94,7 @@ const Hero = ({ content = defaultSocContent }: HeroProps) => {
             {content.badge}
           </div>
 
-          <h1 className="text-balance text-[2.5rem] font-black leading-[1.05] tracking-[-0.02em] text-[#F2F7F7] sm:text-[3.2rem] lg:text-[4rem]">
+          <h1 className="text-balance text-[2.5rem] font-semibold leading-[1.05] tracking-[-0.02em] text-[#F2F7F7] sm:text-[3.2rem] lg:text-[4rem]">
             {content.headingStart}
             <br />
             real <span className="text-[#FFE082] animate-pulse">{content.headingHighlight}</span>
