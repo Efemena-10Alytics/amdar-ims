@@ -19,7 +19,11 @@ const analyticsKpis = [
   { label: 'Data quality', value: '97.3%' },
 ]
 
-const HeroDataAnalytics = () => {
+type HeroDataAnalyticsProps = {
+  onCtaClick?: () => void
+}
+
+const HeroDataAnalytics = ({ onCtaClick }: HeroDataAnalyticsProps) => {
   React.useEffect(() => {
     Aos.init({
       duration: 800,
@@ -61,6 +65,7 @@ const HeroDataAnalytics = () => {
 
           <button
             type="button"
+            onClick={onCtaClick}
             className="group mt-8 inline-flex cursor-pointer items-center gap-2 rounded-xl bg-amdari-yellow px-6 py-3 text-base font-semibold text-[#0C2730] transition hover:bg-primary hover:text-amdari-yellow"
           >
             Save My Spot

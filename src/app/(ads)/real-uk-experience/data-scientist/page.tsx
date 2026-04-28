@@ -1,7 +1,11 @@
+"use client"
+
+import React from 'react'
 import FooterCta from '../content/footer-cta'
 import Hero from '../content/hero'
 import RealIssuesTwo from '../content/real-issues-data-scientist'
 import RightFit from '../content/right-fit'
+import SaveMySpot from '../content/save-my-spot'
 import SessionBreakdown from '../content/session-breakdown'
 import WhatThisUnlocks from '../content/what-this-unlocks'
 import YourOutcome from '../content/your-outcome'
@@ -130,16 +134,19 @@ const dataScientistFooterCtaContent = {
 }
 
 const DataScientistPage = () => {
+  const [isSaveMySpotOpen, setIsSaveMySpotOpen] = React.useState(false)
+
   return (
     <div className='bg-[#021013] min-h-screen'>
       <div className="p-3 text-center text-[#FFE082] bg-[#FFE0821A] font-semibold">Only 100 spots — This is where you stop learning and start becoming hireable.</div>
-      <Hero content={dataScientistHeroContent} />
+      <Hero content={dataScientistHeroContent} onCtaClick={() => setIsSaveMySpotOpen(true)} />
       <YourOutcome content={dataScientistOutcomeContent} />
       <RealIssuesTwo />
       <WhatThisUnlocks content={dataScientistUnlocksContent} />
       <SessionBreakdown content={dataScientistSessionBreakdownContent} />
       <RightFit content={dataScientistRightFitContent} />
-      <FooterCta content={dataScientistFooterCtaContent} />
+      <FooterCta content={dataScientistFooterCtaContent} onCtaClick={() => setIsSaveMySpotOpen(true)} />
+      <SaveMySpot isOpen={isSaveMySpotOpen} onClose={() => setIsSaveMySpotOpen(false)} />
     </div>
   )
 }

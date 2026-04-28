@@ -1,4 +1,7 @@
+"use client"
+
 import React from 'react'
+import SaveMySpot from '../content/save-my-spot'
 import HeroDataAnalytics from '../content/hero-data-analytics'
 import RealIssuesTwo from '../content/real-issues-data-scientist'
 import YourOutcome from '../content/your-outcome'
@@ -8,10 +11,12 @@ import SessionBreakdown from '../content/session-breakdown'
 import FooterCta from '../content/footer-cta'
 
 const DataAnalyticsPage = () => {
+  const [isSaveMySpotOpen, setIsSaveMySpotOpen] = React.useState(false)
+
   return (
     <div className='bg-[#021013] min-h-screen'>
       <div className="p-3 text-center text-[#FFE082] bg-[#FFE0821A] font-semibold">Only 100 spots — This is where you stop learning models and start becoming hireable.</div>
-      <HeroDataAnalytics />
+      <HeroDataAnalytics onCtaClick={() => setIsSaveMySpotOpen(true)} />
       <YourOutcome />
       <RealIssuesTwo
         title="Why this Session is Important"
@@ -104,6 +109,7 @@ const DataAnalyticsPage = () => {
         }}
       />
       <FooterCta
+        onCtaClick={() => setIsSaveMySpotOpen(true)}
         content={{
           title: "Right now, you're close but not there yet.",
           description: 'This session shows you how to cross that gap and start showing up as someone who can actually be hired.',
@@ -111,6 +117,7 @@ const DataAnalyticsPage = () => {
           metaText: 'Limited seats | Free | Built for results',
         }}
       />
+      <SaveMySpot isOpen={isSaveMySpotOpen} onClose={() => setIsSaveMySpotOpen(false)} />
     </div>
   )
 }
