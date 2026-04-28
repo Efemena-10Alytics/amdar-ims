@@ -61,9 +61,10 @@ const defaultSocContent: HeroContent = {
 
 type HeroProps = {
   content?: HeroContent
+  onCtaClick?: () => void
 }
 
-const Hero = ({ content = defaultSocContent }: HeroProps) => {
+const Hero = ({ content = defaultSocContent, onCtaClick }: HeroProps) => {
   React.useEffect(() => {
     Aos.init({
       duration: 800,
@@ -108,6 +109,7 @@ const Hero = ({ content = defaultSocContent }: HeroProps) => {
 
           <button
             type="button"
+            onClick={onCtaClick}
             className="mt-8 cursor-pointer group inline-flex items-center gap-2 rounded-xl bg-amdari-yellow px-7 py-3 text-base font-semibold text-[#0C2730] transition hover:bg-primary hover:text-amdari-yellow"
           >
             {content.ctaText}
