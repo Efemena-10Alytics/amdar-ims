@@ -4,7 +4,26 @@ import Aos from 'aos'
 import { ArrowUpRight } from 'lucide-react'
 import React from 'react'
 
-const FooterCta = () => {
+type FooterCtaContent = {
+  title: string
+  description: string
+  buttonText: string
+  metaText: string
+}
+
+const defaultFooterCtaContent: FooterCtaContent = {
+  title: "Right now, you're close - but not quite there.",
+  description:
+    'This session shows you how to cross that gap and start showing up as someone who can actually be hired. One 60-minute session. Real, practical next steps. No fluff.',
+  buttonText: 'Save My Spot Now',
+  metaText: 'Limited seats | Free | Built for results',
+}
+
+type FooterCtaProps = {
+  content?: FooterCtaContent
+}
+
+const FooterCta = ({ content = defaultFooterCtaContent }: FooterCtaProps) => {
   React.useEffect(() => {
     Aos.init({
       duration: 800,
@@ -19,7 +38,7 @@ const FooterCta = () => {
       <div className="relative overflow-hidden bg-[#092A31] px-4 py-14 sm:px-8">
         <div
           className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-25"
-          style={{ backgroundImage: 'url("/images/sales-banner-noise.png")' }}
+          style={{ backgroundImage: 'url("/images/pngs/ads/ads-noise.png")' }}
         />
         {/* <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-linear-to-b from-[#07242C] to-transparent" /> */}
 
@@ -28,12 +47,11 @@ const FooterCta = () => {
           data-aos="zoom-in"
         >
           <h2 className="mx-auto max-w-3xl text-balance text-2xl font-black leading-tight text-[#DDE6E8] sm:text-5xl" data-aos="fade-up">
-            Right now, you&apos;re close - but not quite there.
+            {content.title}
           </h2>
 
           <p className="mx-auto mt-4 max-w-3xl text-lg leading-relaxed text-[#AFC0C6] sm:text-2xl" data-aos="fade-up" data-aos-delay="100">
-            This session shows you how to cross that gap and start showing up as someone who can actually be hired.
-            One 60-minute session. Real, practical next steps. No fluff.
+            {content.description}
           </p>
 
           <button
@@ -42,14 +60,14 @@ const FooterCta = () => {
             data-aos="fade-up"
             data-aos-delay="180"
           >
-            Save My Spot Now
+            {content.buttonText}
             <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#1A6878] text-[#F6E39A]">
               <ArrowUpRight className="h-3 w-3" />
             </span>
           </button>
 
           <p className="mt-6 text-lg font-semibold text-[#A7B8BE] sm:text-2xl" data-aos="fade-up" data-aos-delay="240">
-            Limited seats | Free | Built for results
+            {content.metaText}
           </p>
         </div>
       </div>

@@ -4,28 +4,49 @@ import Aos from 'aos'
 import { Lightbulb, UserRoundCheck, UserRoundSearch } from 'lucide-react'
 import React from 'react'
 
-const unlockItems = [
+type UnlockItem = {
+  number: string
+  title: string
+  description: string
+}
+
+type WhatThisUnlocksContent = {
+  eyebrow: string
+  title: string
+  items: UnlockItem[]
+}
+
+const defaultUnlockItems: UnlockItem[] = [
   {
     number: '01',
     title: 'Turn training into real experience',
     description: 'Your existing learning becomes usable, credible work history on your CV.',
-    icon: Lightbulb,
   },
   {
     number: '02',
     title: 'Sound like a practitioner',
     description: 'Stop using learner language. Start describing your work with practitioner precision.',
-    icon: UserRoundSearch,
   },
   {
     number: '03',
     title: 'Position yourself as ready',
     description: "Show up as someone who can do the job - not someone still preparing for it.",
-    icon: UserRoundCheck,
   },
 ]
 
-const WhatThisUnlocks = () => {
+const iconList = [Lightbulb, UserRoundSearch, UserRoundCheck]
+
+const defaultWhatThisUnlocksContent: WhatThisUnlocksContent = {
+  eyebrow: '- What This Changes',
+  title: 'What this unlocks',
+  items: defaultUnlockItems,
+}
+
+type WhatThisUnlocksProps = {
+  content?: WhatThisUnlocksContent
+}
+
+const WhatThisUnlocks = ({ content = defaultWhatThisUnlocksContent }: WhatThisUnlocksProps) => {
   React.useEffect(() => {
     Aos.init({
       duration: 800,
@@ -37,15 +58,13 @@ const WhatThisUnlocks = () => {
   return (
     <section className="app-width pb-14 pt-4 lg:pb-20">
       <div className="mb-10" data-aos="fade-up">
-        <p className="text-sm font-semibold uppercase tracking-widest text-[#B9A56B]">- What This Changes</p>
-        <h2 className="mt-2 text-balance text-4xl font-black leading-tight text-[#F2F7F7] sm:text-5xl">
-          What this unlocks
-        </h2>
+        <p className="text-sm font-semibold uppercase tracking-widest text-[#B9A56B]">{content.eyebrow}</p>
+        <h2 className="mt-2 text-balance text-4xl font-black leading-tight text-[#F2F7F7] sm:text-5xl">{content.title}</h2>
       </div>
 
       <div className="relative pt-12">
         <div className="pointer-events-none absolute inset-x-0 -top-10 z-0 hidden md:grid md:grid-cols-3" data-aos="fade-down">
-          {unlockItems.map((item) => (
+          {content.items.map((item) => (
             <span key={`bg-${item.number}`} className="text-right text-8xl font-black leading-none text-[#96B4B31C] lg:text-[9rem]">
               {item.number}
             </span>
@@ -53,8 +72,8 @@ const WhatThisUnlocks = () => {
         </div>
 
         <div className="relative z-10 grid gap-4 md:grid-cols-3">
-          {unlockItems.map((item, index) => {
-            const Icon = item.icon
+          {content.items.map((item, index) => {
+            const Icon = iconList[index % iconList.length]
 
             return (
               <div
