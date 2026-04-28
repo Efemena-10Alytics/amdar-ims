@@ -1,6 +1,6 @@
 import FooterCta from '../content/footer-cta'
 import Hero from '../content/hero'
-import RealIssuesTwo from '../content/real-issues-two'
+import RealIssuesTwo from '../content/real-issues-data-scientist'
 import RightFit from '../content/right-fit'
 import SessionBreakdown from '../content/session-breakdown'
 import WhatThisUnlocks from '../content/what-this-unlocks'
