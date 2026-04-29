@@ -52,7 +52,7 @@ const SocialProof = ({
 
   return (
     <section className="app-width py-10 lg:py-14 space-y-8">
-      <h2 className="max-w-[26ch] md:pb-10 text-4xl font-bold leading-tight text-[#F2F7F7] sm:text-5xl" data-aos="fade-up">
+      <h2 className="max-w-[27ch] md:pb-10 text-4xl font-bold leading-tight text-[#F2F7F7] lg:text-5xl" data-aos="fade-up">
         {heading}
       </h2>
 
