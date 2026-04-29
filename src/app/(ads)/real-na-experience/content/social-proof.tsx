@@ -39,7 +39,7 @@ const defaultCards: SocialProofCard[] = [
 ]
 
 const SocialProof = ({
-  heading = "If you're struggling to land Business Analyst roles in Canada or the US:",
+  heading = "If you're struggling to land AppSec or Cloud Security roles in Canada or the US",
   cards = defaultCards,
 }: SocialProofProps) => {
   React.useEffect(() => {

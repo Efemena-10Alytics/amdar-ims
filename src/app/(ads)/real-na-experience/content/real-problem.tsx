@@ -9,15 +9,17 @@ type RealProblemProps = {
   firstPoint?: string
   secondPointPrefix?: string
   secondPointHighlight?: string
+  thirdPoint?: string
   calloutText?: string
 }
 
 const RealProblem = ({
   eyebrow = '- The Real Problem',
   title = "Why you're being filtered out",
-  firstPoint = 'You did the certifications. You learned the frameworks. You applied.',
-  secondPointPrefix = 'But hiring managers are filtering for one thing:',
-  secondPointHighlight = 'proof of real project delivery in a North American context.',
+  firstPoint = "You've learned OWASP. You understand cloud security. You've done labs. That's not what's failing you.",
+  secondPointPrefix = 'Hiring managers in Canada and the US are filtering for one thing:',
+  secondPointHighlight = "proof you've secured real applications or real cloud environments.",
+  thirdPoint = "Labs demonstrate you know how things work. Engagements demonstrate you can do the work. Those aren't the same thing - and employers know the difference immediately.",
   calloutText = 'No local experience = no interviews. This workshop fixes that.',
 }: RealProblemProps) => {
   React.useEffect(() => {
@@ -52,6 +54,10 @@ const RealProblem = ({
               <br />
               <strong className="font-bold text-[#F2F7F7]">{secondPointHighlight}</strong>
             </span>
+          </li>
+          <li className="flex items-start gap-3 text-xl leading-snug text-[#DDE8EA]" data-aos="fade-right" data-aos-delay="350">
+            <span className="mt-2 inline-block h-2.5 w-2.5 shrink-0 rounded-full border border-[#F94444]" />
+            <span>{thirdPoint}</span>
           </li>
         </ul>
 

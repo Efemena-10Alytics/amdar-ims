@@ -9,20 +9,30 @@ import { GoogleMeetSvg, LimitedSvg } from '../../real-uk-experience/content/svg'
 
 const faqs = [
     { id: 'free', question: 'Is it free?', answer: 'Yes, completely free. No hidden upsell during the session.' },
-    { id: 'cert', question: 'I have PMP/PRINCE2, why no job?', answer: 'Because employers want local project experience, not just certification.' },
-    { id: 'caus', question: "I'm new to Canada/US can this help?", answer: 'Yes. This is built specifically for people without "local experience."' },
+    { id: 'cert', question: "I've completed labs - why am I not getting jobs?", answer: 'Because employers filter for real-world security delivery, not just lab completion.' },
+    { id: 'caus', question: "I'm new to Canada or the US - can this actually help me?", answer: 'Yes. This workshop is built specifically for people without "local experience." That is the exact barrier it addresses.' },
     {
         id: 'miss',
         question: 'What if I miss the live session?',
-        answer: "You'll receive the recording. But live attendance lets you ask questions specific to your situation, worth showing up for.",
+        answer: "You'll get the recording. But live attendance lets you ask questions specific to your current profile and receive direct guidance.",
     },
 ]
 
 type FaqProps = {
     onCtaClick?: () => void
+    ctaTitle?: string
+    ctaDescription?: string
+    ctaButtonText?: string
+    ctaMeta?: [string, string, string]
 }
 
-const Faq = ({ onCtaClick }: FaqProps) => {
+const Faq = ({
+    onCtaClick,
+    ctaTitle = 'Your free seat is waiting',
+    ctaDescription = 'For aspiring AppSec and Cloud Security professionals in Canada and the US who are done being overlooked.',
+    ctaButtonText = 'Save My Spot Now',
+    ctaMeta = ['Live on Google Meet Attend from anywhere', '60 minutes (Live Q&A)', 'Free! Limited to 100 spots'],
+}: FaqProps) => {
     React.useEffect(() => {
         Aos.init({
             duration: 800,
@@ -70,16 +80,16 @@ const Faq = ({ onCtaClick }: FaqProps) => {
                 data-aos="zoom-in"
             >
                 <div>
-                    <h3 className="text-4xl font-black leading-tight text-[#F1D477]">Your free seat is waiting</h3>
+                    <h3 className="text-4xl font-black leading-tight text-[#F1D477]">{ctaTitle}</h3>
                     <p className="mt-2 max-w-[28ch] text-2xl font-semibold leading-snug text-[#E9F0F0]">
-                        For aspiring Project Management professionals in Canada and the US who are done being overlooked.
+                        {ctaDescription}
                     </p>
                     <button
                         type="button"
                         onClick={onCtaClick}
                         className="group mt-6 inline-flex cursor-pointer items-center gap-2 rounded-xl bg-amdari-yellow px-6 py-3 text-base font-semibold text-[#0C2730] transition hover:bg-primary hover:text-amdari-yellow"
                     >
-                        Save My Spot Now
+                        {ctaButtonText}
                         <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-amdari-yellow transition-colors group-hover:bg-amdari-yellow group-hover:text-primary">
                             <ArrowUpRight className="size-3 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                         </span>
@@ -97,19 +107,19 @@ const Faq = ({ onCtaClick }: FaqProps) => {
                         <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-[#0A3040] text-[#67E2A6]">
                             <GoogleMeetSvg/>
                         </span>
-                        <p className="text-xl font-medium text-[#D8E6EA]">Live on Google Meet Attend from anywhere</p>
+                        <p className="text-xl font-medium text-[#D8E6EA]">{ctaMeta[0]}</p>
                     </div>
                     <div className="flex items-center gap-3">
                         <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-[#0A3040] text-[#F1D477]">
                             <CalendarClock className="h-5 w-5" />
                         </span>
-                        <p className="text-xl font-medium text-[#D8E6EA]">60 minutes (Live Q&amp;A)</p>
+                        <p className="text-xl font-medium text-[#D8E6EA]">{ctaMeta[1]}</p>
                     </div>
                     <div className="flex items-center gap-3">
                         <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-[#0A3040] text-[#67E2A6]">
                             <LimitedSvg />
                         </span>
-                        <p className="text-xl font-medium text-[#D8E6EA]">Free! Limited to 100 spots</p>
+                        <p className="text-xl font-medium text-[#D8E6EA]">{ctaMeta[2]}</p>
                     </div>
                 </div>
             </div>

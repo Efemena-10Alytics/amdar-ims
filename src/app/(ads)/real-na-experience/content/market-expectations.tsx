@@ -12,6 +12,7 @@ type TopItem = {
 
 type BottomItem = {
   text: string
+  subtext?: string
 }
 
 type MarketExpectationsProps = {
@@ -22,18 +23,19 @@ type MarketExpectationsProps = {
 }
 
 const defaultTopItems: TopItem[] = [
-  { text: 'Real project experience (not simulations)', icon: <SecuritySvg /> },
-  { text: 'CVs rewritten around actual deliverables', icon: <FilesSvg /> },
-  { text: 'Mentorship from working PMs in global markets', icon: <GlobeSvg /> },
-  { text: 'Built for immigrants trying to break into Canada/US job markets', icon: <MarketSvg /> },
+  { text: 'Real security projects not labs', icon: <SecuritySvg /> },
+  { text: 'CV built around actual findings', icon: <FilesSvg /> },
+  { text: 'Mentorship from working security professionals', icon: <GlobeSvg /> },
+  { text: 'Built for immigrants & career switchers', icon: <MarketSvg /> },
 ]
 
 const defaultBottomItems: BottomItem[] = [
-  { text: 'Project planning & scheduling' },
-  { text: 'Risk & issue management (RAID logs)' },
-  { text: 'Stakeholder communication' },
-  { text: 'Agile (Scrum, standups, sprint planning)' },
-  { text: 'Tools: Jira, MS Project, Excel, Confluence' },
+  { text: 'OWASP Top 10', subtext: 'Practical application not just knowing the list' },
+  { text: 'Cloud security', subtext: 'AWS, Azure, GCP posture & hardening checks' },
+  { text: 'SAST & DAST', subtext: 'Burp Suite, Snyk, and real app testing' },
+  { text: 'Secure code review', subtext: 'Finding and documenting flaws that businesses care about' },
+  { text: 'Threat modelling', subtext: 'STRIDE, attack surface prioritization' },
+  { text: 'API & web security', subtext: 'Auth flaws, injection, and abuse-case scenarios' },
 ]
 
 const MarketExpectations = ({
@@ -105,6 +107,7 @@ const MarketExpectations = ({
               data-aos-delay={150 + index * 80}
             >
               <p className="max-w-[17ch] text-xl font-semibold leading-snug text-[#1D323B]">{item.text}</p>
+              {item.subtext ? <p className="mt-1 max-w-[22ch] text-xs font-medium leading-snug text-[#3D4F56]">{item.subtext}</p> : null}
               <span className="pointer-events-none absolute bottom-2 right-3 text-6xl font-black leading-none text-[#CCB55180]"><TelescopeSvg /></span>
             </div>
           ))}

@@ -30,20 +30,21 @@ type HeroNAContent = {
 
 const defaultHeroStats: HeroStat[] = [
   { value: '39%', label: 'SAY "NO LOCAL EXPERIENCE" IS THEIR BIGGEST BARRIER' },
-  { value: '43%', label: 'JOINED AMDARI FOR REAL WORK EXPERIENCE, NOT MORE COURSES' },
-  { value: '29%', label: 'ARE IMMIGRANTS OR CAREER SWITCHERS' },
+  { value: '43%', label: 'JOINED AMDARI TO BECOME EMPLOYABLE' },
   { value: '90%', label: 'WANT RESULTS WITHIN 1-3 MONTHS' },
+  { value: '1000+', label: 'ATTENDED - MANY NOW WORKING IN THE FIELD' },
 ]
 
 const defaultHeroContent: HeroNAContent = {
-  badge: 'Free - Project Management Job Readiness Workshop',
-  titleBeforeHighlight: "You've got the certification. You've applied to dozens of",
-  titleHighlight: 'Project Management roles',
+  badge: 'Free Workshop - Limited Seats',
+  titleBeforeHighlight: "You've done the courses. Practised in labs. Applied to",
+  titleHighlight: 'AppSec and Cloud Security roles.',
   titleAfterHighlight: 'in Canada or the US.',
   finalHighlight: 'Still no callbacks.',
-  descriptionOne: "The issue isn't your PMP, PRINCE2, or Agile certification, it's the lack of local (Canada/US) project experience on your CV.",
+  descriptionOne:
+    "This free session shows you how to build the kind of evidence that makes UK employers take you seriously even if you've never worked in cybersecurity before.",
   descriptionTwo:
-    'This free 60-minute workshop shows you how to gain portfolio-ready North American PM experience, position it correctly, and start getting interviews even as an immigrant or career switcher.',
+    "This free 60-minute workshop shows you how to gain portfolio-ready AppSec & Cloud Security experience, position it properly, and start getting interviews even if you've never worked in dedicated security role.",
   ctaText: 'Save My Free Spot',
   metaItems: ['100% free', '60 minutes', 'Recording included'],
   imageSrc: '/images/pngs/ads/woman.png',

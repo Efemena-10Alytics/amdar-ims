@@ -14,11 +14,11 @@ type WhatYouWillLearnProps = {
 }
 
 const defaultPoints = [
-  "Why certifications alone don't get you hired in Canada/US",
-  'What "real PM experience" looks like on a North American CV',
-  'How to gain project experience without a job first',
-  'How to talk about your work in interviews (not just your certifications)',
-  'Your exact next step to start getting interviews within weeks',
+  "Why labs and certifications alone don't get you hired in Canada or the US - and what does",
+  'What real App+Cloud Security experience looks like on a North American CV - with specifics',
+  'How to gain hands-on security experience without already having a job in security',
+  'How to talk about vulnerabilities, assessments, and findings in interviews with confidence',
+  'Your exact next step to start getting interviews - within weeks, not months',
 ]
 
 const WhatYouWillLearn = ({
