@@ -57,7 +57,11 @@ const HOW_DID_YOU_HEAR_OPTIONS = [
     value: "Kelvin Ossai",
     label: "Kelvin Ossai",
   },
-  { value: "Clarity Session", label: "Clarity Session",  },
+   {
+    value: "fintech innovator society",
+    label: "Fintech Innovator Society",
+  },
+  // { value: "Clarity Session", label: "Clarity Session",  },
 ];
 
 const REASON_OPTIONS = [
