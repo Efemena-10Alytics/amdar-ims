@@ -93,7 +93,7 @@ const HeroNAExperience = ({ content = defaultHeroContent, onCtaClick }: HeroNAEx
             {content.titleBeforeHighlight}{' '}
             <span className="text-[#FFE082]">{content.titleHighlight}</span> {content.titleAfterHighlight}
             <br />
-            <span className="bg-[#2A8BA4] px-2 text-[#E7FCFF] rounded-lg">{content.finalHighlight}</span>
+            <span className="bg-[#2A8BA4] px-2 text-white rounded-lg">{content.finalHighlight}</span>
           </h1>
 
           <p className="mt-5 max-w-[65ch] text-base leading-relaxed text-[#C7D5D6]">

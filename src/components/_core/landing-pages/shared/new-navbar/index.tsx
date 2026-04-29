@@ -157,21 +157,21 @@ const Navbar = () => {
       {/* {showSalesBanner && <SalesBanner />} */}
       <div
         className={cn(
-          "top-0 left-0 right-0 z-[120] isolate -mt-px",
+          "top-0 left-0 right-0 z-120 isolate -mt-px",
           shouldStickNav ? "sticky" : "relative",
         )}
       >
         <nav
           ref={navBarRef}
           className={cn(
-            "relative z-[121] w-full mt-0 border-b border-t-0 shadow-sm",
+            "relative z-121 w-full mt-0 border-b border-t-0 shadow-sm",
             "transition-[background-color,backdrop-filter,border-b-color,box-shadow,color] duration-300 ease-out",
             showWhiteNav
               ? cn(
-                  "border-gray-200 bg-white text-primary backdrop-blur-none",
+                  "border-gray-200 bg-white text-primary backdrop-blur-xs",
                 )
               : cn(
-                  "border-transparent bg-transparent text-white backdrop-blur-none",
+                  "border-transparent bg-transparent text-white backdrop-blur-xs",
                 ),
           )}
         >

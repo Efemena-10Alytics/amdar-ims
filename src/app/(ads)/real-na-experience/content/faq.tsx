@@ -5,6 +5,7 @@ import { ArrowUpRight, CalendarClock, Globe, UsersRound } from 'lucide-react'
 import React from 'react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import Flag from './flag'
+import { GoogleMeetSvg, LimitedSvg } from '../../real-uk-experience/content/svg'
 
 const faqs = [
     { id: 'free', question: 'Is it free?', answer: 'Yes, completely free. No hidden upsell during the session.' },
@@ -17,7 +18,11 @@ const faqs = [
     },
 ]
 
-const Faq = () => {
+type FaqProps = {
+    onCtaClick?: () => void
+}
+
+const Faq = ({ onCtaClick }: FaqProps) => {
     React.useEffect(() => {
         Aos.init({
             duration: 800,
@@ -71,7 +76,7 @@ const Faq = () => {
                     </p>
                     <button
                         type="button"
-                        // onClick={onCtaClick}
+                        onClick={onCtaClick}
                         className="group mt-6 inline-flex cursor-pointer items-center gap-2 rounded-xl bg-amdari-yellow px-6 py-3 text-base font-semibold text-[#0C2730] transition hover:bg-primary hover:text-amdari-yellow"
                     >
                         Save My Spot Now
@@ -88,21 +93,21 @@ const Faq = () => {
                 </div>
 
                 <div className="mt-6 space-y-4 lg:mt-0">
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-center gap-3">
                         <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-[#0A3040] text-[#67E2A6]">
-                            <Globe className="h-5 w-5" />
+                            <GoogleMeetSvg/>
                         </span>
                         <p className="text-xl font-medium text-[#D8E6EA]">Live on Google Meet Attend from anywhere</p>
                     </div>
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-center gap-3">
                         <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-[#0A3040] text-[#F1D477]">
                             <CalendarClock className="h-5 w-5" />
                         </span>
                         <p className="text-xl font-medium text-[#D8E6EA]">60 minutes (Live Q&amp;A)</p>
                     </div>
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-center gap-3">
                         <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-[#0A3040] text-[#67E2A6]">
-                            <UsersRound className="h-5 w-5" />
+                            <LimitedSvg />
                         </span>
                         <p className="text-xl font-medium text-[#D8E6EA]">Free! Limited to 100 spots</p>
                     </div>
