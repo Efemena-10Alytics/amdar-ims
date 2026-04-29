@@ -58,7 +58,7 @@ const MarketExpectations = ({
           {topTitle}
         </h2>
 
-        <div className="mt-8 grid gap-y-7 sm:grid-cols-2 sm:gap-x-20">
+        <div className="mt-16 grid gap-y-7 sm:grid-cols-2 sm:gap-x-20">
           {topItems.map((item, index) => (
             <div
               key={item.text}
@@ -94,7 +94,7 @@ const MarketExpectations = ({
           {bottomTitle}
         </h3>
 
-        <div className="mt-7 grid gap-4 lg:grid-cols-3">
+        <div className="mt-12 grid gap-4 lg:grid-cols-3">
           {bottomItems.map((item, index) => (
             <div
               key={`${item.text}-${index}`}

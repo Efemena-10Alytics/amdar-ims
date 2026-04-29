@@ -41,11 +41,11 @@ const RealProblem = ({
         data-aos-delay="120"
       >
         <ul className="space-y-3">
-          <li className="flex items-start gap-3 text-3xl leading-snug text-[#DDE8EA]" data-aos="fade-right" data-aos-delay="170">
+          <li className="flex items-start gap-3 text-xl leading-snug text-[#DDE8EA]" data-aos="fade-right" data-aos-delay="170">
             <span className="mt-2 inline-block h-2.5 w-2.5 shrink-0 rounded-full border border-[#F94444]" />
             <span>{firstPoint}</span>
           </li>
-          <li className="flex items-start gap-3 text-3xl leading-snug text-[#DDE8EA]" data-aos="fade-right" data-aos-delay="260">
+          <li className="flex items-start gap-3 text-xl leading-snug text-[#DDE8EA]" data-aos="fade-right" data-aos-delay="260">
             <span className="mt-2 inline-block h-2.5 w-2.5 shrink-0 rounded-full border border-[#F94444]" />
             <span>
               {secondPointPrefix}
@@ -56,7 +56,7 @@ const RealProblem = ({
         </ul>
 
         <p
-          className="mt-4 inline-block rounded-md border border-[#A33D3D] bg-[#3F1E1EE0] px-3 py-2 text-3xl font-semibold text-[#FF5555]"
+          className="mt-4 inline-block rounded-md border border-[#A33D3D] bg-[#3F1E1EE0] px-3 py-2 text-xl font-semibold text-[#FF5555]"
           data-aos="fade-up"
           data-aos-delay="340"
         >
