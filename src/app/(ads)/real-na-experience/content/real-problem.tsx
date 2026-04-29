@@ -55,10 +55,12 @@ const RealProblem = ({
               <strong className="font-bold text-[#F2F7F7]">{secondPointHighlight}</strong>
             </span>
           </li>
-          <li className="flex items-start gap-3 text-xl leading-snug text-[#DDE8EA]" data-aos="fade-right" data-aos-delay="350">
-            <span className="mt-2 inline-block h-2.5 w-2.5 shrink-0 rounded-full border border-[#F94444]" />
-            <span>{thirdPoint}</span>
-          </li>
+          {thirdPoint ? (
+            <li className="flex items-start gap-3 text-xl leading-snug text-[#DDE8EA]" data-aos="fade-right" data-aos-delay="350">
+              <span className="mt-2 inline-block h-2.5 w-2.5 shrink-0 rounded-full border border-[#F94444]" />
+              <span>{thirdPoint}</span>
+            </li>
+          ) : null}
         </ul>
 
         <p
