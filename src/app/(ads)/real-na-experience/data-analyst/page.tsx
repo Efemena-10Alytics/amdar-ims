@@ -123,15 +123,15 @@ const AppAndCloudSecurityPage = () => {
                 ctaMeta={['Live on Google Meet Attend from anywhere', '60 minutes (Live Q&A)', 'Free! Limited to 100 spots']}
             />
             <FooterCta
-              onCtaClick={() => setIsSaveMySpotOpen(true)}
-              content={{
-                title: "You've learned the tools. Now get the experience that gets you hired.",
-                description: 'Without Canadian/US data experience, your applications will keep getting filtered.',
-                buttonText: 'Save My Spot Now',
-                metaText: 'Limited seats | Free | Built for results',
-              }}
+                onCtaClick={() => setIsSaveMySpotOpen(true)}
+                content={{
+                    title: "You've learned the tools. Now get the experience that gets you hired.",
+                    description: 'Without Canadian/US data experience, your applications will keep getting filtered.',
+                    buttonText: 'Save My Spot Now',
+                    metaText: 'Limited seats | Free | Built for results',
+                }}
             />
-            <SaveMySpot isOpen={isSaveMySpotOpen} onClose={() => setIsSaveMySpotOpen(false)}  region='data_WhatsappLinkNA' />
+            <SaveMySpot isOpen={isSaveMySpotOpen} onClose={() => setIsSaveMySpotOpen(false)} region='data_WhatsappLinkNA' />
         </div>
     )
 }
