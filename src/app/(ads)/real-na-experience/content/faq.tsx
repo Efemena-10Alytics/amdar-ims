@@ -7,7 +7,13 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import Flag from './flag'
 import { GoogleMeetSvg, LimitedSvg } from '../../real-uk-experience/content/svg'
 
-const faqs = [
+type FaqItem = {
+    id: string
+    question: string
+    answer: string
+}
+
+const defaultFaqs: FaqItem[] = [
     { id: 'free', question: 'Is it free?', answer: 'Yes, completely free. No hidden upsell during the session.' },
     { id: 'cert', question: "I've completed labs - why am I not getting jobs?", answer: 'Because employers filter for real-world security delivery, not just lab completion.' },
     { id: 'caus', question: "I'm new to Canada or the US - can this actually help me?", answer: 'Yes. This workshop is built specifically for people without "local experience." That is the exact barrier it addresses.' },
@@ -20,6 +26,7 @@ const faqs = [
 
 type FaqProps = {
     onCtaClick?: () => void
+    items?: FaqItem[]
     ctaTitle?: string
     ctaDescription?: string
     ctaButtonText?: string
@@ -28,6 +35,7 @@ type FaqProps = {
 
 const Faq = ({
     onCtaClick,
+    items = defaultFaqs,
     ctaTitle = 'Your free seat is waiting',
     ctaDescription = 'For aspiring AppSec and Cloud Security professionals in Canada and the US who are done being overlooked.',
     ctaButtonText = 'Save My Spot Now',
@@ -56,8 +64,8 @@ const Faq = ({
                 </div>
 
                 <div data-aos="fade-left" data-aos-delay="100">
-                    <Accordion type="single" collapsible defaultValue="free" className="space-y-3">
-                        {faqs.map((faq) => (
+                    <Accordion type="single" collapsible defaultValue={items[0]?.id} className="space-y-3">
+                        {items.map((faq) => (
                             <AccordionItem
                                 key={faq.id}
                                 value={faq.id}
