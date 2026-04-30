@@ -2,7 +2,8 @@
 
 import React from 'react'
 import Image from 'next/image'
-import { ChevronLeft, ChevronRight, Globe2, ShieldCheck, Target } from 'lucide-react'
+import Aos from 'aos'
+import { ChevronLeft, ChevronRight, Globe2, LightbulbIcon, ShieldCheck, Target } from 'lucide-react'
 import { ClockFillSvg, GoogleMeetSvg, LimitedSvg, PinFillSvg } from '../../real-uk-experience/content/svg'
 
 const CybersecurityPage = () => {
@@ -39,6 +40,14 @@ const CybersecurityPage = () => {
 
     const today = new Date()
 
+    React.useEffect(() => {
+        Aos.init({
+            duration: 800,
+            once: true,
+            easing: 'ease-out-cubic',
+        })
+    }, [])
+
     return (
         <section className="bg-[#052A31]">
             <div className="relative min-h-screen text-[#F2F7F7] overflow-hidden">
@@ -54,9 +63,9 @@ const CybersecurityPage = () => {
                 />
 
                 <div className="relative z-10 app-width flex min-h-screen items-center justify-center py-20">
-                    <div className="mx-auto max-w-4xl text-center">
+                    <div className="mx-auto max-w-4xl text-center" data-aos="fade-up">
                         <div className="inline-flex items-center gap-2 rounded-full border border-[#3AB66A] bg-[#1E8B4E33] px-4 py-2 sm:text-lg font-medium text-[#50D07D]">
-                            <span aria-hidden="true">💡</span>
+                            <span aria-hidden="true" className=" h-7 w-7 p-1 rounded-full flex items-center justify-center bg-[#6EE599]"><LightbulbIcon className='animate-pulse text-[#297A46]' /></span>
                             Free - Cybersecurity Careers
                         </div>
 
@@ -103,7 +112,7 @@ const CybersecurityPage = () => {
                     }}
                 />
                 <div className="relative z-10 app-width flex min-h-screen items-center py-16">
-                    <div className="w-full max-w-6xl mx-auto rounded-[28px]  bg-[#04191E]/95 p-6 shadow-[0_24px_60px_rgba(0,0,0,0.35)] md:p-10">
+                    <div className="w-full max-w-6xl mx-auto rounded-[28px]  bg-[#04191E]/95 p-6 shadow-[0_24px_60px_rgba(0,0,0,0.35)] md:p-10" data-aos="zoom-in">
                         <div className="grid gap-8 lg:grid-cols-[1fr_1.2fr] lg:gap-12">
                             <div>
                                 <Image
@@ -111,7 +120,7 @@ const CybersecurityPage = () => {
                                     alt="Amdari"
                                     width={172}
                                     height={40}
-                                    className="h-10 w-auto"
+                                    className="h-10 w-auto animate-pulse"
                                 />
 
                                 <div className="mt-10 space-y-6">
@@ -123,7 +132,7 @@ const CybersecurityPage = () => {
                                     </div>
                                     <div className="flex items-start gap-4">
                                         <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#0B4553] text-[#5EE7A0] [&>svg]:h-6 [&>svg]:w-6">
-                                            <ClockFillSvg/>
+                                            <ClockFillSvg />
                                         </span>
                                         <p className="text-xl leading-snug text-[#DFECEF]">Monday to Friday. Every day</p>
                                     </div>
@@ -190,8 +199,8 @@ const CybersecurityPage = () => {
                                                         isSameDay(selectedDate, date)
                                                             ? 'mx-auto inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#F2D675] font-semibold text-[#0A2730]'
                                                             : isSameDay(today, date)
-                                                              ? 'mx-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#F2D675] text-[#F2D675]'
-                                                              : 'mx-auto inline-flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-[#0F4250]'
+                                                                ? 'mx-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#F2D675] text-[#F2D675]'
+                                                                : 'mx-auto inline-flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-[#0F4250]'
                                                     }
                                                     aria-label={`Select ${date.toDateString()}`}
                                                 >
@@ -224,7 +233,7 @@ const CybersecurityPage = () => {
                     </div>
 
                     <div className="mt-10 grid gap-5 md:grid-cols-3">
-                        <div className="rounded-2xl bg-[#DFC777] p-6 text-center">
+                        <div className="rounded-2xl bg-[#DFC777] p-6 text-center" data-aos="fade-up" data-aos-delay="100">
                             <span className="mx-auto inline-flex h-16 w-16 items-center justify-center rounded-full bg-[#0A5F6A] text-[#5EE7A0]">
                                 <Target className="h-7 w-7" />
                             </span>
@@ -239,7 +248,7 @@ const CybersecurityPage = () => {
                             </p>
                         </div>
 
-                        <div className="rounded-2xl bg-[#DFC777] p-6 text-center">
+                        <div className="rounded-2xl bg-[#DFC777] p-6 text-center" data-aos="fade-up" data-aos-delay="180">
                             <span className="mx-auto inline-flex h-16 w-16 items-center justify-center rounded-full bg-[#0A5F6A] text-[#5EE7A0]">
                                 <ShieldCheck className="h-7 w-7" />
                             </span>
@@ -254,7 +263,7 @@ const CybersecurityPage = () => {
                             </p>
                         </div>
 
-                        <div className="rounded-2xl bg-[#DFC777] p-6 text-center">
+                        <div className="rounded-2xl bg-[#DFC777] p-6 text-center" data-aos="fade-up" data-aos-delay="260">
                             <span className="mx-auto inline-flex h-16 w-16 items-center justify-center rounded-full bg-[#0A5F6A] text-[#5EE7A0]">
                                 <Globe2 className="h-7 w-7" />
                             </span>
