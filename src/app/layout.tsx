@@ -6,6 +6,7 @@ import "aos/dist/aos.css";
 import { Providers } from "./providers";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NextTopLoader from "nextjs-toploader";
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 const sora = Sora({
   variable: "--font-sora",
@@ -51,6 +52,7 @@ export default function RootLayout({
           </Providers>
         </TooltipProvider>
       </body>
+      <GoogleAnalytics gaId="G-TNPG0WCNFB" />
     </html>
   );
 }
