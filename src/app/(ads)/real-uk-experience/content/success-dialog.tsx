@@ -8,35 +8,21 @@ type SuccessDialogProps = {
   isOpen: boolean
   onClose: () => void
   source: string
-
 }
 
-const SuccessDialog = ({ isOpen, onClose, source, }: SuccessDialogProps) => {
+const WHATSAPP_LINKS: Record<string, string> = {
+  data_WhatsappLinkEU: 'https://chat.whatsapp.com/IrSIdYZK8Z62zAtnagRJr4',
+  BA_PM_WhatsappLinkEU: 'https://chat.whatsapp.com/IsnI7AG4pPe8Gb7GOJKNa6',
+  SOC_WhatsappLinkEU: 'https://chat.whatsapp.com/Bw8Qd8XTuYqCtNK1gVOurH',
+  BA_PM_WhatsappLinkNA: 'https://chat.whatsapp.com/FOMGqwlAB9wKePmDmLStfu',
+  data_WhatsappLinkNA: 'https://chat.whatsapp.com/JA7hxEukfq5IrX0u4m3iCO',
+  SOC_WhatsappLinkNA: 'https://chat.whatsapp.com/JNa4E24LpaEGBD7Bp6hCuk',
+  'job-access': 'https://chat.whatsapp.com/FYVmrUfwzpGA5XOAlVKW0d',
+  JobAccess: 'https://chat.whatsapp.com/FYVmrUfwzpGA5XOAlVKW0d',
+}
 
-  // EU whatsapp links
-  const data_WhatsappLinkEU = "https://chat.whatsapp.com/IrSIdYZK8Z62zAtnagRJr4"
-  const BA_PM_WhatsappLinkEU = "https://chat.whatsapp.com/IsnI7AG4pPe8Gb7GOJKNa6"
-  // This is for App/cloud security GRC SOC LANDING PAGES
-  const SOC_WhatsappLinkEU = "https://chat.whatsapp.com/Bw8Qd8XTuYqCtNK1gVOurH"
-
-  // NA whatsapp links
-  const BA_PM_WhatsappLinkNA = "https://chat.whatsapp.com/FOMGqwlAB9wKePmDmLStfu"
-  const data_WhatsappLinkNA = "https://chat.whatsapp.com/JA7hxEukfq5IrX0u4m3iCO"
-  const SOC_WhatsappLinkNA = "https://chat.whatsapp.com/JNa4E24LpaEGBD7Bp6hCuk"
-
-
-
-
-  const whatsappLink = source === SOC_WhatsappLinkEU ? SOC_WhatsappLinkEU
-    : source === BA_PM_WhatsappLinkEU ? BA_PM_WhatsappLinkEU
-      : source === data_WhatsappLinkEU ? data_WhatsappLinkEU
-        : source === BA_PM_WhatsappLinkNA ? BA_PM_WhatsappLinkNA
-          : source === data_WhatsappLinkNA ? data_WhatsappLinkNA
-            : source === SOC_WhatsappLinkNA ? SOC_WhatsappLinkNA
-              : undefined
-
-
-  console.log('source ==>', source)
+const SuccessDialog = ({ isOpen, onClose, source }: SuccessDialogProps) => {
+  const whatsappLink = WHATSAPP_LINKS[source]
   return (
     <Dialog open={isOpen} onOpenChange={(open) => (open ? null : onClose())}>
       <DialogContent
@@ -54,23 +40,18 @@ const SuccessDialog = ({ isOpen, onClose, source, }: SuccessDialogProps) => {
           Thank you for registering! Our team will be in touch with next steps.
         </p>
 
-        {whatsappLink ? (
-          <a
-            href={whatsappLink}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-7 inline-flex h-13 w-full items-center justify-center rounded-xl bg-[#1E8098] text-lg font-medium text-[#EAF6FA] transition hover:bg-[#2693AD]"
-          >
-            Join Whatsapp Community
-          </a>
-        ) : (
-          <button
-            type="button"
-            className="mt-7 h-13 w-full rounded-xl bg-[#1E8098] text-lg font-medium text-[#EAF6FA] transition hover:bg-[#2693AD]"
-          >
-            Join Whatsapp Community
-          </button>
-        )}
+        <a
+          href={whatsappLink ?? '#'}
+          target="_blank"
+          rel="noreferrer"
+          aria-disabled={!whatsappLink}
+          onClick={(event) => {
+            if (!whatsappLink) event.preventDefault()
+          }}
+          className="mt-7 cursor-pointer inline-flex h-13 w-full items-center justify-center rounded-xl bg-[#1E8098] text-lg font-medium text-[#EAF6FA] transition hover:bg-[#2693AD]"
+        >
+          Join Whatsapp Community
+        </a>
       </DialogContent>
     </Dialog>
   )
