@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useRef, useState, useCallback, useEffect } from "react";
+import React, {
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+  startTransition,
+} from "react";
 import {
   Upload,
   FileText,
@@ -339,7 +345,11 @@ function FileUploadZone({
   const handleFile = useCallback(
     (f: File | null) => {
       if (!f) return;
-      onFileChange(f);
+      // startTransition defers the state update so the browser isn't blocked
+      // while React reconciles the File object into the form state.
+      startTransition(() => {
+        onFileChange(f);
+      });
     },
     [onFileChange],
   );
@@ -348,7 +358,8 @@ function FileUploadZone({
     (e: React.DragEvent) => {
       e.preventDefault();
       setDragOver(false);
-      handleFile(e.dataTransfer.files[0] ?? null);
+      const f = e.dataTransfer.files[0] ?? null;
+      if (f) handleFile(f);
     },
     [handleFile],
   );
@@ -491,6 +502,42 @@ function SuccessScreen({
       >
         Submit Another CV
       </Button>
+    </div>
+  );
+}
+
+// ─── Step 6: CV upload (isolated so onFileChange is stable) ──────────────────
+
+function Step6Upload({
+  file,
+  setField,
+  error,
+  isSubmitting,
+}: {
+  file: File | null;
+  setField: <K extends keyof CVReviewFormState>(
+    key: K,
+    value: CVReviewFormState[K],
+  ) => void;
+  error?: string;
+  isSubmitting: boolean;
+}) {
+  const onFileChange = useCallback(
+    (f: File | null) => setField("cv_file", f),
+    [setField],
+  );
+
+  return (
+    <div className="flex flex-col gap-3">
+      <p className="text-sm font-medium text-[#092A31]">
+        Upload your CV <span className="text-red-500">*</span>
+      </p>
+      <FileUploadZone
+        file={file}
+        onFileChange={onFileChange}
+        error={error}
+        disabled={isSubmitting}
+      />
     </div>
   );
 }
@@ -813,17 +860,12 @@ function StepContent({
 
   if (step === 6) {
     return (
-      <div className="flex flex-col gap-3">
-        <p className="text-sm font-medium text-[#092A31]">
-          Upload your CV <span className="text-red-500">*</span>
-        </p>
-        <FileUploadZone
-          file={form.cv_file}
-          onFileChange={(f) => setField("cv_file", f)}
-          error={errors.cv_file}
-          disabled={isSubmitting}
-        />
-      </div>
+      <Step6Upload
+        file={form.cv_file}
+        setField={setField}
+        error={errors.cv_file}
+        isSubmitting={isSubmitting}
+      />
     );
   }
 
