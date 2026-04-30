@@ -25,6 +25,7 @@ export const metadata: Metadata = {
     template: `%s - ${siteConfig.name}`,
   },
   description: siteConfig.description,
+  keywords: "Work experience | Internship| UK | US | Canada",
   icons: {
     icon: "/favicon.png",
     shortcut: "https://www.Amdaridatastrategists.com/logo1.png",
