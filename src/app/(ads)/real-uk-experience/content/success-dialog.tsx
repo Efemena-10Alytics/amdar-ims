@@ -8,21 +8,35 @@ type SuccessDialogProps = {
   isOpen: boolean
   onClose: () => void
   source: string
+
 }
 
-const SuccessDialog = ({ isOpen, onClose, source }: SuccessDialogProps) => {
-  const normalizedSource = source.toLowerCase()
-  const isDataSource = normalizedSource.includes('data')
-  const isSocSource = normalizedSource === 'soc' || normalizedSource === 'app-and-cloud-security'
+const SuccessDialog = ({ isOpen, onClose, source, }: SuccessDialogProps) => {
 
-  const whatsappLink = isDataSource
-    ? 'https://chat.whatsapp.com/IrSIdYZK8Z62zAtnagRJr4'
-    : isSocSource
-      ? 'https://chat.whatsapp.com/Bw8Qd8XTuYqCtNK1gVOurH'
-      : undefined
+  // EU whatsapp links
+  const data_WhatsappLinkEU = "https://chat.whatsapp.com/IrSIdYZK8Z62zAtnagRJr4"
+  const BA_PM_WhatsappLinkEU = "https://chat.whatsapp.com/IsnI7AG4pPe8Gb7GOJKNa6"
+  // This is for App/cloud security GRC SOC LANDING PAGES
+  const SOC_WhatsappLinkEU = "https://chat.whatsapp.com/Bw8Qd8XTuYqCtNK1gVOurH"
+
+  // NA whatsapp links
+  const BA_PM_WhatsappLinkNA = "https://chat.whatsapp.com/FOMGqwlAB9wKePmDmLStfu"
+  const data_WhatsappLinkNA = "https://chat.whatsapp.com/JA7hxEukfq5IrX0u4m3iCO"
+  const SOC_WhatsappLinkNA = "https://chat.whatsapp.com/JNa4E24LpaEGBD7Bp6hCuk"
 
 
 
+
+  const whatsappLink = source === SOC_WhatsappLinkEU ? SOC_WhatsappLinkEU
+    : source === BA_PM_WhatsappLinkEU ? BA_PM_WhatsappLinkEU
+      : source === data_WhatsappLinkEU ? data_WhatsappLinkEU
+        : source === BA_PM_WhatsappLinkNA ? BA_PM_WhatsappLinkNA
+          : source === data_WhatsappLinkNA ? data_WhatsappLinkNA
+            : source === SOC_WhatsappLinkNA ? SOC_WhatsappLinkNA
+              : undefined
+
+
+  console.log('source ==>', source)
   return (
     <Dialog open={isOpen} onOpenChange={(open) => (open ? null : onClose())}>
       <DialogContent

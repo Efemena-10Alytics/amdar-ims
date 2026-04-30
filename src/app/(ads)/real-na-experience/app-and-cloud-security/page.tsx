@@ -33,7 +33,7 @@ const AppAndCloudSecurityPage = () => {
                 metaText: 'Limited seats | Free | Built for results',
               }}
             />
-            <SaveMySpot isOpen={isSaveMySpotOpen} onClose={() => setIsSaveMySpotOpen(false)} />
+            <SaveMySpot isOpen={isSaveMySpotOpen} onClose={() => setIsSaveMySpotOpen(false)}  region='SOC_WhatsappLinkNA' />
         </div>
     )
 }

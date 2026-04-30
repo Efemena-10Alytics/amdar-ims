@@ -23,7 +23,7 @@ const RealUkExpPage = () => {
       <SessionBreakdown />
       <RightFit />
       <FooterCta onCtaClick={() => setIsSaveMySpotOpen(true)} />
-      <SaveMySpot isOpen={isSaveMySpotOpen} onClose={() => setIsSaveMySpotOpen(false)} />
+      <SaveMySpot isOpen={isSaveMySpotOpen} onClose={() => setIsSaveMySpotOpen(false)} region='SOC_WhatsappLinkEU' />
     </div>
   )
 }
