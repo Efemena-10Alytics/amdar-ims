@@ -146,7 +146,7 @@ const DataScientistPage = () => {
       <SessionBreakdown content={dataScientistSessionBreakdownContent} />
       <RightFit content={dataScientistRightFitContent} />
       <FooterCta content={dataScientistFooterCtaContent} onCtaClick={() => setIsSaveMySpotOpen(true)} />
-      <SaveMySpot isOpen={isSaveMySpotOpen} onClose={() => setIsSaveMySpotOpen(false)} />
+      <SaveMySpot isOpen={isSaveMySpotOpen} onClose={() => setIsSaveMySpotOpen(false)} region='data_WhatsappLinkEU' />
     </div>
   )
 }
