@@ -8,14 +8,14 @@ import SuccessDialog from '../real-uk-experience/content/success-dialog'
 import { ClockFillSvg, GoogleMeetSvg } from '../real-uk-experience/content/svg'
 
 const FIELDS = [
-    'Data Analytics',
-    'Data Science',
+    'Data science',
+    'Data analytics',
+    'Data Engineering',
     'Project Management',
-    'Business Analysis',
-    'Cybersecurity / SOC',
-    'Cloud Engineering',
-    'Software Engineering',
-    'Other',
+    'Business analysis',
+    'SOC Analysis',
+    'Governance Risk & Compliance',
+    'App/cloud Security'
 ]
 
 const gainItems = [
@@ -197,7 +197,7 @@ const JobAccessPage = () => {
                                     <select
                                         value={selectedField}
                                         onChange={(e) => setSelectedField(e.target.value)}
-                                        className="h-11 w-full appearance-none rounded-lg border border-[#1E4A5A] bg-[#0F4652] px-4 pr-10 text-sm text-[#4A6A7A] outline-none focus:border-[#2C9AB3]"
+                                        className="h-11 w-full appearance-none rounded-lg border border-[#1E4A5A] bg-[#0F4652] px-4 pr-10 text-sm text-white outline-none focus:border-[#2C9AB3]"
                                     >
                                         <option value="">Select your visa type</option>
                                         {FIELDS.map((field) => (
@@ -206,7 +206,7 @@ const JobAccessPage = () => {
                                             </option>
                                         ))}
                                     </select>
-                                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#4A6A7A]" />
+                                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white" />
                                 </div>
                             </div>
 
@@ -257,7 +257,7 @@ const JobAccessPage = () => {
                 </div>
             </section>
 
-            <SuccessDialog isOpen={isSuccessOpen} onClose={() => setIsSuccessOpen(false)} source="job-access" />
+            <SuccessDialog isOpen={isSuccessOpen} onClose={() => setIsSuccessOpen(false)} source="JobAccess" />
         </div>
     )
 }
