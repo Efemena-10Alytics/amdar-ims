@@ -4,6 +4,7 @@ import React from 'react'
 import Image from 'next/image'
 import { MapPin, Video, Timer, MessageCircle, Building2, Users, Lock, ChevronDown } from 'lucide-react'
 import { useCountries } from '@/features/portfolio/use-countries'
+import { useCreateAdsData } from '@/features/ads/use-create-ads-data'
 import SuccessDialog from '../real-uk-experience/content/success-dialog'
 import { ClockFillSvg, GoogleMeetSvg } from '../real-uk-experience/content/svg'
 
@@ -41,9 +42,15 @@ const gainItems = [
 
 const JobAccessPage = () => {
     const { data: countries = [], isLoading: countriesLoading } = useCountries()
+    const { createNaRole, isSubmitting, errorMessage } = useCreateAdsData()
     const [selectedPhoneCountryCode, setSelectedPhoneCountryCode] = React.useState('')
     const [selectedField, setSelectedField] = React.useState('')
     const [isSuccessOpen, setIsSuccessOpen] = React.useState(false)
+    const [firstName, setFirstName] = React.useState('')
+    const [lastName, setLastName] = React.useState('')
+    const [email, setEmail] = React.useState('')
+    const [phone, setPhone] = React.useState('')
+    const [formError, setFormError] = React.useState('')
 
     React.useEffect(() => {
         if (!countries.length) return
@@ -55,6 +62,55 @@ const JobAccessPage = () => {
         () => countries.find((c) => c.code === selectedPhoneCountryCode),
         [countries, selectedPhoneCountryCode]
     )
+
+    const handleSubmit = React.useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        setFormError('')
+
+        const trimmedFirstName = firstName.trim()
+        const trimmedLastName = lastName.trim()
+        const trimmedEmail = email.trim()
+        const trimmedPhone = phone.trim()
+        const location = selectedPhoneCountry?.name ?? ''
+
+        if (!trimmedFirstName || !trimmedEmail || !trimmedPhone || !location) {
+            setFormError('Please complete all required fields.')
+            return
+        }
+
+        const phoneWithCode = trimmedPhone.startsWith('+')
+            ? trimmedPhone
+            : `${selectedPhoneCountry?.callingCode ?? ''}${trimmedPhone}`
+
+        const response = await createNaRole({
+            source: 'JobAccess',
+            firstName: trimmedFirstName,
+            lastName: trimmedLastName || null,
+            email: trimmedEmail,
+            location,
+            phone: phoneWithCode,
+            visaType: selectedField || null,
+        })
+
+        if (!response) return
+
+        setIsSuccessOpen(true)
+        setFirstName('')
+        setLastName('')
+        setEmail('')
+        setPhone('')
+        setSelectedField('')
+        setFormError('')
+    }, [
+        createNaRole,
+        email,
+        firstName,
+        lastName,
+        phone,
+        selectedField,
+        selectedPhoneCountry?.callingCode,
+        selectedPhoneCountry?.name,
+    ])
 
     return (
         <div className="relative bg-[#092A31] min-h-screen text-[#F2F7F7]">
@@ -129,16 +185,15 @@ const JobAccessPage = () => {
 
                         <form
                             className="mt-6 space-y-4"
-                            onSubmit={(e) => {
-                                e.preventDefault()
-                                setIsSuccessOpen(true)
-                            }}
+                            onSubmit={handleSubmit}
                         >
                             <div className="grid gap-4 sm:grid-cols-2">
                                 <label className="space-y-1.5">
                                     <span className="text-sm font-medium text-[#C7D5D6]">First name</span>
                                     <input
                                         required
+                                        value={firstName}
+                                        onChange={(e) => setFirstName(e.target.value)}
                                         className="h-11 w-full rounded-lg border border-[#1E4A5A] bg-[#0F4652] px-4 text-sm text-[#EAF1F7] placeholder:text-[#4A6A7A] outline-none focus:border-[#2C9AB3]"
                                         placeholder="Enter your first name"
                                     />
@@ -147,6 +202,8 @@ const JobAccessPage = () => {
                                     <span className="text-sm font-medium text-[#C7D5D6]">Last name</span>
                                     <input
                                         required
+                                        value={lastName}
+                                        onChange={(e) => setLastName(e.target.value)}
                                         className="h-11 w-full rounded-lg border border-[#1E4A5A] bg-[#0F4652] px-4 text-sm text-[#EAF1F7] placeholder:text-[#4A6A7A] outline-none focus:border-[#2C9AB3]"
                                         placeholder="Enter your last name"
                                     />
@@ -158,6 +215,8 @@ const JobAccessPage = () => {
                                 <input
                                     type="email"
                                     required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     className="h-11 w-full rounded-lg border border-[#1E4A5A] bg-[#0F4652] px-4 text-sm text-[#EAF1F7] placeholder:text-[#4A6A7A] outline-none focus:border-[#2C9AB3]"
                                     placeholder="Enter your email address"
                                 />
@@ -182,6 +241,8 @@ const JobAccessPage = () => {
                                         <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#4A6A7A]" />
                                     </div>
                                     <input
+                                        value={phone}
+                                        onChange={(e) => setPhone(e.target.value)}
                                         className="h-11 w-full rounded-lg border border-[#1E4A5A] bg-[#0F4652] px-4 text-sm text-[#EAF1F7] placeholder:text-[#4A6A7A] outline-none focus:border-[#2C9AB3]"
                                         placeholder="Your phone number"
                                     />
@@ -209,12 +270,19 @@ const JobAccessPage = () => {
                                     <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white" />
                                 </div>
                             </div>
+                            {formError ? (
+                                <p className="text-sm text-[#FCA5A5]">{formError}</p>
+                            ) : null}
+                            {errorMessage ? (
+                                <p className="text-sm text-[#FCA5A5]">{errorMessage}</p>
+                            ) : null}
 
                             <button
                                 type="submit"
+                                disabled={isSubmitting}
                                 className="mt-2 h-13 w-full rounded-xl bg-[#FFE082] text-base font-semibold text-[#0C2730] transition hover:bg-[#FFD54F] cursor-pointer"
                             >
-                                Reserve My Free Spot
+                                {isSubmitting ? 'Submitting...' : 'Reserve My Free Spot'}
                             </button>
 
                             <p className="flex items-center justify-center gap-1.5 text-sm text-[#6A8A9A]">
