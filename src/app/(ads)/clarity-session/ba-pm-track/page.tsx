@@ -6,8 +6,8 @@ import Aos from 'aos'
 import { ChevronLeft, ChevronRight, Globe2, LightbulbIcon, ShieldCheck, Target } from 'lucide-react'
 import { ClockFillSvg, GoogleMeetSvg, LimitedSvg, PinFillSvg } from '../../real-uk-experience/content/svg'
 
-const CybersecurityPage = () => {
-    const calendlyLink = 'https://calendly.com/efemena-amdari/land-a-cybersecurity-role-via-work-experience'
+const BMPMTrackPage = () => {
+    const calendlyLink = 'https://calendly.com/efemena-amdari/land-a-pm-ba-role-via-work-experience'
 
     const [visibleMonth, setVisibleMonth] = React.useState(() => {
         const now = new Date()
@@ -61,17 +61,17 @@ const CybersecurityPage = () => {
                         backgroundSize: "cover",
                     }}
                 />
-                <div className="relative p-3 z-20 bg-[#FFE0821A] text-center text-[#FFE082]">Only 100 free spots — You’ve done TryHackMe, labs, and certifications. Now get the European experience that gets you hired.</div>
+                <div className="relative p-3 z-20 bg-[#FFE0821A] text-center text-[#FFE082]">Only 100 free spots — Now get the European experience that gets you hired.</div>
 
                 <div className="relative z-10 app-width flex min-h-screen items-center justify-center py-20">
                     <div className="mx-auto max-w-4xl text-center" data-aos="fade-up">
                         <div className="inline-flex items-center gap-2 rounded-full border border-[#3AB66A] bg-[#1E8B4E33] px-4 py-2 sm:text-lg font-medium text-[#50D07D]">
                             <span aria-hidden="true" className=" h-7 w-7 p-1 rounded-full flex items-center justify-center bg-[#6EE599]"><LightbulbIcon className='animate-pulse text-[#297A46]' /></span>
-                            Free - Cybersecurity Careers
+                            Free - Data Careers
                         </div>
 
                         <h1 className="mt-8 text-balance text-4xl md:text-5xl font-semibold leading-[1.2] tracking-[-0.02em] text-[#F6FAFB] lg:text-6xl">
-                            You have the certs.{` `}
+                            You know the role.{` `}
                             <Image
                                 src="/images/svgs/country/UK.svg"
                                 alt="United Kingdom flag"
@@ -80,7 +80,7 @@ const CybersecurityPage = () => {
                                 className="inline-block align-baseline h-7 w-7"
                             />
                             <br />
-                            Now get the <span className="text-[#F04A4A]">UK experience</span>
+                            UK employers just
                             <br />
                             <Image
                                 src="/images/svgs/country/UK.svg"
@@ -89,12 +89,13 @@ const CybersecurityPage = () => {
                                 height={48}
                                 className="inline-block align-baseline h-7 w-7"
                             />{' '}
-                            that gets you hired.
+                            <span className="text-[#F04A4A]">can't see it yet.</span>
                         </h1>
 
                         <p className="mx-auto mt-8 max-w-4xl text-xl sm:text-2xl leading-relaxed text-[#EBCF74]">
-                            SOC Analyst. GRC. App &amp; Cloud Security. If you have the knowledge but no UK work
-                            experience on your CV, this is the free session that changes what happens next.
+                            CBAP. PMP. PRINCE2. Years of experience. If your applications are going nowhere, this
+                            free 1-on-1 session will show you exactly what UK employers need to see and how to show
+                            it.
                         </p>
                     </div>
                 </div>
@@ -225,11 +226,11 @@ const CybersecurityPage = () => {
                         <h2 className="max-w-[16ch] text-4xl font-semibold leading-tight tracking-[-0.02em] text-[#042E3A] lg:text-5xl">
                             Why Join This <span className="text-[#EF4343]">FREE</span>
                             <br />
-                            Mentorship Session?
+                            Clarity Session?
                         </h2>
                         <p className="max-w-[40ch] text-xl text-[#254852]">
-                            Get clarity on exactly what is standing between you and a sponsored cybersecurity role in
-                            the UK, and what to do about it.
+                            Get a clear answer to the question most BA and PM professionals in the UK are asking: why
+                            is nobody calling me back?
                         </p>
                     </div>
 
@@ -239,13 +240,13 @@ const CybersecurityPage = () => {
                                 <Target className="h-7 w-7" />
                             </span>
                             <h3 className="mt-4 text-xl md:text-2xl font-semibold leading-tight text-[#092A31]">
-                                Know Which Roles Can
+                                Find Out Why
                                 <br />
-                                Get You Sponsored
+                                Sponsorship Conversions Stop
                             </h3>
                             <p className="mt-3 text-sm leading-snug text-[#264650]">
-                                SOC Analyst, GRC Analyst, Cloud Security Engineer, find out exactly which roles sit on
-                                the UK Skilled Worker visa list and which occupation codes apply to you.
+                                The moment I mention sponsorship, the call ends. This session shows you exactly why
+                                that happens and how to position yourself so it never does again.
                             </p>
                         </div>
 
@@ -254,13 +255,14 @@ const CybersecurityPage = () => {
                                 <ShieldCheck className="h-7 w-7" />
                             </span>
                             <h3 className="mt-4 text-xl md:text-2xl font-semibold leading-tight text-[#092A31]">
-                                Understand the UK
+                                Turn Your Background
                                 <br />
-                                Experience Gap
+                                Into Your Advantage
                             </h3>
                             <p className="mt-3 text-sm leading-snug text-[#264650]">
-                                CompTIA, CEH, CISSP are not enough on their own. Learn why UK employers keep
-                                filtering you out and exactly what a UK cybersecurity project on your CV changes.
+                                Career switcher from healthcare, operations, finance or care? Your background is a
+                                selling point in Health and NHS hiring if you know how to position it. We show you
+                                exactly how.
                             </p>
                         </div>
 
@@ -269,13 +271,13 @@ const CybersecurityPage = () => {
                                 <Globe2 className="h-7 w-7" />
                             </span>
                             <h3 className="mt-4 text-xl md:text-2xl font-semibold leading-tight text-[#092A31]">
-                                Your Personal
+                                Know Which Employers
                                 <br />
-                                Sponsorship Roadmap
+                                Can Sponsor You
                             </h3>
                             <p className="mt-3 text-sm leading-snug text-[#264650]">
-                                Walk away knowing which UK companies are licensed to sponsor cyber roles, how to
-                                position yourself, and what your next 12 weeks need to look like.
+                                Stop applying blindly. Walk away with the exact list of UK employers licensed to
+                                sponsor BA and PM roles and which ones are actively hiring right now.
                             </p>
                         </div>
                     </div>
@@ -285,4 +287,4 @@ const CybersecurityPage = () => {
     )
 }
 
-export default CybersecurityPage
+export default BMPMTrackPage
