@@ -21,22 +21,7 @@ import {
 } from "@/components/ui/tooltip";
 import { UserAvatar } from "../../internship-program/svg";
 import { MoreDropdown } from "../navbar/more-dropdown";
-
-const ABOUT_SECTION_PREFIXES = [
-  "/about",
-  "/team",
-  "/pricing-plan",
-  "/project-contributors",
-  "/faqs",
-  "/contact",
-  "/privacy",
-] as const;
-
-function isAboutSectionActive(pathname: string) {
-  return ABOUT_SECTION_PREFIXES.some(
-    (p) => pathname === p || pathname.startsWith(`${p}/`),
-  );
-}
+import AboutDropdown from "./about-dropdown";
 
 const linkClass = (isActive: boolean, useWhiteText: boolean) =>
   cn(
@@ -76,15 +61,17 @@ const Navbar = () => {
 
   const isLoggedIn = user != null;
   const isHomePageRoute = pathname === "/home";
-  const shouldStickNav = !isHomePageRoute || isPastHomeHero;
-  const shouldUseScrolledNavStyles = isHomePageRoute ? shouldStickNav : true;
-  const showWhiteNav = isHomePageRoute ? useGlassNav && shouldStickNav : true;
+  const isAboutPageRoute = pathname === "/about";
+  const isHeroNavRoute = isHomePageRoute || isAboutPageRoute;
+  const shouldStickNav = !isHeroNavRoute || isPastHomeHero;
+  const shouldUseScrolledNavStyles = isHeroNavRoute ? shouldStickNav : true;
+  const showWhiteNav = isHeroNavRoute ? useGlassNav && shouldStickNav : true;
   const logoImg = shouldUseScrolledNavStyles
     ? "/logo.svg"
-    : isHomePageRoute
+    : isHeroNavRoute
       ? "/logo-white.svg"
       : "/logo.svg";
-  const useWhiteNavLinkText = isHomePageRoute && !shouldUseScrolledNavStyles;
+  const useWhiteNavLinkText = isHeroNavRoute && !shouldUseScrolledNavStyles;
   const isInternshipProgramRoute =
     pathname === "/internship" ||
     pathname.startsWith("/payment") ||
@@ -119,13 +106,16 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    if (!isHomePageRoute) {
+    if (!isHeroNavRoute) {
       setIsPastHomeHero(true);
       return;
     }
 
     const updateStickyState = () => {
-      const hero = document.getElementById("home-hero-section");
+      const heroSectionId = isHomePageRoute
+        ? "home-hero-section"
+        : "about-hero-section";
+      const hero = document.getElementById(heroSectionId);
       if (!hero) {
         setIsPastHomeHero(false);
         return;
@@ -143,7 +133,7 @@ const Navbar = () => {
       window.removeEventListener("scroll", updateStickyState);
       window.removeEventListener("resize", updateStickyState);
     };
-  }, [isHomePageRoute]);
+  }, [isHeroNavRoute, isHomePageRoute]);
 
   const navLinks: { label: string; href: string }[] = [
     { label: "Real World Project", href: "/projects" },
@@ -206,15 +196,11 @@ const Navbar = () => {
               </Link>
 
               <div className="hidden items-center gap-6 lg:flex xl:gap-10">
-                <Link
-                  href="/about"
-                  className={linkClass(
-                    isAboutSectionActive(pathname),
-                    useWhiteNavLinkText,
-                  )}
-                >
-                  About Us
-                </Link>
+                <AboutDropdown
+                  pathname={pathname}
+                  useWhiteNavLinkText={useWhiteNavLinkText}
+                  linkClass={linkClass}
+                />
                 {navLinks.map((link) => {
                   const isActive =
                     link.href === "/internship"

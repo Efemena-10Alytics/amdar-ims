@@ -58,7 +58,7 @@ const Footer = () => {
     { label: "Blog", href: "/blog" },
     { label: "Success Story", href: "/home#success-stories" },
     { label: "Careers", href: "#" },
-    { label: "Privacy Policy", href: "/privacy-policy" },
+    { label: "Privacy Policy", href: "/policies" },
   ];
 
   const whatsappContacts = [
