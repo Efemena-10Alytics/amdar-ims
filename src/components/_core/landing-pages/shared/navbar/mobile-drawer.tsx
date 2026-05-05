@@ -27,7 +27,7 @@ const MobileDrawer = ({
       {/* Drawer Overlay */}
       {isDrawerOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-50 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-[130] lg:hidden"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -36,7 +36,7 @@ const MobileDrawer = ({
       {/* Drawer */}
       <div
         className={cn(
-          "fixed top-0 left-0 h-full w-80 max-w-[85vw] bg-white z-60 transform transition-transform duration-300 ease-in-out lg:hidden",
+          "fixed top-0 left-0 h-full w-80 max-w-[85vw] bg-white z-[140] transform transition-transform duration-300 ease-in-out lg:hidden",
           isDrawerOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -60,7 +60,7 @@ const MobileDrawer = ({
                 const isActive =
                   link.href !== "#" && pathname.startsWith(link.href);
                 return (
-                  <Link as={"h1"}
+                  <Link
                     key={link.label}
                     href={link.href}
                     onClick={onClose}
