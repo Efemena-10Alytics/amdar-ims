@@ -1,37 +1,25 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-
-interface TermsConditionDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onAgree?: () => void;
-  onDecline?: () => void;
-}
+import { useEffect, useMemo, useState } from "react";
+import { cn } from "@/lib/utils";
 
 type PolicySection = {
+  id: string;
   title: string;
   intro?: string;
   points?: string[];
   paragraphs?: string[];
 };
 
-const TERMS_PARAGRAPHS: string[] = [
+const termsParagraphs: string[] = [
   "Hello and welcome to Amdari! We are dedicated to offering you hands-on, project-based internship designed to provide you with real world experience, and we want to make sure you are aware of all the terms and conditions that come with taking part in our program.",
   "As a participant in our program, please update yourself on the policies and procedures outlined in this document. Please carefully read and comprehend these terms and conditions before starting this program.",
   "Our goal at Amdari is to provide each participant with exceptional opportunities for real-world experience through projects and internships that build practical skills. However, we acknowledge that unforeseen circumstances may sometimes necessitate a refund or deferment.",
 ];
 
-const POLICY_SECTIONS: PolicySection[] = [
+const policySections: PolicySection[] = [
   {
+    id: "removal-access-restriction",
     title: "Removal/Access Restriction Policy for Amdari",
     intro:
       "Participants in any of Amdari's programs may have their access restricted or be removed under the following circumstances:",
@@ -43,6 +31,7 @@ const POLICY_SECTIONS: PolicySection[] = [
     ],
   },
   {
+    id: "program-switching",
     title: "Program Switching Policy for Amdari",
     intro:
       "This section of the policy aims to maintain the integrity of the internship experience while also allowing interns the opportunity to make informed decisions about their career paths:",
@@ -56,6 +45,7 @@ const POLICY_SECTIONS: PolicySection[] = [
     ],
   },
   {
+    id: "refund-policy",
     title: "Refund Policy for Amdari",
     intro:
       "We have devised the following refund policy to make sure that everything is done fairly and openly for parties involved:",
@@ -73,6 +63,7 @@ const POLICY_SECTIONS: PolicySection[] = [
     ],
   },
   {
+    id: "deferment-policy",
     title: "Deferment Policy for Amdari",
     paragraphs: [
       "This deferment policy has been created to provide participants with the opportunity to defer their enrollment in a program for a future date.",
@@ -87,6 +78,7 @@ const POLICY_SECTIONS: PolicySection[] = [
     ],
   },
   {
+    id: "growth-internship-enrollment",
     title: "Growth Internship Enrollment Policy for Amdari",
     intro:
       "Amdari Internship Policy has been created to provide participants with the opportunity to participate in our Growth Internship upon completion of Capstone Project:",
@@ -101,6 +93,7 @@ const POLICY_SECTIONS: PolicySection[] = [
     ],
   },
   {
+    id: "amdari-references",
     title: "Amdari References",
     paragraphs: [
       "The contract with Amdari participants becomes effective at the start of the cohort. Please note that references will be provided only after participants have completed one month of the program, and not before.",
@@ -110,117 +103,117 @@ const POLICY_SECTIONS: PolicySection[] = [
   },
 ];
 
-export function TermsConditionDialog({
-  open,
-  onOpenChange,
-  onAgree,
-  onDecline,
-}: TermsConditionDialogProps) {
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const [hasReachedBottom, setHasReachedBottom] = useState(false);
+const PoliciesPage = () => {
+  const [activeSectionId, setActiveSectionId] = useState("terms-and-conditions");
 
-  const checkScrollPosition = () => {
-    const el = scrollContainerRef.current;
-    if (!el) return;
-    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-    setHasReachedBottom(distanceFromBottom <= 8);
-  };
+  const navItems = useMemo(
+    () => [
+      { id: "terms-and-conditions", title: "Terms & Conditions" },
+      ...policySections.map((section) => ({
+        id: section.id,
+        title: section.title,
+      })),
+    ],
+    [],
+  );
 
   useEffect(() => {
-    if (!open) {
-      setHasReachedBottom(false);
-      return;
-    }
-    const el = scrollContainerRef.current;
-    if (!el) return;
-    const isScrollable = el.scrollHeight > el.clientHeight + 1;
-    setHasReachedBottom(!isScrollable);
-  }, [open]);
+    const sectionElements = navItems
+      .map((item) => document.getElementById(item.id))
+      .filter((el): el is HTMLElement => el !== null);
 
-  const handleDecline = () => {
-    onDecline?.();
-    onOpenChange(false);
-  };
+    if (sectionElements.length === 0) return;
 
-  const handleAgree = () => {
-    onAgree?.();
-    onOpenChange(false);
-  };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntries = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+
+        if (visibleEntries.length > 0) {
+          setActiveSectionId(visibleEntries[0].target.id);
+        }
+      },
+      {
+        root: null,
+        rootMargin: "-120px 0px -60% 0px",
+        threshold: 0.1,
+      },
+    );
+
+    sectionElements.forEach((section) => observer.observe(section));
+
+    return () => observer.disconnect();
+  }, [navItems]);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        showCloseButton={false}
-        className="w-[92vw] max-w-4xl! gap-0 overflow-hidden rounded-lg border-0 p-0"
-      >
-        <DialogHeader className="px-6 pt-6 pb-3">
-          <DialogTitle className="font-clash-display text-2xl font-semibold text-[#092A31]">
-            Terms & Conditions
-          </DialogTitle>
-          <DialogDescription className="sr-only">
-            Read and accept Amdari terms and conditions to continue payment.
-          </DialogDescription>
-        </DialogHeader>
+    <div className="relative z-10 mx-auto max-w-325 px-4 py-10 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+      <div className="grid gap-10 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-14">
+        <aside className="lg:sticky lg:top-28 lg:h-fit">
+          <h1 className="font-clash-display text-4xl font-semibold text-[#092A31]">
+            Our Policies
+          </h1>
+          <nav className="mt-6">
+            <ul className="space-y-3 text-sm text-[#52616B]">
+              {navItems.map((item) => (
+                <li key={item.id}>
+                  <a
+                    className={cn(
+                      "transition-colors hover:text-primary",
+                      activeSectionId === item.id && "font-semibold text-primary",
+                    )}
+                    href={`#${item.id}`}
+                  >
+                    {item.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </aside>
 
-        <div
-          ref={scrollContainerRef}
-          onScroll={checkScrollPosition}
-          className="max-h-[70vh] space-y-5 overflow-y-auto px-6 pb-6 text-[#52616B]"
-        >
-          {TERMS_PARAGRAPHS.map((paragraph) => (
-            <p key={paragraph} className="text-base leading-7">
-              {paragraph}
-            </p>
-          ))}
+        <main className="space-y-10">
+          <section id="terms-and-conditions" className="scroll-mt-32 space-y-4">
+            <h2 className="font-clash-display text-3xl font-semibold text-[#092A31]">
+              Terms & Conditions
+            </h2>
+            {termsParagraphs.map((paragraph) => (
+              <p key={paragraph} className="text-base leading-7 text-[#52616B]">
+                {paragraph}
+              </p>
+            ))}
+          </section>
 
-          {POLICY_SECTIONS.map((section) => (
-            <section key={section.title} className="space-y-4">
-              <h3 className="font-clash-display text-2xl font-semibold text-[#092A31]">
+          {policySections.map((section) => (
+            <section
+              id={section.id}
+              key={section.id}
+              className="scroll-mt-32 space-y-4"
+            >
+              <h3 className="font-clash-display text-3xl font-semibold text-[#092A31]">
                 {section.title}
               </h3>
-
-              {section.intro && <p className="text-base leading-7">{section.intro}</p>}
-
+              {section.intro && (
+                <p className="text-base leading-7 text-[#52616B]">{section.intro}</p>
+              )}
               {section.paragraphs?.map((paragraph) => (
-                <p key={paragraph} className="text-base leading-7">
+                <p key={paragraph} className="text-base leading-7 text-[#52616B]">
                   {paragraph}
                 </p>
               ))}
-
-              {section.points && section.points.length > 0 && (
-                <ol className="list-decimal space-y-3 pl-5">
+              {section.points && (
+                <ol className="list-decimal space-y-3 pl-5 text-base leading-7 text-[#52616B]">
                   {section.points.map((point) => (
-                    <li key={point} className="text-base leading-7">
-                      {point}
-                    </li>
+                    <li key={point}>{point}</li>
                   ))}
                 </ol>
               )}
             </section>
           ))}
-        </div>
-
-        <div className="grid grid-cols-2">
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={handleDecline}
-            className="h-14 rounded-none border-t border-r border-[#D8E4E7] text-lg font-medium text-[#52616B] hover:bg-[#f4f7f8]"
-          >
-            Decline
-          </Button>
-          <Button
-            type="button"
-            onClick={handleAgree}
-            disabled={!hasReachedBottom}
-            className="h-14 rounded-none border-t border-primary bg-primary text-lg font-medium text-white hover:bg-primary/90"
-          >
-            Agree
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </main>
+      </div>
+    </div>
   );
-}
+};
 
-export default TermsConditionDialog;
+export default PoliciesPage;
