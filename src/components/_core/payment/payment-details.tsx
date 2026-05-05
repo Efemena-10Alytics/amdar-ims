@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
@@ -18,6 +17,7 @@ import {
   stripCountryCodeFromPhone,
   type PersonalDataForm,
 } from "./edit-user-data";
+import { TermsConditionDialog } from "./terms-condition-dialog";
 
 const PERSONAL_DATA_KEYS: Array<{
   key: keyof Record<string, unknown>;
@@ -118,6 +118,7 @@ const PaymentDetails = ({
   const [confirmInfo, setConfirmInfo] = useState(false);
   const [confirmTerms, setConfirmTerms] = useState(false);
   const [editDataOpen, setEditDataOpen] = useState(false);
+  const [termsDialogOpen, setTermsDialogOpen] = useState(false);
   const [localNextPaymentDateYmd, setLocalNextPaymentDateYmd] = useState(() =>
     getNextPaymentDateYmd(1),
   );
@@ -385,12 +386,13 @@ const PaymentDetails = ({
             />
             <span className="text-[#4a5568]">
               I have read the{" "}
-              <Link
-                href="/terms-and-conditions"
+              <button
+                type="button"
+                onClick={() => setTermsDialogOpen(true)}
                 className="font-medium text-primary underline underline-offset-2 hover:text-primary/90"
               >
                 Amdari Terms & Conditions
-              </Link>
+              </button>
               {" "} and I agree.
             </span>
           </label>
@@ -433,6 +435,12 @@ const PaymentDetails = ({
         open={editDataOpen}
         onOpenChange={setEditDataOpen}
         initialData={editInitialData}
+      />
+      <TermsConditionDialog
+        open={termsDialogOpen}
+        onOpenChange={setTermsDialogOpen}
+        onAgree={() => setConfirmTerms(true)}
+        onDecline={() => setConfirmTerms(false)}
       />
     </div>
   );
