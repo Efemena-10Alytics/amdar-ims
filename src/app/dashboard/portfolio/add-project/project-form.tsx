@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import type { YourToolsData } from "@/components/_core/dashboard/portfolio/your-tools";
 import { ToolIcon } from "@/components/_core/dashboard/portfolio/your-tools";
 import { AddToolsPopover } from "@/components/_core/dashboard/portfolio/add-tools-popover";
+import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import { portfolioInputStyle } from "@/components/_core/dashboard/portfolio/portfolio-styles";
 import { cn, getImageUrl } from "@/lib/utils";
 import { useGetPortfolio } from "@/features/portfolio/use-get-portfolio";
@@ -106,6 +107,8 @@ export function ProjectForm({
   const projectFilesInputRef = useRef<HTMLInputElement>(null);
   const firstFeatureInputRef = useRef<HTMLInputElement>(null);
   const prefilledKeyRef = useRef<string | null>(null);
+  const warningTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [warningToast, setWarningToast] = useState<string | null>(null);
 
   const { data: apiTools = [] } = useGetTools();
   const { data: portfolioData } = useGetPortfolio();
@@ -244,10 +247,7 @@ export function ProjectForm({
       hasFeature &&
       hasText(challengesAndSolutions) &&
       hasText(impactAndOutcomes) &&
-      hasText(durationBreakdown) &&
-      toolsData.selectedTools.length > 0 &&
-      !!coverDisplaySrc &&
-      hasAtLeastOneProjectFile
+      hasText(durationBreakdown)
     );
   }, [
     title,
@@ -261,11 +261,26 @@ export function ProjectForm({
     challengesAndSolutions,
     impactAndOutcomes,
     durationBreakdown,
-    toolsData.selectedTools,
-    coverDisplaySrc,
-    hasAtLeastOneProjectFile,
   ]);
   const isSubmitDisabled = isSubmitting || (isCreateMode && !hasRequiredCreateFields);
+
+  const showWarningToast = (message: string) => {
+    setWarningToast(message);
+    if (warningTimerRef.current) clearTimeout(warningTimerRef.current);
+    warningTimerRef.current = setTimeout(() => {
+      setWarningToast(null);
+      warningTimerRef.current = null;
+    }, 3000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (warningTimerRef.current) {
+        clearTimeout(warningTimerRef.current);
+        warningTimerRef.current = null;
+      }
+    };
+  }, []);
   const galleryItems = useMemo(
     () => [
       ...existingGalleryUrls.map((url, index) => ({
@@ -307,6 +322,18 @@ export function ProjectForm({
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (isCreateMode && !hasRequiredCreateFields) return;
+    if (isCreateMode && toolsData.selectedTools.length === 0) {
+      showWarningToast("Please select a role before proceeding.");
+      return;
+    }
+    if (isCreateMode && !coverDisplaySrc) {
+      showWarningToast("Please upload a cover image before proceeding.");
+      return;
+    }
+    if (isCreateMode && !hasAtLeastOneProjectFile) {
+      showWarningToast("Please add at least one project file before proceeding.");
+      return;
+    }
     const tools = toolsData.selectedTools.map((name) => {
       const fromCustom = toolsData.customToolImages?.[name];
       const image =
@@ -851,6 +878,18 @@ export function ProjectForm({
           >
             {isSubmitting ? submittingLabel : submitLabel}
           </Button>
+          {warningToast ? (
+            <InfoToastBanner
+              message={warningToast}
+              onDismiss={() => {
+                if (warningTimerRef.current) {
+                  clearTimeout(warningTimerRef.current);
+                  warningTimerRef.current = null;
+                }
+                setWarningToast(null);
+              }}
+            />
+          ) : null}
         </div>
       </form>
     </div>
