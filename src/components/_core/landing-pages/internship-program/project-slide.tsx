@@ -3,9 +3,8 @@
 import { cn } from "@/lib/utils";
 import React, { useEffect } from "react";
 
-const FIRST_TEXT = "Real"; // constant, only the rest changes
-
-const GAIN_ITEMS = [
+const DEFAULT_FIRST_TEXT = "Real"; // constant, only the rest changes
+const DEFAULT_GAIN_ITEMS = [
   "Projects",
   "Responsibilities",
   "Collaboration",
@@ -16,28 +15,39 @@ const GAIN_ITEMS = [
 
 const AUTO_ADVANCE_MS = 4000;
 
-const ProjectSlide = () => {
+interface ProjectSlideProps {
+  firstText?: string;
+  items?: string[];
+}
+
+const ProjectSlide = ({
+  firstText = DEFAULT_FIRST_TEXT,
+  items = DEFAULT_GAIN_ITEMS,
+}: ProjectSlideProps) => {
   const [activeIndex, setActiveIndex] = React.useState(0);
+  const gainItems = items.length > 0 ? items : DEFAULT_GAIN_ITEMS;
 
   useEffect(() => {
     const id = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % GAIN_ITEMS.length);
+      setActiveIndex((prev) => (prev + 1) % gainItems.length);
     }, AUTO_ADVANCE_MS);
     return () => clearInterval(id);
-  }, []);
+  }, [gainItems.length]);
 
   return (
     <div className="text-start">
       <div className="mb-6 text-start">
-        <span className="text-[#64748B] text-xl lg:text-2xl font-semibold">
-          {FIRST_TEXT}{" "}
-        </span>
+        {firstText ? (
+          <span className="text-[#64748B] text-xl lg:text-2xl font-semibold">
+            {firstText}{" "}
+          </span>
+        ) : null}
         <span className="text-[#092A31] text-2xl lg:text-3xl font-semibold">
-          {GAIN_ITEMS[activeIndex] ?? GAIN_ITEMS[0]}
+          {gainItems[activeIndex] ?? gainItems[0]}
         </span>
       </div>
       <div className="flex gap-1 flex-wrap justify-start">
-        {GAIN_ITEMS.map((_, i) => (
+        {gainItems.map((_, i) => (
           <div key={i}>
             <button
               type="button"
