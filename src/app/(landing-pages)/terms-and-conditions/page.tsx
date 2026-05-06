@@ -148,10 +148,10 @@ const PoliciesPage = () => {
 
   return (
     <div className="relative z-10 mx-auto max-w-325 px-4 py-10 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
-      <div className="grid gap-10 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-14">
+      <div className="grid gap-10 lg:grid-cols-[290px_minmax(0,1fr)] lg:gap-14">
         <aside className="lg:sticky lg:top-28 lg:h-fit">
           <h1 className="font-clash-display text-4xl font-semibold text-[#092A31]">
-            Our Policies
+            Our Terms
           </h1>
           <nav className="mt-6">
             <ul className="space-y-3 text-sm text-[#52616B]">

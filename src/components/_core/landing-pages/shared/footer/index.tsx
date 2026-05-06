@@ -58,7 +58,8 @@ const Footer = () => {
     { label: "Blog", href: "/blog" },
     { label: "Success Story", href: "/home#success-stories" },
     { label: "Careers", href: "#" },
-    { label: "Privacy Policy", href: "/policies" },
+    { label: "Privacy Policy", href: "/privacy-policy" },
+    { label: "Terms and Conditions", href: "/terms-and-conditions" },
   ];
 
   const whatsappContacts = [
