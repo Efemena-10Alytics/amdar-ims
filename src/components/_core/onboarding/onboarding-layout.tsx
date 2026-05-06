@@ -1,5 +1,5 @@
-import Aside from "@/components/_core/auth/aside";
 import React from "react";
+import Aside from "./aside";
 
 const OnboardingLayout = ({
   children,
@@ -10,7 +10,7 @@ const OnboardingLayout = ({
       <Aside />
       {/* right side - two backgrounds: solid color + pattern */}
       <div
-        className="relative min-h-full w-full overflow-hidden sm:pl-10"
+        className="relative h-full min-h-0 w-full overflow-y-auto sm:pl-10"
         style={{
           backgroundColor: "#E8EFF1",
           backgroundImage: "url(/images/pngs/auth-pattern.png)",

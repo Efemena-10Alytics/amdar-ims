@@ -2,19 +2,26 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Loader, } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { Check, Loader } from "lucide-react";
 import Flag from "../landing-pages/home/hero/flag";
 
 const CHECKLIST_ITEMS = [
-  "Your orientation video",
-  "Your internship structure video",
-  "Meet Your Cohort Lead",
-  "Internship rules & etiquettes",
-  "Installation videos",
-  "Readiness test",
+  { key: "orientation-video", label: "Your orientation video" },
+  {
+    key: "internship-structure-video",
+    label: "Your internship structure video",
+  },
+  { key: "cohort-lead", label: "Meet Your Cohort Lead" },
+  { key: "internship-rules", label: "Internship rules & etiquettes" },
+  { key: "installation-videos", label: "Installation videos" },
+  { key: "readiness-test", label: "Readiness test" },
 ];
 
 const Aside = () => {
+  const searchParams = useSearchParams();
+  const activeStep = searchParams.get("step") ?? CHECKLIST_ITEMS[0].key;
+
   return (
     <aside className="hidden overflow-y-auto rounded-l-xl bg-[#0F6A79] px-4 py-5 text-white lg:flex lg:w-[45%] lg:flex-col xl:w-[42%] xl:px-5 xl:py-6">
       <Link href="/" className="inline-flex w-fit">
@@ -29,18 +36,20 @@ const Aside = () => {
           </p>
         </div>
 
-        <div className="mt-8 rounded-[14px] bg-[#DDE9E4] p-5">
+        <div className="mt-8 rounded-[14px] bg-[#EDFCF2] p-5">
           <h3 className="text-lg leading-tight font-semibold text-[#173740]">
             Complete the following to get started
           </h3>
 
           <ul className="mt-4 space-y-6">
             {CHECKLIST_ITEMS.map((item, index) => {
-              const isFirst = index === 0;
+              const isActive = activeStep === item.key;
+              const activeIndex = CHECKLIST_ITEMS.findIndex((step) => step.key === activeStep);
+              const isCompleted = activeIndex > index;
               const isLast = index === CHECKLIST_ITEMS.length - 1;
 
               return (
-                <li key={item} className="relative flex items-start gap-3">
+                <li key={item.key} className="relative flex items-start gap-3">
                   {!isLast && (
                     <span
                       aria-hidden="true"
@@ -49,19 +58,29 @@ const Aside = () => {
                   )}
 
                   <span
-                    className={`relative z-10 mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full border bg-[#DDE9E4] ${isFirst
-                        ? "border-transparent text-[#5F8D8D]"
-                        : "border-[#ACF0C5] text-transparent"
+                    className={`relative z-10 mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center border ${isCompleted
+                        ? "border-transparent text-[#1F5D36] bg-[#C7F5D8] h-2 w-2"
+                        : isActive
+                          ? "border-transparent text-[#5F8D8D]"
+                          : "border-[#ACF0C5] text-transparent rounded-full bg-[#EDFCF2]"
                       }`}
                   >
-                    {isFirst ? <Loader size={20} className="size-10"  /> : null}
+                    {isCompleted ? (
+                      <Check className="size-3.5" strokeWidth={3} />
+                    ) : isActive ? (
+                      <Loader size={20} className="size-10 animate-spin animation-duration-[1.8s]" />
+                    ) : null}
                   </span>
 
                   <span
-                    className={`text-base leading-tight ${isFirst ? "text-[#64748B]" : "text-[#A1A8B1]"
+                    className={`text-base leading-tight ${isCompleted
+                        ? "text-[#3B7E58]"
+                        : isActive
+                          ? "text-[#3B465F]"
+                          : "text-[#A1A8B1]"
                       }`}
                   >
-                    {item}
+                    {item.label}
                   </span>
                 </li>
               );
