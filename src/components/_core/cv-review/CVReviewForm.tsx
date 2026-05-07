@@ -423,7 +423,7 @@ function FileUploadZone({
             dragOver && "border-[#156374] bg-[#F0F9FB]",
             error && "border-red-300 bg-red-50/50",
             !disabled &&
-              "cursor-pointer hover:border-[#156374] hover:bg-[#F0F9FB]",
+            "cursor-pointer hover:border-[#156374] hover:bg-[#F0F9FB]",
             disabled && "opacity-50 cursor-not-allowed",
           )}
         >
@@ -502,6 +502,31 @@ function SuccessScreen({
       >
         Submit Another CV
       </Button>
+      <div className="flex max-w-md flex-col items-center gap-3 mx-auto text-center">
+        <p className="text-sm text-[#64748B]">
+          If you&apos;re experiencing any issue - send an email to{" "}
+          <a
+            href="mailto:employability@amdari.io"
+            className="text-[#156374] underline hover:text-[#0d4a56]"
+          >
+            employability@amdari.io
+          </a>{" "}
+          or book a CV review session:
+        </p>
+        <Button
+          asChild
+          variant="outline"
+          className="border-[#156374] text-white bg-[#156374] hover:bg-[#0d4a56] hover:text-white"
+        >
+          <a
+            href="https://calendar.app.google/iVYemAEtUUMbkATf9"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Book a CV Review Session
+          </a>
+        </Button>
+      </div>
     </div>
   );
 }
