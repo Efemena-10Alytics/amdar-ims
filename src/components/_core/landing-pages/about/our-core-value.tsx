@@ -74,8 +74,8 @@ const OurCoreValue = () => {
   return (
     <section className="py-14 lg:py-20">
       <div className="app-width">
-        <h2 className="mx-auto max-w-65 text-center text-4xl font-semibold text-[#062C36] md:text-5xl">
-          Our Core Value
+        <h2 className="mx-auto text-center text-4xl font-semibold text-[#062C36] md:text-5xl">
+          Our <br /> Core Value
         </h2>
 
         <div className="mt-10 grid gap-5 md:grid-cols-2">
