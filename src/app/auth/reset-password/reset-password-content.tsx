@@ -241,7 +241,7 @@ export default function ResetPasswordContent() {
               <p className="mt-6 text-center text-sm text-[#64748B]">
                 Continuing means you agree to{" "}
                 <Link
-                  href="/terms"
+                  href="/terms-and-conditions"
                   className="text-[#156374] font-medium hover:underline"
                 >
                   Amdari Terms
