@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/tooltip";
 import { UserAvatar } from "../../internship-program/svg";
 import { MoreDropdown } from "../navbar/more-dropdown";
-import AboutDropdown from "./about-dropdown";
 
 const linkClass = (isActive: boolean, useWhiteText: boolean) =>
   cn(
@@ -76,6 +75,7 @@ const Navbar = () => {
     pathname === "/internship" ||
     pathname.startsWith("/payment") ||
     pathname.startsWith("/internship");
+  const isAboutRoute = pathname === "/about" || pathname.startsWith("/about/");
 
   const showSalesBanner =
     !pathname.startsWith("/internship/") && !pathname.startsWith("/payment");
@@ -196,11 +196,12 @@ const Navbar = () => {
               </Link>
 
               <div className="hidden items-center gap-6 lg:flex xl:gap-10">
-                <AboutDropdown
-                  pathname={pathname}
-                  useWhiteNavLinkText={useWhiteNavLinkText}
-                  linkClass={linkClass}
-                />
+                <Link
+                  href="/about"
+                  className={linkClass(isAboutRoute, useWhiteNavLinkText)}
+                >
+                  About Us
+                </Link>
                 {navLinks.map((link) => {
                   const isActive =
                     link.href === "/internship"
@@ -248,7 +249,7 @@ const Navbar = () => {
                           )}
                         </Link>
                       </TooltipTrigger>
-                      <TooltipContent>
+                      <TooltipContent className="z-120">
                         <p>Go to Dashboard</p>
                       </TooltipContent>
                     </Tooltip>

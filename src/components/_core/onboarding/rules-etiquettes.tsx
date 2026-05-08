@@ -33,7 +33,7 @@ const RulesEtiquettes = () => {
           Read through your ground rules, compliance and etiquettes
         </h2>
 
-        <div className="mt-4 rounded-xl bg-[#E9EEF2] p-3">
+        <div className="mt-4 rounded-xl bg-[#E9EEF2] max-h-[50vh] overflow-y-auto p-3">
           {ETIQUETTE_BLOCKS.map((text, index) => (
             <div key={index} className={index > 0 ? "mt-3" : ""}>
               <h3 className="text-sm font-semibold text-[#2D6A78]">

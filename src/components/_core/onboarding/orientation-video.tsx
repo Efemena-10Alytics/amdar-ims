@@ -28,10 +28,14 @@ const OrientationVideo = () => {
           role="button"
           tabIndex={0}
           className="relative mt-3 h-63.75 overflow-hidden rounded-2xl sm:h-80"
-          onClick={() => setVideoPlaying((prev) => !prev)}
+          onClick={() => {
+            if (hasVideoEnded) return;
+            setVideoPlaying((prev) => !prev);
+          }}
           onKeyDown={(event) => {
             if (event.key === "Enter" || event.key === " ") {
               event.preventDefault();
+              if (hasVideoEnded) return;
               setVideoPlaying((prev) => !prev);
             }
           }}
@@ -55,6 +59,7 @@ const OrientationVideo = () => {
             type="button"
             onClick={(event) => {
               event.stopPropagation();
+              if (hasVideoEnded) return;
               setVideoPlaying((prev) => !prev);
             }}
             className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full px-3 py-1.5 text-base font-medium text-white backdrop-blur-sm transition hover:bg-black/40"

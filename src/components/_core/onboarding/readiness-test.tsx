@@ -7,7 +7,7 @@ const GUIDELINES = [
   "Answer honestly, this helps us make sure you get the right support from day one.",
   "There are no wrong answers, only the right fit.",
   "Ensure all questions are answered within the time frame",
-  "Ensure all questions are answered",
+  "Complete the quiz before time is up else the you would have to start again.",
 ];
 
 const ReadinessTest = () => {
