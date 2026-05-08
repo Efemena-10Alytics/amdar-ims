@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Copy } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { CopySVG } from "./svg";
 
 const LEADS = [
   {
@@ -45,16 +46,16 @@ const CohortLead = () => {
               <div className="relative h-80">
                 <Image src={lead.image} alt={lead.name} fill className="object-cover" />
               </div>
-              <div className="absolute right-0 bottom-0 left-0 bg-black/55 px-3 py-2.5 backdrop-blur-[1px]">
+              <div className="absolute rounded-md right-2 bottom-2 left-2 bg-black/55 px-3 py-2.5 backdrop-blur-[1px]">
                 <p className="text-xs font-semibold text-[#DFEEF2]">{lead.name}</p>
                 <div className="mt-0.5 flex items-center justify-between gap-3">
                   <p className="text-xs text-[#BCD2D8]">{lead.phone}</p>
                   <button
                     type="button"
-                    className="text-[#D6E8ED] transition hover:text-white"
+                    className="text-[#D6E8ED] transition hover:text-white cursor-pointer"
                     aria-label={`Copy ${lead.name} number`}
                   >
-                    <Copy className="size-3.5" />
+                    <CopySVG />
                   </button>
                 </div>
               </div>
