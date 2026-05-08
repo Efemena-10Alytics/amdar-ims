@@ -38,6 +38,7 @@
     "react-day-picker": "^9.13.2",
     "react-dom": "19.2.3",
     "react-player": "^3.4.0",
+    "react-stacked-center-carousel": "^1.0.14",
     "tailwind-merge": "^3.4.0",
     "zustand": "^5.0.11"
   },

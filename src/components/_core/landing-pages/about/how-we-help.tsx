@@ -1,6 +1,7 @@
 "use client";
 
 import { BriefcaseBusiness, Monitor } from "lucide-react";
+import Image from "next/image";
 
 const HowWeHelp = () => {
   return (
@@ -16,21 +17,36 @@ const HowWeHelp = () => {
               Internships{" "}
               <span className="text-[#1B8194]">(RAVE by Amdari)</span>
             </h3>
-            <p className="mt-4 max-w-130 text-sm leading-relaxed text-[#67828A] md:text-base">
-              Our Career Experience Internship immerses you in a real-world
-              work environment, where you collaborate on live projects that
-              solve actual business challenges. With mentorship from industry
-              experts and measurable results to showcase on your portfolio,
-              you'll also earn a 2-year international job reference to boost
-              your credibility with future employers.
-            </p>
+            <div className=" max-w-130">
+              <p className="mt-4 text-sm leading-relaxed text-[#67828A] md:text-base">
+                Our Career Experience Internship immerses you in a real-world
+                work environment, where you collaborate on live projects that
+                solve actual business challenges. With mentorship from industry
+                experts and measurable results to showcase on your portfolio,
+                you'll also earn a 2-year international job reference to boost
+                your credibility with future employers.
+              </p>
+              <div className="flex justify-end">
+                <Image
+                  src="/images/svgs/about/file.svg"
+                  alt="Internship"
+                  width={90}
+                  height={70}
+                  className="mt-6 rounded-lg object-cover"
+                />
+              </div>
+            </div>
           </article>
 
-          <article>
+          <article className="mt-24">
             <div className="mb-3 flex justify-start">
-              <div className="rounded-lg border border-[#B8D0D6] p-2 text-[#A4C0C7]">
-                <Monitor className="h-12 w-12" strokeWidth={1.8} />
-              </div>
+              <Image
+                src="/images/svgs/about/monitor.svg"
+                alt="Internship"
+                width={114}
+                height={80}
+                className="rounded-lg object-cover"
+              />
             </div>
             <h3 className="text-2xl leading-tight font-semibold text-[#123943] md:text-3xl">
               Real-World Projects
@@ -45,8 +61,8 @@ const HowWeHelp = () => {
           </article>
         </div>
 
-        <article className="mt-12 flex flex-col gap-4 border-t border-[#D9E8EC] pt-8 md:flex-row md:items-start md:justify-between">
-          <div className="max-w-140">
+        <article className="mt-12 max-w-300 mx-auto flex flex-col gap-20 pt-8 md:flex-row md:items-start md:justify-between">
+          <div className="max-w-135">
             <h3 className="text-2xl leading-tight font-semibold text-[#123943] md:text-3xl">
               TalentLoop
             </h3>
@@ -59,10 +75,14 @@ const HowWeHelp = () => {
             </p>
           </div>
 
-          <div className="flex md:pt-1">
-            <div className="rounded-lg bg-[#DDECF0] p-2.5 text-[#B5CCD3]">
-              <BriefcaseBusiness className="h-12 w-12" strokeWidth={1.8} />
-            </div>
+          <div className="flex flex-1 justify-start md:pt-1">
+            <Image
+              src="/images/svgs/about/briefcase.svg"
+              alt="Internship"
+              width={114}
+              height={80}
+              className="rounded-lg object-cover"
+            />
           </div>
         </article>
       </div>
