@@ -4,10 +4,10 @@
  */
 
 /** Original (full) price label shown on internship landing (e.g. strikethrough). */
-export const INTERNSHIP_ORIGINAL_PRICE_LABEL = "GBP 500";
+export const INTERNSHIP_ORIGINAL_PRICE_LABEL = "GBP 800";
 
 /** Discounted price label shown on internship landing. */
-export const INTERNSHIP_DISCOUNTED_PRICE_LABEL = "GBP 390";
+export const INTERNSHIP_DISCOUNTED_PRICE_LABEL = "GBP 600";
 
 /** Fallback program fee when checkout data is not available (e.g. payment details summary). */
 export const INTERNSHIP_FALLBACK_PLAN_TOTAL = "USD 500";
