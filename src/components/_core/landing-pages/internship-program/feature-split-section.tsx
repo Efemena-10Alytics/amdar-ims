@@ -1,7 +1,8 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import Image from "next/image";
+import Aos from "aos";
 
 interface FeatureSplitSectionProps {
   title: string;
@@ -20,8 +21,14 @@ const FeatureSplitSection = ({
   overlayQuote,
   footerContent,
 }: FeatureSplitSectionProps) => {
+  useEffect(() => {
+    Aos.init({
+      once: false,
+      mirror: true,
+    });
+  }, []);
   return (
-    <div className="bg-[#F1F5F6] py-12 lg:py-20">
+    <div data-aos="fade-up" className="bg-[#F1F5F6] py-12 lg:py-20">
       <div className="app-width">
         <div className="flex flex-col items-stretch gap-8 lg:flex-row lg:gap-12">
           <div className="flex flex-1 justify-center">
