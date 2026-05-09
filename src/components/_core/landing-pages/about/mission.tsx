@@ -1,20 +1,36 @@
 "use client";
 
+import { useEffect } from "react";
 import Image from "next/image";
+import Aos from "aos";
 
 const MISSION_COPY =
   "We have been where you are navigating to career uncertainties, job rejections, and skill gaps. We understand how difficult it can be to land your first role intake without the right experience or guidance. That's why Amdari exist: to provide the stepping stones between learning and achieving, helping you build the confidence and expertise to stand out";
 
 const Mission = () => {
+  useEffect(() => {
+    Aos.init({
+      once: false,
+      mirror: true,
+    });
+  }, []);
+
   return (
     <section className="bg-[#062C36] pt-14 lg:pt-20">
       <div className="app-width">
         <div className="grid gap-8 lg:grid-cols-2 lg:items-start lg:gap-12">
-          <h2 className="max-w-105 text-4xl leading-tight font-semibold text-[#EAF2F4] md:text-5xl">
+          <h2
+            data-aos="fade-right"
+            className="max-w-105 text-4xl leading-tight font-semibold text-[#EAF2F4] md:text-5xl"
+          >
             Why Did We <br /> Start Amdari?
           </h2>
 
-          <p className="max-w-160 text-base leading-relaxed text-[#C4D6DA] lg:pt-1">
+          <p
+            data-aos="fade-left"
+            data-aos-delay="120"
+            className="max-w-160 text-base leading-relaxed text-[#C4D6DA] lg:pt-1"
+          >
             {MISSION_COPY}
           </p>
         </div>

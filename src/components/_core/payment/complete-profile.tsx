@@ -61,7 +61,7 @@ const HOW_DID_YOU_HEAR_OPTIONS = [
     value: "fintech innovator society",
     label: "Fintech Innovator Society",
   },
-  // { value: "Clarity Session", label: "Clarity Session",  },
+  { value: "LinkedIn challenge", label: "LinkedIn challenge",  },
 ];
 
 const REASON_OPTIONS = [
