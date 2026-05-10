@@ -22,7 +22,7 @@ const JoinCommunity = () => {
   }, []);
 
   return (
-    <section className="bg-[#0B4A56] py-12 lg:py-16">
+    <section className="overflow-x-hidden bg-[#0B4A56] py-12 lg:py-16">
       <div className="app-width grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
         <div data-aos="fade-right">
           <h2 className="max-w-100 text-5xl leading-tight font-semibold text-[#EAF2F4]">

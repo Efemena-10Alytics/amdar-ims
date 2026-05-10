@@ -16,7 +16,7 @@ const HowWeHelp = () => {
   }, []);
 
   return (
-    <section className="bg-[#F6FAFB] py-14 lg:py-20">
+    <section className="overflow-x-hidden bg-[#F6FAFB] py-14 lg:py-20">
       <div className="app-width">
         <h2
           data-aos="fade-up"
