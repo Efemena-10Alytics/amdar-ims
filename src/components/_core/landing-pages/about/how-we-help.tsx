@@ -1,18 +1,32 @@
 "use client";
 
-import { BriefcaseBusiness, Monitor } from "lucide-react";
+import { useEffect } from "react";
 import Image from "next/image";
+import Aos from "aos";
 
 const HowWeHelp = () => {
+  useEffect(() => {
+    Aos.init({
+      duration: 700,
+      easing: "ease-out-cubic",
+      once: false,
+      mirror: true,
+      offset: 40,
+    });
+  }, []);
+
   return (
-    <section className="bg-[#F6FAFB] py-14 lg:py-20">
+    <section className="overflow-x-hidden bg-[#F6FAFB] py-14 lg:py-20">
       <div className="app-width">
-        <h2 className="mx-auto max-w-130 text-center text-4xl leading-tight font-semibold text-[#123943] md:text-5xl">
+        <h2
+          data-aos="fade-up"
+          className="mx-auto max-w-130 text-center text-4xl leading-tight font-semibold text-[#123943] md:text-5xl"
+        >
           How We Help <br /> Tech Professionals
         </h2>
 
         <div className="mt-12 grid gap-8 md:grid-cols-2 md:gap-14 lg:mt-14">
-          <article>
+          <article data-aos="fade-right" data-aos-delay="80">
             <h3 className="text-2xl leading-tight font-semibold text-[#1D4A55] md:text-3xl">
               Internships{" "}
               <span className="text-[#1B8194]">(RAVE by Amdari)</span>
@@ -38,7 +52,7 @@ const HowWeHelp = () => {
             </div>
           </article>
 
-          <article className="mt-24">
+          <article data-aos="fade-left" data-aos-delay="160" className="mt-24">
             <div className="mb-3 flex justify-start">
               <Image
                 src="/images/svgs/about/monitor.svg"
@@ -61,7 +75,11 @@ const HowWeHelp = () => {
           </article>
         </div>
 
-        <article className="mt-12 max-w-300 mx-auto flex flex-col gap-20 pt-8 md:flex-row md:items-start md:justify-between">
+        <article
+          data-aos="fade-up"
+          data-aos-delay="220"
+          className="mx-auto mt-12 flex max-w-300 flex-col gap-20 pt-8 md:flex-row md:items-start md:justify-between"
+        >
           <div className="max-w-135">
             <h3 className="text-2xl leading-tight font-semibold text-[#123943] md:text-3xl">
               TalentLoop

@@ -48,7 +48,7 @@ const TeamGallery = () => {
           </CarouselContent>
         </Carousel>
 
-        <div className="mt-10 flex justify-end gap-3">
+        <div className="mt-10 flex justify-end gap-3 px-5">
           <button
             type="button"
             onClick={() => api?.scrollPrev()}

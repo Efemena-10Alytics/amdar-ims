@@ -28,7 +28,10 @@ const FeatureSplitSection = ({
     });
   }, []);
   return (
-    <div data-aos="fade-up" className="bg-[#F1F5F6] py-12 lg:py-20">
+    <div
+      data-aos="fade-up"
+      className="overflow-x-hidden bg-[#F1F5F6] py-12 lg:py-20"
+    >
       <div className="app-width">
         <div className="flex flex-col items-stretch gap-8 lg:flex-row lg:gap-12">
           <div className="flex flex-1 justify-center">
