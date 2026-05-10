@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import { BriefcaseBusiness } from "lucide-react";
+import Aos from "aos";
 
 type DifferenceItem = {
   title: string;
@@ -36,17 +38,32 @@ const DIFFERENCE_ITEMS: DifferenceItem[] = [
 ];
 
 const WhatMakesDifferences = () => {
+  useEffect(() => {
+    Aos.init({
+      duration: 650,
+      easing: "ease-out-cubic",
+      once: false,
+      mirror: true,
+      offset: 40,
+    });
+  }, []);
+
   return (
     <section className="bg-[#F2DB88] py-18 lg:py-24">
       <div className="app-width">
-        <h2 className="text-center font-clash-display text-4xl font-semibold text-[#123640] lg:text-5xl">
+        <h2
+          data-aos="fade-up"
+          className="text-center font-clash-display text-4xl font-semibold text-[#123640] lg:text-5xl"
+        >
           What Makes Us Different?
         </h2>
 
         <div className="mx-auto mt-12 grid max-w-292 gap-5 md:grid-cols-3">
-          {DIFFERENCE_ITEMS.slice(0, 3).map((item) => (
+          {DIFFERENCE_ITEMS.slice(0, 3).map((item, index) => (
             <article
               key={item.title}
+              data-aos="fade-up"
+              data-aos-delay={index * 70}
               className="rounded-xl bg-[#DDC772] px-5 py-4 text-[#173740]"
             >
               <div className="flex items-center gap-2">
