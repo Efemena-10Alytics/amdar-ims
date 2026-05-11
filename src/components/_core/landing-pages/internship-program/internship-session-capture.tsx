@@ -2,9 +2,6 @@
 
 import { Suspense, useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import ChoosePath from "@/components/_core/landing-pages/internship-program/choose-path";
-import WhyTakeTheInternship from "@/components/_core/landing-pages/internship-program/why-take-the-internship";
-import JobReady from "@/components/_core/landing-pages/internship-program/job-ready";
 import {
   getSessionOptionByKey,
   SESSION_INFLUENCED_STORAGE_KEY,
@@ -32,15 +29,11 @@ function SessionParamCapture() {
   return null;
 }
 
-export default function InternshipPageClient() {
+/** Client-only: reads `?session=` and stores influenced checkout option, then strips the param. */
+export function InternshipSessionCapture() {
   return (
-    <div>
-      <Suspense fallback={null}>
-        <SessionParamCapture />
-      </Suspense>
-      <ChoosePath />
-      <WhyTakeTheInternship />
-      <JobReady />
-    </div>
+    <Suspense fallback={null}>
+      <SessionParamCapture />
+    </Suspense>
   );
 }

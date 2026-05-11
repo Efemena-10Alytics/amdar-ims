@@ -136,7 +136,7 @@ const Left = ({ program }: LeftProps) => {
             {INTERNSHIP_DISCOUNTED_PRICE_LABEL}
           </div>
         </div>
-        <Link href={`/payment/${program?.id}`}>
+        <Link href={`/payment/${program?.slug}`}>
           <Button
             className={cn(
               "bg-primary text-white hover:bg-[#0f4d5a] rounded-full px-6 py-6 text-base font-medium",

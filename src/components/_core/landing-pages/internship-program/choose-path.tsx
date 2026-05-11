@@ -1,11 +1,7 @@
-"use client";
-
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
-import { useGetInternshipPrograms } from "@/features/internship/use-get-all-internship-programs";
 import { getImageUrl } from "@/lib/utils";
 import { InternshipProgram } from "@/types/internship-program";
 import {
@@ -15,12 +11,11 @@ import {
 
 const FALLBACK_IMAGE = "/images/pngs/internship.png";
 
-const ChoosePath = () => {
-  const { data, isPending, isFetching } = useGetInternshipPrograms();
-  const internshipPrograms =
-    (Array.isArray(data)
-      ? data
-      : (data as { data?: InternshipProgram[] })?.data) ?? [];
+type ChoosePathProps = {
+  internshipPrograms: InternshipProgram[];
+};
+
+const ChoosePath = ({ internshipPrograms }: ChoosePathProps) => {
 
   return (
     <div className="bg-white py-12">
@@ -45,94 +40,58 @@ const ChoosePath = () => {
           </div>
         </div>
 
-        {isPending ? (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, index) => (
+        {internshipPrograms.length === 0 ? (
+          <div className="rounded-xl border border-gray-200 bg-[#E8EFF1] p-6 text-center text-sm text-[#475467]">
+            No internship paths are available right now. Please check back shortly.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {internshipPrograms.map((career) => (
               <div
-                key={`internship-skeleton-${index}`}
-                className="rounded-xl border border-gray-200 bg-[#E8EFF1] p-4 md:p-6"
-                role="status"
-                aria-live="polite"
-                aria-label="Loading career path"
+                key={career.id}
+                className="group bg-[#E8EFF1] hover:bg-primary p-4 md:p-6 rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
               >
-                <div className="h-48 w-full animate-pulse rounded-md bg-gray-300" />
-                <div className="mt-4 space-y-3">
-                  <div className="h-6 w-3/4 animate-pulse rounded bg-gray-300" />
-                  <div className="h-4 w-full animate-pulse rounded bg-gray-300" />
-                  <div className="h-4 w-5/6 animate-pulse rounded bg-gray-300" />
-                  <div className="flex items-center justify-between pt-2">
-                    <div className="space-y-2">
-                      <div className="h-3 w-24 animate-pulse rounded bg-gray-300" />
-                      <div className="h-4 w-20 animate-pulse rounded bg-gray-300" />
+                <div className="relative w-full h-48 bg-gray-200 rounded-md">
+                  <Image
+                    src={getImageUrl(career.image) || FALLBACK_IMAGE}
+                    alt={career.title}
+                    fill
+                    className="object-cover rounded-md"
+                    unoptimized={
+                      !!(career.image && !career.image.startsWith("/"))
+                    }
+                  />
+                </div>
+                <div className="mt-4">
+                  <h3 className="text-xl font-semibold group-hover:text-white text-[#092A31] mb-3">
+                    {career.title}
+                  </h3>
+                  <p className="text-[#0C3640] group-hover:text-white text-sm mb-4 leading-relaxed line-clamp-3">
+                    {career.description}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-lg font-semibold group-hover:text-white text-[#092A31]">
+                        <div className="text-[#64748B] group-hover:text-white line-through text-sm font-normal">
+                          {INTERNSHIP_ORIGINAL_PRICE_LABEL}
+                        </div>
+                        <div>{INTERNSHIP_DISCOUNTED_PRICE_LABEL}</div>
+                      </span>
                     </div>
-                    <div className="h-9 w-24 animate-pulse rounded-full bg-gray-300" />
+                    <Link href={`/internship/${career.slug}`}>
+                      <Button
+                        className={cn(
+                          "bg-primary cursor-pointer group-hover:bg-amdari-yellow group-hover:text-primary hover:text-primary hover:bg-amdari-yellow text-white rounded-full px-4 py-2 text-sm font-medium",
+                        )}
+                      >
+                        Apply here
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-        ) : (
-          <>
-            {isFetching && (
-              <div
-                className="flex justify-center mb-4"
-                role="status"
-                aria-live="polite"
-              >
-                <span className="flex items-center gap-2 text-sm text-[#64748B]">
-                  <Loader2 className="size-4 animate-spin" aria-hidden />
-                  Updating...
-                </span>
-              </div>
-            )}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {internshipPrograms.map((career) => (
-                <div
-                  key={career.id}
-                  className="group bg-[#E8EFF1] hover:bg-primary p-4 md:p-6 rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
-                >
-                  <div className="relative w-full h-48 bg-gray-200 rounded-md">
-                    <Image
-                      src={getImageUrl(career.image) || FALLBACK_IMAGE}
-                      alt={career.title}
-                      fill
-                      className="object-cover rounded-md"
-                      unoptimized={
-                        !!(career.image && !career.image.startsWith("/"))
-                      }
-                    />
-                  </div>
-                  <div className="mt-4">
-                    <h3 className="text-xl font-semibold group-hover:text-white text-[#092A31] mb-3">
-                      {career.title}
-                    </h3>
-                    <p className="text-[#0C3640] group-hover:text-white text-sm mb-4 leading-relaxed line-clamp-3">
-                      {career.description}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <span className="text-lg font-semibold group-hover:text-white text-[#092A31]">
-                          <div className="text-[#64748B] group-hover:text-white line-through text-sm font-normal">
-                            {INTERNSHIP_ORIGINAL_PRICE_LABEL}
-                          </div>
-                          <div>{INTERNSHIP_DISCOUNTED_PRICE_LABEL}</div>
-                        </span>
-                      </div>
-                      <Link href={`/internship/${career.id}`}>
-                        <Button
-                          className={cn(
-                            "bg-primary cursor-pointer group-hover:bg-amdari-yellow group-hover:text-primary hover:text-primary hover:bg-amdari-yellow text-white rounded-full px-4 py-2 text-sm font-medium",
-                          )}
-                        >
-                          Apply here
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </>
         )}
       </div>
     </div>
