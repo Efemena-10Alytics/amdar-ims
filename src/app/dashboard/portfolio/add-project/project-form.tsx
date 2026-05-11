@@ -240,7 +240,7 @@ export function ProjectForm({
       hasText(title) &&
       hasText(category) &&
       hasText(duration) &&
-      hasText(overview) &&
+      // hasText(overview) — overview field temporarily hidden; not required
       hasText(summary) &&
       hasText(problem) &&
       hasText(role) &&
@@ -253,7 +253,6 @@ export function ProjectForm({
     title,
     category,
     duration,
-    overview,
     summary,
     problem,
     role,
@@ -510,6 +509,8 @@ export function ProjectForm({
           </div>
 
 
+          {/* Project overview — temporarily hidden for add/edit; state still sent (may be empty). */}
+          {/*
           <div className="space-y-2">
             <label
               htmlFor="project-overview"
@@ -526,6 +527,7 @@ export function ProjectForm({
               className={cn(portfolioInputStyle, "min-h-25 resize-y")}
             />
           </div>
+          */}
 
           <div className="space-y-2">
             <label
