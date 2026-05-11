@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, FileText, LinkIcon, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, FileText, LinkIcon, Pencil, Trash2, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ViewLinkModal } from "@/components/_core/dashboard/portfolio/view-link-modal";
 import { ProjectCard } from "@/components/_core/dashboard/portfolio/template/bold/my-projects";
-import type {
-    OtherProjectLink,
-    ViewProjectData,
+import {
+    resolveToolIconSrc,
+    type OtherProjectLink,
+    type ViewProjectData,
 } from "../classic/view-project-content-classic";
 
 type ViewProjectContentBoldProps = {
@@ -134,21 +135,36 @@ export function ViewProjectContentBold({
                 <section className="mt-5 flex gap-4 flex-col md:flex-row">
                     <div className="flex-1 p-4 bg-[#F8FAFC] rounded-xl">
                         <h2 className="text-xs font-semibold uppercase tracking-wide text-[#092A31]">
-                            Project overview
+                            Project summary
                         </h2>
                         <p className="mt-2 text-sm leading-relaxed text-zinc-600">
-                            {project.overview || "No overview added."}
+                            {project.summary || "No summary added."}
                         </p>
                         {project.tools && project.tools.length > 0 ? (
                             <div className="mt-3 flex flex-wrap gap-2">
-                                {project.tools.map((tool) => (
-                                    <span
-                                        key={tool.name}
-                                        className="rounded-full bg-[#F3F7F9] px-3 py-1 text-xs font-medium text-[#36515F]"
-                                    >
-                                        {tool.name}
-                                    </span>
-                                ))}
+                                {project.tools.map((tool) => {
+                                    const iconSrc = resolveToolIconSrc(tool);
+                                    return (
+                                        <span
+                                            key={tool.name}
+                                            className="flex size-9 shrink-0 items-center justify-center rounded-full border border-zinc-200 bg-white shadow-sm"
+                                            title={tool.name}
+                                        >
+                                            {iconSrc ? (
+                                                <img
+                                                    src={iconSrc}
+                                                    alt=""
+                                                    className="size-5 object-contain"
+                                                />
+                                            ) : (
+                                                <Wrench
+                                                    className="size-4 shrink-0 text-zinc-400"
+                                                    aria-hidden
+                                                />
+                                            )}
+                                        </span>
+                                    );
+                                })}
                             </div>
                         ) : null}
                     </div>
@@ -243,7 +259,7 @@ export function ViewProjectContentBold({
                     <DetailCard label="Role & responsibilities" content={project.role} />
                 </section>
 
-                {project.summary ? (
+                {/* {project.summary ? (
                     <section>
                         <h2 className="text-xs font-semibold uppercase tracking-wide text-[#092A31]">
                             Project summary
@@ -252,7 +268,7 @@ export function ViewProjectContentBold({
                             {project.summary}
                         </p>
                     </section>
-                ) : null}
+                ) : null} */}
 
                 {project.features && project.features.length > 0 ? (
                     <section>

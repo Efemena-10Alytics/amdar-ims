@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Pencil, Trash2, LinkIcon, FileText } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2, LinkIcon, FileText, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ViewLinkModal } from "@/components/_core/dashboard/portfolio/view-link-modal";
 import {
@@ -107,10 +107,26 @@ const TOOL_ICONS: Record<string, string> = {
   Jira: "/images/svgs/tools/jira.svg",
   Canva: "/images/svgs/tools/canva.svg",
   "Adobe illustration": "/images/svgs/tools/adobe-illustrator.svg",
+  "Adobe Illustrator": "/images/svgs/tools/adobe-illustrator.svg",
   "Light room": "/images/svgs/tools/light-room.svg",
   Ubuntu: "/images/svgs/tools/ubuntu.svg",
   "Sales force": "/images/svgs/tools/sales-force.svg",
 };
+
+const TOOL_ICON_ENTRIES = Object.entries(TOOL_ICONS);
+
+export function resolveToolIconSrc(tool: { name: string; iconUrl?: string }): string | undefined {
+  const fromApi = tool.iconUrl?.trim();
+  if (fromApi) return fromApi;
+  const name = tool.name?.trim();
+  if (!name) return undefined;
+  if (TOOL_ICONS[name]) return TOOL_ICONS[name];
+  const lower = name.toLowerCase();
+  for (const [key, url] of TOOL_ICON_ENTRIES) {
+    if (key.toLowerCase() === lower) return url;
+  }
+  return undefined;
+}
 
 export function ViewProjectContentClassic({
   project,
@@ -208,18 +224,18 @@ export function ViewProjectContentClassic({
         <div className="space-y-8">
           <div>
 
-            {project.overview && (
+            {project.summary && (
               <section>
-                <h2 className="text-lg font-semibold text-[#092A31] mb-3 uppercase">Project Overview</h2>
+                <h2 className="text-lg font-semibold text-[#092A31] mb-3 uppercase">Project Summary</h2>
                 <p className="text-sm text-zinc-600 leading-relaxed">
-                  {project.overview}
+                  {project.summary}
                 </p>
               </section>
             )}
             {project.tools && project.tools.length > 0 && (
               <div className="flex flex-wrap gap-3 mt-6">
                 {project.tools.map((tool) => {
-                  const iconSrc = tool.iconUrl ?? TOOL_ICONS[tool.name];
+                  const iconSrc = resolveToolIconSrc(tool);
                   return (
                     <span
                       key={tool.name}
@@ -233,9 +249,10 @@ export function ViewProjectContentClassic({
                           className="size-6 object-contain"
                         />
                       ) : (
-                        <span className="text-xs font-semibold text-zinc-500">
-                          {tool.name.charAt(0)}
-                        </span>
+                        <Wrench
+                          className="size-5 shrink-0 text-zinc-400"
+                          aria-hidden
+                        />
                       )}
                     </span>
                   );
@@ -245,7 +262,7 @@ export function ViewProjectContentClassic({
           </div>
 
 
-          {project.summary && (
+          {/* {project.summary && (
             <section>
               <h2 className="text-lg uppercase font-semibold text-[#092A31] mb-3">
                Project Summary
@@ -254,7 +271,7 @@ export function ViewProjectContentClassic({
                 {project.summary}
               </p>
             </section>
-          )}
+          )} */}
 
           {project.problem && (
             <section>
