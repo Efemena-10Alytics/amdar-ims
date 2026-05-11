@@ -31,11 +31,11 @@ const TeamGallery = () => {
           opts={{ align: "start", loop: true }}
           className="mt-8 w-full"
         >
-          <CarouselContent className="-ml-2 md:-ml-3">
+          <CarouselContent className="-ml-2 md:-ml-3 p-6">
             {galleryImages.map((image, index) => (
-              <CarouselItem key={`${image}-${index}`} className="pl-2 md:basis-1/3 md:pl-3">
+              <CarouselItem key={`${image}-${index}`} className="pl-2 hover:p-6 md:basis-1/3 md:pl-3">
                 <div
-                  className="h-76 overflow-hidden rounded-md bg-[#8EA3AD]"
+                  className="h-76 overflow-hidden rounded-md bg-[#8EA3AD] hover:scale-105 transition-transform duration-300"
                   style={{
                     backgroundImage: `url(${image})`,
                     backgroundSize: "cover",
