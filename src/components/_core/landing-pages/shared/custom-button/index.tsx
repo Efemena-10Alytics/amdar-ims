@@ -1,22 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 interface CustomButtonProps {
   btnText: string;
   onClick?: () => void;
+  href?: string;
 }
-const CustomButton = ({ btnText, onClick }: CustomButtonProps) => {
-  return (
-    <Button
-      onClick={onClick}
-      className={cn(
-        "bg-primary text-white hover:bg-[#0f4d5a] rounded-full h-12 text-base",
-        "inline-flex items-center gap-2 w-fit justify-center",
-        "group hover:bg-amdari-yellow transition-colors duration-300",
-      )}
-    >
+
+const buttonClassName = cn(
+  "bg-primary text-white hover:bg-[#0f4d5a] rounded-full h-12 text-base",
+  "inline-flex items-center gap-2 w-fit justify-center",
+  "group hover:bg-amdari-yellow transition-colors duration-300",
+);
+
+const CustomButton = ({ btnText, onClick, href }: CustomButtonProps) => {
+  const content = (
+    <>
       <div className="group-hover:text-primary">{btnText}</div>
       <div
         className={cn(
@@ -26,6 +28,20 @@ const CustomButton = ({ btnText, onClick }: CustomButtonProps) => {
       >
         <ArrowUpRight className="w-3 h-3" />
       </div>
+    </>
+  );
+
+  if (href != null && href !== "") {
+    return (
+      <Button asChild className={buttonClassName}>
+        <Link href={href}>{content}</Link>
+      </Button>
+    );
+  }
+
+  return (
+    <Button onClick={onClick} className={buttonClassName}>
+      {content}
     </Button>
   );
 };

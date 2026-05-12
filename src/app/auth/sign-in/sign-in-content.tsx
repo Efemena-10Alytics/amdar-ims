@@ -27,12 +27,7 @@ export default function SignInContent() {
     const user = await login({ email, password }, undefined, true);
     if (!user) return;
 
-    const token = typeof user.token === "string" ? user.token : undefined;
-
-    const redirectUrl = await buildExternalAuthRedirectUrl(
-      redirectParam,
-      token,
-    );
+    const redirectUrl = await buildExternalAuthRedirectUrl(redirectParam);
     window.location.replace(redirectUrl);
   };
 

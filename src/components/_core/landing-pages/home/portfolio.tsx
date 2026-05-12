@@ -3,10 +3,16 @@
 import React from "react";
 import Image from "next/image";
 import Aos from "aos";
+import { useAuthStore } from "@/store/auth-store";
 import CustomButton from "../shared/custom-button";
 
 const Portfolio = () => {
   const [imageError, setImageError] = React.useState(false);
+  const user = useAuthStore((s) => s.user);
+  const portfolioCtaHref =
+    user != null
+      ? "/dashboard/portfolio"
+      : `/auth/sign-in?redirect=${encodeURIComponent("/dashboard/portfolio")}`;
 
   React.useEffect(() => {
     Aos.init();
@@ -32,7 +38,7 @@ const Portfolio = () => {
               Showcase your experience, projects and proficiency level with our
               portfolio builder to stand out in the competitive tech landscape.
             </p>
-            <CustomButton btnText="Create your portfolio" />
+            <CustomButton btnText="Create your portfolio" href={portfolioCtaHref} />
           </div>
         </div>
 

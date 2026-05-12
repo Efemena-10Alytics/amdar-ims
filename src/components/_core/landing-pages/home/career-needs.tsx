@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import Aos from "aos";
 import CustomButton from "../shared/custom-button";
+import Link from "next/link";
 
 const CareerNeeds = () => {
   const benefits = [
@@ -63,7 +64,9 @@ const CareerNeeds = () => {
               overwhelming. That's why we built Amdari to help you access
               opportunities easily
             </p>
-            <CustomButton btnText="Apply now" />
+            <Link href="/internship">
+              <CustomButton btnText="Apply now" />
+            </Link>
           </div>
 
           {/* Right Column - Benefits List (overflow here doesn't affect sticky) */}
