@@ -215,11 +215,11 @@ const Team = () => {
                     ref={stickyPanelRef}
                     className={cn(
                         "sticky top-20 z-10 pb-16 transition-[padding] duration-200 ease-out lg:top-24 lg:pb-20",
-                        isStuck && "pt-12",
+                        isStuck && "pt-36",
                     )}
                 >
                     <div className="app-width grid items-start gap-8 md:grid-cols-[0.95fr_1fr] md:gap-12">
-                        <div>
+                        <div className="min-w-0">
                             <h2 className="font-clash-display text-4xl font-semibold text-[#123640] lg:text-5xl">
                                 Amdari Team
                             </h2>
@@ -255,7 +255,7 @@ const Team = () => {
                             </ul>
                         </div>
 
-                        <div className="relative w-full max-w-135">
+                        <div className="relative mx-auto w-full max-w-135">
                             <StackCards
                                 slides={teamSlides}
                                 scrollLinear={scrollLinear}
