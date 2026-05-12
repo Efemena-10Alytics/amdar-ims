@@ -1,4 +1,5 @@
 import Partners from "@/components/_core/landing-pages/home/partners/index";
+import Companies from "@/components/_core/landing-pages/home/companies";
 import WhatWeOffer from "@/components/_core/landing-pages/home/what-we-offer/index";
 import Portfolio from "@/components/_core/landing-pages/home/portfolio";
 import WhatOurInternsSays from "@/components/_core/landing-pages/home/what-our-interns-says";
@@ -19,6 +20,7 @@ const InternShipProgram = () => {
       <JobReady />
       <Portfolio />
       <WhatOurInternsSays />
+      <Companies />
       <Experience />
       <RoadMap />
       <SuccessStories />
