@@ -18,6 +18,8 @@ import CTAbanner from "./cta-banner";
 import Aos from "aos";
 import { useGetInternshipPrograms } from "@/features/internship/use-get-all-internship-programs";
 import type { InternshipProgram } from "@/types/internship-program";
+import { usePathname } from "next/navigation";
+import StillHaveQuestion from "../../business-partners/still-have-question";
 
 const PROGRAMS_LABELS = [
   "Product Design",
@@ -45,6 +47,8 @@ function findProgramForLabel(programs: InternshipProgram[], label: string): Inte
 
 const Footer = () => {
   const { data } = useGetInternshipPrograms();
+  const pathname = usePathname();
+  const isBusinessPartnersPage = pathname === "/business-partners";
   const programsLinks = useMemo(() => {
     const programs = (Array.isArray(data) ? data : (data as { data?: InternshipProgram[] })?.data) ?? [];
     return PROGRAMS_LABELS.map((label) => {
@@ -138,7 +142,7 @@ const Footer = () => {
 
       {/* CTA Banner */}
       <div className="relative z-10">
-        <CTAbanner />
+       {isBusinessPartnersPage? <StillHaveQuestion /> : <CTAbanner />}
       </div>
 
       {/* Main Footer Content */}

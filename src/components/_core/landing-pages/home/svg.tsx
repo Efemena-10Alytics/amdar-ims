@@ -26,6 +26,7 @@ export const ArrowRightCurve = () => (
     />
   </svg>
 );
+
 export const IdeaSvg = () => (
   <svg
     width="16"
@@ -44,4 +45,12 @@ export const IdeaSvg = () => (
       fill="#5A431B"
     />
   </svg>
+);
+
+export const CopierSvg = () => (
+  <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M26.6667 3.33203H13.3333C11.4924 3.33203 10 4.82442 10 6.66536V33.332C10 35.173 11.4924 36.6654 13.3333 36.6654H26.6667C28.5076 36.6654 30 35.173 30 33.332V6.66536C30 4.82442 28.5076 3.33203 26.6667 3.33203Z" stroke="#156374" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M33.3359 10H6.66927C4.82832 10 3.33594 11.4924 3.33594 13.3333V26.6667C3.33594 28.5076 4.82832 30 6.66927 30H33.3359C35.1769 30 36.6693 28.5076 36.6693 26.6667V13.3333C36.6693 11.4924 35.1769 10 33.3359 10Z" stroke="#156374" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+
 );
