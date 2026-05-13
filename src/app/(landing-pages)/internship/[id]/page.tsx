@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { cache } from "react";
-import { notFound } from "next/navigation";
 import Left from "@/components/_core/landing-pages/internship-program/internship-details/left";
 import Right from "@/components/_core/landing-pages/internship-program/internship-details/right";
 import Project from "@/components/_core/landing-pages/internship-program/project";
@@ -63,9 +62,15 @@ export default async function InternshipProgramDetails({
   params,
 }: InternshipProgramDetailsPageProps) {
   const { id } = await params;
-  if (!id) notFound();
+  if (!id) {
+    return <ProgramUnavailable />;
+  }
 
-  const program = await getProgramByIdCached(id).catch(() => notFound());
+  const program = await getProgramByIdCached(id).catch(() => null);
+
+  if (!program) {
+    return <ProgramUnavailable />;
+  }
 
   return (
     <div className="bg-white mt-10">
@@ -83,6 +88,24 @@ export default async function InternshipProgramDetails({
       </div>
       <Project program={program} />
       <CrossFunctional program={program} />
+    </div>
+  );
+}
+
+function ProgramUnavailable() {
+  return (
+    <div className="bg-white py-24">
+      <div className="app-width">
+        <div className="mx-auto max-w-2xl rounded-2xl bg-[#E8EFF1] p-8 text-center">
+          <h1 className="text-3xl font-bold text-[#092A31]">
+            Internship details are being updated
+          </h1>
+          <p className="mt-4 text-base leading-relaxed text-[#64748B]">
+            This internship link may have changed. Please return to the
+            internship page to choose the latest available career path.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
