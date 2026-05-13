@@ -254,6 +254,34 @@ export function ViewProjectContentBold({
                     </aside>
                 </section>
 
+                  {project.projectImages && project.projectImages.length > 0 ? (
+                    <section className="mt-4 gap-4 grid grid-cols-2 space-y-2">
+                        {project.projectImages.slice(2).map((imageUrl, index) => (
+                            <div
+                                key={`${imageUrl}-${index}`}
+                                className="overflow-hidden rounded-xl border border-zinc-200 bg-[#F8FAFC]"
+                            >
+                                {isPdfAsset(imageUrl) ? (
+                                    <a
+                                        href={imageUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex h-105 w-full flex-col items-center justify-center gap-2 bg-[#E8EFF1] px-4 text-center text-zinc-600 hover:bg-[#dde8eb] transition-colors"
+                                    >
+                                        <FileText className="size-8 text-primary" aria-hidden />
+                                        <span className="text-sm font-medium">PDF document</span>
+                                        <span className="text-xs font-medium text-primary underline underline-offset-2">
+                                            Click to read
+                                        </span>
+                                    </a>
+                                ) : (
+                                    <img src={imageUrl} alt="" className="max-h-105 h-full w-full object-cover" />
+                                )}
+                            </div>
+                        ))}
+                    </section>
+                ) : null}
+
                 <section className="mt-4 grid gap-4 md:grid-cols-2">
                     <DetailCard label="Problem & context" content={project.problem} />
                     <DetailCard label="Role & responsibilities" content={project.role} />
@@ -304,7 +332,7 @@ export function ViewProjectContentBold({
 
                 {project.projectImages && project.projectImages.length > 0 ? (
                     <section className="mt-4 space-y-2">
-                        {project.projectImages.map((imageUrl, index) => (
+                        {project.projectImages.slice(0, 2).map((imageUrl, index) => (
                             <div
                                 key={`${imageUrl}-${index}`}
                                 className="overflow-hidden rounded-xl border border-zinc-200 bg-[#F8FAFC]"
@@ -314,7 +342,7 @@ export function ViewProjectContentBold({
                                         href={imageUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex h-44 w-full flex-col items-center justify-center gap-2 bg-[#E8EFF1] px-4 text-center text-zinc-600 hover:bg-[#dde8eb] transition-colors"
+                                        className="flex h-105 w-full flex-col items-center justify-center gap-2 bg-[#E8EFF1] px-4 text-center text-zinc-600 hover:bg-[#dde8eb] transition-colors"
                                     >
                                         <FileText className="size-8 text-primary" aria-hidden />
                                         <span className="text-sm font-medium">PDF document</span>

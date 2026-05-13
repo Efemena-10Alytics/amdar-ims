@@ -8,7 +8,7 @@ const ABOUT_DESCRIPTION =
 
 const ABOUT_SLIDE_ITEMS = [
   "Interview Preps",
-  "Mentorship section",
+  "Mentorship session",
   "Portfolio building",
   "CV Revamp",
   "Career Experience program",

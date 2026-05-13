@@ -84,9 +84,35 @@ function getFallbackRedirectUrl(): URL {
   return new URL(`${base}/dashboard`);
 }
 
+function isSafeDashboardPathname(pathname: string): boolean {
+  return pathname === "/dashboard" || pathname.startsWith("/dashboard/");
+}
+
 function resolveSafeRedirectUrl(redirectParam?: string): URL {
   const fallback = getFallbackRedirectUrl();
   if (!redirectParam) return fallback;
+
+  const trimmed = redirectParam.trim();
+  if (trimmed.startsWith("/") && !trimmed.startsWith("//")) {
+    const baseOrigin =
+      typeof window !== "undefined"
+        ? window.location.origin
+        : new URL(externalRedirect.replace(/\/+$/, "")).origin;
+    try {
+      const resolved = new URL(trimmed, `${baseOrigin}/`);
+      const isHttp =
+        resolved.protocol === "http:" || resolved.protocol === "https:";
+      if (
+        isHttp &&
+        resolved.origin === baseOrigin &&
+        isSafeDashboardPathname(resolved.pathname)
+      ) {
+        return resolved;
+      }
+    } catch {
+      // fall through to absolute URL handling
+    }
+  }
 
   try {
     const candidate = new URL(redirectParam);
@@ -114,7 +140,11 @@ export async function buildExternalAuthRedirectUrl(
   const redirectUrl = resolveSafeRedirectUrl(redirectParam);
   const token = providedToken || getAccessTokenFromStorage();
 
-  if (token) {
+  const isSameOriginAsCurrent =
+    typeof window !== "undefined" &&
+    redirectUrl.origin === window.location.origin;
+
+  if (token && !isSameOriginAsCurrent) {
     const encryptedToken = await encryptTokenForRedirect(token);
     if (encryptedToken) {
       redirectUrl.searchParams.set("token", encryptedToken);
