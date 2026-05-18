@@ -1,11 +1,17 @@
 "use client";
 import React from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Aos from "aos";
 import { ArrowRight } from "lucide-react";
+import { useAuthStore } from "@/store/auth-store";
 
 const CTAbanner = () => {
+  const user = useAuthStore((s) => s.user);
+  const ctaHref = user != null ? "/dashboard" : "/auth/sign-up";
+  const ctaLabel = user != null ? "Go to dashboard" : "Create an account";
+
   React.useEffect(() => {
     Aos.init({ duration: 600 });
   }, []);
@@ -34,14 +40,17 @@ const CTAbanner = () => {
               </p>
             </div>
             <Button
+              asChild
               className={cn(
                 "bg-amdari-yellow text-[#156374] hover:bg-amdari-yellow/90",
                 "rounded-full px-6 py-6 text-base font-medium",
                 "flex items-center gap-2",
               )}
             >
-              Create an account
-              <ArrowRight className="w-5 h-5" />
+              <Link href={ctaHref}>
+                {ctaLabel}
+                <ArrowRight className="w-5 h-5" />
+              </Link>
             </Button>
           </div>
         </div>
