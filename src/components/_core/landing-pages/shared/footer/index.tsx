@@ -22,25 +22,42 @@ import { usePathname } from "next/navigation";
 import StillHaveQuestion from "../../business-partners/still-have-question";
 
 const PROGRAMS_LABELS = [
-  "Product Design",
   "Project Mgt.",
   "Data Analytics",
   "Business Analysis",
   "Data Science",
   "Ethical Hacking",
+  "SOC analysis",
+  "GRC",
+  "App and Cloud Security",
 ] as const;
 
-function findProgramForLabel(programs: InternshipProgram[], label: string): InternshipProgram | undefined {
-  const normalizedLabel = label
+function normalizeProgramText(value: string) {
+  return value
     .toLowerCase()
     .trim()
     .replace(/\s*&\s*/g, " and ")
     .replace(/\bmgt\.?/gi, "management");
+}
+
+function labelToSlugHint(label: string) {
+  return normalizeProgramText(label).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function findProgramForLabel(programs: InternshipProgram[], label: string): InternshipProgram | undefined {
+  const normalizedLabel = normalizeProgramText(label);
+  const slugHint = labelToSlugHint(label);
+
+  const bySlug = programs.find(
+    (program) =>
+      program.slug === slugHint ||
+      program.slug.includes(slugHint) ||
+      slugHint.includes(program.slug),
+  );
+  if (bySlug) return bySlug;
+
   return programs.find((program) => {
-    const title = program.title
-      .toLowerCase()
-      .replace(/\s*&\s*/g, " and ")
-      .replace(/\bmgt\.?/gi, "management");
+    const title = normalizeProgramText(program.title);
     return title.includes(normalizedLabel) || normalizedLabel.includes(title);
   });
 }
@@ -53,7 +70,8 @@ const Footer = () => {
     const programs = (Array.isArray(data) ? data : (data as { data?: InternshipProgram[] })?.data) ?? [];
     return PROGRAMS_LABELS.map((label) => {
       const program = findProgramForLabel(programs, label);
-      return program ? { label, href: `/internship/${program.id}` } : null;
+      if (!program?.slug) return null;
+      return { label, href: `/internship/${program.slug}` };
     }).filter((link): link is { label: (typeof PROGRAMS_LABELS)[number]; href: string } => link !== null);
   }, [data]);
 
