@@ -49,7 +49,7 @@ const Aside = () => {
               const isLast = index === CHECKLIST_ITEMS.length - 1;
 
               return (
-                <li key={item.key} className="relative flex items-start gap-3">
+                <li key={item.key} className="relative">
                   {!isLast && (
                     <span
                       aria-hidden="true"
@@ -57,31 +57,37 @@ const Aside = () => {
                     />
                   )}
 
-                  <span
-                    className={`relative z-10 mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center border ${isCompleted
-                        ? "border-transparent text-[#1F5D36] bg-[#C7F5D8] h-2 w-2"
-                        : isActive
-                          ? "border-transparent text-[#5F8D8D]"
-                          : "border-[#ACF0C5] text-transparent rounded-full bg-[#EDFCF2]"
-                      }`}
+                  <Link
+                    href={`/onboarding?step=${item.key}`}
+                    aria-current={isActive ? "step" : undefined}
+                    className="relative flex items-start gap-3"
                   >
-                    {isCompleted ? (
-                      <Check className="size-3.5" strokeWidth={3} />
-                    ) : isActive ? (
-                      <Loader size={20} className="size-10 animate-spin animation-duration-[1.8s]" />
-                    ) : null}
-                  </span>
+                    <span
+                      className={`relative z-10 mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center border ${isCompleted
+                          ? "border-transparent text-[#1F5D36] bg-[#C7F5D8] h-2 w-2"
+                          : isActive
+                            ? "border-transparent text-[#5F8D8D]"
+                            : "border-[#ACF0C5] text-transparent rounded-full bg-[#EDFCF2]"
+                        }`}
+                    >
+                      {isCompleted ? (
+                        <Check className="size-3.5" strokeWidth={3} />
+                      ) : isActive ? (
+                        <Loader size={20} className="size-10 animate-spin animation-duration-[1.8s]" />
+                      ) : null}
+                    </span>
 
-                  <span
-                    className={`text-base leading-tight ${isCompleted
-                        ? "text-[#3B7E58]"
-                        : isActive
-                          ? "text-[#3B465F]"
-                          : "text-[#A1A8B1]"
-                      }`}
-                  >
-                    {item.label}
-                  </span>
+                    <span
+                      className={`text-base leading-tight ${isCompleted
+                          ? "text-[#3B7E58]"
+                          : isActive
+                            ? "text-[#3B465F]"
+                            : "text-[#A1A8B1]"
+                        }`}
+                    >
+                      {item.label}
+                    </span>
+                  </Link>
                 </li>
               );
             })}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Check, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -12,13 +12,9 @@ const READINESS_GROUPS = [
     title: "Career Readiness",
     href: "/pre-diagnostic-test",
     items: [
-      { key: "welcome-video", label: "Welcome video", status: "done" },
-      { key: "career-curriculum", label: "Career curriculum", status: "done" },
-      {
-        key: "career-path-diagnostics",
-        label: "Career path diagnostics",
-        status: "done",
-      },
+      { key: "welcome-video", label: "Welcome video" },
+      { key: "career-curriculum", label: "Career curriculum" },
+      { key: "career-path-diagnostics", label: "Career path diagnostics" },
     ],
   },
   {
@@ -26,13 +22,9 @@ const READINESS_GROUPS = [
     title: "Technology Readiness",
     href: "/pre-diagnostic-test/technology-readiness",
     items: [
-      { key: "technology-use-case", label: "Technology use case", status: "done" },
-      { key: "practical-walkthrough", label: "Practical walkthrough", status: "todo" },
-      {
-        key: "technology-diagnostics",
-        label: "Technology diagnostics",
-        status: "todo",
-      },
+      { key: "technology-use-case", label: "Technology use case" },
+      { key: "practical-walkthrough", label: "Practical walkthrough" },
+      { key: "technology-diagnostics", label: "Technology diagnostics" },
     ],
   },
   {
@@ -40,22 +32,56 @@ const READINESS_GROUPS = [
     title: "IMS Process",
     href: "/pre-diagnostic-test/ims-readiness",
     items: [
-      { key: "how-the-ims-works", label: "How the IMS works", status: "done" },
-      { key: "ims-diagnostics", label: "IMS Diagnostics", status: "todo" },
+      { key: "how-the-ims-works", label: "How the IMS works" },
+      { key: "ims-diagnostics", label: "IMS Diagnostics" },
     ],
   },
 ] as const;
 
-function getActiveGroupKey(pathname: string) {
-  return (
-    READINESS_GROUPS.find((group) => pathname === group.href)?.key ??
-    READINESS_GROUPS[0].key
-  );
+type ReadinessGroup = (typeof READINESS_GROUPS)[number];
+
+const STEP_INDEX_MAP = (() => {
+  const map = new Map<string, number>();
+  let index = 0;
+
+  for (const group of READINESS_GROUPS) {
+    for (const item of group.items) {
+      map.set(`${group.key}:${item.key}`, index);
+      index += 1;
+    }
+  }
+
+  return map;
+})();
+
+function getActiveGroup(pathname: string) {
+  return READINESS_GROUPS.find((group) => group.href === pathname) ?? READINESS_GROUPS[0];
+}
+
+function resolveCurrentStep(group: ReadinessGroup, stepParam: string | null) {
+  const defaultStep = group.items[0].key;
+  if (!stepParam) return defaultStep;
+
+  const matchedStep = group.items.find((item) => item.key === stepParam)?.key;
+  return matchedStep ?? defaultStep;
+}
+
+function getGlobalStepIndex(groupKey: string, stepKey: string) {
+  return STEP_INDEX_MAP.get(`${groupKey}:${stepKey}`) ?? 0;
+}
+
+function getItemStatus(itemIndex: number, currentIndex: number) {
+  return itemIndex < currentIndex ? "done" : "todo";
 }
 
 const Aside = () => {
   const pathname = usePathname();
-  const activeGroupKey = getActiveGroupKey(pathname);
+  const searchParams = useSearchParams();
+
+  const activeGroup = getActiveGroup(pathname);
+  const activeGroupKey = activeGroup.key;
+  const currentStepKey = resolveCurrentStep(activeGroup, searchParams.get("step"));
+  const currentGlobalIndex = getGlobalStepIndex(activeGroupKey, currentStepKey);
 
   return (
     <aside className="hidden overflow-y-auto rounded-l-xl bg-[#156F7D] px-5 py-6 text-white lg:flex lg:w-[45%] lg:flex-col xl:w-[42%] xl:px-6 xl:py-7">
@@ -100,7 +126,11 @@ const Aside = () => {
                 {isOpen ? (
                   <ul className="space-y-3 px-4 pb-4 pt-1">
                     {group.items.map((item) => {
-                      const isDone = item.status === "done";
+                      const itemGlobalIndex = getGlobalStepIndex(group.key, item.key);
+                      const status = getItemStatus(itemGlobalIndex, currentGlobalIndex);
+                      const isDone = status === "done";
+                      const isCurrent =
+                        group.key === activeGroupKey && item.key === currentStepKey;
 
                       return (
                         <li
@@ -109,6 +139,7 @@ const Aside = () => {
                         >
                           <Link
                             href={`${group.href}?step=${item.key}`}
+                            aria-current={isCurrent ? "step" : undefined}
                             className="flex min-w-0 items-center gap-2.5"
                           >
                             <span
@@ -121,7 +152,12 @@ const Aside = () => {
                             >
                               {isDone ? <Check className="size-3" strokeWidth={3} /> : null}
                             </span>
-                            <span className="truncate text-sm font-medium text-[#A9D0D7]">
+                            <span
+                              className={cn(
+                                "truncate text-sm font-medium",
+                                isCurrent ? "text-white" : "text-[#A9D0D7]",
+                              )}
+                            >
                               {item.label}
                             </span>
                           </Link>
