@@ -37,7 +37,7 @@ export default function Companies() {
 
   return (
     <section
-      className="bg-[#F0F4F8] py-14 lg:py-20"
+      className="bg-[#F0F4F8] py-14 lg:py-20 -translate-y-25"
       aria-labelledby="companies-heading"
     >
       <div className="">
@@ -61,7 +61,7 @@ export default function Companies() {
               tech, finance, care, and beyond — proof that the right experience
               opens the right doors.
             </p> */}
-            <div data-aos="fade-up" data-aos-delay="140">
+            <div data-aos="fade-up" data-aos-delay="140" className="mt-4">
               <CustomButton btnText="Be a business partner" />
             </div>
           </div>
