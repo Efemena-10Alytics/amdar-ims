@@ -22,7 +22,6 @@ import { usePathname } from "next/navigation";
 import StillHaveQuestion from "../../business-partners/still-have-question";
 
 const PROGRAMS_LABELS = [
-  "Project Mgt.",
   "Data Analytics",
   "Business Analysis",
   "Data Science",
@@ -32,34 +31,86 @@ const PROGRAMS_LABELS = [
   "App and Cloud Security",
 ] as const;
 
+const PROGRAM_MATCH_STOP_WORDS = new Set([
+  "and",
+  "the",
+  "work",
+  "experience",
+  "internship",
+  "career",
+  "uk",
+  "canada",
+  "wei",
+  "cei",
+  "acei",
+]);
+
 function normalizeProgramText(value: string) {
   return value
     .toLowerCase()
     .trim()
     .replace(/\s*&\s*/g, " and ")
-    .replace(/\bmgt\.?/gi, "management");
+    .replace(/\s*\/\s*/g, " and ")
+    .replace(/\banalyst\b/g, "analysis")
+    .replace(/\bmgt\.?/gi, "management")
+    .replace(/\([^)]*\)/g, " ")
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function programMatchTokens(value: string) {
+  return normalizeProgramText(value)
+    .split(" ")
+    .filter((word) => word.length > 1 && !PROGRAM_MATCH_STOP_WORDS.has(word));
 }
 
 function labelToSlugHint(label: string) {
-  return normalizeProgramText(label).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  return normalizeProgramText(label).replace(/\s+/g, "-").replace(/^-|-$/g, "");
 }
 
 function findProgramForLabel(programs: InternshipProgram[], label: string): InternshipProgram | undefined {
   const normalizedLabel = normalizeProgramText(label);
   const slugHint = labelToSlugHint(label);
+  const labelTokens = programMatchTokens(label);
 
-  const bySlug = programs.find(
-    (program) =>
+  const bySlug = programs.find((program) => {
+    const normalizedSlug = normalizeProgramText(program.slug.replace(/-/g, " "));
+    return (
       program.slug === slugHint ||
       program.slug.includes(slugHint) ||
-      slugHint.includes(program.slug),
-  );
+      slugHint.includes(program.slug) ||
+      normalizedSlug.includes(normalizedLabel) ||
+      normalizedLabel
+        .split(" ")
+        .every((word) => normalizedSlug.includes(word))
+    );
+  });
   if (bySlug) return bySlug;
 
-  return programs.find((program) => {
+  const byTitle = programs.find((program) => {
     const title = normalizeProgramText(program.title);
     return title.includes(normalizedLabel) || normalizedLabel.includes(title);
   });
+  if (byTitle) return byTitle;
+
+  if (labelTokens.length === 0) return undefined;
+
+  let best: { program: InternshipProgram; score: number } | undefined;
+  for (const program of programs) {
+    const haystack = `${normalizeProgramText(program.title)} ${normalizeProgramText(program.slug.replace(/-/g, " "))}`;
+    const score = labelTokens.filter((token) => haystack.includes(token)).length;
+    if (score === 0) continue;
+    if (!best || score > best.score) {
+      best = { program, score };
+    }
+  }
+
+  if (best && best.score >= Math.min(2, labelTokens.length)) {
+    return best.program;
+  }
+
+  return best?.program;
 }
 
 const Footer = () => {
