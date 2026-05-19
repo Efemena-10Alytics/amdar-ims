@@ -7,7 +7,7 @@ const INTERNSHIP_PROGRAMS_QUERY_KEY = ["internship-programs-all"];
 
 type InternshipProgramsResponse =
   | InternshipProgram[]
-  | { data?: InternshipProgram[]; [key: string]: unknown };
+  | { data?: InternshipProgram[];[key: string]: unknown };
 
 export async function getInternshipProgramsAll(): Promise<InternshipProgramsResponse> {
   const { data } = await axiosInstance.get("/internship-programs-all");

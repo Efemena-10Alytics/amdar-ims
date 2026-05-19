@@ -25,6 +25,7 @@ const PROGRAMS_LABELS = [
   "Data Analytics",
   "Business Analysis",
   "Data Science",
+  "Data Engineering",
   "Ethical Hacking",
   "SOC analysis",
   "GRC",
