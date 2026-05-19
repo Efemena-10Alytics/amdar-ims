@@ -8,6 +8,7 @@ import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/she
 type QuizDrawerProps = {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    onComplete?: () => void;
 };
 
 type QuizQuestion = {
@@ -49,7 +50,7 @@ const QUIZ_QUESTIONS: QuizQuestion[] = [
     },
 ];
 
-const QuizDrawer = ({ open, onOpenChange }: QuizDrawerProps) => {
+const QuizDrawer = ({ open, onOpenChange, onComplete }: QuizDrawerProps) => {
     const [answers, setAnswers] = useState<Record<string, string>>({});
     const [questionIndex, setQuestionIndex] = useState(0);
     const [secondsLeft, setSecondsLeft] = useState(9 * 60 + 59);
@@ -86,6 +87,7 @@ const QuizDrawer = ({ open, onOpenChange }: QuizDrawerProps) => {
             setQuestionIndex((prev) => prev + 1);
             return;
         }
+        onComplete?.();
         onOpenChange(false);
     };
 

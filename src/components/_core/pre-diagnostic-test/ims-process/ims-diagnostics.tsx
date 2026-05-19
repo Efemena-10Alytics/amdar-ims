@@ -87,7 +87,7 @@ const ImsDiagnostic = () => {
       <ImsDiagnosticDrawer
         open={isDiagnosticOpen}
         onOpenChange={setIsDiagnosticOpen}
-        onComplete={() => router.push("/onboarding")}
+        onComplete={() => router.push("/setup")}
       />
     </section>
   );
