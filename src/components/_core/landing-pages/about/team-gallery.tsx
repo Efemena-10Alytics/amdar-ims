@@ -9,14 +9,10 @@ import {
 } from "@/components/ui/carousel";
 import { ArrowLeftCurve, ArrowRightCurve } from "../home/svg";
 
-const galleryImages = [
-  "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1000&q=80",
-  "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1000&q=80",
-  "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1000&q=80",
-  "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1000&q=80",
-  "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1000&q=80",
-  "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1000&q=80",
-];
+const galleryImages = Array.from(
+  { length: 8 },
+  (_, index) => `/images/pngs/teams/teams${index + 1}.png`,
+);
 
 const TeamGallery = () => {
   const [api, setApi] = React.useState<CarouselApi>();
@@ -33,7 +29,7 @@ const TeamGallery = () => {
         >
           <CarouselContent className="-ml-2 md:-ml-3 p-6">
             {galleryImages.map((image, index) => (
-              <CarouselItem key={`${image}-${index}`} className="pl-2 hover:p-6 md:basis-1/3 md:pl-3">
+              <CarouselItem key={image} className="pl-2 hover:p-6 md:basis-1/3 md:pl-3">
                 <div
                   className="h-76 overflow-hidden rounded-md bg-[#8EA3AD] hover:scale-105 transition-transform duration-300"
                   style={{
