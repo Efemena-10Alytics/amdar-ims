@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Flag from "../landing-pages/home/hero/flag";
 import QuizDrawer from "./quiz-drawer";
 
@@ -11,6 +12,7 @@ const GUIDELINES = [
 ];
 
 const ReadinessTest = () => {
+  const router = useRouter();
   const [isQuizOpen, setIsQuizOpen] = useState(false);
 
   return (
@@ -62,7 +64,11 @@ const ReadinessTest = () => {
         Start Quiz
       </button>
 
-      <QuizDrawer open={isQuizOpen} onOpenChange={setIsQuizOpen} />
+      <QuizDrawer
+        open={isQuizOpen}
+        onOpenChange={setIsQuizOpen}
+        onComplete={() => router.push("/pre-diagnostic-test")}
+      />
     </section>
   );
 };
