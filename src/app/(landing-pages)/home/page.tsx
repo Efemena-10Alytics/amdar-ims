@@ -14,13 +14,13 @@ const InternShipProgram = () => {
   return (
     <div>
       <InternshipHeroTwo />
+      <Companies />
       <WhatWeOffer />
       <Partners />
       <CareerNeeds />
       <JobReady />
       <Portfolio />
       <WhatOurInternsSays />
-      <Companies />
       <Experience />
       <RoadMap />
       <SuccessStories />

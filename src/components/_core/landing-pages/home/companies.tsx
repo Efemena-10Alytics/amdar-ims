@@ -40,10 +40,10 @@ export default function Companies() {
       className="bg-[#F0F4F8] py-14 lg:py-20"
       aria-labelledby="companies-heading"
     >
-      <div className="app-width">
+      <div className="">
         <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between lg:gap-16">
           <div
-            className="max-w-xl shrink-0 lg:pt-1"
+            className="app-width max-w-lg shrink-0 lg:pt-1"
             data-aos="fade-right"
           >
             <h2
@@ -52,7 +52,7 @@ export default function Companies() {
             >
               Companies who have hired our interns
             </h2>
-            <p
+            {/* <p
               className="mt-4 mb-6 text-base leading-relaxed text-[#475467] lg:text-lg"
               data-aos="fade-up"
               data-aos-delay="80"
@@ -60,40 +60,67 @@ export default function Companies() {
               Our interns have gone on to work with leading companies across
               tech, finance, care, and beyond — proof that the right experience
               opens the right doors.
-            </p>
+            </p> */}
             <div data-aos="fade-up" data-aos-delay="140">
               <CustomButton btnText="Be a business partner" />
             </div>
           </div>
 
-          <ul
-            className="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:max-w-2xl"
+          <div
+            className="relative min-w-0 flex-1 overflow-hidden"
             data-aos="fade-left"
             data-aos-delay="100"
           >
-            {COMPANY_LOGOS.map((company, index) => {
-              const isAmdari = company.src.includes("amdari");
-              return (
-                <li
-                  key={company.src}
-                  data-aos="fade-up"
-                  data-aos-delay={120 + index * 45}
-                  className={cn(
-                    "flex aspect-square items-center justify-center rounded-xs p-4 sm:p-5",
-                    isAmdari ? "bg-transparent" : "bg-[#E2E8F0]",
-                  )}
-                >
-                  <Image
-                    src={company.src}
-                    alt={company.alt}
-                    width={140}
-                    height={72}
-                    className="max-h-14 w-auto max-w-full object-contain sm:max-h-16"
-                  />
-                </li>
-              );
-            })}
-          </ul>
+            <div
+              className="flex w-max gap-3 sm:gap-4"
+              style={{
+                animation: "companies-scroll 45s linear infinite",
+              }}
+            >
+              {[...COMPANY_LOGOS, ...COMPANY_LOGOS].map((company, index) => {
+                const isAmdari = company.src.includes("amdari");
+                return (
+                  <div
+                    key={`${company.src}-${index}`}
+                    className={cn(
+                      "flex size-24 shrink-0 items-center justify-center rounded-xs p-4 sm:size-28 sm:p-5",
+                      isAmdari ? "bg-transparent" : "bg-[#E2E8F0]",
+                    )}
+                  >
+                    <Image
+                      src={company.src}
+                      alt={company.alt}
+                      width={140}
+                      height={72}
+                      className="max-h-14 w-auto max-w-full object-contain sm:max-h-16"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+            <div
+              className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-linear-to-r from-[#F0F4F8] to-transparent sm:w-12"
+              aria-hidden
+            />
+            <div
+              className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-linear-to-l from-[#F0F4F8] to-transparent sm:w-12"
+              aria-hidden
+            />
+            <style
+              dangerouslySetInnerHTML={{
+                __html: `
+                  @keyframes companies-scroll {
+                    0% {
+                      transform: translateX(0);
+                    }
+                    100% {
+                      transform: translateX(-50%);
+                    }
+                  }
+                `,
+              }}
+            />
+          </div>
         </div>
       </div>
     </section>
