@@ -1,6 +1,13 @@
 import DashboardHeader from "@/components/_core/dashboard/dashboard/header";
+import ActivityPeak from "@/components/_core/dashboard/dashboard/activity-peak";
+import InternshipBasicInfo from "@/components/_core/dashboard/dashboard/intership-basic-info";
+import Streak from "@/components/_core/dashboard/dashboard/streak";
 import DashboardWelcome from "@/components/_core/dashboard/dashboard/welcome";
 import WelcomeVideo from "@/components/_core/dashboard/dashboard/welcome-video";
+import InterviewPrepRequest from "@/components/_core/dashboard/dashboard/interview-prep-request";
+import ReferenceLetter from "@/components/_core/dashboard/dashboard/reference-letter";
+import RecommendedCourses from "@/components/_core/dashboard/dashboard/recommended-courses";
+import YourRoadMap from "@/components/_core/dashboard/dashboard/your-road-map";
 
 const DashboardPage = () => {
   return (
@@ -15,6 +22,21 @@ const DashboardPage = () => {
           <WelcomeVideo />
         </div>
       </div>
+
+      <InternshipBasicInfo />
+      <YourRoadMap />
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <Streak />
+        <ActivityPeak />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <ReferenceLetter />
+        <InterviewPrepRequest />
+      </div>
+
+      <RecommendedCourses />
     </div>
   );
 };
