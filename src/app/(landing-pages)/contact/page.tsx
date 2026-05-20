@@ -112,9 +112,8 @@ const InputField = ({
       onFocus={() => onFocus(name)}
       onBlur={onBlur}
       disabled={disabled}
-      className={`w-full h-12 bg-[#F8FAFC] rounded-lg px-4 font-sora text-sm text-[#0C3640] placeholder:text-[#64748B] outline-none border transition-colors duration-150 disabled:opacity-60 disabled:cursor-not-allowed ${
-        focused === name ? "border-[#156374]" : "border-[#E2E8F0]"
-      }`}
+      className={`w-full h-12 bg-[#F8FAFC] rounded-lg px-4 font-sora text-sm text-[#0C3640] placeholder:text-[#64748B] outline-none border transition-colors duration-150 disabled:opacity-60 disabled:cursor-not-allowed ${focused === name ? "border-[#156374]" : "border-[#E2E8F0]"
+        }`}
     />
   </div>
 );
@@ -156,7 +155,7 @@ const ContactContent = () => {
   return (
     <div className="bg-white">
       {/* ── Hero ── */}
-      <section className="bg-white text-center pt-[60px] pb-12">
+      <section className="bg-white text-center pt-15 pb-12">
         <h1 className="text-[#092A31] font-clash-display text-[40px] font-bold tracking-tight mb-3">
           Contact Us
         </h1>
@@ -167,16 +166,16 @@ const ContactContent = () => {
 
       {/* ── Card ── */}
       <section className="bg-white px-5 lg:px-12 pb-20">
-        <div className="bg-[#E8EFF1] rounded-[24px] p-5 lg:p-10 flex flex-col lg:flex-row gap-10 max-w-[1200px] mx-auto">
+        <div className="bg-[#E8EFF1] rounded-[24px] p-5 lg:p-10 flex flex-col lg:flex-row gap-10 max-w-300 mx-auto">
 
           {/* ── Left Panel ── */}
-          <div className="lg:w-[50%] flex-shrink-0 w-[340px] flex flex-col gap-6">
+          <div className="lg:w-[50%] shrink-0 w-85 flex flex-col gap-6">
             <h2 className="text-[#092A31] font-clash-display text-xl font-semibold">
               Get in touch with us
             </h2>
 
             {/* Calls */}
-            <div className="flex flex-col gap-[5px]">
+            <div className="flex flex-col gap-1.25">
               <div className="flex items-center gap-1.5 mb-1">
                 <PhoneIcon />
                 <span className="text-[#156374] font-sora text-sm font-medium">Calls</span>
@@ -189,7 +188,7 @@ const ContactContent = () => {
             </div>
 
             {/* WhatsApp */}
-            <div className="flex flex-col gap-[5px]">
+            <div className="flex flex-col gap-1.25">
               <div className="flex items-center gap-1.5 mb-1">
                 <WhatsAppIcon />
                 <span className="text-[#156374] font-sora text-sm font-medium">WhatsApp</span>
@@ -224,73 +223,72 @@ const ContactContent = () => {
           </div>
 
           {/* ── Right Panel ── */}
-<div className="lg:w-[50%] lg:flex lg:justify-end lg:pr-12">
-          <div className="lg:max-w-lg flex flex-col gap-5">
-            <h3 className="text-[#0C3640] font-clash-display text-base font-semibold m-0 lg:mt-7">
-              Send us a message and we'll respond within 24hour
-            </h3>
+          <div className="lg:w-[50%] lg:flex lg:justify-end lg:pr-12">
+            <div className="lg:max-w-lg flex flex-col gap-5">
+              <h3 className="text-[#0C3640] font-clash-display text-base font-semibold m-0 lg:mt-7">
+                Send us a message and we'll respond within 24hour
+              </h3>
 
-            <InputField
-              label="Full name"
-              name="name"
-              placeholder="Your full name"
-              value={name}
-              onChange={setName}
-              focused={focused}
-              onFocus={setFocused}
-              onBlur={() => setFocused(null)}
-              disabled={loading}
-            />
-
-            <InputField
-              label="Email"
-              name="email"
-              type="email"
-              placeholder="Your email address"
-              value={email}
-              onChange={setEmail}
-              focused={focused}
-              onFocus={setFocused}
-              onBlur={() => setFocused(null)}
-              disabled={loading}
-            />
-
-            {/* Message Textarea */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[#071A27] font-sora text-sm">Message</label>
-              <textarea
-                placeholder="Leave us a message"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onFocus={() => setFocused("message")}
+              <InputField
+                label="Full name"
+                name="name"
+                placeholder="Your full name"
+                value={name}
+                onChange={setName}
+                focused={focused}
+                onFocus={setFocused}
                 onBlur={() => setFocused(null)}
                 disabled={loading}
-                className={`w-full h-[152px] bg-[#F8FAFC] rounded-lg px-4 py-3 font-sora text-sm text-[#0C3640] placeholder:text-[#64748B] outline-none border resize-none transition-colors duration-150 disabled:opacity-60 disabled:cursor-not-allowed ${
-                  focused === "message" ? "border-[#156374]" : "border-[#E2E8F0]"
-                }`}
               />
+
+              <InputField
+                label="Email"
+                name="email"
+                type="email"
+                placeholder="Your email address"
+                value={email}
+                onChange={setEmail}
+                focused={focused}
+                onFocus={setFocused}
+                onBlur={() => setFocused(null)}
+                disabled={loading}
+              />
+
+              {/* Message Textarea */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[#071A27] font-sora text-sm">Message</label>
+                <textarea
+                  placeholder="Leave us a message"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onFocus={() => setFocused("message")}
+                  onBlur={() => setFocused(null)}
+                  disabled={loading}
+                  className={`w-full h-38 bg-[#F8FAFC] rounded-lg px-4 py-3 font-sora text-sm text-[#0C3640] placeholder:text-[#64748B] outline-none border resize-none transition-colors duration-150 disabled:opacity-60 disabled:cursor-not-allowed ${focused === "message" ? "border-[#156374]" : "border-[#E2E8F0]"
+                    }`}
+                />
+              </div>
+
+              {/* Feedback messages */}
+              {error && (
+                <p className="text-red-500 font-sora text-sm">{error}</p>
+              )}
+              {success && (
+                <p className="text-[#156374] font-sora text-sm">
+                  Message sent successfully! We'll get back to you within 24 hours.
+                </p>
+              )}
+
+              {/* Submit */}
+              <button
+                onClick={handleSubmit}
+                disabled={loading}
+                className="w-full py-4 bg-[#156374] border border-[#448290] rounded-2xl text-[#FFE082] font-sora text-base font-normal hover:bg-[#0e4f5e] transition-colors duration-150 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {loading ? "Sending..." : "Send your message"}
+              </button>
             </div>
-
-            {/* Feedback messages */}
-            {error && (
-              <p className="text-red-500 font-sora text-sm">{error}</p>
-            )}
-            {success && (
-              <p className="text-[#156374] font-sora text-sm">
-                Message sent successfully! We'll get back to you within 24 hours.
-              </p>
-            )}
-
-            {/* Submit */}
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              className="w-full py-4 bg-[#156374] border border-[#448290] rounded-[12px] text-[#FFE082] font-sora text-base font-normal hover:bg-[#0e4f5e] transition-colors duration-150 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              {loading ? "Sending..." : "Send your message"}
-            </button>
           </div>
-</div>
 
         </div>
       </section>

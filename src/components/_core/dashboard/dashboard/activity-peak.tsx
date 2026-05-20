@@ -75,7 +75,7 @@ const ActivityPeak = () => {
               <ChevronDown className="size-4" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="min-w-[120px]">
+          <DropdownMenuContent align="end" className="min-w-30">
             <DropdownMenuItem onClick={() => setTimeframe("daily")}>
               Daily
             </DropdownMenuItem>

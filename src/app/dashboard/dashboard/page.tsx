@@ -6,6 +6,8 @@ import DashboardWelcome from "@/components/_core/dashboard/dashboard/welcome";
 import WelcomeVideo from "@/components/_core/dashboard/dashboard/welcome-video";
 import InterviewPrepRequest from "@/components/_core/dashboard/dashboard/interview-prep-request";
 import ReferenceLetter from "@/components/_core/dashboard/dashboard/reference-letter";
+import LeaderBoard from "@/components/_core/dashboard/dashboard/leader-board";
+import RecommendedCrashCourse from "@/components/_core/dashboard/dashboard/recommended-crash-course";
 import RecommendedCourses from "@/components/_core/dashboard/dashboard/recommended-courses";
 import YourRoadMap from "@/components/_core/dashboard/dashboard/your-road-map";
 
@@ -23,20 +25,28 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      <InternshipBasicInfo />
-      <YourRoadMap />
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Streak />
-        <ActivityPeak />
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_320px]">
+        <div>
+          <InternshipBasicInfo />
+          <YourRoadMap />
+
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <Streak />
+            <ActivityPeak />
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <ReferenceLetter />
+            <InterviewPrepRequest />
+          </div>
+          <RecommendedCourses />
+        </div>
+        <div className="flex flex-col gap-4">
+          <LeaderBoard />
+          <RecommendedCrashCourse />
+        </div>
       </div>
-
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <ReferenceLetter />
-        <InterviewPrepRequest />
-      </div>
-
-      <RecommendedCourses />
     </div>
   );
 };
