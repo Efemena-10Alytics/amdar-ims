@@ -62,7 +62,7 @@ export default function Companies() {
               opens the right doors.
             </p> */}
             <div data-aos="fade-up" data-aos-delay="140" className="mt-4">
-              <CustomButton btnText="Be a business partner" />
+              <CustomButton btnText="Be a business partner" href="/business-partners" />
             </div>
           </div>
 
