@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { scrollToHash } from "@/lib/scroll-to-hash";
 import { cn } from "@/lib/utils";
 import SuccessModal from "./success-modal";
 
@@ -60,6 +61,14 @@ export default function BecomeAPartner() {
     Aos.init({ duration: 600, once: true });
   }, []);
 
+  React.useEffect(() => {
+    if (window.location.hash === "#become-a-partner") {
+      requestAnimationFrame(() => {
+        scrollToHash("#become-a-partner", { behavior: "auto" });
+      });
+    }
+  }, []);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -71,14 +80,15 @@ export default function BecomeAPartner() {
   return (
     <>
       <section
-        className="relative overflow-hidden bg-white py-14 text-[#092A31] sm:py-16 lg:py-20"
+        className="relative scroll-mt-16 overflow-hidden bg-white py-14 text-[#092A31] sm:py-16 lg:py-20"
         aria-labelledby="become-partner-heading"
+        id="become-a-partner"
       >
         <div
           className="pointer-events-none absolute inset-0 opacity-70"
           aria-hidden
         >
-          <div className="absolute inset-0 bg-[linear-gradient(#E8EFF1_1px,transparent_1px),linear-gradient(90deg,#E8EFF1_1px,transparent_1px)] bg-[size:5rem_5rem]" />
+          <div className="absolute inset-0 bg-[linear-gradient(#E8EFF1_1px,transparent_1px),linear-gradient(90deg,#E8EFF1_1px,transparent_1px)] bg-size-[5rem_5rem]" />
           <div className="absolute left-[29%] top-[24%] h-36 w-28 bg-[#E8EFF1]/70" />
           <div className="absolute bottom-[25%] left-[29%] h-20 w-36 bg-[#E8EFF1]/70" />
         </div>

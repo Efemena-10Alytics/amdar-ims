@@ -167,8 +167,8 @@ export default function BusinessPartnersHero() {
                             data-aos-delay="160"
                             className="relative z-10 mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
                         >
-                            <CustomButton btnText="Become a Partner" href="/auth/sign-up" />
-                            <Button
+                            <CustomButton btnText="Become a Partner" href="#become-a-partner" />
+                            {/* <Button
                                 type="button"
                                 onClick={() => setShowVideo(true)}
                                 className={cn(
@@ -181,7 +181,7 @@ export default function BusinessPartnersHero() {
                                 <span className="flex size-8 items-center justify-center rounded-full bg-[#0F4652] text-white transition-colors group-hover:bg-[#156374]">
                                     <PlayIcon className="size-3.5 fill-current" />
                                 </span>
-                            </Button>
+                            </Button> */}
                         </div>
 
                         <div

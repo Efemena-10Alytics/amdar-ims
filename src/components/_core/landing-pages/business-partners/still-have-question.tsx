@@ -4,7 +4,16 @@ import React from "react";
 import Link from "next/link";
 import Aos from "aos";
 import { ArrowUpRight } from "lucide-react";
+import { scrollToHash } from "@/lib/scroll-to-hash";
 import { cn } from "@/lib/utils";
+
+const ctaClassName = (variant: "solid" | "outline") =>
+  cn(
+    "group inline-flex h-12 min-w-52 items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold transition-colors",
+    variant === "solid"
+      ? "bg-amdari-yellow text-[#092A31] hover:bg-[#F5CF57]"
+      : "border border-white/55 bg-transparent text-white hover:bg-white/10",
+  );
 
 function CtaButton({
   href,
@@ -15,27 +24,39 @@ function CtaButton({
   children: React.ReactNode;
   variant?: "solid" | "outline";
 }) {
-  return (
-    <Link
-      href={href}
+  const icon = (
+    <span
       className={cn(
-        "group inline-flex h-12 min-w-52 items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold transition-colors",
+        "flex size-5 items-center justify-center rounded-full transition-colors",
         variant === "solid"
-          ? "bg-amdari-yellow text-[#092A31] hover:bg-[#F5CF57]"
-          : "border border-white/55 bg-transparent text-white hover:bg-white/10",
+          ? "bg-primary text-amdari-yellow"
+          : "bg-amdari-yellow text-primary",
       )}
     >
-      <span>{children}</span>
-      <span
-        className={cn(
-          "flex size-5 items-center justify-center rounded-full transition-colors",
-          variant === "solid"
-            ? "bg-primary text-amdari-yellow"
-            : "bg-amdari-yellow text-primary",
-        )}
+      <ArrowUpRight className="size-3" strokeWidth={2.4} />
+    </span>
+  );
+
+  if (href.startsWith("#")) {
+    return (
+      <a
+        href={href}
+        className={ctaClassName(variant)}
+        onClick={(event) => {
+          event.preventDefault();
+          scrollToHash(href);
+        }}
       >
-        <ArrowUpRight className="size-3" strokeWidth={2.4} />
-      </span>
+        <span>{children}</span>
+        {icon}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={href} className={ctaClassName(variant)}>
+      <span>{children}</span>
+      {icon}
     </Link>
   );
 }
@@ -79,7 +100,7 @@ export default function StillHaveQuestion() {
             </div>
 
             <div className="flex flex-col gap-4 sm:w-fit">
-              <CtaButton href="/auth/sign-up">Become a Partner</CtaButton>
+              <CtaButton href="#become-a-partner">Become a Partner</CtaButton>
               <CtaButton href="mailto:hello@amdari.io" variant="outline">
                 Email Us Directly
               </CtaButton>
