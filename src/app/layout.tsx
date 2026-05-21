@@ -54,10 +54,10 @@ export default function RootLayout({
             {children}
           </Providers>
         </TooltipProvider>
+        <GoogleTagManagerScript />
+        <GoogleAnalytics gaId="G-TNPG0WCNFB" />
+        <MetaPixel />
       </body>
-      <GoogleTagManagerScript />
-      <GoogleAnalytics gaId="G-TNPG0WCNFB" />
-      <MetaPixel />
     </html>
   );
 }

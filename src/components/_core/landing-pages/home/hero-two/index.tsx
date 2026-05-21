@@ -44,9 +44,9 @@ const InternshipHeroTwo = () => {
             <WordDrop />
             <br />
             {/* Carousel */}
-            <h1 className="inline-block overflow-hidden h-[1.2em] relative align-middle">
+            <span className="inline-block overflow-hidden h-[1.2em] relative align-middle">
               <Slider />
-            </h1>
+            </span>
           </h1>
 
           {/* Description */}

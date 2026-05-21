@@ -166,41 +166,6 @@ const IconOrbit = () => {
                     ))}
                 </div>
             </div>
-            <style jsx>{`
-                .hero-two-orbit-stage {
-                    transform: translateY(10px);
-                }
-
-                .hero-two-orbit-item {
-                    margin-left: -28px;
-                    margin-top: -28px;
-                    animation: hero-two-item-orbit linear infinite;
-                }
-
-                .hero-two-icon-spin {
-                    animation: hero-two-icon-spin 9s linear infinite;
-                }
-
-                @keyframes hero-two-item-orbit {
-                    from {
-                        transform: rotate(var(--hero-orbit-angle))
-                            translateY(calc(-1 * var(--hero-orbit-radius)));
-                    }
-                    to {
-                        transform: rotate(calc(var(--hero-orbit-angle) + 360deg))
-                            translateY(calc(-1 * var(--hero-orbit-radius)));
-                    }
-                }
-
-                @keyframes hero-two-icon-spin {
-                    from {
-                        transform: rotate(0deg);
-                    }
-                    to {
-                        transform: rotate(360deg);
-                    }
-                }
-            `}</style>
         </>
     )
 }
