@@ -67,7 +67,7 @@ export default function BlogDetails({ slug, blog, recommendedPosts }: BlogDetail
                             <div className="flex flex-wrap gap-2">
                                 {blog.categories?.map((item: string, index: number) => (
                                     <p key={index} className="mt-1 flex gap-1 items-center capitalize text-sm font-medium text-[#092A31]">
-                                       <div className="h-1 w-1 rounded-full bg-primary/20" /> {item.replace(/-/g, " ")} 
+                                        <div className="h-1 w-1 rounded-full bg-primary/20" /> {item.replace(/-/g, " ")}
                                     </p>
                                 ))}
                             </div>
@@ -105,7 +105,7 @@ export default function BlogDetails({ slug, blog, recommendedPosts }: BlogDetail
                                 Important things to know
                             </h2>
                             <div
-                                className="text-lg leading-6 text-[#5F7380]"
+                                className="tinymce-content ![&_*]:font-sans [&_p]:text-base [&_p]:my-0 [&_ul]:my-0 [&_ol]:my-0 [&_li]:text-base"
                                 dangerouslySetInnerHTML={{ __html: contentHtml }}
                             />
                         </section>
