@@ -81,7 +81,7 @@ function CourseCard({ course }: { course: RecommendedCourse }) {
         {course.description}
       </p>
 
-      <div className="relative mt-3 aspect-[16/10] w-full overflow-hidden rounded-lg bg-[#E8EFF1]">
+      <div className="relative mt-3 aspect-16/10 w-full overflow-hidden rounded-lg bg-[#E8EFF1]">
         <Image
           src={course.image}
           alt=""

@@ -1,4 +1,7 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
+import { scrollToHash } from "@/lib/scroll-to-hash";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
@@ -32,6 +35,22 @@ const CustomButton = ({ btnText, onClick, href }: CustomButtonProps) => {
   );
 
   if (href != null && href !== "") {
+    if (href.startsWith("#")) {
+      return (
+        <Button asChild className={buttonClassName}>
+          <a
+            href={href}
+            onClick={(event) => {
+              event.preventDefault();
+              scrollToHash(href);
+            }}
+          >
+            {content}
+          </a>
+        </Button>
+      );
+    }
+
     return (
       <Button asChild className={buttonClassName}>
         <Link href={href}>{content}</Link>

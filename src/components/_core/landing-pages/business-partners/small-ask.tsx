@@ -132,7 +132,7 @@ export default function SmallAsk() {
           data-aos-delay="240"
           className="mt-10 flex justify-center lg:mt-12"
         >
-          <CustomButton btnText="Become a Partner" href="/auth/sign-up" />
+          <CustomButton btnText="Become a Partner" href="#become-a-partner" />
         </div>
       </div>
     </section>
