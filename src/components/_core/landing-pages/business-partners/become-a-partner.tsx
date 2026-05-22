@@ -12,6 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useBecomeAPartner } from "@/features/business-partners/use-become-a-partner";
+import type { BecomeAPartnerPayload } from "@/features/business-partners/types";
 import { scrollToHash } from "@/lib/scroll-to-hash";
 import { cn } from "@/lib/utils";
 import SuccessModal from "./success-modal";
@@ -53,9 +55,43 @@ function FieldLabel({
   );
 }
 
+function payloadFromForm(
+  formData: FormData,
+  industry: string,
+): BecomeAPartnerPayload {
+  const extraInfo = String(formData.get("extraInfo") ?? "").trim();
+  return {
+    companyName: String(formData.get("companyName") ?? "").trim(),
+    industry,
+    companySize: String(formData.get("companySize") ?? "").trim(),
+    yourName: String(formData.get("yourName") ?? "").trim(),
+    jobTitle: String(formData.get("jobTitle") ?? "").trim(),
+    workEmail: String(formData.get("workEmail") ?? "").trim(),
+    challenge: String(formData.get("challenge") ?? "").trim(),
+    ...(extraInfo ? { extraInfo } : {}),
+  };
+}
+
+function isPayloadComplete(payload: BecomeAPartnerPayload): boolean {
+  return Boolean(
+    payload.companyName &&
+      payload.industry &&
+      payload.companySize &&
+      payload.yourName &&
+      payload.jobTitle &&
+      payload.workEmail &&
+      payload.challenge,
+  );
+}
+
 export default function BecomeAPartner() {
   const [successOpen, setSuccessOpen] = React.useState(false);
   const [submittedEmail, setSubmittedEmail] = React.useState("");
+  const [industry, setIndustry] = React.useState("");
+  const [clientError, setClientError] = React.useState("");
+  const formRef = React.useRef<HTMLFormElement>(null);
+
+  const { submitBecomeAPartner, isSubmitting, errorMessage } = useBecomeAPartner();
 
   React.useEffect(() => {
     Aos.init({ duration: 600, once: true });
@@ -69,13 +105,27 @@ export default function BecomeAPartner() {
     }
   }, []);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get("workEmail");
-    setSubmittedEmail(typeof email === "string" && email ? email : "example@gmail.io");
+    setClientError("");
+
+    const payload = payloadFromForm(new FormData(event.currentTarget), industry);
+
+    if (!isPayloadComplete(payload)) {
+      setClientError("Please fill in all required fields.");
+      return;
+    }
+
+    const ok = await submitBecomeAPartner(payload);
+    if (!ok) return;
+
+    setSubmittedEmail(payload.workEmail);
     setSuccessOpen(true);
+    setIndustry("");
+    formRef.current?.reset();
   };
+
+  const displayError = clientError || errorMessage;
 
   return (
     <>
@@ -122,127 +172,153 @@ export default function BecomeAPartner() {
           </div>
 
           <form
+            ref={formRef}
             data-aos="fade-left"
             className="rounded-xl border border-[#BFD2D8] bg-white p-5 shadow-[0_28px_55px_rgba(21,99,116,0.16)] sm:p-5 lg:p-6"
             onSubmit={handleSubmit}
           >
-          <div>
-            <h3 className="text-lg font-bold text-[#253F4B]">Register Here</h3>
-            <p className="mt-0.5 text-xs font-medium text-[#B4C0CC]">
-              Fill in your appropriate details below
-            </p>
-          </div>
-
-          <div className="mt-4 grid gap-x-5 gap-y-3 sm:grid-cols-2">
             <div>
-              <FieldLabel htmlFor="company-name">Company Name</FieldLabel>
-              <Input
-                id="company-name"
-                name="companyName"
-                placeholder="Enter your email address"
-                className={fieldClassName}
-              />
+              <h3 className="text-lg font-bold text-[#253F4B]">Register Here</h3>
+              <p className="mt-0.5 text-xs font-medium text-[#B4C0CC]">
+                Fill in your appropriate details below
+              </p>
             </div>
 
-            <div>
-              <FieldLabel htmlFor="industry">Industry</FieldLabel>
-              <Select name="industry">
-                <SelectTrigger
-                  id="industry"
-                  className={cn(fieldClassName, "h-9")}
+            <div className="mt-4 grid gap-x-5 gap-y-3 sm:grid-cols-2">
+              <div>
+                <FieldLabel htmlFor="company-name">Company Name</FieldLabel>
+                <Input
+                  id="company-name"
+                  name="companyName"
+                  required
+                  disabled={isSubmitting}
+                  placeholder="Acme Corp"
+                  className={fieldClassName}
+                />
+              </div>
+
+              <div>
+                <FieldLabel htmlFor="industry">Industry</FieldLabel>
+                <Select
+                  value={industry}
+                  onValueChange={setIndustry}
+                  disabled={isSubmitting}
+                  required
                 >
-                  <SelectValue placeholder="Select your location" />
-                </SelectTrigger>
-                <SelectContent>
-                  {INDUSTRIES.map((industry) => (
-                    <SelectItem key={industry} value={industry.toLowerCase()}>
-                      {industry}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                  <SelectTrigger
+                    id="industry"
+                    className={cn(fieldClassName, "h-9")}
+                  >
+                    <SelectValue placeholder="Select industry" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {INDUSTRIES.map((item) => (
+                      <SelectItem key={item} value={item}>
+                        {item}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <FieldLabel htmlFor="company-size">Company Size</FieldLabel>
+                <Input
+                  id="company-size"
+                  name="companySize"
+                  required
+                  disabled={isSubmitting}
+                  placeholder="51-200"
+                  className={fieldClassName}
+                />
+              </div>
+
+              <div>
+                <FieldLabel htmlFor="your-name">Your Name</FieldLabel>
+                <Input
+                  id="your-name"
+                  name="yourName"
+                  required
+                  disabled={isSubmitting}
+                  placeholder="Jane Doe"
+                  className={fieldClassName}
+                />
+              </div>
+
+              <div>
+                <FieldLabel htmlFor="job-title">Your Role / Job Title</FieldLabel>
+                <Input
+                  id="job-title"
+                  name="jobTitle"
+                  required
+                  disabled={isSubmitting}
+                  placeholder="Head of Talent"
+                  className={fieldClassName}
+                />
+              </div>
+
+              <div>
+                <FieldLabel htmlFor="work-email">Work Email</FieldLabel>
+                <Input
+                  id="work-email"
+                  name="workEmail"
+                  type="email"
+                  required
+                  disabled={isSubmitting}
+                  placeholder="jane@acme.com"
+                  className={fieldClassName}
+                />
+              </div>
             </div>
 
-            <div>
-              <FieldLabel htmlFor="company-size">Company Size</FieldLabel>
-              <Input
-                id="company-size"
-                name="companySize"
-                placeholder="Enter your email address"
-                className={fieldClassName}
+            <div className="mt-3">
+              <FieldLabel htmlFor="challenge">
+                What kind of challenge would you like interns to work on?
+              </FieldLabel>
+              <textarea
+                id="challenge"
+                name="challenge"
+                required
+                disabled={isSubmitting}
+                rows={4}
+                placeholder="Scaling programs"
+                className={cn(
+                  fieldClassName,
+                  "min-h-18 w-full resize-none rounded-md py-2.5 leading-relaxed outline-none transition-[color,box-shadow] focus-visible:ring-[3px]",
+                )}
               />
             </div>
 
-            <div>
-              <FieldLabel htmlFor="your-name">Your Name</FieldLabel>
-              <Input
-                id="your-name"
-                name="yourName"
-                placeholder="Enter your email address"
-                className={fieldClassName}
+            <div className="mt-3">
+              <FieldLabel htmlFor="extra-info">
+                Anything else we should know? (optional)
+              </FieldLabel>
+              <textarea
+                id="extra-info"
+                name="extraInfo"
+                disabled={isSubmitting}
+                rows={3}
+                placeholder="Optional"
+                className={cn(
+                  fieldClassName,
+                  "min-h-16 w-full resize-none rounded-md py-2.5 leading-relaxed outline-none transition-[color,box-shadow] focus-visible:ring-[3px]",
+                )}
               />
             </div>
 
-            <div>
-              <FieldLabel htmlFor="job-title">Your Role / Job Title</FieldLabel>
-              <Input
-                id="job-title"
-                name="jobTitle"
-                placeholder="Enter your email address"
-                className={fieldClassName}
-              />
-            </div>
+            {displayError ? (
+              <p className="mt-3 text-sm font-medium text-red-600" role="alert">
+                {displayError}
+              </p>
+            ) : null}
 
-            <div>
-              <FieldLabel htmlFor="work-email">Work Email</FieldLabel>
-              <Input
-                id="work-email"
-                name="workEmail"
-                type="email"
-                placeholder="Enter your email address"
-                className={fieldClassName}
-              />
-            </div>
-          </div>
-
-          <div className="mt-3">
-            <FieldLabel htmlFor="challenge">
-              What kind of challenge would you like interns to work on?
-            </FieldLabel>
-            <textarea
-              id="challenge"
-              name="challenge"
-              rows={4}
-              placeholder="Describe the business problem or scenario. It doesn't need to be formal; a paragraph is enough."
-              className={cn(
-                fieldClassName,
-                "min-h-18 w-full resize-none rounded-md py-2.5 leading-relaxed outline-none transition-[color,box-shadow] focus-visible:ring-[3px]",
-              )}
-            />
-          </div>
-
-          <div className="mt-3">
-            <FieldLabel htmlFor="extra-info">
-              Anything else we should know? (optional)
-            </FieldLabel>
-            <textarea
-              id="extra-info"
-              name="extraInfo"
-              rows={3}
-              placeholder="Ask"
-              className={cn(
-                fieldClassName,
-                "min-h-16 w-full resize-none rounded-md py-2.5 leading-relaxed outline-none transition-[color,box-shadow] focus-visible:ring-[3px]",
-              )}
-            />
-          </div>
-
-          <Button
-            type="submit"
-            className="mt-4 h-10 w-full rounded-lg bg-primary text-sm font-semibold text-white hover:bg-[#0F4D5A]"
-          >
-            Submit Partner Interest →
-          </Button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="mt-4 h-10 w-full rounded-lg bg-primary text-sm font-semibold text-white hover:bg-[#0F4D5A] disabled:opacity-60"
+            >
+              {isSubmitting ? "Submitting…" : "Submit Partner Interest →"}
+            </Button>
           </form>
         </div>
       </section>
