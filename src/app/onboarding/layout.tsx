@@ -1,4 +1,5 @@
 import Aside from "@/components/_core/onboarding/aside";
+import { JourneyStepper } from "@/components/_core/onboarding/journey-stepper";
 import React, { Suspense } from "react";
 
 const OnboardingLayout = ({
@@ -21,6 +22,9 @@ const OnboardingLayout = ({
           backgroundPosition: "0 0",
         }}
       >
+        <div className="w-full max-w-190 px-4 pt-5 sm:px-0 sm:pt-8">
+          <JourneyStepper activeStep={1} />
+        </div>
         {children}
       </div>
     </div>
