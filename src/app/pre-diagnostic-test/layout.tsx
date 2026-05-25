@@ -1,7 +1,8 @@
 import Aside from "@/components/_core/pre-diagnostic-test/aside";
+import { JourneyStepper } from "@/components/_core/onboarding/journey-stepper";
 import React, { Suspense } from "react";
 
-const OnboardingLayout = ({
+const PreDiagnosticTestLayout = ({
   children,
 }: Readonly<{ children: React.ReactNode }>) => {
   return (
@@ -21,10 +22,13 @@ const OnboardingLayout = ({
           backgroundPosition: "0 0",
         }}
       >
+        <div className="w-full max-w-190 px-4 pt-5 sm:px-0 sm:pt-8">
+          <JourneyStepper activeStep={2} />
+        </div>
         {children}
       </div>
     </div>
   );
 };
 
-export default OnboardingLayout;
+export default PreDiagnosticTestLayout;

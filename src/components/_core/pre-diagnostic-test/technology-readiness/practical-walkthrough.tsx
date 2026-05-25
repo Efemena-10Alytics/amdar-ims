@@ -12,13 +12,7 @@ const PracticalWalkthrough = () => {
   const [hasVideoEnded, setHasVideoEnded] = useState(false);
 
   return (
-    <section className="w-full max-w-190 py-5 sm:py-8">
-      <div className="mb-6 flex items-center gap-3">
-        <span className="h-1.5 w-14 rounded-full bg-[#1E7C8D]" />
-        <span className="h-1.5 w-14 rounded-full bg-[#1E7C8D]" />
-        <span className="h-1.5 w-14 rounded-full bg-[#B1C5CB]" />
-      </div>
-
+    <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
       <h1 className="text-2xl font-semibold text-[#173740]">Practical walkthrough</h1>
 
       <article className="mt-5 rounded-2xl border border-[#DCE5E9] bg-[#F6F8FA] p-4 shadow-[0_8px_18px_rgba(18,57,67,0.06)] sm:p-5">

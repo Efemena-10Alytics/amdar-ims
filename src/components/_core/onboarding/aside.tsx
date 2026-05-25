@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Check, Loader } from "lucide-react";
 import Flag from "../landing-pages/home/hero/flag";
+import { Button } from "@/components/ui/button";
+import { WhatsappSVG } from "./svg";
 
 const CHECKLIST_ITEMS = [
   { key: "orientation-video", label: "Your orientation video" },
@@ -64,10 +66,10 @@ const Aside = () => {
                   >
                     <span
                       className={`relative z-10 mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center border ${isCompleted
-                          ? "border-transparent text-[#1F5D36] bg-[#C7F5D8] h-2 w-2"
-                          : isActive
-                            ? "border-transparent text-[#5F8D8D]"
-                            : "border-[#ACF0C5] text-transparent rounded-full bg-[#EDFCF2]"
+                        ? "border-transparent text-[#1F5D36] bg-[#C7F5D8] h-2 w-2"
+                        : isActive
+                          ? "border-transparent text-[#5F8D8D]"
+                          : "border-[#ACF0C5] text-transparent rounded-full bg-[#EDFCF2]"
                         }`}
                     >
                       {isCompleted ? (
@@ -79,10 +81,10 @@ const Aside = () => {
 
                     <span
                       className={`text-base leading-tight ${isCompleted
-                          ? "text-[#3B7E58]"
-                          : isActive
-                            ? "text-[#3B465F]"
-                            : "text-[#A1A8B1]"
+                        ? "text-[#3B7E58]"
+                        : isActive
+                          ? "text-[#3B465F]"
+                          : "text-[#A1A8B1]"
                         }`}
                     >
                       {item.label}
@@ -99,6 +101,9 @@ const Aside = () => {
           <span>+10K interns Across the world Got hired</span>
         </div>
       </div>
+      <Button className="w-full rounded-full cursor-pointer h-11 bg-[#ACF0C5] text-[#092A31] hover:bg-[#ACF0C5]/80 mb-10">
+        <WhatsappSVG /> Join Our community
+      </Button>
     </aside>
   );
 };
