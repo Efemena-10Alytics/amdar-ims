@@ -21,10 +21,23 @@ export const SESSION_OPTIONS = [
     label: "IWD ConferenceChat",
     key: "iwd-conference",
   },
-  { value: "Immigration session", label: "Immigration session", key: "immigartion-session" },
+  {
+    value: "Immigration session",
+    label: "Immigration session",
+    key: "immigartion-session",
+  },
+  {
+    value: "YouTube Live",
+    label: "YouTube Live",
+    key: "youTube-live",
+  },
   { value: "UK job lab session", label: "UK job lab sessione", key: "uk-job" },
   { value: "Hackathon", label: "Hackathon", key: "hackathon" },
-  { value: "Clarity Session", label: "Clarity Session", key: "clarity-session" },
+  {
+    value: "Clarity Session",
+    label: "Clarity Session",
+    key: "clarity-session",
+  },
   { value: "None of the above", label: "None of the above", key: "none" },
 ] as const;
 
