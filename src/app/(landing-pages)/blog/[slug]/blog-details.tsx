@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MessageCircle } from "lucide-react";
 import BlogCard, {
     type BlogCardData,
 } from "@/components/_core/landing-pages/blog/blog-card";
@@ -16,6 +16,8 @@ const PARAGRAPH =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.";
 
 const FALLBACK_BLOG_IMAGE = "/images/pngs/template/classic.png";
+
+const CAREER_COACH_WHATSAPP_URL = "https://wa.me/447782293725";
 
 function formatBlogDate(value: string | null | undefined): string {
     if (!value) return "—";
@@ -52,7 +54,7 @@ export default function BlogDetails({ slug, blog, recommendedPosts }: BlogDetail
     return (
         <main className="app-width py-10">
             <div className="grid gap-10 lg:gap-20 lg:grid-cols-[260px_minmax(0,1fr)]">
-                <aside className="space-y-8 pt-2">
+                <aside className="space-y-8 pt-2 lg:sticky lg:top-24 lg:self-start">
                     <Link
                         href="/blog"
                         className="inline-flex items-center gap-2 text-sm text-[#7D8F98] hover:text-[#092A31]"
@@ -83,6 +85,16 @@ export default function BlogDetails({ slug, blog, recommendedPosts }: BlogDetail
                             <p className="mt-1 text-sm font-medium text-[#092A31]">{date}</p>
                         </div>
                     </div>
+
+                    <a
+                        href={CAREER_COACH_WHATSAPP_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-primary/90"
+                    >
+                        <MessageCircle className="size-4" />
+                        Speak To A Career Coach
+                    </a>
                 </aside>
 
                 <section className="min-w-0 space-y-6">
