@@ -75,41 +75,56 @@ const MobileDrawer = ({
                 );
               })}
               <div>
-                <h1 className={cn(
-                  "text-base font-medium transition-colors py-2 relative",
-                  "text-primary hover:text-[#0f4d5a]",
-                )}>More Programs</h1>
+                <h1
+                  className={cn(
+                    "text-base font-medium transition-colors py-2 relative",
+                    "text-primary hover:text-[#0f4d5a]",
+                  )}
+                >
+                  Resources
+                </h1>
                 <div className="pl-2 space-y-3 mt-2">
-
                   <div>
-                    <Link className={cn(
-                      "text-base font-medium transition-colors py-2 relative",
-                      "text-primary hover:text-[#0f4d5a]",
-                    )} href="/hackathon">
+                    <Link
+                      className={cn(
+                        "text-base font-medium transition-colors py-2 relative",
+                        "text-primary hover:text-[#0f4d5a]",
+                      )}
+                      href="/hackathon"
+                    >
                       <h2>Hackathon</h2>
                     </Link>
                   </div>
                   <div>
-                    <Link className={cn(
-                      "text-base font-medium transition-colors py-2 relative",
-                      "text-primary hover:text-[#0f4d5a]",
-                    )} href="/job-board">
+                    <Link
+                      className={cn(
+                        "text-base font-medium transition-colors py-2 relative",
+                        "text-primary hover:text-[#0f4d5a]",
+                      )}
+                      href="/job-board"
+                    >
                       <h2>Job Board</h2>
                     </Link>
                   </div>
                   <div>
-                    <Link className={cn(
-                      "text-base font-medium transition-colors py-2 relative",
-                      "text-primary hover:text-[#0f4d5a]",
-                    )} href="/blog">
+                    <Link
+                      className={cn(
+                        "text-base font-medium transition-colors py-2 relative",
+                        "text-primary hover:text-[#0f4d5a]",
+                      )}
+                      href="/blog"
+                    >
                       <h2>Blog</h2>
                     </Link>
                   </div>
                   <div>
-                    <Link className={cn(
-                      "text-base font-medium transition-colors py-2 relative",
-                      "text-primary hover:text-[#0f4d5a]",
-                    )} href="/contact">
+                    <Link
+                      className={cn(
+                        "text-base font-medium transition-colors py-2 relative",
+                        "text-primary hover:text-[#0f4d5a]",
+                      )}
+                      href="/contact"
+                    >
                       <h2>Chat With Us</h2>
                     </Link>
                   </div>
