@@ -35,10 +35,13 @@ const READINESS_GROUPS = [
         label: "Career Knowledge discovery",
         children: [
           {
-            key: "internship-structure-video",
+            key: "career-knowledge-discovery-1",
             label: "Career knowledge discovery 1",
           },
-          { key: "cohort-lead", label: "Career knowledge discovery 2" },
+          {
+            key: "career-knowledge-discovery-2",
+            label: "Career knowledge discovery 2",
+          },
         ],
       },
       { key: "career-path-diagnostics", label: "Career path diagnostics" },

@@ -1,15 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import { Pause, Play } from "lucide-react";
 import { useRouter } from "next/navigation";
-import ReactPlayer from "react-player";
+import OnboardingVideoPlayer from "@/components/_core/onboarding/onboarding-video-player";
+import { usePreDiagnosticNavigation } from "@/components/_core/pre-diagnostic-test/use-pre-diagnostic-navigation";
+import { getPreDiagnosticVideoDescription } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
+
+const FALLBACK_VIDEO_SRC = "https://vimeo.com/1123856639";
+const FALLBACK_DESCRIPTION =
+  "Get familiar with your learning environment, understand what to expect, and how to make the most of your learning experience.";
 
 const WelcomeVideo = () => {
   const router = useRouter();
-  const [videoPlaying, setVideoPlaying] = useState(true);
-  const [volume, setVolume] = useState(0.5);
+  const { preDiagnostic } = usePreDiagnosticNavigation();
   const [hasVideoEnded, setHasVideoEnded] = useState(false);
+
+  const welcomeVideo = preDiagnostic.career_readiness.welcomeVideo[0];
+  const src = welcomeVideo?.link?.trim() || FALLBACK_VIDEO_SRC;
+  const description = getPreDiagnosticVideoDescription(
+    welcomeVideo,
+    FALLBACK_DESCRIPTION,
+  );
 
   return (
     <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
@@ -18,83 +29,19 @@ const WelcomeVideo = () => {
       <article className="mt-5 rounded-2xl border border-[#DCE5E9] bg-[#F6F8FA] p-4 shadow-[0_8px_18px_rgba(18,57,67,0.06)] sm:p-5">
         <h2 className="text-lg font-semibold text-[#3B6B76]">Watch video</h2>
 
-        <div
-          role="button"
-          tabIndex={0}
-          className="relative mt-3 h-63.75 overflow-hidden rounded-2xl sm:h-80"
-          onClick={() => {
-            if (hasVideoEnded) return;
-            setVideoPlaying((prev) => !prev);
-          }}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" || event.key === " ") {
-              event.preventDefault();
-              if (hasVideoEnded) return;
-              setVideoPlaying((prev) => !prev);
-            }
-          }}
-          aria-label={videoPlaying ? "Pause video" : "Play video"}
-        >
-          <ReactPlayer
-            src="https://vimeo.com/1123856639"
-            playing={videoPlaying}
-            loop={false}
-            volume={volume}
-            width="100%"
-            height="100%"
-            controls={false}
-            onEnded={() => {
-              setVideoPlaying(false);
-              setHasVideoEnded(true);
-            }}
-          />
+        <OnboardingVideoPlayer src={src} onEnded={() => setHasVideoEnded(true)} />
 
-          <button
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation();
-              if (hasVideoEnded) return;
-              setVideoPlaying((prev) => !prev);
-            }}
-            className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full px-3 py-1.5 text-base font-medium text-white backdrop-blur-sm transition hover:bg-black/40"
-          >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E7C8D]">
-              {videoPlaying ? (
-                <Pause className="h-4 w-4 fill-current" />
-              ) : (
-                <Play className="ml-0.5 h-4 w-4 fill-current" />
-              )}
-            </span>
-            {videoPlaying ? "Pause video" : "Play to watch"}
-          </button>
-
-          <div
-            className="absolute right-4 bottom-4 flex items-center gap-2 rounded-lg bg-black/45 px-2 py-1"
-            onClick={(event) => event.stopPropagation()}
-            onKeyDown={(event) => event.stopPropagation()}
-          >
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.1"
-              value={volume}
-              onChange={(event) => setVolume(Number(event.target.value))}
-              className="h-1 w-20 cursor-pointer appearance-none rounded-lg bg-white/60"
-            />
-          </div>
-        </div>
-
-        <p className="mt-3 text-base leading-relaxed text-[#64748B] font-semibold">
-          Get familiar with your learning environment, understand what to expect,
-          and how to make the most of your learning experience.
+        <p className="mt-3 text-base leading-relaxed font-semibold text-[#64748B]">
+          {description}
         </p>
       </article>
 
       <button
         type="button"
         disabled={!hasVideoEnded}
-        onClick={() => router.push("/pre-diagnostic-test?step=internship-structure-video")}
+        onClick={() =>
+          router.push("/pre-diagnostic-test?step=career-knowledge-discovery-1")
+        }
         className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
       >
         Continue
