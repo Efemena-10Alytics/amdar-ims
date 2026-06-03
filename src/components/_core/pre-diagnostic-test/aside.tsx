@@ -3,8 +3,25 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
-import { Check, ChevronRight } from "lucide-react";
+import { Check, ChevronRight, Loader } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+type StepItem = {
+  key: string;
+  label: string;
+};
+
+type GroupItem = {
+  key: string;
+  label: string;
+  children: StepItem[];
+};
+
+type AsideEntry = StepItem | GroupItem;
+
+function isGroupItem(entry: AsideEntry): entry is GroupItem {
+  return "children" in entry;
+}
 
 const READINESS_GROUPS = [
   {
@@ -13,9 +30,19 @@ const READINESS_GROUPS = [
     href: "/pre-diagnostic-test",
     items: [
       { key: "welcome-video", label: "Welcome video" },
-      { key: "career-curriculum", label: "Career curriculum" },
+      {
+        key: "career-knowledge",
+        label: "Career Knowledge discovery",
+        children: [
+          {
+            key: "internship-structure-video",
+            label: "Career knowledge discovery 1",
+          },
+          { key: "cohort-lead", label: "Career knowledge discovery 2" },
+        ],
+      },
       { key: "career-path-diagnostics", label: "Career path diagnostics" },
-    ],
+    ] satisfies AsideEntry[],
   },
   {
     key: "technology-readiness",
@@ -23,9 +50,19 @@ const READINESS_GROUPS = [
     href: "/pre-diagnostic-test/technology-readiness",
     items: [
       { key: "technology-use-case", label: "Technology use case" },
-      { key: "practical-walkthrough", label: "Practical walkthrough" },
+      {
+        key: "practical-walkthrough",
+        label: "Practical walkthrough",
+        children: [
+          {
+            key: "practical-walkthrough-1",
+            label: "Practical walkthrough 1",
+          },
+          { key: "practical-walkthrough-2", label: "Practical walkthrough 2" },
+        ],
+      },
       { key: "technology-diagnostics", label: "Technology diagnostics" },
-    ],
+    ] satisfies AsideEntry[],
   },
   {
     key: "ims-readiness",
@@ -34,18 +71,24 @@ const READINESS_GROUPS = [
     items: [
       { key: "how-the-ims-works", label: "How the IMS works" },
       { key: "ims-diagnostics", label: "IMS Diagnostics" },
-    ],
+    ] satisfies StepItem[],
   },
 ] as const;
 
 type ReadinessGroup = (typeof READINESS_GROUPS)[number];
+
+function getFlatStepsForGroup(group: ReadinessGroup) {
+  return group.items.flatMap((item) =>
+    isGroupItem(item) ? item.children : [item],
+  );
+}
 
 const STEP_INDEX_MAP = (() => {
   const map = new Map<string, number>();
   let index = 0;
 
   for (const group of READINESS_GROUPS) {
-    for (const item of group.items) {
+    for (const item of getFlatStepsForGroup(group)) {
       map.set(`${group.key}:${item.key}`, index);
       index += 1;
     }
@@ -59,10 +102,11 @@ function getActiveGroup(pathname: string) {
 }
 
 function resolveCurrentStep(group: ReadinessGroup, stepParam: string | null) {
-  const defaultStep = group.items[0].key;
+  const flatSteps = getFlatStepsForGroup(group);
+  const defaultStep = flatSteps[0]?.key ?? "welcome-video";
   if (!stepParam) return defaultStep;
 
-  const matchedStep = group.items.find((item) => item.key === stepParam)?.key;
+  const matchedStep = flatSteps.find((item) => item.key === stepParam)?.key;
   return matchedStep ?? defaultStep;
 }
 
@@ -72,6 +116,21 @@ function getGlobalStepIndex(groupKey: string, stepKey: string) {
 
 function getItemStatus(itemIndex: number, currentIndex: number) {
   return itemIndex < currentIndex ? "done" : "todo";
+}
+
+function StatusBadge({ isDone }: { isDone: boolean }) {
+  return (
+    <span
+      className={cn(
+        "rounded-full px-3 py-1 text-[10px] font-semibold leading-none",
+        isDone
+          ? "bg-[#CFF6DA] text-[#238A50]"
+          : "border border-[#7EAAB2] text-[#9EC5CC]",
+      )}
+    >
+      {isDone ? "Done" : "Todo"}
+    </span>
+  );
 }
 
 const Aside = () => {
@@ -124,21 +183,118 @@ const Aside = () => {
                 </Link>
 
                 {isOpen ? (
-                  <ul className="space-y-3 px-4 pb-4 pt-1">
-                    {group.items.map((item) => {
-                      const itemGlobalIndex = getGlobalStepIndex(group.key, item.key);
-                      const status = getItemStatus(itemGlobalIndex, currentGlobalIndex);
-                      const isDone = status === "done";
+                  <ul className="space-y-3 px-4 pt-1 pb-4">
+                    {group.items.map((entry) => {
+                      if (isGroupItem(entry)) {
+                        const childIndexes = entry.children.map((child) =>
+                          getGlobalStepIndex(group.key, child.key),
+                        );
+                        const groupDone = childIndexes.every(
+                          (index) => index < currentGlobalIndex,
+                        );
+
+                        return (
+                          <li key={entry.key} className="space-y-2">
+                            <div className="grid grid-cols-[1fr_auto] items-center gap-3">
+                              <div className="flex min-w-0 items-center gap-2.5">
+                                <span
+                                  className={cn(
+                                    "flex size-4 shrink-0 items-center justify-center rounded-[3px] border",
+                                    groupDone
+                                      ? "border-transparent bg-[#BDF3D0] text-[#1F7A4A]"
+                                      : "border-[#8BB9C1] text-transparent",
+                                  )}
+                                >
+                                  {groupDone ? (
+                                    <Check className="size-3" strokeWidth={3} />
+                                  ) : null}
+                                </span>
+                                <span className="truncate text-sm font-medium text-[#A9D0D7]">
+                                  {entry.label}
+                                </span>
+                              </div>
+                              <StatusBadge isDone={groupDone} />
+                            </div>
+
+                            <ul className="space-y-4">
+                              {entry.children.map((child, childIndex) => {
+                                const childGlobalIndex = getGlobalStepIndex(
+                                  group.key,
+                                  child.key,
+                                );
+                                const isChildDone = childGlobalIndex < currentGlobalIndex;
+                                const isChildCurrent =
+                                  group.key === activeGroupKey &&
+                                  child.key === currentStepKey;
+                                const isChildLocked =
+                                  childGlobalIndex > currentGlobalIndex;
+                                const isLastChild =
+                                  childIndex === entry.children.length - 1;
+
+                                return (
+                                  <li key={child.key} className="relative">
+                                    {!isLastChild && (
+                                      <span
+                                        aria-hidden
+                                        className="absolute top-4 left-1.75 z-0 h-full w-px bg-[#5A9AA4]"
+                                      />
+                                    )}
+                                    <Link
+                                      href={`${group.href}?step=${child.key}`}
+                                      aria-current={isChildCurrent ? "step" : undefined}
+                                      className={cn(
+                                        "relative flex items-start gap-2.5",
+                                        isChildLocked && "pointer-events-none",
+                                      )}
+                                    >
+                                      <span className="relative z-10 mt-0.5 flex size-3.5 shrink-0 items-center justify-center">
+                                        {isChildDone ? (
+                                          <Check
+                                            className="size-3 text-[#BDF3D0]"
+                                            strokeWidth={3}
+                                          />
+                                        ) : isChildCurrent ? (
+                                          <Loader
+                                            className="size-3.5 animate-spin text-[#BDF3D0]"
+                                            strokeWidth={2.5}
+                                          />
+                                        ) : (
+                                          <span className="size-2.5 rounded-full border border-[#8BB9C1]" />
+                                        )}
+                                      </span>
+                                      <span
+                                        className={cn(
+                                          "text-sm font-medium leading-tight",
+                                          isChildCurrent
+                                            ? "text-white"
+                                            : isChildLocked
+                                              ? "text-[#7EAAB2]"
+                                              : "text-[#A9D0D7]",
+                                        )}
+                                      >
+                                        {child.label}
+                                      </span>
+                                    </Link>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </li>
+                        );
+                      }
+
+                      const itemGlobalIndex = getGlobalStepIndex(group.key, entry.key);
+                      const isDone = getItemStatus(itemGlobalIndex, currentGlobalIndex) === "done";
                       const isCurrent =
-                        group.key === activeGroupKey && item.key === currentStepKey;
+                        group.key === activeGroupKey && entry.key === currentStepKey;
 
                       return (
                         <li
-                          key={item.key}
+                          key={entry.key}
                           className="grid grid-cols-[1fr_auto] items-center gap-3"
                         >
                           <Link
-                            href={`${group.href}?step=${item.key}`}
+                            href={`${group.href}?step=${entry.key}`}
                             aria-current={isCurrent ? "step" : undefined}
                             className="flex min-w-0 items-center gap-2.5"
                           >
@@ -158,19 +314,10 @@ const Aside = () => {
                                 isCurrent ? "text-white" : "text-[#A9D0D7]",
                               )}
                             >
-                              {item.label}
+                              {entry.label}
                             </span>
                           </Link>
-                          <span
-                            className={cn(
-                              "rounded-full px-3 py-1 text-[10px] font-semibold leading-none",
-                              isDone
-                                ? "bg-[#CFF6DA] text-[#238A50]"
-                                : "border border-[#7EAAB2] text-[#9EC5CC]",
-                            )}
-                          >
-                            {isDone ? "Done" : "Todo"}
-                          </span>
+                          <StatusBadge isDone={isDone} />
                         </li>
                       );
                     })}

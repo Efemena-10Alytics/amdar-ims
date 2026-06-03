@@ -1,10 +1,12 @@
-import CareerCurriculum from "@/components/_core/pre-diagnostic-test/career-readiness/career-curriculum";
+import CareerCohortLead from "@/components/_core/pre-diagnostic-test/career-readiness/career-cohort-lead";
+import CareerInternshipStructureVideo from "@/components/_core/pre-diagnostic-test/career-readiness/career-internship-structure-video";
 import CareerPathDiagnostic from "@/components/_core/pre-diagnostic-test/career-readiness/career-path-diagnostic";
 import WelcomeVideo from "@/components/_core/pre-diagnostic-test/career-readiness/welcome-video";
 
 const STEP_COMPONENTS = {
   "welcome-video": WelcomeVideo,
-  "career-curriculum": CareerCurriculum,
+  "internship-structure-video": CareerInternshipStructureVideo,
+  "cohort-lead": CareerCohortLead,
   "career-path-diagnostics": CareerPathDiagnostic,
 } as const;
 

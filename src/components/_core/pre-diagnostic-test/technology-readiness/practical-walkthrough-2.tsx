@@ -5,7 +5,9 @@ import { Pause, Play } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ReactPlayer from "react-player";
 
-const PracticalWalkthrough = () => {
+const WALKTHROUGH_VIDEO_SRC = "https://vimeo.com/1123856639";
+
+const PracticalWalkthrough2 = () => {
   const router = useRouter();
   const [videoPlaying, setVideoPlaying] = useState(true);
   const [volume, setVolume] = useState(0.5);
@@ -13,7 +15,7 @@ const PracticalWalkthrough = () => {
 
   return (
     <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
-      <h1 className="text-2xl font-semibold text-[#173740]">Practical walkthrough</h1>
+      <h1 className="text-2xl font-semibold text-[#173740]">Practical walkthrough 2</h1>
 
       <article className="mt-5 rounded-2xl border border-[#DCE5E9] bg-[#F6F8FA] p-4 shadow-[0_8px_18px_rgba(18,57,67,0.06)] sm:p-5">
         <h2 className="text-lg font-semibold text-[#3B6B76]">Watch video</h2>
@@ -36,7 +38,7 @@ const PracticalWalkthrough = () => {
           aria-label={videoPlaying ? "Pause video" : "Play video"}
         >
           <ReactPlayer
-            src="https://vimeo.com/1123856639"
+            src={WALKTHROUGH_VIDEO_SRC}
             playing={videoPlaying}
             loop={false}
             volume={volume}
@@ -81,13 +83,14 @@ const PracticalWalkthrough = () => {
               value={volume}
               onChange={(event) => setVolume(Number(event.target.value))}
               className="h-1 w-20 cursor-pointer appearance-none rounded-lg bg-white/60"
+              aria-label="Volume"
             />
           </div>
         </div>
 
-        <p className="mt-3 text-base leading-relaxed text-[#64748B] font-semibold">
-          Get familiar with your learning environment, understand what to expect,
-          and how to make the most of your learning experience.
+        <p className="mt-3 text-base leading-relaxed font-semibold text-[#64748B]">
+          Learn how to navigate your tools, submit work, and stay on track throughout
+          your program.
         </p>
       </article>
 
@@ -95,7 +98,9 @@ const PracticalWalkthrough = () => {
         type="button"
         disabled={!hasVideoEnded}
         onClick={() =>
-          router.push("/pre-diagnostic-test/technology-readiness?step=technology-diagnostics")
+          router.push(
+            "/pre-diagnostic-test/technology-readiness?step=technology-diagnostics",
+          )
         }
         className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
       >
@@ -105,4 +110,4 @@ const PracticalWalkthrough = () => {
   );
 };
 
-export default PracticalWalkthrough;
+export default PracticalWalkthrough2;
