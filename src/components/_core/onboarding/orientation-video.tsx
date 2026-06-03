@@ -1,14 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import OnboardingVideoPlayer from "./onboarding-video-player";
-
-const ORIENTATION_VIDEO_SRC = "https://vimeo.com/1123856639";
+import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
 const OrientationVideo = () => {
-  const router = useRouter();
+  const { onboarding, goToStep } = useOnboardingNavigation();
   const [hasVideoEnded, setHasVideoEnded] = useState(false);
+
+  const orientation = onboarding.orientation_video;
+  const description =
+    orientation.description?.trim() ||
+    orientation.instructions?.trim() ||
+    "Get familiar with your learning environment, understand what to expect, and how to make the most of your learning experience.";
 
   return (
     <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
@@ -18,20 +22,19 @@ const OrientationVideo = () => {
         <h2 className="text-lg font-semibold text-[#3B6B76]">Watch video</h2>
 
         <OnboardingVideoPlayer
-          src={ORIENTATION_VIDEO_SRC}
+          src={orientation.link}
           onEnded={() => setHasVideoEnded(true)}
         />
 
-        <p className="mt-3 text-base leading-relaxed text-[#64748B] font-semibold">
-          Get familiar with your learning environment, understand what to expect,
-          and how to make the most of your learning experience.
+        <p className="mt-3 text-base leading-relaxed font-semibold text-[#64748B]">
+          {description}
         </p>
       </article>
 
       <button
         type="button"
         disabled={!hasVideoEnded}
-        onClick={() => router.push("/onboarding?step=internship-structure-video")}
+        onClick={() => goToStep("internship-structure-video")}
         className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
       >
         Continue

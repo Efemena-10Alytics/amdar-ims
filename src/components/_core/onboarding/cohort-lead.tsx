@@ -1,31 +1,23 @@
 "use client";
-import Image from "next/image";
-import { Copy } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { CopySVG } from "./svg";
 
-const LEADS = [
-  {
-    name: "Agada Queen (Specialist)",
-    phone: "+234 821342134",
-    image: "/images/pngs/about/efe.png",
-  },
-  {
-    name: "Agada Queen (Lead)",
-    phone: "+234 821342134",
-    image: "/images/pngs/about/adeiza.png",
-  },
-  {
-    name: "Agada Queen (Support)",
-    phone: "+234 821342134",
-    image: "/images/pngs/about/omowunmi.png",
-  },
-];
+import Image from "next/image";
+import { useState } from "react";
+import { formatLeadPhone } from "@/features/onboarding/use-get-onboarding";
+import { CopySVG } from "./svg";
+import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
 const CohortLead = () => {
-  const router = useRouter();
+  const { onboarding, goToStep } = useOnboardingNavigation();
   const [isConfirmed, setIsConfirmed] = useState(false);
+  const leads = onboarding.cohort_lead ?? [];
+
+  const copyPhone = async (phone: string) => {
+    try {
+      await navigator.clipboard.writeText(phone);
+    } catch {
+      // ignore clipboard errors
+    }
+  };
 
   return (
     <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
@@ -35,26 +27,39 @@ const CohortLead = () => {
         <h2 className="text-lg font-semibold text-[#3B6B76]">Save your leads contact</h2>
 
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {LEADS.map((lead) => (
-            <article key={lead.name} className="relative overflow-hidden rounded-2xl">
-              <div className="relative h-80">
-                <Image src={lead.image} alt={lead.name} fill className="object-cover" />
-              </div>
-              <div className="absolute rounded-md right-2 bottom-2 left-2 bg-black/55 px-3 py-2.5 backdrop-blur-[1px]">
-                <p className="text-xs font-semibold text-[#DFEEF2]">{lead.name}</p>
-                <div className="mt-0.5 flex items-center justify-between gap-3">
-                  <p className="text-xs text-[#BCD2D8]">{lead.phone}</p>
-                  <button
-                    type="button"
-                    className="text-[#D6E8ED] transition hover:text-white cursor-pointer"
-                    aria-label={`Copy ${lead.name} number`}
-                  >
-                    <CopySVG />
-                  </button>
+          {leads.map((lead) => {
+            const phone = formatLeadPhone(lead);
+            return (
+              <article
+                key={`${lead.name}-${lead.phone}`}
+                className="relative overflow-hidden rounded-2xl"
+              >
+                <div className="relative h-80">
+                  <Image
+                    src={lead.image.url}
+                    alt={lead.name}
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
                 </div>
-              </div>
-            </article>
-          ))}
+                <div className="absolute right-2 bottom-2 left-2 rounded-md bg-black/55 px-3 py-2.5 backdrop-blur-[1px]">
+                  <p className="text-xs font-semibold text-[#DFEEF2]">{lead.name}</p>
+                  <div className="mt-0.5 flex items-center justify-between gap-3">
+                    <p className="text-xs text-[#BCD2D8]">{phone}</p>
+                    <button
+                      type="button"
+                      onClick={() => copyPhone(phone)}
+                      className="cursor-pointer text-[#D6E8ED] transition hover:text-white"
+                      aria-label={`Copy ${lead.name} number`}
+                    >
+                      <CopySVG />
+                    </button>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
         </div>
 
         <label className="mt-4 inline-flex items-center gap-2">
@@ -64,14 +69,16 @@ const CohortLead = () => {
             onChange={(event) => setIsConfirmed(event.target.checked)}
             className="size-4 rounded border-[#CBD8DE] accent-[#1E7C8D]"
           />
-          <span className="text-sm text-[#8C9DAC]">I confirm that I know who to reach out to</span>
+          <span className="text-sm text-[#8C9DAC]">
+            I confirm that I know who to reach out to
+          </span>
         </label>
       </article>
 
       <button
         type="button"
         disabled={!isConfirmed}
-        onClick={() => router.push("/onboarding?step=internship-rules")}
+        onClick={() => goToStep("internship-rules")}
         className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
       >
         Continue

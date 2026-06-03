@@ -1,44 +1,26 @@
 "use client";
 
-import { useState } from "react";
-import { CirclePlay, Download, PlayIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
+import { Download, PlayIcon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
 } from "@/components/ui/dialog";
+import type { OnboardingInstallationTool } from "@/features/onboarding/types";
 import OnboardingVideoPlayer from "./onboarding-video-player";
-
-const INSTALLATION_VIDEO_SRC = "https://vimeo.com/1123856639";
-
-const TOOLS = [
-  {
-    id: "google-sheet",
-    name: "Google Sheet",
-    videoSrc: INSTALLATION_VIDEO_SRC,
-    downloadUrl: "#",
-  },
-  {
-    id: "claude-ai",
-    name: "Claude AI",
-    videoSrc: INSTALLATION_VIDEO_SRC,
-    downloadUrl: "#",
-  },
-  {
-    id: "figma",
-    name: "Figma",
-    videoSrc: INSTALLATION_VIDEO_SRC,
-    downloadUrl: "#",
-  },
-] as const;
-
-type Tool = (typeof TOOLS)[number];
+import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
 const IntallationVideo = () => {
-  const router = useRouter();
+  const { onboarding, goToStep } = useOnboardingNavigation();
   const [confirmed, setConfirmed] = useState(false);
-  const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
+  const [selectedTool, setSelectedTool] =
+    useState<OnboardingInstallationTool | null>(null);
+
+  const tools = useMemo(
+    () => onboarding.installation_video ?? [],
+    [onboarding.installation_video],
+  );
 
   return (
     <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
@@ -56,13 +38,15 @@ const IntallationVideo = () => {
         </p>
 
         <div className="mt-5 space-y-3">
-          {TOOLS.map((tool) => (
+          {tools.map((tool) => (
             <div
-              key={tool.id}
+              key={`${tool.toolName}-${tool.toolLink}`}
               className="flex flex-col gap-3 rounded-xl bg-[#E8EFF1] px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
             >
               <div>
-                <p className="text-base font-semibold text-[#173740]">{tool.name}</p>
+                <p className="text-base font-semibold text-[#173740]">
+                  {tool.toolName}
+                </p>
                 <button
                   type="button"
                   onClick={() => setSelectedTool(tool)}
@@ -76,7 +60,7 @@ const IntallationVideo = () => {
               </div>
 
               <a
-                href={tool.downloadUrl}
+                href={tool.toolLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-lg bg-[#D7EAEF] px-4 py-2.5 text-sm font-semibold text-[#2D6A78] transition hover:bg-[#c8dfe6] sm:self-center"
@@ -104,7 +88,7 @@ const IntallationVideo = () => {
       <button
         type="button"
         disabled={!confirmed}
-        onClick={() => router.push("/onboarding?step=readiness-test")}
+        onClick={() => goToStep("readiness-test")}
         className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
       >
         Continue
@@ -127,13 +111,13 @@ const IntallationVideo = () => {
           {selectedTool && (
             <div className="px-5 pb-5">
               <OnboardingVideoPlayer
-                key={selectedTool.id}
-                src={selectedTool.videoSrc}
+                key={selectedTool.videoLink}
+                src={selectedTool.videoLink}
                 onEnded={() => {}}
               />
 
               <a
-                href={selectedTool.downloadUrl}
+                href={selectedTool.toolLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#2D6A78] underline underline-offset-2 transition hover:text-[#1E7C8D]"
