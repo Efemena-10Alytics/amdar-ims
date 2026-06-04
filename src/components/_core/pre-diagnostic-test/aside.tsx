@@ -5,6 +5,13 @@ import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Check, ChevronRight, Loader } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
+import {
+  isPreDiagnosticAsideStepLocked,
+  isPreDiagnosticEnrollmentStepComplete,
+  type PreDiagnosticAsideStepKey,
+} from "@/features/internship/use-update-completed-pre-diagnostic";
+import type { PreDiagnosticStepsCompletedState } from "@/types/user/enrollment";
 
 type StepItem = {
   key: string;
@@ -86,20 +93,6 @@ function getFlatStepsForGroup(group: ReadinessGroup) {
   );
 }
 
-const STEP_INDEX_MAP = (() => {
-  const map = new Map<string, number>();
-  let index = 0;
-
-  for (const group of READINESS_GROUPS) {
-    for (const item of getFlatStepsForGroup(group)) {
-      map.set(`${group.key}:${item.key}`, index);
-      index += 1;
-    }
-  }
-
-  return map;
-})();
-
 function getActiveGroup(pathname: string) {
   return READINESS_GROUPS.find((group) => group.href === pathname) ?? READINESS_GROUPS[0];
 }
@@ -113,12 +106,14 @@ function resolveCurrentStep(group: ReadinessGroup, stepParam: string | null) {
   return matchedStep ?? defaultStep;
 }
 
-function getGlobalStepIndex(groupKey: string, stepKey: string) {
-  return STEP_INDEX_MAP.get(`${groupKey}:${stepKey}`) ?? 0;
-}
-
-function getItemStatus(itemIndex: number, currentIndex: number) {
-  return itemIndex < currentIndex ? "done" : "todo";
+function isPreDiagnosticGroupComplete(
+  preDiagnosticSteps: PreDiagnosticStepsCompletedState | undefined,
+  groupKey: "career-knowledge" | "practical-walkthrough",
+) {
+  if (groupKey === "career-knowledge") {
+    return preDiagnosticSteps?.carrerReadiness?.careerKnowledgeDiscovery === "completed";
+  }
+  return preDiagnosticSteps?.TechnologyDiagnostic?.practicalWalkthrough === "completed";
 }
 
 function StatusBadge({ isDone }: { isDone: boolean }) {
@@ -139,11 +134,12 @@ function StatusBadge({ isDone }: { isDone: boolean }) {
 const Aside = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { data: enrollment } = useGetUserEnrollment();
 
   const activeGroup = getActiveGroup(pathname);
   const activeGroupKey = activeGroup.key;
   const currentStepKey = resolveCurrentStep(activeGroup, searchParams.get("step"));
-  const currentGlobalIndex = getGlobalStepIndex(activeGroupKey, currentStepKey);
+  const preDiagnosticStepsCompleted = enrollment?.isPreDiagnosticStepsCompleted;
 
   return (
     <aside className="hidden overflow-y-auto rounded-l-xl bg-[#156F7D] px-5 py-6 text-white lg:flex lg:w-[45%] lg:flex-col xl:w-[42%] xl:px-6 xl:py-7">
@@ -189,11 +185,9 @@ const Aside = () => {
                   <ul className="space-y-3 px-4 pt-1 pb-4">
                     {group.items.map((entry) => {
                       if (isGroupItem(entry)) {
-                        const childIndexes = entry.children.map((child) =>
-                          getGlobalStepIndex(group.key, child.key),
-                        );
-                        const groupDone = childIndexes.every(
-                          (index) => index < currentGlobalIndex,
+                        const groupDone = isPreDiagnosticGroupComplete(
+                          preDiagnosticStepsCompleted,
+                          entry.key as "career-knowledge" | "practical-walkthrough",
                         );
 
                         return (
@@ -221,16 +215,18 @@ const Aside = () => {
 
                             <ul className="space-y-4">
                               {entry.children.map((child, childIndex) => {
-                                const childGlobalIndex = getGlobalStepIndex(
-                                  group.key,
-                                  child.key,
+                                const childStepKey = child.key as PreDiagnosticAsideStepKey;
+                                const isChildDone = isPreDiagnosticEnrollmentStepComplete(
+                                  preDiagnosticStepsCompleted,
+                                  childStepKey,
                                 );
-                                const isChildDone = childGlobalIndex < currentGlobalIndex;
                                 const isChildCurrent =
                                   group.key === activeGroupKey &&
                                   child.key === currentStepKey;
-                                const isChildLocked =
-                                  childGlobalIndex > currentGlobalIndex;
+                                const isChildLocked = isPreDiagnosticAsideStepLocked(
+                                  preDiagnosticStepsCompleted,
+                                  childStepKey,
+                                );
                                 const isLastChild =
                                   childIndex === entry.children.length - 1;
 
@@ -286,10 +282,17 @@ const Aside = () => {
                         );
                       }
 
-                      const itemGlobalIndex = getGlobalStepIndex(group.key, entry.key);
-                      const isDone = getItemStatus(itemGlobalIndex, currentGlobalIndex) === "done";
+                      const stepKey = entry.key as PreDiagnosticAsideStepKey;
+                      const isDone = isPreDiagnosticEnrollmentStepComplete(
+                        preDiagnosticStepsCompleted,
+                        stepKey,
+                      );
                       const isCurrent =
                         group.key === activeGroupKey && entry.key === currentStepKey;
+                      const isLocked = isPreDiagnosticAsideStepLocked(
+                        preDiagnosticStepsCompleted,
+                        stepKey,
+                      );
 
                       return (
                         <li
@@ -299,7 +302,10 @@ const Aside = () => {
                           <Link
                             href={`${group.href}?step=${entry.key}`}
                             aria-current={isCurrent ? "step" : undefined}
-                            className="flex min-w-0 items-center gap-2.5"
+                            className={cn(
+                              "flex min-w-0 items-center gap-2.5",
+                              isLocked && "pointer-events-none",
+                            )}
                           >
                             <span
                               className={cn(
@@ -314,7 +320,11 @@ const Aside = () => {
                             <span
                               className={cn(
                                 "truncate text-sm font-medium",
-                                isCurrent ? "text-white" : "text-[#A9D0D7]",
+                                isCurrent
+                                  ? "text-white"
+                                  : isLocked
+                                    ? "text-[#7EAAB2]"
+                                    : "text-[#A9D0D7]",
                               )}
                             >
                               {entry.label}

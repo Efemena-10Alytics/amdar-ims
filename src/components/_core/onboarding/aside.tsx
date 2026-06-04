@@ -10,6 +10,8 @@ import {
   getStudentDisplayName,
 } from "@/features/onboarding/use-get-onboarding";
 import { ONBOARDING_CHECKLIST_ITEMS } from "@/features/onboarding/types";
+import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
+import { isOnboardingEnrollmentStepComplete } from "@/features/internship/use-update-completed-onboarding-step";
 import Flag from "../landing-pages/home/hero/flag";
 import { Button } from "@/components/ui/button";
 import { WhatsappSVG } from "./svg";
@@ -17,9 +19,11 @@ import { WhatsappSVG } from "./svg";
 const Aside = () => {
   const searchParams = useSearchParams();
   const user = useAuthStore((s) => s.user);
+  const { data: enrollment } = useGetUserEnrollment();
   const activeStep = searchParams.get("step") ?? ONBOARDING_CHECKLIST_ITEMS[0].key;
   const studentName = getStudentDisplayName(user);
   const welcomeLabel = studentName ? `WELCOME ${studentName.toUpperCase()}!` : "WELCOME!";
+  const onboardingStepsCompleted = enrollment?.isOnboardingStepsCompleted;
 
   return (
     <aside className="hidden overflow-y-auto rounded-l-xl bg-[#0F6A79] px-4 py-5 text-white lg:flex lg:w-[45%] lg:flex-col xl:w-[42%] xl:px-5 xl:py-6">
@@ -43,10 +47,10 @@ const Aside = () => {
           <ul className="mt-4 space-y-6">
             {ONBOARDING_CHECKLIST_ITEMS.map((item, index) => {
               const isActive = activeStep === item.key;
-              const activeIndex = ONBOARDING_CHECKLIST_ITEMS.findIndex(
-                (step) => step.key === activeStep,
+              const isCompleted = isOnboardingEnrollmentStepComplete(
+                onboardingStepsCompleted,
+                item.key,
               );
-              const isCompleted = activeIndex > index;
               const isLast = index === ONBOARDING_CHECKLIST_ITEMS.length - 1;
 
               return (

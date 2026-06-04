@@ -10,6 +10,7 @@ import type {
   EnrollmentStepStatus,
   OnboardingEnrollmentStepKey,
   OnboardingStepsCompleted,
+  OnboardingStepsCompletedState,
   UpdateEnrollmentStepsPayload,
   UpdateEnrollmentStepsResponse,
 } from "@/types/user/enrollment";
@@ -25,6 +26,15 @@ export const ONBOARDING_STEP_TO_ENROLLMENT_KEY: Record<
   "installation-videos": "installationVideo",
   "readiness-test": "readinessTest",
 };
+
+export function isOnboardingEnrollmentStepComplete(
+  steps: OnboardingStepsCompletedState | undefined,
+  step: OnboardingStepKey,
+): boolean {
+  if (!steps) return false;
+  const enrollmentKey = ONBOARDING_STEP_TO_ENROLLMENT_KEY[step];
+  return steps[enrollmentKey] === "completed";
+}
 
 function getErrorMessage(error: unknown): string {
   if (axios.isAxiosError(error)) {

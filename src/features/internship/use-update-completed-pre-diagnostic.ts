@@ -5,6 +5,7 @@ import type {
   EnrollmentStepStatus,
   PreDiagnosticCareerReadinessStepKey,
   PreDiagnosticImsProcessStepKey,
+  PreDiagnosticStepsCompletedState,
   PreDiagnosticStepsCompletedUpdate,
   PreDiagnosticTechnologyReadinessStepKey,
   UpdateEnrollmentStepsPayload,
@@ -64,6 +65,115 @@ export const PRE_DIAGNOSTIC_STEP_TO_ENROLLMENT: Record<
   "how-the-ims-works": { group: "imsProcess", step: "HowTheImsWorks" },
   "ims-diagnostics": { group: "imsProcess", step: "imsProcessDiagnostic" },
 };
+
+/** Aside step keys shown in the pre-diagnostic UI (includes sub-steps without their own API field). */
+export const PRE_DIAGNOSTIC_ASIDE_STEP_KEYS = [
+  "welcome-video",
+  "career-knowledge-discovery-1",
+  "career-knowledge-discovery-2",
+  "career-path-diagnostics",
+  "technology-use-case",
+  "practical-walkthrough-1",
+  "practical-walkthrough-2",
+  "technology-diagnostics",
+  "how-the-ims-works",
+  "ims-diagnostics",
+] as const;
+
+export type PreDiagnosticAsideStepKey = (typeof PRE_DIAGNOSTIC_ASIDE_STEP_KEYS)[number];
+
+type PreDiagnosticAsideStepMapping = {
+  group: PreDiagnosticGroupKey;
+  step:
+    | PreDiagnosticCareerReadinessStepKey
+    | PreDiagnosticTechnologyReadinessStepKey
+    | PreDiagnosticImsProcessStepKey;
+};
+
+const PRE_DIAGNOSTIC_ASIDE_STEP_TO_ENROLLMENT: Record<
+  PreDiagnosticAsideStepKey,
+  PreDiagnosticAsideStepMapping | null
+> = {
+  "welcome-video": { group: "carrerReadiness", step: "welcomeVideo" },
+  "career-knowledge-discovery-1": null,
+  "career-knowledge-discovery-2": {
+    group: "carrerReadiness",
+    step: "careerKnowledgeDiscovery",
+  },
+  "career-path-diagnostics": {
+    group: "carrerReadiness",
+    step: "CareerPathDiagnostic",
+  },
+  "technology-use-case": {
+    group: "TechnologyDiagnostic",
+    step: "technologyUseCase",
+  },
+  "practical-walkthrough-1": null,
+  "practical-walkthrough-2": {
+    group: "TechnologyDiagnostic",
+    step: "practicalWalkthrough",
+  },
+  "technology-diagnostics": {
+    group: "TechnologyDiagnostic",
+    step: "TechnologyDiagnostic",
+  },
+  "how-the-ims-works": { group: "imsProcess", step: "HowTheImsWorks" },
+  "ims-diagnostics": { group: "imsProcess", step: "imsProcessDiagnostic" },
+};
+
+function getPreDiagnosticEnrollmentStepStatus(
+  steps: PreDiagnosticStepsCompletedState | undefined,
+  mapping: PreDiagnosticAsideStepMapping,
+): EnrollmentStepStatus | undefined {
+  const groupSteps = steps?.[mapping.group];
+  if (!groupSteps) return undefined;
+  return groupSteps[mapping.step as keyof typeof groupSteps];
+}
+
+const PRE_DIAGNOSTIC_STEP_UNLOCK_AFTER: Record<
+  PreDiagnosticAsideStepKey,
+  PreDiagnosticAsideStepKey[]
+> = {
+  "welcome-video": [],
+  "career-knowledge-discovery-1": ["welcome-video"],
+  "career-knowledge-discovery-2": ["welcome-video"],
+  "career-path-diagnostics": ["career-knowledge-discovery-2"],
+  "technology-use-case": ["career-path-diagnostics"],
+  "practical-walkthrough-1": ["technology-use-case"],
+  "practical-walkthrough-2": ["technology-use-case"],
+  "technology-diagnostics": ["practical-walkthrough-2"],
+  "how-the-ims-works": ["technology-diagnostics"],
+  "ims-diagnostics": ["how-the-ims-works"],
+};
+
+export function isPreDiagnosticEnrollmentStepComplete(
+  steps: PreDiagnosticStepsCompletedState | undefined,
+  asideStepKey: PreDiagnosticAsideStepKey,
+): boolean {
+  const mapping = PRE_DIAGNOSTIC_ASIDE_STEP_TO_ENROLLMENT[asideStepKey];
+
+  if (mapping === null) {
+    if (asideStepKey === "career-knowledge-discovery-1") {
+      return steps?.carrerReadiness?.careerKnowledgeDiscovery === "completed";
+    }
+    if (asideStepKey === "practical-walkthrough-1") {
+      return steps?.TechnologyDiagnostic?.practicalWalkthrough === "completed";
+    }
+    return false;
+  }
+
+  return getPreDiagnosticEnrollmentStepStatus(steps, mapping) === "completed";
+}
+
+export function isPreDiagnosticAsideStepLocked(
+  steps: PreDiagnosticStepsCompletedState | undefined,
+  asideStepKey: PreDiagnosticAsideStepKey,
+): boolean {
+  const prerequisites = PRE_DIAGNOSTIC_STEP_UNLOCK_AFTER[asideStepKey] ?? [];
+  return prerequisites.some(
+    (requiredStep) => !isPreDiagnosticEnrollmentStepComplete(steps, requiredStep),
+  );
+}
 
 function getErrorMessage(error: unknown): string {
   if (axios.isAxiosError(error)) {
