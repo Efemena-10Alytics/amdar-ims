@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { Lightbulb } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useUpdateCompletedPreDiagnostic } from "@/features/internship/use-update-completed-pre-diagnostic";
 import CareerDiagnosticDrawer from "./career-diagnostic-drawer";
 
 const GUIDELINES = [
@@ -20,7 +21,20 @@ const DIAGNOSTIC_FLAGS = [
 
 const CareerPathDiagnostic = () => {
   const router = useRouter();
+  const { markPreDiagnosticStepComplete, isUpdating, errorMessage } =
+    useUpdateCompletedPreDiagnostic();
   const [isDiagnosticOpen, setIsDiagnosticOpen] = useState(false);
+
+  const handleDiagnosticComplete = async () => {
+    if (isUpdating) return;
+
+    try {
+      await markPreDiagnosticStepComplete("career-path-diagnostics");
+      router.push("/pre-diagnostic-test/technology-readiness");
+    } catch {
+      // errorMessage is set by the hook
+    }
+  };
 
   return (
     <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
@@ -71,18 +85,23 @@ const CareerPathDiagnostic = () => {
         </div>
       </article>
 
+      {errorMessage ? (
+        <p className="mt-4 text-sm text-destructive">{errorMessage}</p>
+      ) : null}
+
       <button
         type="button"
+        disabled={isUpdating}
         onClick={() => setIsDiagnosticOpen(true)}
-        className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa]"
+        className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0]"
       >
-        Start diagnostic
+        {isUpdating ? "Saving..." : "Start diagnostic"}
       </button>
 
       <CareerDiagnosticDrawer
         open={isDiagnosticOpen}
         onOpenChange={setIsDiagnosticOpen}
-        onComplete={() => router.push("/pre-diagnostic-test/technology-readiness")}
+        onComplete={handleDiagnosticComplete}
       />
     </section>
   );

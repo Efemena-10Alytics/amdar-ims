@@ -1,10 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useUpdateCompletedOnboardingStep } from "@/features/internship/use-update-completed-onboarding-step";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
 const RulesEtiquettes = () => {
   const { onboarding, goToStep } = useOnboardingNavigation();
+  const { markOnboardingStepComplete, isUpdating, errorMessage } =
+    useUpdateCompletedOnboardingStep();
   const [confirmRules, setConfirmRules] = useState(false);
   const [confirmTerms, setConfirmTerms] = useState(false);
 
@@ -12,9 +15,20 @@ const RulesEtiquettes = () => {
   const docLink = rules.docLink;
 
   const canContinue = useMemo(
-    () => confirmRules && confirmTerms,
-    [confirmRules, confirmTerms],
+    () => confirmRules && confirmTerms && !isUpdating,
+    [confirmRules, confirmTerms, isUpdating],
   );
+
+  const handleContinue = async () => {
+    if (!confirmRules || !confirmTerms || isUpdating) return;
+
+    try {
+      await markOnboardingStepComplete("internship-rules");
+      goToStep("installation-videos");
+    } catch {
+      // errorMessage is set by the hook
+    }
+  };
 
   return (
     <section className="w-full max-w-190 overflow-y-auto! px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
@@ -66,13 +80,17 @@ const RulesEtiquettes = () => {
         </label>
       </article>
 
+      {errorMessage ? (
+        <p className="mt-4 text-sm text-destructive">{errorMessage}</p>
+      ) : null}
+
       <button
         type="button"
         disabled={!canContinue}
-        onClick={() => goToStep("installation-videos")}
+        onClick={handleContinue}
         className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
       >
-        Continue
+        {isUpdating ? "Saving..." : "Continue"}
       </button>
     </section>
   );

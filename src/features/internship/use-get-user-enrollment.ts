@@ -13,6 +13,11 @@ export async function getUserEnrollment(): Promise<UserEnrollment> {
   const { data } = await axiosInstance.get<UserEnrollmentApiResponse>(
     "v3/user/enrollment",
   );
+
+  if (data.success === false || !data.data) {
+    throw new Error(data.message?.trim() || "Failed to load enrollment.");
+  }
+
   return data.data;
 }
 

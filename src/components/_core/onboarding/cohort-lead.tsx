@@ -3,13 +3,29 @@
 import Image from "next/image";
 import { useState } from "react";
 import { formatLeadPhone } from "@/features/onboarding/use-get-onboarding";
+import { useUpdateCompletedOnboardingStep } from "@/features/internship/use-update-completed-onboarding-step";
 import { CopySVG } from "./svg";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
 const CohortLead = () => {
   const { onboarding, goToStep } = useOnboardingNavigation();
+  const { markOnboardingStepComplete, isUpdating, errorMessage } =
+    useUpdateCompletedOnboardingStep();
   const [isConfirmed, setIsConfirmed] = useState(false);
   const leads = onboarding.cohort_lead ?? [];
+
+  const canContinue = isConfirmed && !isUpdating;
+
+  const handleContinue = async () => {
+    if (!canContinue) return;
+
+    try {
+      await markOnboardingStepComplete("cohort-lead");
+      goToStep("internship-rules");
+    } catch {
+      // errorMessage is set by the hook
+    }
+  };
 
   const copyPhone = async (phone: string) => {
     try {
@@ -75,13 +91,17 @@ const CohortLead = () => {
         </label>
       </article>
 
+      {errorMessage ? (
+        <p className="mt-4 text-sm text-destructive">{errorMessage}</p>
+      ) : null}
+
       <button
         type="button"
-        disabled={!isConfirmed}
-        onClick={() => goToStep("internship-rules")}
+        disabled={!canContinue}
+        onClick={handleContinue}
         className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
       >
-        Continue
+        {isUpdating ? "Saving..." : "Continue"}
       </button>
     </section>
   );

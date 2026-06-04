@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import OnboardingVideoPlayer from "@/components/_core/onboarding/onboarding-video-player";
 import { usePreDiagnosticNavigation } from "@/components/_core/pre-diagnostic-test/use-pre-diagnostic-navigation";
+import { useUpdateCompletedPreDiagnostic } from "@/features/internship/use-update-completed-pre-diagnostic";
 import { getPreDiagnosticVideoDescription } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 
 const FALLBACK_VIDEO_SRC = "https://vimeo.com/1123856639";
@@ -13,6 +14,8 @@ const FALLBACK_DESCRIPTION =
 const PracticalWalkthrough2 = () => {
   const router = useRouter();
   const { preDiagnostic } = usePreDiagnosticNavigation();
+  const { markPreDiagnosticStepComplete, isUpdating, errorMessage } =
+    useUpdateCompletedPreDiagnostic();
   const [hasVideoEnded, setHasVideoEnded] = useState(false);
 
   const walkthroughVideo = preDiagnostic.technology_readiness.PracticalWalkthrough[1];
@@ -21,6 +24,21 @@ const PracticalWalkthrough2 = () => {
     walkthroughVideo,
     FALLBACK_DESCRIPTION,
   );
+
+  const canContinue = hasVideoEnded && !isUpdating;
+
+  const handleContinue = async () => {
+    if (!canContinue) return;
+
+    try {
+      await markPreDiagnosticStepComplete("practical-walkthrough-2");
+      router.push(
+        "/pre-diagnostic-test/technology-readiness?step=technology-diagnostics",
+      );
+    } catch {
+      // errorMessage is set by the hook
+    }
+  };
 
   return (
     <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
@@ -36,17 +54,17 @@ const PracticalWalkthrough2 = () => {
         </p>
       </article>
 
+      {errorMessage ? (
+        <p className="mt-4 text-sm text-destructive">{errorMessage}</p>
+      ) : null}
+
       <button
         type="button"
-        disabled={!hasVideoEnded}
-        onClick={() =>
-          router.push(
-            "/pre-diagnostic-test/technology-readiness?step=technology-diagnostics",
-          )
-        }
+        disabled={!canContinue}
+        onClick={handleContinue}
         className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
       >
-        Continue
+        {isUpdating ? "Saving..." : "Continue"}
       </button>
     </section>
   );
