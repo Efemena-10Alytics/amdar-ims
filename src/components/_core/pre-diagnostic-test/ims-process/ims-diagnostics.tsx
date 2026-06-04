@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { Lightbulb } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useUpdateCompletedPreDiagnostic } from "@/features/internship/use-update-completed-pre-diagnostic";
 import ImsDiagnosticDrawer from "./ims-diagnostic-drawer";
 
 const GUIDELINES = [
@@ -18,9 +19,22 @@ const DIAGNOSTIC_FLAGS = [
   { src: "/images/svgs/country/USA.svg", alt: "United States" },
 ];
 
-const ImsDiagnostic = () => {
+const ImsDiagnostics = () => {
   const router = useRouter();
+  const { markPreDiagnosticStepComplete, isUpdating, errorMessage } =
+    useUpdateCompletedPreDiagnostic();
   const [isDiagnosticOpen, setIsDiagnosticOpen] = useState(false);
+
+  const handleDiagnosticComplete = async () => {
+    if (isUpdating) return;
+
+    try {
+      await markPreDiagnosticStepComplete("ims-diagnostics");
+      router.push("/setup");
+    } catch {
+      // errorMessage is set by the hook
+    }
+  };
 
   return (
     <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
@@ -71,21 +85,26 @@ const ImsDiagnostic = () => {
         </div>
       </article>
 
+      {errorMessage ? (
+        <p className="mt-4 text-sm text-destructive">{errorMessage}</p>
+      ) : null}
+
       <button
         type="button"
+        disabled={isUpdating}
         onClick={() => setIsDiagnosticOpen(true)}
-        className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa]"
+        className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0]"
       >
-        Start diagnostic
+        {isUpdating ? "Saving..." : "Start diagnostic"}
       </button>
 
       <ImsDiagnosticDrawer
         open={isDiagnosticOpen}
         onOpenChange={setIsDiagnosticOpen}
-        onComplete={() => router.push("/setup")}
+        onComplete={handleDiagnosticComplete}
       />
     </section>
   );
 };
 
-export default ImsDiagnostic;
+export default ImsDiagnostics;

@@ -86,6 +86,12 @@ export type PreDiagnosticStepsCompletedState = {
   imsProcess: PreDiagnosticImsProcessSteps;
 };
 
+export type PreDiagnosticStepsCompletedUpdate = {
+  carrerReadiness?: Partial<PreDiagnosticCareerReadinessSteps>;
+  TechnologyDiagnostic?: Partial<PreDiagnosticTechnologyReadinessSteps>;
+  imsProcess?: Partial<PreDiagnosticImsProcessSteps>;
+};
+
 export type UserEnrollment = {
   id: number;
   user_id: number;
@@ -121,7 +127,7 @@ export type OnboardingStepCompletionStatus = EnrollmentStepStatus;
 
 export type UpdateEnrollmentStepsPayload = {
   isOnboardingStepsCompleted?: OnboardingStepsCompleted;
-  isPreDiagnosticStepsCompleted?: Partial<PreDiagnosticStepsCompletedState>;
+  isPreDiagnosticStepsCompleted?: PreDiagnosticStepsCompletedUpdate;
 };
 
 export type UpdateEnrollmentStepsResponse = {
