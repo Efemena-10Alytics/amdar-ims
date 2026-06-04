@@ -11,16 +11,24 @@ function DashboardEnrollmentGuard({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { data: enrollment, isLoading, isError, isFetching } = useGetUserEnrollment();
+  const {
+    data: enrollment,
+    isLoading,
+    isError,
+    isFetching,
+    isSuccess,
+  } = useGetUserEnrollment();
 
-  const redirectHref = enrollment
+  const enrollmentReady = isSuccess && !isFetching && enrollment != null;
+
+  const redirectHref = enrollmentReady
     ? resolveEnrollmentJourneyRedirect(enrollment)
     : null;
 
   useEffect(() => {
-    if (isLoading || isFetching || isError || !enrollment || !redirectHref) return;
+    if (!enrollmentReady || isError || !redirectHref) return;
     router.replace(redirectHref);
-  }, [enrollment, isLoading, isFetching, isError, redirectHref, router]);
+  }, [enrollmentReady, isError, redirectHref, router]);
 
   if (isLoading) {
     return (

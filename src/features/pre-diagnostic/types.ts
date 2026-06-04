@@ -46,6 +46,7 @@ export type PreDiagnosticCohort = {
   active_week: number | null;
   status: string;
   duration: number;
+  version: string | null;
 };
 
 export type PreDiagnosticProgram = {

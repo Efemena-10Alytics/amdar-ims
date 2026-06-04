@@ -50,6 +50,7 @@ export type OnboardingCohort = {
   active_week: number | null;
   status: string;
   duration: number;
+  version: string | null;
   created_at: string;
   updated_at: string;
 };

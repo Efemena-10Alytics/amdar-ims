@@ -7,10 +7,18 @@ import {
   type PreDiagnosticAsideStepKey,
 } from "@/features/internship/use-update-completed-pre-diagnostic";
 import type {
+  EnrollmentCohort,
   OnboardingStepsCompletedState,
   PreDiagnosticStepsCompletedState,
   UserEnrollment,
 } from "@/types/user/enrollment";
+
+/** Journey redirects run only when the cohort has a non-null version assigned. */
+export function hasEnrollmentJourneyVersion(
+  cohort: EnrollmentCohort | undefined,
+): boolean {
+  return cohort?.version != null;
+}
 
 const PRE_DIAGNOSTIC_STEP_ROUTES: Record<PreDiagnosticAsideStepKey, string> = {
   "welcome-video": "/pre-diagnostic-test?step=welcome-video",
@@ -73,6 +81,8 @@ export function getFirstPendingPreDiagnosticHref(
 export function resolveEnrollmentJourneyRedirect(
   enrollment: UserEnrollment,
 ): string | null {
+  if (!hasEnrollmentJourneyVersion(enrollment.cohort)) return null;
+
   const onboardingHref = getFirstPendingOnboardingHref(
     enrollment.isOnboardingStepsCompleted,
   );
