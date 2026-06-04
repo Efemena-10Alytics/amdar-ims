@@ -4,25 +4,22 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Check, Loader } from "lucide-react";
+import { useAuthStore } from "@/store/auth-store";
+import {
+  buildOnboardingStepHref,
+  getStudentDisplayName,
+} from "@/features/onboarding/use-get-onboarding";
+import { ONBOARDING_CHECKLIST_ITEMS } from "@/features/onboarding/types";
 import Flag from "../landing-pages/home/hero/flag";
 import { Button } from "@/components/ui/button";
 import { WhatsappSVG } from "./svg";
 
-const CHECKLIST_ITEMS = [
-  { key: "orientation-video", label: "Your orientation video" },
-  {
-    key: "internship-structure-video",
-    label: "Your internship structure video",
-  },
-  { key: "cohort-lead", label: "Meet Your Cohort Lead" },
-  { key: "internship-rules", label: "Internship rules & etiquettes" },
-  { key: "installation-videos", label: "Installation videos" },
-  { key: "readiness-test", label: "Readiness test" },
-];
-
 const Aside = () => {
   const searchParams = useSearchParams();
-  const activeStep = searchParams.get("step") ?? CHECKLIST_ITEMS[0].key;
+  const user = useAuthStore((s) => s.user);
+  const activeStep = searchParams.get("step") ?? ONBOARDING_CHECKLIST_ITEMS[0].key;
+  const studentName = getStudentDisplayName(user);
+  const welcomeLabel = studentName ? `WELCOME ${studentName.toUpperCase()}!` : "WELCOME!";
 
   return (
     <aside className="hidden overflow-y-auto rounded-l-xl bg-[#0F6A79] px-4 py-5 text-white lg:flex lg:w-[45%] lg:flex-col xl:w-[42%] xl:px-5 xl:py-6">
@@ -32,7 +29,7 @@ const Aside = () => {
 
       <div className="mt-9 flex grow flex-col">
         <div>
-          <h2 className="text-lg font-semibold text-white">WELCOME AMBER!</h2>
+          <h2 className="text-lg font-semibold text-white">{welcomeLabel}</h2>
           <p className="mt-1 text-sm text-[#C4DEE3]">
             Let&apos;s make your onboarding journey smooth
           </p>
@@ -44,11 +41,13 @@ const Aside = () => {
           </h3>
 
           <ul className="mt-4 space-y-6">
-            {CHECKLIST_ITEMS.map((item, index) => {
+            {ONBOARDING_CHECKLIST_ITEMS.map((item, index) => {
               const isActive = activeStep === item.key;
-              const activeIndex = CHECKLIST_ITEMS.findIndex((step) => step.key === activeStep);
+              const activeIndex = ONBOARDING_CHECKLIST_ITEMS.findIndex(
+                (step) => step.key === activeStep,
+              );
               const isCompleted = activeIndex > index;
-              const isLast = index === CHECKLIST_ITEMS.length - 1;
+              const isLast = index === ONBOARDING_CHECKLIST_ITEMS.length - 1;
 
               return (
                 <li key={item.key} className="relative">
@@ -60,22 +59,25 @@ const Aside = () => {
                   )}
 
                   <Link
-                    href={`/onboarding?step=${item.key}`}
+                    href={buildOnboardingStepHref(item.key)}
                     aria-current={isActive ? "step" : undefined}
                     className="relative flex items-start gap-3"
                   >
                     <span
                       className={`relative z-10 mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center border ${isCompleted
-                        ? "border-transparent text-[#1F5D36] bg-[#C7F5D8] h-2 w-2"
+                        ? "h-2 w-2 border-transparent bg-[#C7F5D8] text-[#1F5D36]"
                         : isActive
                           ? "border-transparent text-[#5F8D8D]"
-                          : "border-[#ACF0C5] text-transparent rounded-full bg-[#EDFCF2]"
+                          : "rounded-full border-[#ACF0C5] bg-[#EDFCF2] text-transparent"
                         }`}
                     >
                       {isCompleted ? (
                         <Check className="size-3.5" strokeWidth={3} />
                       ) : isActive ? (
-                        <Loader size={20} className="size-10 animate-spin animation-duration-[1.8s]" />
+                        <Loader
+                          size={20}
+                          className="animation-duration-[1.8s] size-10 animate-spin"
+                        />
                       ) : null}
                     </span>
 
@@ -101,7 +103,7 @@ const Aside = () => {
           <span>+10K interns Across the world Got hired</span>
         </div>
       </div>
-      <Button className="w-full rounded-full cursor-pointer h-11 bg-[#ACF0C5] text-[#092A31] hover:bg-[#ACF0C5]/80 mb-10">
+      <Button className="mb-10 h-11 w-full cursor-pointer rounded-full bg-[#ACF0C5] text-[#092A31] hover:bg-[#ACF0C5]/80">
         <WhatsappSVG /> Join Our community
       </Button>
     </aside>

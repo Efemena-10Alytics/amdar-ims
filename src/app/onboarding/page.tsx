@@ -1,35 +1,19 @@
-import CohortLead from "@/components/_core/onboarding/cohort-lead";
-import InternshipStructureVideo from "@/components/_core/onboarding/internship-structure-video";
-import OrientationVideo from "@/components/_core/onboarding/orientation-video";
-import IntallationVideo from "@/components/_core/onboarding/intallation-video";
-import ReadinessTest from "@/components/_core/onboarding/readiness-test";
-import RulesEtiquettes from "@/components/_core/onboarding/rules-etiquettes";
+import { Suspense } from "react";
+import OnboardingPageContent from "@/components/_core/onboarding/onboarding-page-content";
 
-const STEP_COMPONENTS = {
-  "orientation-video": OrientationVideo,
-  "internship-structure-video": InternshipStructureVideo,
-  "cohort-lead": CohortLead,
-  "internship-rules": RulesEtiquettes,
-  "installation-videos": IntallationVideo,
-  "readiness-test": ReadinessTest,
-} as const;
-
-type OnboardingStep = keyof typeof STEP_COMPONENTS;
-
-const OnboardingPage = async ({
-  searchParams,
-}: {
-  searchParams: Promise<{ step?: string }>;
-}) => {
-  const params = await searchParams;
-  const step = (params.step ?? "orientation-video") as OnboardingStep;
-  const ActiveStepComponent =
-    STEP_COMPONENTS[step] ?? STEP_COMPONENTS["orientation-video"];
-
+function OnboardingFallback() {
   return (
-    <div>
-      <ActiveStepComponent />
+    <div className="w-full max-w-190 px-4 pb-8 pt-0 sm:px-0">
+      <p className="text-sm text-[#64748B]">Loading...</p>
     </div>
+  );
+}
+
+const OnboardingPage = () => {
+  return (
+    <Suspense fallback={<OnboardingFallback />}>
+      <OnboardingPageContent />
+    </Suspense>
   );
 };
 

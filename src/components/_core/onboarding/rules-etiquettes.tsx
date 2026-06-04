@@ -1,17 +1,15 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
 
-const ETIQUETTE_BLOCKS = [
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-];
+import { useMemo, useState } from "react";
+import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
 const RulesEtiquettes = () => {
-  const router = useRouter();
+  const { onboarding, goToStep } = useOnboardingNavigation();
   const [confirmRules, setConfirmRules] = useState(false);
   const [confirmTerms, setConfirmTerms] = useState(false);
+
+  const rules = onboarding.rule_and_etiquette;
+  const docLink = rules.docLink;
 
   const canContinue = useMemo(
     () => confirmRules && confirmTerms,
@@ -27,15 +25,11 @@ const RulesEtiquettes = () => {
           Read through your ground rules, compliance and etiquettes
         </h2>
 
-        <div className="mt-4 rounded-xl bg-[#E9EEF2] max-h-[50vh] overflow-y-auto p-3">
-          {ETIQUETTE_BLOCKS.map((text, index) => (
-            <div key={index} className={index > 0 ? "mt-3" : ""}>
-              <h3 className="text-sm font-semibold text-[#2D6A78]">
-                Read through your ground rules, compliance and etiquettes
-              </h3>
-              <p className="mt-1 text-sm leading-relaxed text-[#506572]">{text}</p>
-            </div>
-          ))}
+        <div className="mt-4 max-h-[50vh] overflow-y-auto rounded-xl bg-[#E9EEF2] p-3">
+          <div
+            className="text-sm leading-relaxed text-[#506572]"
+            dangerouslySetInnerHTML={{ __html: rules.instructions }}
+          />
         </div>
 
         <label className="mt-4 inline-flex items-center gap-2">
@@ -58,7 +52,15 @@ const RulesEtiquettes = () => {
             className="size-4 rounded border-[#CBD8DE] accent-[#1E7C8D]"
           />
           <span className="text-sm text-[#8C9DAC]">
-            I have read the <span className="text-[#2D6A78]">Amdari Terms &amp; Policies</span>{" "}
+            I have read the{" "}
+            <a
+              href={docLink.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#2D6A78] underline"
+            >
+              {docLink.name || "Amdari Terms & Policies"}
+            </a>{" "}
             attached above and I agree.
           </span>
         </label>
@@ -67,7 +69,7 @@ const RulesEtiquettes = () => {
       <button
         type="button"
         disabled={!canContinue}
-        onClick={() => router.push("/onboarding?step=installation-videos")}
+        onClick={() => goToStep("installation-videos")}
         className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
       >
         Continue
