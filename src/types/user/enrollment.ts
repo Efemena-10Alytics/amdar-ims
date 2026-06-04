@@ -32,7 +32,7 @@ export type EnrollmentCohort = {
   active_week: number | null;
   status: string;
   duration: number;
-  version?: string | null;
+  version?: string | number | null;
   created_at: string;
   updated_at: string;
 };
@@ -105,6 +105,8 @@ export type UserEnrollment = {
   dropped_at: string | null;
   notes: string | null;
   buddy_name: string | null;
+  /** Present on some API responses when not nested under `cohort` */
+  version?: string | number | null;
   created_at: string;
   updated_at: string;
   program: EnrollmentProgram;

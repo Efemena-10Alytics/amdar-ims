@@ -7,17 +7,23 @@ import {
   type PreDiagnosticAsideStepKey,
 } from "@/features/internship/use-update-completed-pre-diagnostic";
 import type {
-  EnrollmentCohort,
   OnboardingStepsCompletedState,
   PreDiagnosticStepsCompletedState,
   UserEnrollment,
 } from "@/types/user/enrollment";
 
+/** Reads cohort version from nested cohort or enrollment root (API shape varies). */
+export function getEnrollmentCohortVersion(
+  enrollment: UserEnrollment,
+): string | number | null | undefined {
+  const fromCohort = enrollment.cohort?.version;
+  if (fromCohort != null) return fromCohort;
+  return enrollment.version;
+}
+
 /** Journey redirects run only when the cohort has a non-null version assigned. */
-export function hasEnrollmentJourneyVersion(
-  cohort: EnrollmentCohort | undefined,
-): boolean {
-  return cohort?.version != null;
+export function hasEnrollmentJourneyVersion(enrollment: UserEnrollment): boolean {
+  return getEnrollmentCohortVersion(enrollment) != null;
 }
 
 const PRE_DIAGNOSTIC_STEP_ROUTES: Record<PreDiagnosticAsideStepKey, string> = {
@@ -81,7 +87,7 @@ export function getFirstPendingPreDiagnosticHref(
 export function resolveEnrollmentJourneyRedirect(
   enrollment: UserEnrollment,
 ): string | null {
-  if (!hasEnrollmentJourneyVersion(enrollment.cohort)) return null;
+  if (!hasEnrollmentJourneyVersion(enrollment)) return null;
 
   const onboardingHref = getFirstPendingOnboardingHref(
     enrollment.isOnboardingStepsCompleted,
