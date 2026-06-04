@@ -2,11 +2,24 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAddBuddyName } from "@/features/internship/use-add-buddy-name";
 
 const NameYourBuddy = () => {
   const router = useRouter();
   const [buddyName, setBuddyName] = useState("");
-  const canContinue = buddyName.trim().length > 0;
+  const { submitBuddyName, isSubmitting, errorMessage } = useAddBuddyName();
+  const canContinue = buddyName.trim().length > 0 && !isSubmitting;
+
+  const handleContinue = async () => {
+    if (!canContinue) return;
+
+    try {
+      await submitBuddyName(buddyName);
+      router.push("/home");
+    } catch {
+      // errorMessage is set by the hook
+    }
+  };
 
   return (
     <section className="w-full max-w-180 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
@@ -36,17 +49,22 @@ const NameYourBuddy = () => {
               onChange={(event) => setBuddyName(event.target.value)}
               placeholder="Enter your buddy name"
               aria-label="Your buddy name"
+              disabled={isSubmitting}
               className="w-full bg-transparent text-center text-xl font-bold tracking-wide text-[#173740] uppercase outline-none placeholder:font-medium placeholder:normal-case placeholder:text-[#8C9DAC]"
             />
           </div>
 
+          {errorMessage ? (
+            <p className="mt-4 w-full text-sm text-destructive">{errorMessage}</p>
+          ) : null}
+
           <button
             type="button"
             disabled={!canContinue}
-            onClick={() => router.push("/onboarding")}
+            onClick={handleContinue}
             className="mt-8 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
           >
-            Continue
+            {isSubmitting ? "Saving..." : "Continue"}
           </button>
         </div>
       </article>
