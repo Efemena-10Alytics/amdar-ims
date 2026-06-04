@@ -8,11 +8,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { OnboardingInstallationTool } from "@/features/onboarding/types";
+import { useUpdateCompletedOnboardingStep } from "@/features/internship/use-update-completed-onboarding-step";
 import OnboardingVideoPlayer from "./onboarding-video-player";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
 const IntallationVideo = () => {
   const { onboarding, goToStep } = useOnboardingNavigation();
+  const { markOnboardingStepComplete, isUpdating, errorMessage } =
+    useUpdateCompletedOnboardingStep();
   const [confirmed, setConfirmed] = useState(false);
   const [selectedTool, setSelectedTool] =
     useState<OnboardingInstallationTool | null>(null);
@@ -21,6 +24,19 @@ const IntallationVideo = () => {
     () => onboarding.installation_video ?? [],
     [onboarding.installation_video],
   );
+
+  const canContinue = confirmed && !isUpdating;
+
+  const handleContinue = async () => {
+    if (!canContinue) return;
+
+    try {
+      await markOnboardingStepComplete("installation-videos");
+      goToStep("readiness-test");
+    } catch {
+      // errorMessage is set by the hook
+    }
+  };
 
   return (
     <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
@@ -85,13 +101,17 @@ const IntallationVideo = () => {
         </label>
       </article>
 
+      {errorMessage ? (
+        <p className="mt-4 text-sm text-destructive">{errorMessage}</p>
+      ) : null}
+
       <button
         type="button"
-        disabled={!confirmed}
-        onClick={() => goToStep("readiness-test")}
+        disabled={!canContinue}
+        onClick={handleContinue}
         className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
       >
-        Continue
+        {isUpdating ? "Saving..." : "Continue"}
       </button>
 
       <Dialog

@@ -1,3 +1,5 @@
+export type EnrollmentStepStatus = "pending" | "completed";
+
 export type EnrollmentProgram = {
   id: number;
   thumbnail: string | null;
@@ -34,6 +36,56 @@ export type EnrollmentCohort = {
   updated_at: string;
 };
 
+export type OnboardingEnrollmentStepKey =
+  | "orientationVideo"
+  | "internshipStructureVideo"
+  | "meetCohortLead"
+  | "rulesAndEtiquettes"
+  | "installationVideo"
+  | "readinessTest";
+
+export type OnboardingStepsCompletedState = Record<
+  OnboardingEnrollmentStepKey,
+  EnrollmentStepStatus
+>;
+
+/** API field name (typo preserved) */
+export type PreDiagnosticCareerReadinessStepKey =
+  | "welcomeVideo"
+  | "careerKnowledgeDiscovery"
+  | "CareerPathDiagnostic";
+
+export type PreDiagnosticCareerReadinessSteps = Record<
+  PreDiagnosticCareerReadinessStepKey,
+  EnrollmentStepStatus
+>;
+
+export type PreDiagnosticTechnologyReadinessStepKey =
+  | "technologyUseCase"
+  | "practicalWalkthrough"
+  | "TechnologyDiagnostic";
+
+export type PreDiagnosticTechnologyReadinessSteps = Record<
+  PreDiagnosticTechnologyReadinessStepKey,
+  EnrollmentStepStatus
+>;
+
+export type PreDiagnosticImsProcessStepKey =
+  | "HowTheImsWorks"
+  | "imsProcessDiagnostic";
+
+export type PreDiagnosticImsProcessSteps = Record<
+  PreDiagnosticImsProcessStepKey,
+  EnrollmentStepStatus
+>;
+
+export type PreDiagnosticStepsCompletedState = {
+  /** API field name (typo preserved) */
+  carrerReadiness: PreDiagnosticCareerReadinessSteps;
+  TechnologyDiagnostic: PreDiagnosticTechnologyReadinessSteps;
+  imsProcess: PreDiagnosticImsProcessSteps;
+};
+
 export type UserEnrollment = {
   id: number;
   user_id: number;
@@ -45,13 +97,34 @@ export type UserEnrollment = {
   completed_at: string | null;
   dropped_at: string | null;
   notes: string | null;
+  buddy_name: string | null;
   created_at: string;
   updated_at: string;
   program: EnrollmentProgram;
   cohort: EnrollmentCohort;
+  isOnboardingStepsCompleted: OnboardingStepsCompletedState;
+  isPreDiagnosticStepsCompleted: PreDiagnosticStepsCompletedState;
 };
 
 export type UserEnrollmentApiResponse = {
+  success: boolean;
+  message: string;
+  data: UserEnrollment;
+};
+
+export type OnboardingStepsCompleted = Partial<
+  Record<OnboardingEnrollmentStepKey, EnrollmentStepStatus>
+>;
+
+/** @deprecated Use `EnrollmentStepStatus` */
+export type OnboardingStepCompletionStatus = EnrollmentStepStatus;
+
+export type UpdateEnrollmentStepsPayload = {
+  isOnboardingStepsCompleted?: OnboardingStepsCompleted;
+  isPreDiagnosticStepsCompleted?: Partial<PreDiagnosticStepsCompletedState>;
+};
+
+export type UpdateEnrollmentStepsResponse = {
   success: boolean;
   message: string;
   data: UserEnrollment;

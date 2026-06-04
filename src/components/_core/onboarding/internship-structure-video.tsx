@@ -3,10 +3,13 @@
 import { useState } from "react";
 import { Pause, Play } from "lucide-react";
 import ReactPlayer from "react-player";
+import { useUpdateCompletedOnboardingStep } from "@/features/internship/use-update-completed-onboarding-step";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
 const InternshipStructureVideo = () => {
   const { onboarding, goToStep } = useOnboardingNavigation();
+  const { markOnboardingStepComplete, isUpdating, errorMessage } =
+    useUpdateCompletedOnboardingStep();
   const videos = onboarding.internshp_structure_video ?? [];
   const [videoIndex, setVideoIndex] = useState(0);
   const [videoPlaying, setVideoPlaying] = useState(true);
@@ -24,13 +27,21 @@ const InternshipStructureVideo = () => {
     );
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!allVideosCompleted && videoIndex < videos.length - 1) {
       setVideoIndex((prev) => prev + 1);
       setVideoPlaying(true);
       return;
     }
-    goToStep("cohort-lead");
+
+    if (isUpdating) return;
+
+    try {
+      await markOnboardingStepComplete("internship-structure-video");
+      goToStep("cohort-lead");
+    } catch {
+      // errorMessage is set by the hook
+    }
   };
 
   if (!currentVideo) {
@@ -122,15 +133,24 @@ const InternshipStructureVideo = () => {
         )}
       </article>
 
+      {errorMessage ? (
+        <p className="mt-4 text-sm text-destructive">{errorMessage}</p>
+      ) : null}
+
       <button
         type="button"
-        disabled={!completedIndexes.includes(videoIndex) && !allVideosCompleted}
+        disabled={
+          isUpdating ||
+          (!completedIndexes.includes(videoIndex) && !allVideosCompleted)
+        }
         onClick={handleContinue}
         className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
       >
-        {allVideosCompleted || videoIndex >= videos.length - 1
-          ? "Continue"
-          : "Next video"}
+        {isUpdating
+          ? "Saving..."
+          : allVideosCompleted || videoIndex >= videos.length - 1
+            ? "Continue"
+            : "Next video"}
       </button>
     </section>
   );

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { OnboardingReadinessQuestion } from "@/features/onboarding/types";
+import { useUpdateCompletedOnboardingStep } from "@/features/internship/use-update-completed-onboarding-step";
 import Flag from "../landing-pages/home/hero/flag";
 import QuizDrawer from "./quiz-drawer";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
@@ -26,6 +27,8 @@ function mapQuizQuestions(questions: OnboardingReadinessQuestion[]) {
 const ReadinessTest = () => {
   const router = useRouter();
   const { onboarding } = useOnboardingNavigation();
+  const { markOnboardingStepComplete, isUpdating, errorMessage } =
+    useUpdateCompletedOnboardingStep();
   const [isQuizOpen, setIsQuizOpen] = useState(false);
 
   const questions = useMemo(
@@ -35,6 +38,17 @@ const ReadinessTest = () => {
 
   const questionCount = questions.length;
   const quizMinutes = Math.max(questionCount, 1) * 5;
+
+  const handleQuizComplete = async () => {
+    if (isUpdating) return;
+
+    try {
+      await markOnboardingStepComplete("readiness-test");
+      router.push("/pre-diagnostic-test");
+    } catch {
+      // errorMessage is set by the hook
+    }
+  };
 
   return (
     <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
@@ -71,13 +85,17 @@ const ReadinessTest = () => {
         </div>
       </article>
 
+      {errorMessage ? (
+        <p className="mt-4 text-sm text-destructive">{errorMessage}</p>
+      ) : null}
+
       <button
         type="button"
-        disabled={questionCount === 0}
+        disabled={questionCount === 0 || isUpdating}
         onClick={() => setIsQuizOpen(true)}
         className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0]"
       >
-        Start Quiz
+        {isUpdating ? "Saving..." : "Start Quiz"}
       </button>
 
       <QuizDrawer
@@ -85,7 +103,7 @@ const ReadinessTest = () => {
         onOpenChange={setIsQuizOpen}
         questions={questions}
         durationMinutes={quizMinutes}
-        onComplete={() => router.push("/pre-diagnostic-test")}
+        onComplete={handleQuizComplete}
       />
     </section>
   );

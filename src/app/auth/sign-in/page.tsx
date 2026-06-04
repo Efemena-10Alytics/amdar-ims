@@ -16,3 +16,30 @@ export default function SignInPage() {
     </Suspense>
   );
 }
+
+
+const isOboardingStepsCompleted = {
+  orientationVideo: "completed",
+  internshipStructureVideo: "completed",
+  meetCohortLead: "completed",
+  rulesAndEtiquettes: "completed",
+  installationVideo: "completed",
+  readinessTest: "completed",
+}
+
+const isPreDiagnosticStepsCompleted = {
+  carrerReadiness: {
+    welcomeVideo: "completed",
+    careerKnowledgeDiscovery: "completed",
+    CareerPathDiagnostic: "completed",
+  },
+  TechnologyDiagnostic: {
+    technologyUseCase: "completed",
+    practicalWalkthrough: "completed",
+    TechnologyDiagnostic: "completed",
+  },
+  imsProcess: {
+    HowTheImsWorks: "completed",
+    imsProcessDiagnostic: "completed",
+  },
+}

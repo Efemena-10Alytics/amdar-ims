@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useUpdateCompletedOnboardingStep } from "@/features/internship/use-update-completed-onboarding-step";
 import OnboardingVideoPlayer from "./onboarding-video-player";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
 const OrientationVideo = () => {
   const { onboarding, goToStep } = useOnboardingNavigation();
+  const { markOnboardingStepComplete, isUpdating, errorMessage } =
+    useUpdateCompletedOnboardingStep();
   const [hasVideoEnded, setHasVideoEnded] = useState(false);
 
   const orientation = onboarding.orientation_video;
@@ -13,6 +16,19 @@ const OrientationVideo = () => {
     orientation.description?.trim() ||
     orientation.instructions?.trim() ||
     "Get familiar with your learning environment, understand what to expect, and how to make the most of your learning experience.";
+
+  const canContinue = hasVideoEnded && !isUpdating;
+
+  const handleContinue = async () => {
+    if (!canContinue) return;
+
+    try {
+      await markOnboardingStepComplete("orientation-video");
+      goToStep("internship-structure-video");
+    } catch {
+      // errorMessage is set by the hook
+    }
+  };
 
   return (
     <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
@@ -31,13 +47,17 @@ const OrientationVideo = () => {
         </p>
       </article>
 
+      {errorMessage ? (
+        <p className="mt-4 text-sm text-destructive">{errorMessage}</p>
+      ) : null}
+
       <button
         type="button"
-        disabled={!hasVideoEnded}
-        onClick={() => goToStep("internship-structure-video")}
+        disabled={!canContinue}
+        onClick={handleContinue}
         className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
       >
-        Continue
+        {isUpdating ? "Saving..." : "Continue"}
       </button>
     </section>
   );
