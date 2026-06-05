@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import ChoosePath from "@/components/_core/landing-pages/internship-program/choose-path";
 import WhyTakeTheInternship from "@/components/_core/landing-pages/internship-program/why-take-the-internship";
 import JobReady from "@/components/_core/landing-pages/internship-program/job-ready";
@@ -40,7 +41,9 @@ export default async function InternshipHubPage() {
       <h1 className="sr-only">{PAGE_TITLE}</h1>
       <p className="sr-only">{PAGE_DESCRIPTION}</p>
       <InternshipSessionCapture />
-      <ChoosePath internshipPrograms={internshipPrograms} />
+      <Suspense fallback={null}>
+        <ChoosePath internshipPrograms={internshipPrograms} />
+      </Suspense>
       <WhyTakeTheInternship />
       <JobReady />
     </div>
