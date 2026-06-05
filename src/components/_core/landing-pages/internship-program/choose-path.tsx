@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -16,6 +19,8 @@ type ChoosePathProps = {
 };
 
 const ChoosePath = ({ internshipPrograms }: ChoosePathProps) => {
+  const searchParams = useSearchParams();
+  const uniqueSuffix = searchParams.get("unique") === "1" ? "?unique=1" : "";
 
   return (
     <div className="bg-white py-12">
@@ -78,7 +83,7 @@ const ChoosePath = ({ internshipPrograms }: ChoosePathProps) => {
                         <div>{INTERNSHIP_DISCOUNTED_PRICE_LABEL}</div>
                       </span>
                     </div>
-                    <Link href={`/internship/${career.slug}`}>
+                    <Link href={`/internship/${career.slug}${uniqueSuffix}`}>
                       <Button
                         className={cn(
                           "bg-primary cursor-pointer group-hover:bg-amdari-yellow group-hover:text-primary hover:text-primary hover:bg-amdari-yellow text-white rounded-full px-4 py-2 text-sm font-medium",

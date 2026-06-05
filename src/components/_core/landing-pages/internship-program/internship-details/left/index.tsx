@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -28,6 +29,8 @@ interface LeftProps {
 
 const Left = ({ program }: LeftProps) => {
   const [activeTab, setActiveTab] = useState("Overview");
+  const searchParams = useSearchParams();
+  const uniqueSuffix = searchParams.get("unique") === "1" ? "?unique=1" : "";
 
   console.log("program:", program);
 
@@ -136,7 +139,7 @@ const Left = ({ program }: LeftProps) => {
             {INTERNSHIP_DISCOUNTED_PRICE_LABEL}
           </div>
         </div>
-        <Link href={`/payment/${program?.slug}`}>
+        <Link href={`/payment/${program?.slug}${uniqueSuffix}`}>
           <Button
             className={cn(
               "bg-primary text-white hover:bg-[#0f4d5a] rounded-full px-6 py-6 text-base font-medium",
@@ -192,7 +195,7 @@ const Left = ({ program }: LeftProps) => {
           Don't let the lack of real world experience hold you back. Join Amdari
           today and take a decisive step toward a successful career in tech.
         </p>
-        <Link href={`/payment/${program?.id}`}>
+        <Link href={`/payment/${program?.id}${uniqueSuffix}`}>
           <Button
             className={cn(
               "bg-amdari-yellow text-[#092A31] hover:bg-amdari-yellow/90 rounded-full px-8 py-6 text-base font-medium",

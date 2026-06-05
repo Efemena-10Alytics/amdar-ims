@@ -141,7 +141,7 @@ export function usePayNow({
         success_url: newUser
           ? `${origin}/complete-your-profile?program=${slug}&u-status=new`
           : `${origin}/payment/${paymentPageId ?? slug}?status=success`,
-        cancel_url: `${origin}/payment/${paymentPageId ?? slug}?status=cancelled${newUser ? "&u-status=new" : ""}`,
+        cancel_url: `${origin}/payment/${paymentPageId ?? slug}?status=cancelled${newUser ? "&u-status=new" : ""}${checkoutSelections.splitFirstPayment != null ? "&unique=1" : ""}`,
         next_payment_date: apiNextPaymentDate,
         promo_code: promoApplied && promoCode ? promoCode : "default",
         ...(depositAmount !== undefined
