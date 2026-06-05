@@ -18,9 +18,7 @@ interface PaymentPlanResponse {
 }
 
 /** Extract a user-facing error message from API error response */
-function extractErrorMessage(
-  data: unknown
-): string {
+function extractErrorMessage(data: unknown): string {
   if (data && typeof data === "object") {
     const obj = data as Record<string, unknown>;
     if (typeof obj.message === "string") return obj.message;
@@ -104,7 +102,9 @@ export function usePayNow({
         originalNextPaymentAmount = Number(pricing.two_installments_amount) / 2;
       } else {
         // 3-installments
-        originalTotalAmount = Number(pricing.original_three_installments_amount);
+        originalTotalAmount = Number(
+          pricing.original_three_installments_amount,
+        );
         installments = 3;
         originalNextPaymentAmount =
           Number(pricing.three_installments_amount) / 3;
@@ -144,12 +144,14 @@ export function usePayNow({
         cancel_url: `${origin}/payment/${paymentPageId ?? slug}?status=cancelled${newUser ? "&u-status=new" : ""}`,
         next_payment_date: apiNextPaymentDate,
         promo_code: promoApplied && promoCode ? promoCode : "default",
-        ...(depositAmount !== undefined ? { deposit_amount: depositAmount } : {}),
+        ...(depositAmount !== undefined
+          ? { deposit_amount: depositAmount }
+          : {}),
       };
 
       const response = await axiosInstance.post<PaymentPlanResponse>(
-        "/api/v2/payment-plans",
-        paymentData
+        "/v2/payment-plans",
+        paymentData,
       );
 
       const data = response.data;
@@ -163,7 +165,9 @@ export function usePayNow({
         }
       } else {
         const message =
-          (data && typeof data === "object" && typeof (data as { message?: string }).message === "string")
+          data &&
+          typeof data === "object" &&
+          typeof (data as { message?: string }).message === "string"
             ? (data as { message: string }).message
             : extractErrorMessage(data ?? {});
         onError?.(message);
@@ -175,7 +179,9 @@ export function usePayNow({
       } else if (err.response?.status === 401) {
         onError?.("Please log in to continue with payment.");
       } else if (err.response?.status === 500) {
-        onError?.("Server error occurred. Please try again or contact support.");
+        onError?.(
+          "Server error occurred. Please try again or contact support.",
+        );
       } else {
         onError?.("Payment failed. Please try again.");
       }
