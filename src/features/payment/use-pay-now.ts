@@ -150,7 +150,7 @@ export function usePayNow({
       };
 
       const response = await axiosInstance.post<PaymentPlanResponse>(
-        "/payment-plans",
+        "/payment/payment-plans",
         paymentData,
       );
 
