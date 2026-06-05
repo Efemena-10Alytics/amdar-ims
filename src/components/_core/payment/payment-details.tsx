@@ -273,27 +273,52 @@ const PaymentDetails = ({
               {checkoutSelections?.installmentBreakdown &&
                 checkoutSelections.installmentBreakdown.length > 0 ? (
                 <div className="space-y-2 border-[#B6CFD4]/50">
-                  {checkoutSelections.installmentBreakdown.map((item, i) => (
-                    <div key={i} className="flex justify-between text-sm pt-2">
-                      <span className="text-[#6b7280]">
-                        {item.label === "1st payment"
-                          ? "First payment"
-                          : item.label === "2nd payment"
-                            ? "Second payment"
-                            : item.label === "3rd payment"
-                              ? "Third payment"
-                              : item.label}
-                      </span>
-                      <span className="flex items-center gap-2 font-medium text-[#092A31]">
-                        {originalAmounts[i] != null && (
-                          <span className="text-[#9ca3af] line-through text-xs">
-                            {originalAmounts[i]}
+                  {checkoutSelections.installmentBreakdown.map((item, i) => {
+                    const split = checkoutSelections.splitFirstPayment;
+                    const showSplitAfter = split && i === 0;
+                    const displayAmount =
+                      showSplitAfter
+                        ? `${checkoutSelections.currency} ${split!.payNow}`
+                        : item.amount;
+                    const labelMap: Record<string, string> = {
+                      "1st payment": "First payment",
+                      "2nd payment": "Second payment",
+                      "3rd payment": "Third payment",
+                    };
+                    return (
+                      <div key={i}>
+                        <div className="flex justify-between text-sm pt-2">
+                          <span className="text-[#6b7280]">
+                            {labelMap[item.label] ?? item.label}
                           </span>
+                          <span className="flex items-center gap-2 font-medium text-[#092A31]">
+                            {!showSplitAfter && originalAmounts[i] != null && (
+                              <span className="text-[#9ca3af] line-through text-xs">
+                                {originalAmounts[i]}
+                              </span>
+                            )}
+                            {displayAmount}
+                          </span>
+                        </div>
+                        {showSplitAfter && (
+                          <div className="mt-2 rounded-lg bg-[#FEFCE8] border border-[#FEF08A] px-3 py-2 space-y-1 text-sm">
+                            <div className="flex items-center justify-between gap-x-4">
+                              <span className="text-[#854d0e]">Balance of 1st installment</span>
+                              <span className="font-bold text-[#854d0e]">
+                                {checkoutSelections.currency} {split!.balance}
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between gap-x-4">
+                              <span className="text-[#854d0e]">Deadline</span>
+                              <span className="rounded-full bg-[#FEF08A] px-2 py-0.5 text-xs font-medium text-[#713F12]">
+                                {split!.deadline}
+                              </span>
+                            </div>
+                          </div>
                         )}
-                        {item.amount}
-                      </span>
-                    </div>
-                  ))}
+                      </div>
+                    );
+                  })}
                 </div>
               ) : checkoutSelections?.planTotal ? (
                 <div className="mt-3 flex justify-between text-sm border-t border-[#B6CFD4]/50 pt-3">

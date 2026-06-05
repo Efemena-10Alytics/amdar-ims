@@ -55,6 +55,7 @@ const PaymentMain = ({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const promoCode = searchParams.get("promo_code") ?? DEFAULT_PROMO_CODE;
+  const isUnique = searchParams.get("unique") === "1";
   const activeStep = stepFromParam(searchParams.get("step"));
   const statusParam = searchParams.get("status") ?? "";
   const statusSuccess =
@@ -186,6 +187,7 @@ const PaymentMain = ({
             checkoutData={checkoutData}
             program={program}
             promoCode={promoCode}
+            isUnique={isUnique}
             onProceed={(selections) => {
               setCheckoutSelections(selections);
               if (user != null) {

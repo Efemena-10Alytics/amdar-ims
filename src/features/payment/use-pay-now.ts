@@ -128,6 +128,8 @@ export function usePayNow({
       const origin =
         typeof window !== "undefined" ? window.location.origin : "";
 
+      const depositAmount = checkoutSelections.splitFirstPayment?.payNow;
+
       const paymentData = {
         program_id: checkoutData.program.id,
         cohort_id: cohort.id,
@@ -142,10 +144,11 @@ export function usePayNow({
         cancel_url: `${origin}/payment/${paymentPageId ?? slug}?status=cancelled${newUser ? "&u-status=new" : ""}`,
         next_payment_date: apiNextPaymentDate,
         promo_code: promoApplied && promoCode ? promoCode : "default",
+        ...(depositAmount !== undefined ? { deposit_amount: depositAmount } : {}),
       };
 
       const response = await axiosInstance.post<PaymentPlanResponse>(
-        "/payment/payment-plans",
+        "/api/v2/payment-plans",
         paymentData
       );
 

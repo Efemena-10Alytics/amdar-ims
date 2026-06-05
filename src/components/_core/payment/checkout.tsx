@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CheckoutData } from "@/features/payment/use-get-checkout-data";
-import type { CheckoutPricing, CheckoutSelections } from "@/types/payment";
+import type { CheckoutPricing, CheckoutSelections, SplitFirstPayment } from "@/types/payment";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +19,7 @@ import {
   type PaymentPlanId,
 } from "@/features/payment/use-checkout-storage";
 import { FillCalendaSvg } from "../landing-pages/internship-program/svg";
+import { FirstPaymentModal } from "./first-payment-modal";
 
 interface PaymentPlanOption {
   id: PaymentPlanId;
@@ -114,6 +115,8 @@ interface CheckoutProps {
   checkoutData?: CheckoutData;
   program?: InternshipProgram;
   promoCode?: string;
+  /** When true, shows the split-first-installment feature (Edit 1st payment). */
+  isUnique?: boolean;
   /** Parent calls this with selections; parent is responsible for navigating to next step (or e.g. opening sign-in). */
   onProceed?: (selections: CheckoutSelections) => void;
 }
@@ -122,6 +125,7 @@ const Checkout = ({
   checkoutData,
   program,
   promoCode,
+  isUnique = false,
   onProceed,
 }: CheckoutProps) => {
   const firstCurrency = checkoutData?.pricings?.[0]?.currency ?? "USD";
@@ -134,6 +138,9 @@ const Checkout = ({
     setCurrency,
     persistSelections,
   } = useCheckoutFormStorage(program?.id, checkoutData, firstCurrency);
+
+  const [firstPaymentSplit, setFirstPaymentSplit] = useState<SplitFirstPayment | null>(null);
+  const [splitModalOpen, setSplitModalOpen] = useState(false);
 
   // Persist selections and notify parent; parent controls navigation (e.g. may open sign-in if not logged in)
   const handleProceedWithPersist = (selections: CheckoutSelections) => {
@@ -154,13 +161,14 @@ const Checkout = ({
     const normalizedPromoCode = promoCode?.trim().toUpperCase();
 
     return plans.filter((p) => {
+      if (isUnique) return p.id === "3-installments";
       if (p.id === "2-installments") return false;
       if (normalizedPromoCode === "BBAMD26" && p.id === "3-installments") {
         return false;
       }
       return true;
     });
-  }, [promoCode, selectedPricing]);
+  }, [promoCode, selectedPricing, isUnique]);
 
   useEffect(() => {
     const currencies = checkoutData?.pricings?.map((p) => p.currency) ?? [];
@@ -180,6 +188,19 @@ const Checkout = ({
     }
   }, [paymentPlans, selectedPlan, setSelectedPlan]);
 
+  // Reset split when the user changes their plan or cohort selection.
+  useEffect(() => {
+    setFirstPaymentSplit(null);
+  }, [selectedPlan, selectedCohort]);
+
+  /** Numeric value of the first installment for the 3-installments plan. Used by FirstPaymentModal. */
+  const firstInstallmentTotal = useMemo(() => {
+    if (selectedPlan !== "3-installments" || !selectedPricing) return 0;
+    const breakdown = selectedPricing.display_three_installment_breakdown;
+    if (breakdown && breakdown.length >= 1) return breakdown[0];
+    return Math.round(selectedPricing.three_installments_amount / 3);
+  }, [selectedPlan, selectedPricing]);
+
   const canProceed =
     selectedCohort !== null && !!selectedPricing && !!selectedPlan;
 
@@ -194,10 +215,13 @@ const Checkout = ({
 
   const handleProceed = () => {
     if (!selectedCohortData || !selectedPricing || !selectedPlanOption) return;
+    const rawFirstPayment = selectedPlanOption.breakdown?.[0]?.amount ?? null;
     const firstPaymentAmount =
       selectedPlan === "full"
         ? null
-        : (selectedPlanOption.breakdown?.[0]?.amount ?? null);
+        : firstPaymentSplit
+          ? `${currency} ${firstPaymentSplit.payNow}`
+          : rawFirstPayment;
     const selections: CheckoutSelections = {
       cohort: selectedCohortData,
       planId: selectedPlanOption.id,
@@ -207,6 +231,7 @@ const Checkout = ({
       planTotal: selectedPlanOption.total,
       firstPaymentAmount,
       installmentBreakdown: selectedPlanOption.breakdown ?? null,
+      splitFirstPayment: firstPaymentSplit ?? null,
     };
     handleProceedWithPersist(selections);
   };
@@ -404,22 +429,48 @@ const Checkout = ({
                     >
                       <div className="min-h-0 overflow-hidden">
                         <div className="space-y-1 py-2 text-sm">
-                          {plan.breakdown.map((row, i) => (
-                            <div
-                              key={i}
-                              className="flex items-center justify-between gap-x-4 gap-y-0.5"
-                            >
-                              <div className="flex-1">{row.label}</div>
-                              {row.dueDate != null && (
-                                <div className="ml-1.5 text-left flex-1">
-                                  {row.dueDate}
+                          {plan.breakdown.map((row, i) => {
+                            const showSplitAfter =
+                              isUnique &&
+                              plan.id === "3-installments" &&
+                              firstPaymentSplit &&
+                              i === 0;
+                            const displayAmount =
+                              showSplitAfter
+                                ? `${currency} ${firstPaymentSplit!.payNow}`
+                                : row.amount;
+                            return (
+                              <div key={i}>
+                                <div className="flex items-center justify-between gap-x-4 gap-y-0.5">
+                                  <div className="flex-1">{row.label}</div>
+                                  {row.dueDate != null && (
+                                    <div className="ml-1.5 text-left flex-1">
+                                      {row.dueDate}
+                                    </div>
+                                  )}
+                                  <div className="font-medium flex-1">
+                                    {displayAmount}
+                                  </div>
                                 </div>
-                              )}
-                              <div className="font-medium flex-1">
-                                {row.amount}
+                                {showSplitAfter && (
+                                  <div className="mt-1 rounded-lg bg-[#FEFCE8] border border-[#FEF08A] px-3 py-2 space-y-1">
+                                    <div className="flex items-center justify-between gap-x-4">
+                                      <span className="flex-1 text-[#854d0e]">Balance of 1st installment</span>
+                                      <span className="font-bold text-[#854d0e]">
+                                        {currency} {firstPaymentSplit!.balance}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center justify-between gap-x-4">
+                                      <span className="text-[#854d0e]">Deadline</span>
+                                      <span className="rounded-full bg-[#FEF08A] px-2 py-0.5 text-xs font-medium text-[#713F12]">
+                                        {firstPaymentSplit!.deadline}
+                                      </span>
+                                    </div>
+                                  </div>
+                                )}
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       </div>
                     </div>
@@ -435,14 +486,51 @@ const Checkout = ({
       </section>
 
       <div className="w-full">
-        <Button
-          onClick={handleProceed}
-          disabled={!canProceed}
-          className="w-full bg-primary h-12 font-medium text-white hover:bg-primary/90 disabled:opacity-50 disabled:pointer-events-none"
-        >
-          Proceed to Payment
-        </Button>
+        {isUnique && selectedPlan === "3-installments" && !firstPaymentSplit ? (
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setSplitModalOpen(true)}
+              disabled={!canProceed}
+              className="flex-1 h-12 border-2 border-[#092A31] text-[#092A31] font-medium hover:bg-[#E8EFF1] disabled:opacity-50 disabled:pointer-events-none"
+            >
+              Edit 1st payment
+            </Button>
+            <Button
+              onClick={handleProceed}
+              disabled={!canProceed}
+              className="flex-1 bg-primary h-12 font-medium text-white hover:bg-primary/90 disabled:opacity-50 disabled:pointer-events-none"
+            >
+              Proceed
+            </Button>
+          </div>
+        ) : (
+          <Button
+            onClick={handleProceed}
+            disabled={!canProceed}
+            className="w-full bg-primary h-12 font-medium text-white hover:bg-primary/90 disabled:opacity-50 disabled:pointer-events-none"
+          >
+            Proceed to Payment
+          </Button>
+        )}
       </div>
+
+      {selectedCohortData && (
+        <FirstPaymentModal
+          open={splitModalOpen}
+          onOpenChange={setSplitModalOpen}
+          firstInstallmentTotal={firstInstallmentTotal}
+          currency={currency}
+          cohortStartDate={selectedCohortData.start_date}
+          onConfirm={(payNow) =>
+            setFirstPaymentSplit({
+              payNow,
+              balance: firstInstallmentTotal - payNow,
+              deadline: selectedCohortData.start_date,
+            })
+          }
+        />
+      )}
     </main>
   );
 };

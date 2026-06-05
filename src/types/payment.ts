@@ -68,6 +68,13 @@ export interface InstallmentBreakdownItem {
   amount: string;
 }
 
+/** Split info for the first installment when ?unique=1 flow is active */
+export interface SplitFirstPayment {
+  payNow: number;
+  balance: number;
+  deadline: string; // cohort start_date
+}
+
 /** Collected checkout selections to pass to Payment / PaymentDetails */
 export type CheckoutSelections = {
   cohort: CheckoutCohort;
@@ -80,4 +87,6 @@ export type CheckoutSelections = {
   firstPaymentAmount: string | null;
   /** Per-installment rows for 2- or 3-installment plans; null for full payment. */
   installmentBreakdown: InstallmentBreakdownItem[] | null;
+  /** Set when the user splits the 1st installment via the ?unique=1 flow. */
+  splitFirstPayment?: SplitFirstPayment | null;
 };
