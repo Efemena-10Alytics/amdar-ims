@@ -12,7 +12,10 @@ import {
 } from "@/features/readiness-test/field-answers";
 import { getSortedReadinessTestFields } from "@/features/readiness-test/get-sorted-form-fields";
 import { useSubmitReadinessTestForm } from "@/features/readiness-test/use-submit-readiness-test-form";
-import type { ReadinessTestForm } from "@/features/readiness-test/types";
+import type {
+  ReadinessTestForm,
+  ReadinessTestSubmitResultData,
+} from "@/features/readiness-test/types";
 
 type ReadinessTestDrawerProps = {
   open: boolean;
@@ -21,7 +24,7 @@ type ReadinessTestDrawerProps = {
   durationMinutes?: number;
   title?: string;
   finishLabel?: string;
-  onComplete?: () => void | Promise<void>;
+  onComplete?: (result: ReadinessTestSubmitResultData) => void | Promise<void>;
 };
 
 const ReadinessTestDrawer = ({
@@ -94,9 +97,15 @@ const ReadinessTestDrawer = ({
 
     try {
       const payload = buildFormSubmitPayload(form, answers);
-      await submitForm(form.id, payload);
+      const response = await submitForm(form.id, payload);
+
+      if (!response.data) {
+        setLocalError("Unable to load your quiz results. Please try again.");
+        return;
+      }
+
       onOpenChange(false);
-      await onComplete?.();
+      await onComplete?.(response.data);
     } catch {
       // errorMessage is set by the hook
     }

@@ -132,8 +132,16 @@ export type ReadinessTestSubmitPayload = {
   answers: ReadinessTestSubmitAnswer[];
 };
 
+export type ReadinessTestSubmitResultData = {
+  submission_id: number;
+  attempt_number: number;
+  total_score: number;
+  passed: boolean;
+  submitted_at: string;
+};
+
 export type ReadinessTestSubmitResponse = {
   success: boolean;
   message: string;
-  data?: unknown;
+  data?: ReadinessTestSubmitResultData;
 };
