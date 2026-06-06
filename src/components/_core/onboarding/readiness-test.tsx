@@ -3,8 +3,10 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import ReadinessTestDrawer from "@/components/_core/readiness-test/readiness-test-drawer";
+import ReadinessTestResult from "@/components/_core/readiness-test/readiness-test-result";
 import { getReadinessTestGuidelines } from "@/features/readiness-test/get-readiness-test-guidelines";
 import { getSortedReadinessTestFields } from "@/features/readiness-test/get-sorted-form-fields";
+import type { ReadinessTestSubmitResultData } from "@/features/readiness-test/types";
 import { useUpdateCompletedOnboardingStep } from "@/features/internship/use-update-completed-onboarding-step";
 import Flag from "../landing-pages/home/hero/flag";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
@@ -22,6 +24,8 @@ const ReadinessTest = () => {
   const { markOnboardingStepComplete, isUpdating, errorMessage } =
     useUpdateCompletedOnboardingStep();
   const [isQuizOpen, setIsQuizOpen] = useState(false);
+  const [submitResult, setSubmitResult] =
+    useState<ReadinessTestSubmitResultData | null>(null);
 
   const readinessForm = onboarding.readiness_test;
   const fields = useMemo(
@@ -33,7 +37,11 @@ const ReadinessTest = () => {
   const quizMinutes =
     readinessForm?.duration ?? Math.max(questionCount, 1) * 5;
 
-  const handleQuizComplete = async () => {
+  const handleQuizComplete = async (result: ReadinessTestSubmitResultData) => {
+    setSubmitResult(result);
+  };
+
+  const handleProceed = async () => {
     if (isUpdating) return;
 
     try {
@@ -43,6 +51,23 @@ const ReadinessTest = () => {
       // errorMessage is set by the hook
     }
   };
+
+  const handleRetake = () => {
+    setSubmitResult(null);
+    setIsQuizOpen(true);
+  };
+
+  if (submitResult) {
+    return (
+      <ReadinessTestResult
+        totalScore={submitResult.total_score}
+        title={readinessForm?.title ?? "Readiness Quiz"}
+        onRetake={handleRetake}
+        onProceed={handleProceed}
+        isProceeding={isUpdating}
+      />
+    );
+  }
 
   return (
     <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
