@@ -1,31 +1,27 @@
+import type { ReadinessTestForm } from "@/features/readiness-test/types";
+
 export type PreDiagnosticVideoItem = {
   link: string;
   description: string;
   instructions: string;
 };
 
-export type PreDiagnosticQuestion = {
-  question: string;
-  options: string[];
-  correctAnswer: string;
-};
-
 export type PreDiagnosticCareerReadiness = {
   welcomeVideo: PreDiagnosticVideoItem[];
   careerKnowledgeDiscovery: PreDiagnosticVideoItem[];
-  careerPathDiagnostic: PreDiagnosticQuestion[];
+  careerPathDiagnostic: ReadinessTestForm | null;
 };
 
 export type PreDiagnosticTechnologyReadiness = {
   technologyUsecase: PreDiagnosticVideoItem;
   /** API field name (capital P preserved) */
   PracticalWalkthrough: PreDiagnosticVideoItem[];
-  technologyDiagnostic: PreDiagnosticQuestion[];
+  technologyDiagnostic: ReadinessTestForm | null;
 };
 
 export type PreDiagnosticImsReadiness = {
   howTheImsWorks: PreDiagnosticVideoItem;
-  imsDiagnostic: PreDiagnosticQuestion[];
+  imsDiagnostic: ReadinessTestForm | null;
 };
 
 export type PreDiagnosticCreator = {

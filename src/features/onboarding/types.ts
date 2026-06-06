@@ -1,3 +1,5 @@
+import type { ReadinessTestForm } from "@/features/readiness-test/types";
+
 export type OnboardingMediaFile = {
   name: string;
   key: string;
@@ -32,12 +34,6 @@ export type OnboardingInstallationTool = {
   toolName: string;
   toolLink: string;
   videoLink: string;
-};
-
-export type OnboardingReadinessQuestion = {
-  question: string;
-  options: string[];
-  correctAnswer: string;
 };
 
 export type OnboardingCohort = {
@@ -96,7 +92,7 @@ export type Onboarding = {
   cohort_lead: OnboardingCohortLead[];
   rule_and_etiquette: OnboardingRulesAndEtiquette;
   installation_video: OnboardingInstallationTool[];
-  readiness_test: OnboardingReadinessQuestion[];
+  readiness_test: ReadinessTestForm | null;
   created_at: string;
   updated_at: string;
   creator: OnboardingCreator;
