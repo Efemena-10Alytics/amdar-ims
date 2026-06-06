@@ -110,3 +110,30 @@ export type ReadinessTestFormApiResponse = {
   message: string;
   data: ReadinessTestForm | null;
 };
+
+export type ReadinessTestSubmitUploadFile = {
+  name: string;
+  key: string;
+  url: string;
+};
+
+export type ReadinessTestSubmitAnswerValue =
+  | { option_id: number }
+  | { option_ids: number[] }
+  | string
+  | ReadinessTestSubmitUploadFile[];
+
+export type ReadinessTestSubmitAnswer = {
+  field_id: number;
+  value: ReadinessTestSubmitAnswerValue;
+};
+
+export type ReadinessTestSubmitPayload = {
+  answers: ReadinessTestSubmitAnswer[];
+};
+
+export type ReadinessTestSubmitResponse = {
+  success: boolean;
+  message: string;
+  data?: unknown;
+};

@@ -1,15 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { X } from "lucide-react";
+import { ChevronLeft, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import ReadinessTestField from "@/components/_core/readiness-test/readiness-test-field";
+import { buildFormSubmitPayload } from "@/features/readiness-test/build-form-submit-payload";
 import {
   isReadinessTestFieldAnswered,
   type ReadinessTestFieldAnswer,
 } from "@/features/readiness-test/field-answers";
 import { getSortedReadinessTestFields } from "@/features/readiness-test/get-sorted-form-fields";
+import { useSubmitDiagnosticTest } from "@/features/readiness-test/use-submit-diagnostic-test";
 import type { ReadinessTestForm } from "@/features/readiness-test/types";
 
 type ReadinessTestDrawerProps = {
@@ -18,7 +20,7 @@ type ReadinessTestDrawerProps = {
   form: ReadinessTestForm | null | undefined;
   durationMinutes?: number;
   title?: string;
-  onComplete?: () => void;
+  onComplete?: () => void | Promise<void>;
 };
 
 const ReadinessTestDrawer = ({
@@ -33,6 +35,8 @@ const ReadinessTestDrawer = ({
   const [answers, setAnswers] = useState<Record<string, ReadinessTestFieldAnswer>>({});
   const [fieldIndex, setFieldIndex] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(durationMinutes * 60);
+  const { submitDiagnosticTestForm, isSubmitting, errorMessage } =
+    useSubmitDiagnosticTest();
 
   const activeField = fields[fieldIndex];
   const activeAnswer = activeField ? answers[String(activeField.id)] : undefined;
@@ -40,6 +44,8 @@ const ReadinessTestDrawer = ({
   const canContinue = activeField
     ? isReadinessTestFieldAnswered(activeField, activeAnswer)
     : false;
+  const isLastField = fieldIndex >= totalFields - 1;
+  const canGoBack = fieldIndex > 0;
   const minutes = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
   const seconds = String(secondsLeft % 60).padStart(2, "0");
   const timerToneClass =
@@ -65,14 +71,29 @@ const ReadinessTestDrawer = ({
     return () => window.clearInterval(timer);
   }, [open, secondsLeft, totalFields]);
 
-  const handleContinue = () => {
-    if (!activeField || !canContinue) return;
-    if (fieldIndex < totalFields - 1) {
+  const handleBack = () => {
+    if (!canGoBack || isSubmitting) return;
+    setFieldIndex((prev) => prev - 1);
+  };
+
+  const handleContinue = async () => {
+    if (!activeField || !canContinue || isSubmitting) return;
+
+    if (!isLastField) {
       setFieldIndex((prev) => prev + 1);
       return;
     }
-    onComplete?.();
-    onOpenChange(false);
+
+    if (!form?.id) return;
+
+    try {
+      const payload = buildFormSubmitPayload(form, answers);
+      await submitDiagnosticTestForm(form.id, payload);
+      onOpenChange(false);
+      await onComplete?.();
+    } catch {
+      // errorMessage is set by the hook
+    }
   };
 
   if (!activeField) {
@@ -129,14 +150,35 @@ const ReadinessTestDrawer = ({
               }
             />
 
-            <Button
-              type="button"
-              disabled={!canContinue}
-              onClick={handleContinue}
-              className="mt-5 h-12 w-full rounded-full bg-primary text-base text-white hover:bg-primary/90 disabled:bg-[#9DB8C0]"
-            >
-              {fieldIndex < totalFields - 1 ? "Continue" : "Finish Quiz"}
-            </Button>
+            {errorMessage ? (
+              <p className="mt-4 text-sm text-destructive">{errorMessage}</p>
+            ) : null}
+
+            <div className="mt-5 flex gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                disabled={!canGoBack || isSubmitting}
+                onClick={handleBack}
+                className="h-12 flex-1 rounded-full border-[#C5D6DC] bg-white text-base font-medium text-[#2D6A78] hover:bg-[#EEF4F6] disabled:opacity-50"
+              >
+                <ChevronLeft className="size-4" />
+                Back
+              </Button>
+
+              <Button
+                type="button"
+                disabled={!canContinue || isSubmitting}
+                onClick={() => void handleContinue()}
+                className="h-12 flex-1 rounded-full bg-primary text-base text-white hover:bg-primary/90 disabled:bg-[#9DB8C0]"
+              >
+                {isSubmitting
+                  ? "Submitting..."
+                  : isLastField
+                    ? "Finish Quiz"
+                    : "Continue"}
+              </Button>
+            </div>
           </div>
         </div>
       </SheetContent>
