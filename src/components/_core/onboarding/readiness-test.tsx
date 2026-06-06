@@ -2,10 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { OnboardingReadinessQuestion } from "@/features/onboarding/types";
+import ReadinessTestDrawer from "@/components/_core/readiness-test/readiness-test-drawer";
+import { getSortedReadinessTestFields } from "@/features/readiness-test/get-sorted-form-fields";
 import { useUpdateCompletedOnboardingStep } from "@/features/internship/use-update-completed-onboarding-step";
 import Flag from "../landing-pages/home/hero/flag";
-import QuizDrawer from "./quiz-drawer";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
 const GUIDELINES = [
@@ -15,15 +15,6 @@ const GUIDELINES = [
   "Complete the quiz before time is up else the you would have to start again.",
 ];
 
-function mapQuizQuestions(questions: OnboardingReadinessQuestion[]) {
-  return questions.map((item, index) => ({
-    id: `readiness-${index}`,
-    title: item.question,
-    options: item.options,
-    correctAnswer: item.correctAnswer,
-  }));
-}
-
 const ReadinessTest = () => {
   const router = useRouter();
   const { onboarding } = useOnboardingNavigation();
@@ -31,13 +22,15 @@ const ReadinessTest = () => {
     useUpdateCompletedOnboardingStep();
   const [isQuizOpen, setIsQuizOpen] = useState(false);
 
-  const questions = useMemo(
-    () => mapQuizQuestions(onboarding.readiness_test ?? []),
-    [onboarding.readiness_test],
+  const readinessForm = onboarding.readiness_test;
+  const fields = useMemo(
+    () => getSortedReadinessTestFields(readinessForm),
+    [readinessForm],
   );
 
-  const questionCount = questions.length;
-  const quizMinutes = Math.max(questionCount, 1) * 5;
+  const questionCount = fields.length;
+  const quizMinutes =
+    readinessForm?.duration ?? Math.max(questionCount, 1) * 5;
 
   const handleQuizComplete = async () => {
     if (isUpdating) return;
@@ -67,7 +60,10 @@ const ReadinessTest = () => {
         <div className="mt-4 rounded-xl bg-[#E0E8EC] p-4">
           <h3 className="text-lg font-semibold text-[#2D6A78]">Assessment guidelines</h3>
           <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm font-medium text-[#3F5E68]">
-            {GUIDELINES.map((item) => (
+            {(readinessForm?.guidelines
+              ? readinessForm.guidelines.split("\n").filter(Boolean)
+              : GUIDELINES
+            ).map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>
@@ -98,11 +94,12 @@ const ReadinessTest = () => {
         {isUpdating ? "Saving..." : "Start Quiz"}
       </button>
 
-      <QuizDrawer
+      <ReadinessTestDrawer
         open={isQuizOpen}
         onOpenChange={setIsQuizOpen}
-        questions={questions}
+        form={readinessForm}
         durationMinutes={quizMinutes}
+        title={readinessForm?.title ?? "Readiness Quiz"}
         onComplete={handleQuizComplete}
       />
     </section>
