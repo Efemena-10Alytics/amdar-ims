@@ -11,7 +11,7 @@ import {
   type ReadinessTestFieldAnswer,
 } from "@/features/readiness-test/field-answers";
 import { getSortedReadinessTestFields } from "@/features/readiness-test/get-sorted-form-fields";
-import { useSubmitDiagnosticTest } from "@/features/readiness-test/use-submit-diagnostic-test";
+import { useSubmitReadinessTestForm } from "@/features/readiness-test/use-submit-readiness-test-form";
 import type { ReadinessTestForm } from "@/features/readiness-test/types";
 
 type ReadinessTestDrawerProps = {
@@ -20,6 +20,7 @@ type ReadinessTestDrawerProps = {
   form: ReadinessTestForm | null | undefined;
   durationMinutes?: number;
   title?: string;
+  finishLabel?: string;
   onComplete?: () => void | Promise<void>;
 };
 
@@ -29,14 +30,15 @@ const ReadinessTestDrawer = ({
   form,
   durationMinutes = 10,
   title = "Readiness Quiz",
+  finishLabel = "Finish Quiz",
   onComplete,
 }: ReadinessTestDrawerProps) => {
   const fields = useMemo(() => getSortedReadinessTestFields(form), [form]);
   const [answers, setAnswers] = useState<Record<string, ReadinessTestFieldAnswer>>({});
   const [fieldIndex, setFieldIndex] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(durationMinutes * 60);
-  const { submitDiagnosticTestForm, isSubmitting, errorMessage } =
-    useSubmitDiagnosticTest();
+  const [localError, setLocalError] = useState("");
+  const { submitForm, isSubmitting, errorMessage } = useSubmitReadinessTestForm();
 
   const activeField = fields[fieldIndex];
   const activeAnswer = activeField ? answers[String(activeField.id)] : undefined;
@@ -59,6 +61,7 @@ const ReadinessTestDrawer = ({
     if (!open) return;
     setFieldIndex(0);
     setAnswers({});
+    setLocalError("");
     setSecondsLeft(durationMinutes * 60);
   }, [open, durationMinutes, form?.id]);
 
@@ -84,11 +87,14 @@ const ReadinessTestDrawer = ({
       return;
     }
 
-    if (!form?.id) return;
+    if (!form?.id) {
+      setLocalError("Unable to submit: form id is missing.");
+      return;
+    }
 
     try {
       const payload = buildFormSubmitPayload(form, answers);
-      await submitDiagnosticTestForm(form.id, payload);
+      await submitForm(form.id, payload);
       onOpenChange(false);
       await onComplete?.();
     } catch {
@@ -150,8 +156,8 @@ const ReadinessTestDrawer = ({
               }
             />
 
-            {errorMessage ? (
-              <p className="mt-4 text-sm text-destructive">{errorMessage}</p>
+            {(localError || errorMessage) ? (
+              <p className="mt-4 text-sm text-destructive">{localError || errorMessage}</p>
             ) : null}
 
             <div className="mt-5 flex gap-3">
@@ -175,7 +181,7 @@ const ReadinessTestDrawer = ({
                 {isSubmitting
                   ? "Submitting..."
                   : isLastField
-                    ? "Finish Quiz"
+                    ? finishLabel
                     : "Continue"}
               </Button>
             </div>

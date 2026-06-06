@@ -97,7 +97,7 @@ export type ReadinessTestForm = {
   passing_score: number | null;
   max_attempts: number;
   duration: number | null;
-  guidelines: string | null;
+  guidelines: string | string[] | null;
   is_published: boolean;
   created_at: string;
   updated_at: string;

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import ReadinessTestDrawer from "@/components/_core/readiness-test/readiness-test-drawer";
+import { getReadinessTestGuidelines } from "@/features/readiness-test/get-readiness-test-guidelines";
 import { getSortedReadinessTestFields } from "@/features/readiness-test/get-sorted-form-fields";
 import { useUpdateCompletedOnboardingStep } from "@/features/internship/use-update-completed-onboarding-step";
 import Flag from "../landing-pages/home/hero/flag";
@@ -60,12 +61,11 @@ const ReadinessTest = () => {
         <div className="mt-4 rounded-xl bg-[#E0E8EC] p-4">
           <h3 className="text-lg font-semibold text-[#2D6A78]">Assessment guidelines</h3>
           <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm font-medium text-[#3F5E68]">
-            {(readinessForm?.guidelines
-              ? readinessForm.guidelines.split("\n").filter(Boolean)
-              : GUIDELINES
-            ).map((item) => (
+            {getReadinessTestGuidelines(readinessForm?.guidelines, GUIDELINES).map(
+              (item) => (
               <li key={item}>{item}</li>
-            ))}
+            ),
+            )}
           </ul>
         </div>
 
@@ -100,6 +100,7 @@ const ReadinessTest = () => {
         form={readinessForm}
         durationMinutes={quizMinutes}
         title={readinessForm?.title ?? "Readiness Quiz"}
+        finishLabel="Finish Quiz"
         onComplete={handleQuizComplete}
       />
     </section>

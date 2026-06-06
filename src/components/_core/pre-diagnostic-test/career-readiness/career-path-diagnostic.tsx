@@ -1,11 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Lightbulb } from "lucide-react";
 import { useRouter } from "next/navigation";
+import ReadinessTestDrawer from "@/components/_core/readiness-test/readiness-test-drawer";
+import { usePreDiagnosticNavigation } from "@/components/_core/pre-diagnostic-test/use-pre-diagnostic-navigation";
+import { getReadinessTestGuidelines } from "@/features/readiness-test/get-readiness-test-guidelines";
+import { getSortedReadinessTestFields } from "@/features/readiness-test/get-sorted-form-fields";
 import { useUpdateCompletedPreDiagnostic } from "@/features/internship/use-update-completed-pre-diagnostic";
-import CareerDiagnosticDrawer from "./career-diagnostic-drawer";
 
 const GUIDELINES = [
   "Answer honestly, this helps us make sure you get the right support from day one.",
@@ -21,9 +24,19 @@ const DIAGNOSTIC_FLAGS = [
 
 const CareerPathDiagnostic = () => {
   const router = useRouter();
+  const { preDiagnostic } = usePreDiagnosticNavigation();
   const { markPreDiagnosticStepComplete, isUpdating, errorMessage } =
     useUpdateCompletedPreDiagnostic();
   const [isDiagnosticOpen, setIsDiagnosticOpen] = useState(false);
+
+  const diagnosticForm = preDiagnostic.career_readiness.careerPathDiagnostic;
+  const fields = useMemo(
+    () => getSortedReadinessTestFields(diagnosticForm),
+    [diagnosticForm],
+  );
+  const questionCount = fields.length;
+  const durationMinutes =
+    diagnosticForm?.duration ?? Math.max(questionCount, 1) * 5;
 
   const handleDiagnosticComplete = async () => {
     if (isUpdating) return;
@@ -66,20 +79,22 @@ const CareerPathDiagnostic = () => {
         <div className="mt-4 rounded-xl bg-[#E0E8EC] p-4">
           <h3 className="text-lg font-semibold text-[#2D6A78]">Assessment guidelines</h3>
           <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm font-medium text-[#3F5E68]">
-            {GUIDELINES.map((item) => (
+            {getReadinessTestGuidelines(diagnosticForm?.guidelines, GUIDELINES).map(
+              (item) => (
               <li key={item}>{item}</li>
-            ))}
+            ),
+            )}
           </ul>
         </div>
 
         <div className="mt-3 flex items-center justify-center gap-10 rounded-lg bg-[#EFF3F6] px-6 py-3 text-center">
           <div>
-            <p className="text-lg font-semibold text-[#173740]">10</p>
+            <p className="text-lg font-semibold text-[#173740]">{questionCount}</p>
             <p className="text-sm font-medium text-[#6C7D88]">Question</p>
           </div>
           <span className="h-10 w-px bg-[#D0DAE0]" aria-hidden />
           <div>
-            <p className="text-lg font-semibold text-[#173740]">10</p>
+            <p className="text-lg font-semibold text-[#173740]">{durationMinutes}</p>
             <p className="text-sm font-medium text-[#6C7D88]">Minutes</p>
           </div>
         </div>
@@ -91,16 +106,20 @@ const CareerPathDiagnostic = () => {
 
       <button
         type="button"
-        disabled={isUpdating}
+        disabled={questionCount === 0 || isUpdating}
         onClick={() => setIsDiagnosticOpen(true)}
         className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0]"
       >
         {isUpdating ? "Saving..." : "Start diagnostic"}
       </button>
 
-      <CareerDiagnosticDrawer
+      <ReadinessTestDrawer
         open={isDiagnosticOpen}
         onOpenChange={setIsDiagnosticOpen}
+        form={diagnosticForm}
+        durationMinutes={durationMinutes}
+        title={diagnosticForm?.title ?? "Career Diagnostics"}
+        finishLabel="Finish diagnostic"
         onComplete={handleDiagnosticComplete}
       />
     </section>
