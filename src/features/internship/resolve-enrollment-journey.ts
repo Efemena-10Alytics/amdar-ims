@@ -9,6 +9,10 @@ import {
   buildCareerKnowledgeDiscoveryHref,
   isCareerKnowledgeDiscoveryStep,
 } from "@/features/pre-diagnostic/career-knowledge-discovery-steps";
+import {
+  buildPracticalWalkthroughHref,
+  isPracticalWalkthroughStep,
+} from "@/features/pre-diagnostic/practical-walkthrough-steps";
 import type {
   OnboardingStepsCompletedState,
   PreDiagnosticStepsCompletedState,
@@ -34,15 +38,15 @@ function getPreDiagnosticStepRoute(step: string): string | null {
     return buildCareerKnowledgeDiscoveryHref(step);
   }
 
+  if (isPracticalWalkthroughStep(step)) {
+    return buildPracticalWalkthroughHref(step);
+  }
+
   const routes: Record<string, string> = {
     "welcome-video": "/pre-diagnostic-test?step=welcome-video",
     "career-path-diagnostics": "/pre-diagnostic-test?step=career-path-diagnostics",
     "technology-use-case":
       "/pre-diagnostic-test/technology-readiness?step=technology-use-case",
-    "practical-walkthrough-1":
-      "/pre-diagnostic-test/technology-readiness?step=practical-walkthrough-1",
-    "practical-walkthrough-2":
-      "/pre-diagnostic-test/technology-readiness?step=practical-walkthrough-2",
     "technology-diagnostics":
       "/pre-diagnostic-test/technology-readiness?step=technology-diagnostics",
     "how-the-ims-works": "/pre-diagnostic-test/ims-readiness?step=how-the-ims-works",

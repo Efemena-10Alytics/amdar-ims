@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation";
 import OnboardingVideoPlayer from "@/components/_core/onboarding/onboarding-video-player";
 import { usePreDiagnosticNavigation } from "@/components/_core/pre-diagnostic-test/use-pre-diagnostic-navigation";
 import { useUpdateCompletedPreDiagnostic } from "@/features/internship/use-update-completed-pre-diagnostic";
+import {
+  buildPracticalWalkthroughHref,
+  getFirstPracticalWalkthroughStepKey,
+} from "@/features/pre-diagnostic/practical-walkthrough-steps";
 import { getPreDiagnosticVideoDescription } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 
 const FALLBACK_VIDEO_SRC = "https://vimeo.com/1123856639";
@@ -32,8 +36,14 @@ const TechnologyUseCase = () => {
 
     try {
       await markPreDiagnosticStepComplete("technology-use-case");
+      const walkthroughCount = Math.max(
+        preDiagnostic.technology_readiness.PracticalWalkthrough.length,
+        1,
+      );
       router.push(
-        "/pre-diagnostic-test/technology-readiness?step=practical-walkthrough-1",
+        buildPracticalWalkthroughHref(
+          getFirstPracticalWalkthroughStepKey(walkthroughCount),
+        ),
       );
     } catch {
       // errorMessage is set by the hook

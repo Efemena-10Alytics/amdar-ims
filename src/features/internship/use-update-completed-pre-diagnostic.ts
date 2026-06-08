@@ -20,13 +20,20 @@ import {
   isCareerKnowledgeDiscoveryStep,
   parseCareerKnowledgeDiscoveryStepNumber,
 } from "@/features/pre-diagnostic/career-knowledge-discovery-steps";
+import {
+  getLastPracticalWalkthroughStepKey,
+  getPracticalWalkthroughStepKeys,
+  isPracticalWalkthroughStep,
+  parsePracticalWalkthroughStepNumber,
+  PRACTICAL_WALKTHROUGH_ENROLLMENT_STEP_KEY,
+} from "@/features/pre-diagnostic/practical-walkthrough-steps";
 
 export const PRE_DIAGNOSTIC_STEP_KEYS = [
   "welcome-video",
   CAREER_KNOWLEDGE_DISCOVERY_ENROLLMENT_STEP_KEY,
   "career-path-diagnostics",
   "technology-use-case",
-  "practical-walkthrough-2",
+  PRACTICAL_WALKTHROUGH_ENROLLMENT_STEP_KEY,
   "technology-diagnostics",
   "how-the-ims-works",
   "ims-diagnostics",
@@ -61,7 +68,7 @@ export const PRE_DIAGNOSTIC_STEP_TO_ENROLLMENT: Record<
     group: "TechnologyDiagnostic",
     step: "technologyUseCase",
   },
-  "practical-walkthrough-2": {
+  [PRACTICAL_WALKTHROUGH_ENROLLMENT_STEP_KEY]: {
     group: "TechnologyDiagnostic",
     step: "practicalWalkthrough",
   },
@@ -96,9 +103,8 @@ export function getPreDiagnosticAsideStepKeys({
   const discoverySteps = getCareerKnowledgeDiscoveryStepKeys(
     careerKnowledgeDiscoveryCount,
   ) as PreDiagnosticAsideStepKey[];
-  const walkthroughSteps = Array.from(
-    { length: Math.max(practicalWalkthroughCount, 1) },
-    (_, index) => `practical-walkthrough-${index + 1}`,
+  const walkthroughSteps = getPracticalWalkthroughStepKeys(
+    practicalWalkthroughCount,
   ) as PreDiagnosticAsideStepKey[];
 
   return [
@@ -150,9 +156,8 @@ function getPreDiagnosticAsideStepEnrollmentMapping(
     return { group: "TechnologyDiagnostic", step: "technologyUseCase" };
   }
 
-  const walkthroughMatch = asideStepKey.match(/^practical-walkthrough-(\d+)$/);
-  if (walkthroughMatch) {
-    const walkthroughStepNumber = Number.parseInt(walkthroughMatch[1], 10);
+  const walkthroughStepNumber = parsePracticalWalkthroughStepNumber(asideStepKey);
+  if (walkthroughStepNumber != null) {
     if (walkthroughStepNumber === Math.max(practicalWalkthroughCount, 1)) {
       return { group: "TechnologyDiagnostic", step: "practicalWalkthrough" };
     }
@@ -186,6 +191,7 @@ function getPreDiagnosticEnrollmentStepStatus(
 function getPreDiagnosticStepUnlockAfter(
   asideStepKey: string,
   careerKnowledgeDiscoveryCount = 2,
+  practicalWalkthroughCount = 2,
 ): string[] {
   const discoveryStepNumber =
     parseCareerKnowledgeDiscoveryStepNumber(asideStepKey);
@@ -200,10 +206,13 @@ function getPreDiagnosticStepUnlockAfter(
   if (asideStepKey === "welcome-video") return [];
   if (asideStepKey === "technology-use-case") return ["career-path-diagnostics"];
 
-  const walkthroughMatch = asideStepKey.match(/^practical-walkthrough-(\d+)$/);
-  if (walkthroughMatch) return ["technology-use-case"];
+  if (parsePracticalWalkthroughStepNumber(asideStepKey) != null) {
+    return ["technology-use-case"];
+  }
 
-  if (asideStepKey === "technology-diagnostics") return ["practical-walkthrough-2"];
+  if (asideStepKey === "technology-diagnostics") {
+    return [getLastPracticalWalkthroughStepKey(practicalWalkthroughCount)];
+  }
   if (asideStepKey === "how-the-ims-works") return ["technology-diagnostics"];
   if (asideStepKey === "ims-diagnostics") return ["how-the-ims-works"];
 
@@ -227,7 +236,7 @@ export function isPreDiagnosticEnrollmentStepComplete(
     if (isCareerKnowledgeDiscoveryStep(asideStepKey)) {
       return steps?.carrerReadiness?.careerKnowledgeDiscovery === "completed";
     }
-    if (asideStepKey === "practical-walkthrough-1") {
+    if (isPracticalWalkthroughStep(asideStepKey)) {
       return steps?.TechnologyDiagnostic?.practicalWalkthrough === "completed";
     }
     return false;
@@ -244,6 +253,7 @@ export function isPreDiagnosticAsideStepLocked(
   const prerequisites = getPreDiagnosticStepUnlockAfter(
     asideStepKey,
     options?.careerKnowledgeDiscoveryCount ?? 2,
+    options?.practicalWalkthroughCount ?? 2,
   );
 
   return prerequisites.some(

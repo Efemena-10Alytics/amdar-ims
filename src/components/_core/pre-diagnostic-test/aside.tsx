@@ -12,6 +12,7 @@ import {
   isPreDiagnosticEnrollmentStepComplete,
 } from "@/features/internship/use-update-completed-pre-diagnostic";
 import { buildCareerKnowledgeDiscoveryStepKey } from "@/features/pre-diagnostic/career-knowledge-discovery-steps";
+import { buildPracticalWalkthroughStepKey } from "@/features/pre-diagnostic/practical-walkthrough-steps";
 import { useGetPreDiagnostic } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 import type { PreDiagnosticStepsCompletedState } from "@/types/user/enrollment";
 
@@ -39,12 +40,23 @@ type ReadinessGroup = {
   items: AsideEntry[];
 };
 
-function buildReadinessGroups(careerKnowledgeDiscoveryCount: number): ReadinessGroup[] {
+function buildReadinessGroups(
+  careerKnowledgeDiscoveryCount: number,
+  practicalWalkthroughCount: number,
+): ReadinessGroup[] {
   const careerKnowledgeChildren = Array.from(
     { length: careerKnowledgeDiscoveryCount },
     (_, index) => ({
       key: buildCareerKnowledgeDiscoveryStepKey(index),
       label: `Career knowledge discovery ${index + 1}`,
+    }),
+  );
+
+  const practicalWalkthroughChildren = Array.from(
+    { length: practicalWalkthroughCount },
+    (_, index) => ({
+      key: buildPracticalWalkthroughStepKey(index),
+      label: `Practical walkthrough ${index + 1}`,
     }),
   );
 
@@ -72,13 +84,7 @@ function buildReadinessGroups(careerKnowledgeDiscoveryCount: number): ReadinessG
         {
           key: "practical-walkthrough",
           label: "Practical walkthrough",
-          children: [
-            {
-              key: "practical-walkthrough-1",
-              label: "Practical walkthrough 1",
-            },
-            { key: "practical-walkthrough-2", label: "Practical walkthrough 2" },
-          ],
+          children: practicalWalkthroughChildren,
         },
         { key: "technology-diagnostics", label: "Technology diagnostics" },
       ],
@@ -149,13 +155,21 @@ const Aside = () => {
     preDiagnostic?.career_readiness.careerKnowledgeDiscovery.length ?? 2,
     1,
   );
+  const practicalWalkthroughCount = Math.max(
+    preDiagnostic?.technology_readiness.PracticalWalkthrough.length ?? 2,
+    1,
+  );
   const stepOptions = useMemo(
-    () => ({ careerKnowledgeDiscoveryCount }),
-    [careerKnowledgeDiscoveryCount],
+    () => ({ careerKnowledgeDiscoveryCount, practicalWalkthroughCount }),
+    [careerKnowledgeDiscoveryCount, practicalWalkthroughCount],
   );
   const readinessGroups = useMemo(
-    () => buildReadinessGroups(careerKnowledgeDiscoveryCount),
-    [careerKnowledgeDiscoveryCount],
+    () =>
+      buildReadinessGroups(
+        careerKnowledgeDiscoveryCount,
+        practicalWalkthroughCount,
+      ),
+    [careerKnowledgeDiscoveryCount, practicalWalkthroughCount],
   );
 
   const activeGroup = getActiveGroup(pathname, readinessGroups);
