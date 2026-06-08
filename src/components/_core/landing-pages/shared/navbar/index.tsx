@@ -76,7 +76,8 @@ const Navbr = () => {
     pathname === "/internship" ||
     pathname.startsWith("/payment") ||
     pathname.startsWith("/internship");
-  const isMoreProgramRoute = pathname.startsWith("/blog");
+  const isMoreProgramRoute =
+    pathname.startsWith("/blog") || pathname.startsWith("/testimonial");
 
   const showSalesBanner =
     !pathname.startsWith("/internship/") && !pathname.startsWith("/payment");

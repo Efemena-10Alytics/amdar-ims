@@ -29,6 +29,11 @@ const DEFAULT_GRID_ITEMS: MoreGridItem[] = [
     href: "/blog",
   },
   {
+    title: "Testimonials",
+    description: "Hear what our interns say about their Amdari experience",
+    href: "/testimonial",
+  },
+  {
     title: "Job board",
     description: "Check out some jobs you can apply to here",
     href: "/talent-loop",
