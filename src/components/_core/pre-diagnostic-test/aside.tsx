@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useMemo } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Check, ChevronRight, Loader } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -9,8 +10,9 @@ import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollm
 import {
   isPreDiagnosticAsideStepLocked,
   isPreDiagnosticEnrollmentStepComplete,
-  type PreDiagnosticAsideStepKey,
 } from "@/features/internship/use-update-completed-pre-diagnostic";
+import { buildCareerKnowledgeDiscoveryStepKey } from "@/features/pre-diagnostic/career-knowledge-discovery-steps";
+import { useGetPreDiagnostic } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 import type { PreDiagnosticStepsCompletedState } from "@/types/user/enrollment";
 
 type StepItem = {
@@ -30,62 +32,68 @@ function isGroupItem(entry: AsideEntry): entry is GroupItem {
   return "children" in entry;
 }
 
-const READINESS_GROUPS = [
-  {
-    key: "career-readiness",
-    title: "Career Readiness",
-    href: "/pre-diagnostic-test",
-    items: [
-      { key: "welcome-video", label: "Welcome video" },
-      {
-        key: "career-knowledge",
-        label: "Career Knowledge discovery",
-        children: [
-          {
-            key: "career-knowledge-discovery-1",
-            label: "Career knowledge discovery 1",
-          },
-          {
-            key: "career-knowledge-discovery-2",
-            label: "Career knowledge discovery 2",
-          },
-        ],
-      },
-      { key: "career-path-diagnostics", label: "Career path diagnostics" },
-    ] satisfies AsideEntry[],
-  },
-  {
-    key: "technology-readiness",
-    title: "Technology Readiness",
-    href: "/pre-diagnostic-test/technology-readiness",
-    items: [
-      { key: "technology-use-case", label: "Technology use case" },
-      {
-        key: "practical-walkthrough",
-        label: "Practical walkthrough",
-        children: [
-          {
-            key: "practical-walkthrough-1",
-            label: "Practical walkthrough 1",
-          },
-          { key: "practical-walkthrough-2", label: "Practical walkthrough 2" },
-        ],
-      },
-      { key: "technology-diagnostics", label: "Technology diagnostics" },
-    ] satisfies AsideEntry[],
-  },
-  {
-    key: "ims-readiness",
-    title: "IMS Process",
-    href: "/pre-diagnostic-test/ims-readiness",
-    items: [
-      { key: "how-the-ims-works", label: "How the IMS works" },
-      { key: "ims-diagnostics", label: "IMS Diagnostics" },
-    ] satisfies StepItem[],
-  },
-] as const;
+type ReadinessGroup = {
+  key: string;
+  title: string;
+  href: string;
+  items: AsideEntry[];
+};
 
-type ReadinessGroup = (typeof READINESS_GROUPS)[number];
+function buildReadinessGroups(careerKnowledgeDiscoveryCount: number): ReadinessGroup[] {
+  const careerKnowledgeChildren = Array.from(
+    { length: careerKnowledgeDiscoveryCount },
+    (_, index) => ({
+      key: buildCareerKnowledgeDiscoveryStepKey(index),
+      label: `Career knowledge discovery ${index + 1}`,
+    }),
+  );
+
+  return [
+    {
+      key: "career-readiness",
+      title: "Career Readiness",
+      href: "/pre-diagnostic-test",
+      items: [
+        { key: "welcome-video", label: "Welcome video" },
+        {
+          key: "career-knowledge",
+          label: "Career Knowledge discovery",
+          children: careerKnowledgeChildren,
+        },
+        { key: "career-path-diagnostics", label: "Career path diagnostics" },
+      ],
+    },
+    {
+      key: "technology-readiness",
+      title: "Technology Readiness",
+      href: "/pre-diagnostic-test/technology-readiness",
+      items: [
+        { key: "technology-use-case", label: "Technology use case" },
+        {
+          key: "practical-walkthrough",
+          label: "Practical walkthrough",
+          children: [
+            {
+              key: "practical-walkthrough-1",
+              label: "Practical walkthrough 1",
+            },
+            { key: "practical-walkthrough-2", label: "Practical walkthrough 2" },
+          ],
+        },
+        { key: "technology-diagnostics", label: "Technology diagnostics" },
+      ],
+    },
+    {
+      key: "ims-readiness",
+      title: "IMS Process",
+      href: "/pre-diagnostic-test/ims-readiness",
+      items: [
+        { key: "how-the-ims-works", label: "How the IMS works" },
+        { key: "ims-diagnostics", label: "IMS Diagnostics" },
+      ],
+    },
+  ];
+}
 
 function getFlatStepsForGroup(group: ReadinessGroup) {
   return group.items.flatMap((item) =>
@@ -93,8 +101,8 @@ function getFlatStepsForGroup(group: ReadinessGroup) {
   );
 }
 
-function getActiveGroup(pathname: string) {
-  return READINESS_GROUPS.find((group) => group.href === pathname) ?? READINESS_GROUPS[0];
+function getActiveGroup(pathname: string, groups: ReadinessGroup[]) {
+  return groups.find((group) => group.href === pathname) ?? groups[0];
 }
 
 function resolveCurrentStep(group: ReadinessGroup, stepParam: string | null) {
@@ -135,8 +143,22 @@ const Aside = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { data: enrollment } = useGetUserEnrollment();
+  const { data: preDiagnostic } = useGetPreDiagnostic();
 
-  const activeGroup = getActiveGroup(pathname);
+  const careerKnowledgeDiscoveryCount = Math.max(
+    preDiagnostic?.career_readiness.careerKnowledgeDiscovery.length ?? 2,
+    1,
+  );
+  const stepOptions = useMemo(
+    () => ({ careerKnowledgeDiscoveryCount }),
+    [careerKnowledgeDiscoveryCount],
+  );
+  const readinessGroups = useMemo(
+    () => buildReadinessGroups(careerKnowledgeDiscoveryCount),
+    [careerKnowledgeDiscoveryCount],
+  );
+
+  const activeGroup = getActiveGroup(pathname, readinessGroups);
   const activeGroupKey = activeGroup.key;
   const currentStepKey = resolveCurrentStep(activeGroup, searchParams.get("step"));
   const preDiagnosticStepsCompleted = enrollment?.isPreDiagnosticStepsCompleted;
@@ -158,7 +180,7 @@ const Aside = () => {
         </div>
 
         <div className="mt-8 space-y-2.5">
-          {READINESS_GROUPS.map((group) => {
+          {readinessGroups.map((group) => {
             const isOpen = group.key === activeGroupKey;
 
             return (
@@ -215,17 +237,18 @@ const Aside = () => {
 
                             <ul className="space-y-4">
                               {entry.children.map((child, childIndex) => {
-                                const childStepKey = child.key as PreDiagnosticAsideStepKey;
                                 const isChildDone = isPreDiagnosticEnrollmentStepComplete(
                                   preDiagnosticStepsCompleted,
-                                  childStepKey,
+                                  child.key,
+                                  stepOptions,
                                 );
                                 const isChildCurrent =
                                   group.key === activeGroupKey &&
                                   child.key === currentStepKey;
                                 const isChildLocked = isPreDiagnosticAsideStepLocked(
                                   preDiagnosticStepsCompleted,
-                                  childStepKey,
+                                  child.key,
+                                  stepOptions,
                                 );
                                 const isLastChild =
                                   childIndex === entry.children.length - 1;
@@ -282,16 +305,17 @@ const Aside = () => {
                         );
                       }
 
-                      const stepKey = entry.key as PreDiagnosticAsideStepKey;
                       const isDone = isPreDiagnosticEnrollmentStepComplete(
                         preDiagnosticStepsCompleted,
-                        stepKey,
+                        entry.key,
+                        stepOptions,
                       );
                       const isCurrent =
                         group.key === activeGroupKey && entry.key === currentStepKey;
                       const isLocked = isPreDiagnosticAsideStepLocked(
                         preDiagnosticStepsCompleted,
-                        stepKey,
+                        entry.key,
+                        stepOptions,
                       );
 
                       return (

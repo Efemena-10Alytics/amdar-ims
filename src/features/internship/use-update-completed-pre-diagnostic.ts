@@ -13,10 +13,17 @@ import type {
 } from "@/types/user/enrollment";
 import { USER_ENROLLMENT_QUERY_KEY } from "@/features/internship/use-get-user-enrollment";
 import { updateEnrollmentOnboardingSteps } from "@/features/internship/use-update-completed-onboarding-step";
+import {
+  CAREER_KNOWLEDGE_DISCOVERY_ENROLLMENT_STEP_KEY,
+  getCareerKnowledgeDiscoveryStepKeys,
+  getLastCareerKnowledgeDiscoveryStepKey,
+  isCareerKnowledgeDiscoveryStep,
+  parseCareerKnowledgeDiscoveryStepNumber,
+} from "@/features/pre-diagnostic/career-knowledge-discovery-steps";
 
 export const PRE_DIAGNOSTIC_STEP_KEYS = [
   "welcome-video",
-  "career-knowledge-discovery-2",
+  CAREER_KNOWLEDGE_DISCOVERY_ENROLLMENT_STEP_KEY,
   "career-path-diagnostics",
   "technology-use-case",
   "practical-walkthrough-2",
@@ -42,7 +49,7 @@ export const PRE_DIAGNOSTIC_STEP_TO_ENROLLMENT: Record<
   PreDiagnosticStepMapping
 > = {
   "welcome-video": { group: "carrerReadiness", step: "welcomeVideo" },
-  "career-knowledge-discovery-2": {
+  [CAREER_KNOWLEDGE_DISCOVERY_ENROLLMENT_STEP_KEY]: {
     group: "carrerReadiness",
     step: "careerKnowledgeDiscovery",
   },
@@ -66,21 +73,48 @@ export const PRE_DIAGNOSTIC_STEP_TO_ENROLLMENT: Record<
   "ims-diagnostics": { group: "imsProcess", step: "imsProcessDiagnostic" },
 };
 
-/** Aside step keys shown in the pre-diagnostic UI (includes sub-steps without their own API field). */
-export const PRE_DIAGNOSTIC_ASIDE_STEP_KEYS = [
-  "welcome-video",
-  "career-knowledge-discovery-1",
-  "career-knowledge-discovery-2",
-  "career-path-diagnostics",
-  "technology-use-case",
-  "practical-walkthrough-1",
-  "practical-walkthrough-2",
-  "technology-diagnostics",
-  "how-the-ims-works",
-  "ims-diagnostics",
-] as const;
+export type PreDiagnosticAsideStepKey =
+  | "welcome-video"
+  | `career-knowledge-discovery-${number}`
+  | "career-path-diagnostics"
+  | "technology-use-case"
+  | `practical-walkthrough-${number}`
+  | "technology-diagnostics"
+  | "how-the-ims-works"
+  | "ims-diagnostics";
 
-export type PreDiagnosticAsideStepKey = (typeof PRE_DIAGNOSTIC_ASIDE_STEP_KEYS)[number];
+type PreDiagnosticAsideStepOptions = {
+  careerKnowledgeDiscoveryCount?: number;
+  practicalWalkthroughCount?: number;
+};
+
+/** Aside step keys shown in the pre-diagnostic UI (includes sub-steps without their own API field). */
+export function getPreDiagnosticAsideStepKeys({
+  careerKnowledgeDiscoveryCount = 2,
+  practicalWalkthroughCount = 2,
+}: PreDiagnosticAsideStepOptions = {}): PreDiagnosticAsideStepKey[] {
+  const discoverySteps = getCareerKnowledgeDiscoveryStepKeys(
+    careerKnowledgeDiscoveryCount,
+  ) as PreDiagnosticAsideStepKey[];
+  const walkthroughSteps = Array.from(
+    { length: Math.max(practicalWalkthroughCount, 1) },
+    (_, index) => `practical-walkthrough-${index + 1}`,
+  ) as PreDiagnosticAsideStepKey[];
+
+  return [
+    "welcome-video",
+    ...discoverySteps,
+    "career-path-diagnostics",
+    "technology-use-case",
+    ...walkthroughSteps,
+    "technology-diagnostics",
+    "how-the-ims-works",
+    "ims-diagnostics",
+  ];
+}
+
+/** @deprecated Use `getPreDiagnosticAsideStepKeys()` */
+export const PRE_DIAGNOSTIC_ASIDE_STEP_KEYS = getPreDiagnosticAsideStepKeys();
 
 type PreDiagnosticAsideStepMapping = {
   group: PreDiagnosticGroupKey;
@@ -90,36 +124,55 @@ type PreDiagnosticAsideStepMapping = {
     | PreDiagnosticImsProcessStepKey;
 };
 
-const PRE_DIAGNOSTIC_ASIDE_STEP_TO_ENROLLMENT: Record<
-  PreDiagnosticAsideStepKey,
-  PreDiagnosticAsideStepMapping | null
-> = {
-  "welcome-video": { group: "carrerReadiness", step: "welcomeVideo" },
-  "career-knowledge-discovery-1": null,
-  "career-knowledge-discovery-2": {
-    group: "carrerReadiness",
-    step: "careerKnowledgeDiscovery",
-  },
-  "career-path-diagnostics": {
-    group: "carrerReadiness",
-    step: "CareerPathDiagnostic",
-  },
-  "technology-use-case": {
-    group: "TechnologyDiagnostic",
-    step: "technologyUseCase",
-  },
-  "practical-walkthrough-1": null,
-  "practical-walkthrough-2": {
-    group: "TechnologyDiagnostic",
-    step: "practicalWalkthrough",
-  },
-  "technology-diagnostics": {
-    group: "TechnologyDiagnostic",
-    step: "TechnologyDiagnostic",
-  },
-  "how-the-ims-works": { group: "imsProcess", step: "HowTheImsWorks" },
-  "ims-diagnostics": { group: "imsProcess", step: "imsProcessDiagnostic" },
-};
+function getPreDiagnosticAsideStepEnrollmentMapping(
+  asideStepKey: string,
+  careerKnowledgeDiscoveryCount = 2,
+  practicalWalkthroughCount = 2,
+): PreDiagnosticAsideStepMapping | null {
+  if (asideStepKey === "welcome-video") {
+    return { group: "carrerReadiness", step: "welcomeVideo" };
+  }
+
+  const discoveryStepNumber =
+    parseCareerKnowledgeDiscoveryStepNumber(asideStepKey);
+  if (discoveryStepNumber != null) {
+    if (discoveryStepNumber === Math.max(careerKnowledgeDiscoveryCount, 1)) {
+      return { group: "carrerReadiness", step: "careerKnowledgeDiscovery" };
+    }
+    return null;
+  }
+
+  if (asideStepKey === "career-path-diagnostics") {
+    return { group: "carrerReadiness", step: "CareerPathDiagnostic" };
+  }
+
+  if (asideStepKey === "technology-use-case") {
+    return { group: "TechnologyDiagnostic", step: "technologyUseCase" };
+  }
+
+  const walkthroughMatch = asideStepKey.match(/^practical-walkthrough-(\d+)$/);
+  if (walkthroughMatch) {
+    const walkthroughStepNumber = Number.parseInt(walkthroughMatch[1], 10);
+    if (walkthroughStepNumber === Math.max(practicalWalkthroughCount, 1)) {
+      return { group: "TechnologyDiagnostic", step: "practicalWalkthrough" };
+    }
+    return null;
+  }
+
+  if (asideStepKey === "technology-diagnostics") {
+    return { group: "TechnologyDiagnostic", step: "TechnologyDiagnostic" };
+  }
+
+  if (asideStepKey === "how-the-ims-works") {
+    return { group: "imsProcess", step: "HowTheImsWorks" };
+  }
+
+  if (asideStepKey === "ims-diagnostics") {
+    return { group: "imsProcess", step: "imsProcessDiagnostic" };
+  }
+
+  return null;
+}
 
 function getPreDiagnosticEnrollmentStepStatus(
   steps: PreDiagnosticStepsCompletedState | undefined,
@@ -130,30 +183,48 @@ function getPreDiagnosticEnrollmentStepStatus(
   return groupSteps[mapping.step as keyof typeof groupSteps];
 }
 
-const PRE_DIAGNOSTIC_STEP_UNLOCK_AFTER: Record<
-  PreDiagnosticAsideStepKey,
-  PreDiagnosticAsideStepKey[]
-> = {
-  "welcome-video": [],
-  "career-knowledge-discovery-1": ["welcome-video"],
-  "career-knowledge-discovery-2": ["welcome-video"],
-  "career-path-diagnostics": ["career-knowledge-discovery-2"],
-  "technology-use-case": ["career-path-diagnostics"],
-  "practical-walkthrough-1": ["technology-use-case"],
-  "practical-walkthrough-2": ["technology-use-case"],
-  "technology-diagnostics": ["practical-walkthrough-2"],
-  "how-the-ims-works": ["technology-diagnostics"],
-  "ims-diagnostics": ["how-the-ims-works"],
-};
+function getPreDiagnosticStepUnlockAfter(
+  asideStepKey: string,
+  careerKnowledgeDiscoveryCount = 2,
+): string[] {
+  const discoveryStepNumber =
+    parseCareerKnowledgeDiscoveryStepNumber(asideStepKey);
+  if (discoveryStepNumber != null) {
+    return discoveryStepNumber === 1 ? ["welcome-video"] : ["welcome-video"];
+  }
+
+  if (asideStepKey === "career-path-diagnostics") {
+    return [getLastCareerKnowledgeDiscoveryStepKey(careerKnowledgeDiscoveryCount)];
+  }
+
+  if (asideStepKey === "welcome-video") return [];
+  if (asideStepKey === "technology-use-case") return ["career-path-diagnostics"];
+
+  const walkthroughMatch = asideStepKey.match(/^practical-walkthrough-(\d+)$/);
+  if (walkthroughMatch) return ["technology-use-case"];
+
+  if (asideStepKey === "technology-diagnostics") return ["practical-walkthrough-2"];
+  if (asideStepKey === "how-the-ims-works") return ["technology-diagnostics"];
+  if (asideStepKey === "ims-diagnostics") return ["how-the-ims-works"];
+
+  return [];
+}
 
 export function isPreDiagnosticEnrollmentStepComplete(
   steps: PreDiagnosticStepsCompletedState | undefined,
-  asideStepKey: PreDiagnosticAsideStepKey,
+  asideStepKey: string,
+  options?: PreDiagnosticAsideStepOptions,
 ): boolean {
-  const mapping = PRE_DIAGNOSTIC_ASIDE_STEP_TO_ENROLLMENT[asideStepKey];
+  const careerKnowledgeDiscoveryCount = options?.careerKnowledgeDiscoveryCount ?? 2;
+  const practicalWalkthroughCount = options?.practicalWalkthroughCount ?? 2;
+  const mapping = getPreDiagnosticAsideStepEnrollmentMapping(
+    asideStepKey,
+    careerKnowledgeDiscoveryCount,
+    practicalWalkthroughCount,
+  );
 
   if (mapping === null) {
-    if (asideStepKey === "career-knowledge-discovery-1") {
+    if (isCareerKnowledgeDiscoveryStep(asideStepKey)) {
       return steps?.carrerReadiness?.careerKnowledgeDiscovery === "completed";
     }
     if (asideStepKey === "practical-walkthrough-1") {
@@ -167,11 +238,17 @@ export function isPreDiagnosticEnrollmentStepComplete(
 
 export function isPreDiagnosticAsideStepLocked(
   steps: PreDiagnosticStepsCompletedState | undefined,
-  asideStepKey: PreDiagnosticAsideStepKey,
+  asideStepKey: string,
+  options?: PreDiagnosticAsideStepOptions,
 ): boolean {
-  const prerequisites = PRE_DIAGNOSTIC_STEP_UNLOCK_AFTER[asideStepKey] ?? [];
+  const prerequisites = getPreDiagnosticStepUnlockAfter(
+    asideStepKey,
+    options?.careerKnowledgeDiscoveryCount ?? 2,
+  );
+
   return prerequisites.some(
-    (requiredStep) => !isPreDiagnosticEnrollmentStepComplete(steps, requiredStep),
+    (requiredStep) =>
+      !isPreDiagnosticEnrollmentStepComplete(steps, requiredStep, options),
   );
 }
 
