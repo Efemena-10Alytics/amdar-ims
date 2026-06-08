@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Play } from "lucide-react";
 import ReactPlayer from "react-player";
+import { VideoFullscreenButton } from "@/components/_core/shared/video-fullscreen-button";
+import { useVideoFullscreen } from "@/hooks/use-video-fullscreen";
 import {
   Carousel,
   CarouselContent,
@@ -37,16 +39,32 @@ function TestimonialVideoCard({
   onImageError,
   onPlay,
 }: TestimonialVideoCardProps) {
+  const { containerRef, isFullscreen, toggleFullscreen } = useVideoFullscreen();
+
   if (isPlaying) {
     return (
-      <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-black sm:min-h-112">
+      <div
+        ref={containerRef}
+        className={cn(
+          "relative aspect-video w-full overflow-hidden rounded-2xl bg-black sm:min-h-112",
+          "[&:fullscreen]:flex [&:fullscreen]:aspect-auto [&:fullscreen]:h-screen [&:fullscreen]:max-h-none [&:fullscreen]:w-screen [&:fullscreen]:items-center [&:fullscreen]:justify-center [&:fullscreen]:rounded-none",
+        )}
+      >
         <ReactPlayer
           src={testimonial.videoUrl}
           playing
           controls
           width="100%"
           height="100%"
+          className={cn(isFullscreen && "max-h-screen max-w-screen")}
         />
+
+        <div className="absolute right-4 bottom-4 z-10">
+          <VideoFullscreenButton
+            isFullscreen={isFullscreen}
+            onToggle={toggleFullscreen}
+          />
+        </div>
       </div>
     );
   }
