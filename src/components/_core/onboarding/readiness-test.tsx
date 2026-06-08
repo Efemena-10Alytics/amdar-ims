@@ -1,14 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import ReadinessTestDrawer from "@/components/_core/readiness-test/readiness-test-drawer";
-import ReadinessTestResult from "@/components/_core/readiness-test/readiness-test-result";
 import { getReadinessTestGuidelines } from "@/features/readiness-test/get-readiness-test-guidelines";
 import { getSortedReadinessTestFields } from "@/features/readiness-test/get-sorted-form-fields";
+import { useReadinessTestEntry } from "@/features/readiness-test/use-readiness-test-entry";
 import type { ReadinessTestSubmitResultData } from "@/features/readiness-test/types";
-import { useUpdateCompletedOnboardingStep } from "@/features/internship/use-update-completed-onboarding-step";
+import {
+  isOnboardingEnrollmentStepComplete,
+  useUpdateCompletedOnboardingStep,
+} from "@/features/internship/use-update-completed-onboarding-step";
 import Flag from "../landing-pages/home/hero/flag";
+import { useOnboardingData } from "./onboarding-context";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
 const GUIDELINES = [
@@ -21,27 +25,34 @@ const GUIDELINES = [
 const ReadinessTest = () => {
   const router = useRouter();
   const { onboarding } = useOnboardingNavigation();
+  const { enrollment } = useOnboardingData();
   const { markOnboardingStepComplete, isUpdating, errorMessage } =
     useUpdateCompletedOnboardingStep();
-  const [isQuizOpen, setIsQuizOpen] = useState(false);
-  const [submitResult, setSubmitResult] =
-    useState<ReadinessTestSubmitResultData | null>(null);
 
   const readinessForm = onboarding.readiness_test;
+  const isStepCompleted = isOnboardingEnrollmentStepComplete(
+    enrollment?.isOnboardingStepsCompleted,
+    "readiness-test",
+  );
+  const {
+    savedResult,
+    isLoadingLatest,
+    canViewResults,
+    isDrawerOpen,
+    setIsDrawerOpen,
+    handleSubmitted,
+  } = useReadinessTestEntry(readinessForm?.id, isStepCompleted);
+
   const fields = useMemo(
     () => getSortedReadinessTestFields(readinessForm),
     [readinessForm],
   );
 
   const questionCount = fields.length;
-  const quizMinutes =
-    readinessForm?.duration ?? Math.max(questionCount, 1) * 5;
+  const quizMinutes = readinessForm?.duration ?? 10;
+  const quizTitle = readinessForm?.title ?? "Readiness Quiz";
 
-  const handleQuizComplete = async (result: ReadinessTestSubmitResultData) => {
-    setSubmitResult(result);
-  };
-
-  const handleProceed = async () => {
+  const handleProceed = async (_result: ReadinessTestSubmitResultData) => {
     if (isUpdating) return;
 
     try {
@@ -51,23 +62,6 @@ const ReadinessTest = () => {
       // errorMessage is set by the hook
     }
   };
-
-  const handleRetake = () => {
-    setSubmitResult(null);
-    setIsQuizOpen(true);
-  };
-
-  if (submitResult) {
-    return (
-      <ReadinessTestResult
-        totalScore={submitResult.total_score}
-        title={readinessForm?.title ?? "Readiness Quiz"}
-        onRetake={handleRetake}
-        onProceed={handleProceed}
-        isProceeding={isUpdating}
-      />
-    );
-  }
 
   return (
     <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
@@ -112,21 +106,30 @@ const ReadinessTest = () => {
 
       <button
         type="button"
-        disabled={questionCount === 0 || isUpdating}
-        onClick={() => setIsQuizOpen(true)}
+        disabled={questionCount === 0 || isUpdating || isLoadingLatest}
+        onClick={() => setIsDrawerOpen(true)}
         className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0]"
       >
-        {isUpdating ? "Saving..." : "Start Quiz"}
+        {isUpdating
+          ? "Saving..."
+          : isLoadingLatest
+            ? "Loading..."
+            : canViewResults
+              ? "View results"
+              : "Start Quiz"}
       </button>
 
       <ReadinessTestDrawer
-        open={isQuizOpen}
-        onOpenChange={setIsQuizOpen}
+        open={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
         form={readinessForm}
         durationMinutes={quizMinutes}
-        title={readinessForm?.title ?? "Readiness Quiz"}
+        title={quizTitle}
         finishLabel="Finish Quiz"
-        onComplete={handleQuizComplete}
+        isProceeding={isUpdating}
+        savedResult={savedResult}
+        onSubmitted={handleSubmitted}
+        onComplete={handleProceed}
       />
     </section>
   );

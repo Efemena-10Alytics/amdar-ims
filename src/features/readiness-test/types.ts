@@ -145,3 +145,9 @@ export type ReadinessTestSubmitResponse = {
   message: string;
   data?: ReadinessTestSubmitResultData;
 };
+
+export type ReadinessTestLatestSubmissionResponse = {
+  success: boolean;
+  message: string;
+  data: ReadinessTestSubmitResultData | null;
+};
