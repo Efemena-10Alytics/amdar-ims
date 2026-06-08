@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Pause, Play } from "lucide-react";
 import ReactPlayer from "react-player";
+import { VideoFullscreenButton } from "@/components/_core/shared/video-fullscreen-button";
+import { useVideoFullscreen } from "@/hooks/use-video-fullscreen";
+import { cn } from "@/lib/utils";
 
 const PLAYBACK_RATES = [0.75, 1, 1.25, 1.5, 1.75, 2] as const;
 
@@ -31,6 +34,7 @@ type OnboardingVideoPlayerProps = {
 };
 
 const OnboardingVideoPlayer = ({ src, onEnded }: OnboardingVideoPlayerProps) => {
+  const { containerRef, isFullscreen, toggleFullscreen } = useVideoFullscreen();
   const playerRef = useRef<HTMLVideoElement | null>(null);
   const [videoPlaying, setVideoPlaying] = useState(true);
   const [volume, setVolume] = useState(0.5);
@@ -77,9 +81,13 @@ const OnboardingVideoPlayer = ({ src, onEnded }: OnboardingVideoPlayerProps) => 
 
   return (
     <div
+      ref={containerRef}
       role="button"
       tabIndex={0}
-      className="relative mt-3 h-63.75 overflow-hidden rounded-2xl sm:h-80"
+      className={cn(
+        "relative mt-3 h-63.75 overflow-hidden rounded-2xl sm:h-80",
+        "[&:fullscreen]:mt-0 [&:fullscreen]:flex [&:fullscreen]:h-screen [&:fullscreen]:max-h-none [&:fullscreen]:w-screen [&:fullscreen]:items-center [&:fullscreen]:justify-center [&:fullscreen]:rounded-none [&:fullscreen]:bg-black",
+      )}
       onClick={togglePlayback}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
@@ -98,6 +106,7 @@ const OnboardingVideoPlayer = ({ src, onEnded }: OnboardingVideoPlayerProps) => 
         playbackRate={playbackRate}
         width="100%"
         height="100%"
+        className={cn(isFullscreen && "max-h-screen max-w-screen")}
         controls={false}
         onReady={syncPlaybackTime}
         onDurationChange={syncPlaybackTime}
@@ -110,12 +119,16 @@ const OnboardingVideoPlayer = ({ src, onEnded }: OnboardingVideoPlayerProps) => 
         }}
       />
 
-      <span
-        className="pointer-events-none absolute top-3 right-3 z-10 rounded-md bg-black px-2.5 py-1 text-xs font-semibold whitespace-nowrap text-white tabular-nums"
-        aria-live="polite"
+      <div
+        className="absolute top-3 right-3 z-10"
+        onClick={(event) => event.stopPropagation()}
+        onKeyDown={(event) => event.stopPropagation()}
       >
-        {formatVideoTime(playedSeconds)} / {formatVideoTime(durationSeconds)}
-      </span>
+        <VideoFullscreenButton
+          isFullscreen={isFullscreen}
+          onToggle={toggleFullscreen}
+        />
+      </div>
 
       <button
         type="button"
@@ -167,6 +180,13 @@ const OnboardingVideoPlayer = ({ src, onEnded }: OnboardingVideoPlayerProps) => 
           className="h-1 w-20 cursor-pointer appearance-none rounded-lg bg-white/60"
           aria-label="Volume"
         />
+
+        <span
+          className="px-1 text-xs font-semibold whitespace-nowrap text-white tabular-nums"
+          aria-live="polite"
+        >
+          {formatVideoTime(playedSeconds)} / {formatVideoTime(durationSeconds)}
+        </span>
       </div>
     </div>
   );
