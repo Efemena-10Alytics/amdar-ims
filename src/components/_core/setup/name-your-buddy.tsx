@@ -22,7 +22,7 @@ const NameYourBuddy = () => {
   };
 
   return (
-    <section className="w-full max-w-180 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
+    <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
       <h1 className="text-2xl font-semibold text-[#173740]">The Amdari-You</h1>
 
       <article className="mt-5 rounded-2xl border border-[#DCE5E9] bg-white p-6 shadow-[0_8px_18px_rgba(18,57,67,0.06)] sm:p-8">

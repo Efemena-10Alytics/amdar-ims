@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 import Aside from "@/components/_core/pre-diagnostic-test/aside";
-import { JourneyStepper } from "@/components/_core/onboarding/journey-stepper";
+import { JourneyLayoutHeader } from "@/components/_core/onboarding/journey-layout-header";
 import { PreDiagnosticProvider } from "@/components/_core/pre-diagnostic-test/pre-diagnostic-context";
 import { useGetPreDiagnostic } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 
@@ -104,9 +104,7 @@ function PreDiagnosticShellContent({
           backgroundPosition: "0 0",
         }}
       >
-        <div className="w-full max-w-190 px-4 pt-5 sm:px-0 sm:pt-8">
-          <JourneyStepper activeStep={2} />
-        </div>
+        <JourneyLayoutHeader activeStep={2} />
         <div className="pb-8">{content}</div>
       </div>
     </div>

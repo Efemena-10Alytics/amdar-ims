@@ -1,7 +1,8 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
+import { useRequireUserId } from "@/hooks/use-require-user-id";
 import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
-import { getUserId } from "@/lib/get-user-id";
-import { useAuthStore } from "@/store/auth-store";
 import type {
   UserEnrollment,
   UserEnrollmentApiResponse,
@@ -22,14 +23,18 @@ export async function getUserEnrollment(): Promise<UserEnrollment> {
 }
 
 export function useGetUserEnrollment() {
-  const user = useAuthStore((s) => s.user);
-  const userId = getUserId(user);
+  const { userId, isAuthReady } = useRequireUserId();
 
-  return useQuery({
+  const query = useQuery({
     queryKey: USER_ENROLLMENT_QUERY_KEY,
     queryFn: getUserEnrollment,
-    enabled: !!apiBaseURL && userId != null && userId !== "",
+    enabled: !!apiBaseURL && isAuthReady && userId != null && userId !== "",
   });
+
+  return {
+    ...query,
+    isAuthReady,
+  };
 }
 
 /** @deprecated Use `useGetUserEnrollment` */

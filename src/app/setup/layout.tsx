@@ -1,31 +1,13 @@
-import Aside from "@/components/_core/setup/aside";
-import { JourneyStepper } from "@/components/_core/onboarding/journey-stepper";
+import SetupShell from "@/components/_core/setup/setup-shell";
 import React, { Suspense } from "react";
 
 const SetupLayout = ({
   children,
 }: Readonly<{ children: React.ReactNode }>) => {
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-white p-3 2xl:p-5">
-      <Suspense fallback={<div className="hidden lg:flex lg:w-[45%] xl:w-[42%]" />}>
-        <Aside />
-      </Suspense>
-      <div
-        className="relative h-full min-h-0 w-full overflow-y-auto sm:pl-10"
-        style={{
-          backgroundColor: "#E8EFF1",
-          backgroundImage: "url(/images/pngs/auth-pattern.png)",
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-          backgroundPosition: "0 0",
-        }}
-      >
-        <div className="w-full max-w-190 px-4 pt-5 sm:px-0 sm:pt-8">
-          <JourneyStepper activeStep={3} />
-        </div>
-        {children}
-      </div>
-    </div>
+    <SetupShell>
+      <Suspense fallback={null}>{children}</Suspense>
+    </SetupShell>
   );
 };
 
