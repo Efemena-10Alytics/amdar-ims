@@ -2,10 +2,13 @@ import { buildOnboardingStepHref } from "@/features/onboarding/use-get-onboardin
 import { ONBOARDING_STEP_KEYS } from "@/features/onboarding/types";
 import { isOnboardingEnrollmentStepComplete } from "@/features/internship/use-update-completed-onboarding-step";
 import {
+  getPreDiagnosticAsideStepKeys,
   isPreDiagnosticEnrollmentStepComplete,
-  PRE_DIAGNOSTIC_ASIDE_STEP_KEYS,
-  type PreDiagnosticAsideStepKey,
 } from "@/features/internship/use-update-completed-pre-diagnostic";
+import {
+  buildCareerKnowledgeDiscoveryHref,
+  isCareerKnowledgeDiscoveryStep,
+} from "@/features/pre-diagnostic/career-knowledge-discovery-steps";
 import type {
   OnboardingStepsCompletedState,
   PreDiagnosticStepsCompletedState,
@@ -26,24 +29,28 @@ export function hasEnrollmentJourneyVersion(enrollment: UserEnrollment): boolean
   return getEnrollmentCohortVersion(enrollment) != null;
 }
 
-const PRE_DIAGNOSTIC_STEP_ROUTES: Record<PreDiagnosticAsideStepKey, string> = {
-  "welcome-video": "/pre-diagnostic-test?step=welcome-video",
-  "career-knowledge-discovery-1":
-    "/pre-diagnostic-test?step=career-knowledge-discovery-1",
-  "career-knowledge-discovery-2":
-    "/pre-diagnostic-test?step=career-knowledge-discovery-2",
-  "career-path-diagnostics": "/pre-diagnostic-test?step=career-path-diagnostics",
-  "technology-use-case":
-    "/pre-diagnostic-test/technology-readiness?step=technology-use-case",
-  "practical-walkthrough-1":
-    "/pre-diagnostic-test/technology-readiness?step=practical-walkthrough-1",
-  "practical-walkthrough-2":
-    "/pre-diagnostic-test/technology-readiness?step=practical-walkthrough-2",
-  "technology-diagnostics":
-    "/pre-diagnostic-test/technology-readiness?step=technology-diagnostics",
-  "how-the-ims-works": "/pre-diagnostic-test/ims-readiness?step=how-the-ims-works",
-  "ims-diagnostics": "/pre-diagnostic-test/ims-readiness?step=ims-diagnostics",
-};
+function getPreDiagnosticStepRoute(step: string): string | null {
+  if (isCareerKnowledgeDiscoveryStep(step)) {
+    return buildCareerKnowledgeDiscoveryHref(step);
+  }
+
+  const routes: Record<string, string> = {
+    "welcome-video": "/pre-diagnostic-test?step=welcome-video",
+    "career-path-diagnostics": "/pre-diagnostic-test?step=career-path-diagnostics",
+    "technology-use-case":
+      "/pre-diagnostic-test/technology-readiness?step=technology-use-case",
+    "practical-walkthrough-1":
+      "/pre-diagnostic-test/technology-readiness?step=practical-walkthrough-1",
+    "practical-walkthrough-2":
+      "/pre-diagnostic-test/technology-readiness?step=practical-walkthrough-2",
+    "technology-diagnostics":
+      "/pre-diagnostic-test/technology-readiness?step=technology-diagnostics",
+    "how-the-ims-works": "/pre-diagnostic-test/ims-readiness?step=how-the-ims-works",
+    "ims-diagnostics": "/pre-diagnostic-test/ims-readiness?step=ims-diagnostics",
+  };
+
+  return routes[step] ?? null;
+}
 
 export function hasPendingOnboardingSteps(
   steps: OnboardingStepsCompletedState | undefined,
@@ -56,7 +63,7 @@ export function hasPendingOnboardingSteps(
 export function hasPendingPreDiagnosticSteps(
   steps: PreDiagnosticStepsCompletedState | undefined,
 ): boolean {
-  return PRE_DIAGNOSTIC_ASIDE_STEP_KEYS.some(
+  return getPreDiagnosticAsideStepKeys().some(
     (step) => !isPreDiagnosticEnrollmentStepComplete(steps, step),
   );
 }
@@ -75,9 +82,9 @@ export function getFirstPendingOnboardingHref(
 export function getFirstPendingPreDiagnosticHref(
   steps: PreDiagnosticStepsCompletedState | undefined,
 ): string | null {
-  for (const step of PRE_DIAGNOSTIC_ASIDE_STEP_KEYS) {
+  for (const step of getPreDiagnosticAsideStepKeys()) {
     if (!isPreDiagnosticEnrollmentStepComplete(steps, step)) {
-      return PRE_DIAGNOSTIC_STEP_ROUTES[step];
+      return getPreDiagnosticStepRoute(step);
     }
   }
   return null;

@@ -1,36 +1,77 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import OnboardingVideoPlayer from "@/components/_core/onboarding/onboarding-video-player";
 import { usePreDiagnosticNavigation } from "@/components/_core/pre-diagnostic-test/use-pre-diagnostic-navigation";
+import {
+  buildCareerKnowledgeDiscoveryHref,
+  CAREER_KNOWLEDGE_DISCOVERY_ENROLLMENT_STEP_KEY,
+  getFirstCareerKnowledgeDiscoveryStepKey,
+  getNextCareerKnowledgeDiscoveryStepKey,
+  isLastCareerKnowledgeDiscoveryStep,
+  parseCareerKnowledgeDiscoveryStepNumber,
+} from "@/features/pre-diagnostic/career-knowledge-discovery-steps";
 import { useUpdateCompletedPreDiagnostic } from "@/features/internship/use-update-completed-pre-diagnostic";
 import { getPreDiagnosticVideoDescription } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 
 const FALLBACK_VIDEO_SRC = "https://vimeo.com/1123856639";
-const FALLBACK_DESCRIPTION = "Continue exploring career knowledge for your program";
+const FALLBACK_DESCRIPTION = "Getting to know how your internship works";
 
-const CareerKnowledgeDiscovery2 = () => {
+const CareerKnowledgeDiscovery = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { preDiagnostic } = usePreDiagnosticNavigation();
   const { markPreDiagnosticStepComplete, isUpdating, errorMessage } =
     useUpdateCompletedPreDiagnostic();
   const [hasVideoEnded, setHasVideoEnded] = useState(false);
 
-  const discoveryVideo = preDiagnostic.career_readiness.careerKnowledgeDiscovery[1];
+  const discoveryVideos =
+    preDiagnostic.career_readiness.careerKnowledgeDiscovery ?? [];
+  const discoveryCount = Math.max(discoveryVideos.length, 1);
+
+  const stepKey =
+    searchParams.get("step") ?? getFirstCareerKnowledgeDiscoveryStepKey(discoveryCount);
+  const stepNumber = parseCareerKnowledgeDiscoveryStepNumber(stepKey) ?? 1;
+  const videoIndex = Math.min(stepNumber - 1, discoveryCount - 1);
+  const isLastStep = isLastCareerKnowledgeDiscoveryStep(stepNumber, discoveryCount);
+
+  const discoveryVideo = discoveryVideos[videoIndex];
   const src = discoveryVideo?.link?.trim() || FALLBACK_VIDEO_SRC;
   const description = getPreDiagnosticVideoDescription(
     discoveryVideo,
     FALLBACK_DESCRIPTION,
   );
 
+  const title = useMemo(
+    () => `Career knowledge discovery ${stepNumber}`,
+    [stepNumber],
+  );
+
+  useEffect(() => {
+    setHasVideoEnded(false);
+  }, [stepKey, src]);
+
   const canContinue = hasVideoEnded && !isUpdating;
 
   const handleContinue = async () => {
     if (!canContinue) return;
 
+    if (!isLastStep) {
+      const nextStepKey = getNextCareerKnowledgeDiscoveryStepKey(
+        stepNumber,
+        discoveryCount,
+      );
+      if (nextStepKey) {
+        router.push(buildCareerKnowledgeDiscoveryHref(nextStepKey));
+      }
+      return;
+    }
+
     try {
-      await markPreDiagnosticStepComplete("career-knowledge-discovery-2");
+      await markPreDiagnosticStepComplete(
+        CAREER_KNOWLEDGE_DISCOVERY_ENROLLMENT_STEP_KEY,
+      );
       router.push("/pre-diagnostic-test?step=career-path-diagnostics");
     } catch {
       // errorMessage is set by the hook
@@ -39,16 +80,26 @@ const CareerKnowledgeDiscovery2 = () => {
 
   return (
     <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
-      <h1 className="text-2xl font-semibold text-[#173740]">Career knowledge discovery 2</h1>
+      <h1 className="text-2xl font-semibold text-[#173740]">{title}</h1>
 
       <article className="mt-5 rounded-2xl border border-[#DCE5E9] bg-[#F6F8FA] p-4 shadow-[0_8px_18px_rgba(18,57,67,0.06)] sm:p-5">
         <h2 className="text-lg font-semibold text-[#3B6B76]">Watch video</h2>
 
-        <OnboardingVideoPlayer src={src} onEnded={() => setHasVideoEnded(true)} />
+        <OnboardingVideoPlayer
+          key={`${stepKey}-${src}`}
+          src={src}
+          onEnded={() => setHasVideoEnded(true)}
+        />
 
         <p className="mt-3 text-base leading-relaxed font-semibold text-[#64748B]">
           {description}
         </p>
+
+        {discoveryCount > 1 ? (
+          <p className="mt-2 text-sm font-medium text-[#2D6A78]">
+            Video {stepNumber} of {discoveryCount}
+          </p>
+        ) : null}
       </article>
 
       {errorMessage ? (
@@ -67,4 +118,4 @@ const CareerKnowledgeDiscovery2 = () => {
   );
 };
 
-export default CareerKnowledgeDiscovery2;
+export default CareerKnowledgeDiscovery;

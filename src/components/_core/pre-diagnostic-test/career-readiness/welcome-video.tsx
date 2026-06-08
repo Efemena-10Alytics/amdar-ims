@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation";
 import OnboardingVideoPlayer from "@/components/_core/onboarding/onboarding-video-player";
 import { usePreDiagnosticNavigation } from "@/components/_core/pre-diagnostic-test/use-pre-diagnostic-navigation";
 import { useUpdateCompletedPreDiagnostic } from "@/features/internship/use-update-completed-pre-diagnostic";
+import {
+  buildCareerKnowledgeDiscoveryHref,
+  getFirstCareerKnowledgeDiscoveryStepKey,
+} from "@/features/pre-diagnostic/career-knowledge-discovery-steps";
 import { getPreDiagnosticVideoDescription } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 
 const FALLBACK_VIDEO_SRC = "https://vimeo.com/1123856639";
@@ -32,7 +36,15 @@ const WelcomeVideo = () => {
 
     try {
       await markPreDiagnosticStepComplete("welcome-video");
-      router.push("/pre-diagnostic-test?step=career-knowledge-discovery-1");
+      const discoveryCount = Math.max(
+        preDiagnostic.career_readiness.careerKnowledgeDiscovery.length,
+        1,
+      );
+      router.push(
+        buildCareerKnowledgeDiscoveryHref(
+          getFirstCareerKnowledgeDiscoveryStepKey(discoveryCount),
+        ),
+      );
     } catch {
       // errorMessage is set by the hook
     }
