@@ -20,6 +20,7 @@ export type OnboardingStructureVideo = {
 
 export type OnboardingCohortLead = {
   name: string;
+  position: string;
   phone: string;
   countryCode: string;
   image: OnboardingMediaFile;

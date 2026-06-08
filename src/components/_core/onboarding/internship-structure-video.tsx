@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Pause, Play } from "lucide-react";
-import ReactPlayer from "react-player";
+import OnboardingVideoPlayer from "@/components/_core/onboarding/onboarding-video-player";
 import { useUpdateCompletedOnboardingStep } from "@/features/internship/use-update-completed-onboarding-step";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
@@ -12,8 +11,6 @@ const InternshipStructureVideo = () => {
     useUpdateCompletedOnboardingStep();
   const videos = onboarding.internshp_structure_video ?? [];
   const [videoIndex, setVideoIndex] = useState(0);
-  const [videoPlaying, setVideoPlaying] = useState(true);
-  const [volume, setVolume] = useState(0.5);
   const [completedIndexes, setCompletedIndexes] = useState<number[]>([]);
 
   const currentVideo = videos[videoIndex];
@@ -21,7 +18,6 @@ const InternshipStructureVideo = () => {
     videos.length > 0 && completedIndexes.length >= videos.length;
 
   const handleVideoEnded = () => {
-    setVideoPlaying(false);
     setCompletedIndexes((prev) =>
       prev.includes(videoIndex) ? prev : [...prev, videoIndex],
     );
@@ -30,7 +26,6 @@ const InternshipStructureVideo = () => {
   const handleContinue = async () => {
     if (!allVideosCompleted && videoIndex < videos.length - 1) {
       setVideoIndex((prev) => prev + 1);
-      setVideoPlaying(true);
       return;
     }
 
@@ -61,66 +56,11 @@ const InternshipStructureVideo = () => {
           {currentVideo.title || "Watch video"}
         </h2>
 
-        <div
-          role="button"
-          tabIndex={0}
-          className="relative mt-3 h-63.75 overflow-hidden rounded-2xl sm:h-80"
-          onClick={() => setVideoPlaying((prev) => !prev)}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" || event.key === " ") {
-              event.preventDefault();
-              setVideoPlaying((prev) => !prev);
-            }
-          }}
-          aria-label={videoPlaying ? "Pause video" : "Play video"}
-        >
-          <ReactPlayer
-            key={currentVideo.link}
-            src={currentVideo.link}
-            playing={videoPlaying}
-            loop={false}
-            volume={volume}
-            width="100%"
-            height="100%"
-            controls={false}
-            onEnded={handleVideoEnded}
-          />
-
-          <button
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation();
-              setVideoPlaying((prev) => !prev);
-            }}
-            className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full px-3 py-1.5 text-base font-medium text-white backdrop-blur-sm transition hover:bg-black/40"
-          >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E7C8D]">
-              {videoPlaying ? (
-                <Pause className="h-4 w-4 fill-current" />
-              ) : (
-                <Play className="ml-0.5 h-4 w-4 fill-current" />
-              )}
-            </span>
-            {videoPlaying ? "Pause video" : "Play to watch"}
-          </button>
-
-          <div
-            className="absolute right-4 bottom-4 flex items-center gap-2 rounded-lg bg-black/45 px-2 py-1"
-            onClick={(event) => event.stopPropagation()}
-            onKeyDown={(event) => event.stopPropagation()}
-          >
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.1"
-              value={volume}
-              onChange={(event) => setVolume(Number(event.target.value))}
-              className="h-1 w-20 cursor-pointer appearance-none rounded-lg bg-white/60"
-              aria-label="Volume"
-            />
-          </div>
-        </div>
+        <OnboardingVideoPlayer
+          key={currentVideo.link}
+          src={currentVideo.link}
+          onEnded={handleVideoEnded}
+        />
 
         <p className="mt-3 text-base leading-relaxed font-semibold text-[#64748B]">
           {currentVideo.description || "Getting to know how your internship works"}
