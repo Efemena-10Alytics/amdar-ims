@@ -1,14 +1,19 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Lightbulb } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ReadinessTestDrawer from "@/components/_core/readiness-test/readiness-test-drawer";
+import { usePreDiagnosticData } from "@/components/_core/pre-diagnostic-test/pre-diagnostic-context";
 import { usePreDiagnosticNavigation } from "@/components/_core/pre-diagnostic-test/use-pre-diagnostic-navigation";
 import { getReadinessTestGuidelines } from "@/features/readiness-test/get-readiness-test-guidelines";
 import { getSortedReadinessTestFields } from "@/features/readiness-test/get-sorted-form-fields";
-import { useUpdateCompletedPreDiagnostic } from "@/features/internship/use-update-completed-pre-diagnostic";
+import { useReadinessTestEntry } from "@/features/readiness-test/use-readiness-test-entry";
+import {
+  isPreDiagnosticEnrollmentStepComplete,
+  useUpdateCompletedPreDiagnostic,
+} from "@/features/internship/use-update-completed-pre-diagnostic";
 
 const GUIDELINES = [
   "Answer honestly, this helps us make sure you get the right support from day one.",
@@ -25,20 +30,32 @@ const DIAGNOSTIC_FLAGS = [
 const CareerPathDiagnostic = () => {
   const router = useRouter();
   const { preDiagnostic } = usePreDiagnosticNavigation();
+  const { enrollment } = usePreDiagnosticData();
   const { markPreDiagnosticStepComplete, isUpdating, errorMessage } =
     useUpdateCompletedPreDiagnostic();
-  const [isDiagnosticOpen, setIsDiagnosticOpen] = useState(false);
-
   const diagnosticForm = preDiagnostic.career_readiness.careerPathDiagnostic;
+  const isStepCompleted = isPreDiagnosticEnrollmentStepComplete(
+    enrollment?.isPreDiagnosticStepsCompleted,
+    "career-path-diagnostics",
+  );
+  const {
+    savedResult,
+    isLoadingLatest,
+    canViewResults,
+    isDrawerOpen,
+    setIsDrawerOpen,
+    handleSubmitted,
+  } = useReadinessTestEntry(diagnosticForm?.id, isStepCompleted);
+
   const fields = useMemo(
     () => getSortedReadinessTestFields(diagnosticForm),
     [diagnosticForm],
   );
   const questionCount = fields.length;
-  const durationMinutes =
-    diagnosticForm?.duration ?? Math.max(questionCount, 1) * 5;
+  const durationMinutes = diagnosticForm?.duration ?? 10;
+  const diagnosticTitle = diagnosticForm?.title ?? "Career Diagnostics";
 
-  const handleDiagnosticComplete = async () => {
+  const handleProceed = async () => {
     if (isUpdating) return;
 
     try {
@@ -106,21 +123,30 @@ const CareerPathDiagnostic = () => {
 
       <button
         type="button"
-        disabled={questionCount === 0 || isUpdating}
-        onClick={() => setIsDiagnosticOpen(true)}
+        disabled={questionCount === 0 || isUpdating || isLoadingLatest}
+        onClick={() => setIsDrawerOpen(true)}
         className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0]"
       >
-        {isUpdating ? "Saving..." : "Start diagnostic"}
+        {isUpdating
+          ? "Saving..."
+          : isLoadingLatest
+            ? "Loading..."
+            : canViewResults
+              ? "View results"
+              : "Start diagnostic"}
       </button>
 
       <ReadinessTestDrawer
-        open={isDiagnosticOpen}
-        onOpenChange={setIsDiagnosticOpen}
+        open={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
         form={diagnosticForm}
         durationMinutes={durationMinutes}
-        title={diagnosticForm?.title ?? "Career Diagnostics"}
+        title={diagnosticTitle}
         finishLabel="Finish diagnostic"
-        onComplete={handleDiagnosticComplete}
+        isProceeding={isUpdating}
+        savedResult={savedResult}
+        onSubmitted={handleSubmitted}
+        onComplete={handleProceed}
       />
     </section>
   );

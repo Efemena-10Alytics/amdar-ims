@@ -15,6 +15,8 @@ type ReadinessTestResultProps = {
   onRetake?: () => void;
   onProceed?: () => void;
   isProceeding?: boolean;
+  /** Renders inside the quiz drawer without page-level section padding. */
+  embedded?: boolean;
 };
 
 function ScoreRing({
@@ -35,7 +37,7 @@ function ScoreRing({
     circumference - (progress / 100) * circumference;
 
   return (
-    <div className="relative mx-auto size-36">
+    <div className="relative mx-auto size-18">
       <svg
         className="size-full -rotate-90"
         viewBox={`0 0 ${radius * 2} ${radius * 2}`}
@@ -63,7 +65,7 @@ function ScoreRing({
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-4xl font-semibold text-[#173740]">
+        <span className="text-lg font-semibold text-[#173740]">
           {Math.round(score)}
         </span>
       </div>
@@ -77,6 +79,7 @@ const ReadinessTestResult = ({
   onRetake,
   onProceed,
   isProceeding = false,
+  embedded = false,
 }: ReadinessTestResultProps) => {
   const config = getReadinessScoreTierConfig(totalScore);
 
@@ -88,23 +91,31 @@ const ReadinessTestResult = ({
     onProceed?.();
   };
 
-  return (
-    <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
-      <div className="flex items-start justify-between gap-4">
-        <h1 className="text-2xl font-semibold text-[#173740]">{title}</h1>
-        {onRetake ? (
-          <Button
-            type="button"
-            onClick={onRetake}
-            disabled={isProceeding}
-            className="h-10 shrink-0 rounded-lg bg-primary px-5 text-sm font-medium text-white hover:bg-primary/90"
-          >
-            Retake
-          </Button>
-        ) : null}
-      </div>
+  const content = (
+    <>
+      {!embedded ? (
+        <div className="flex items-start justify-between gap-4">
+          <h1 className="text-lg font-semibold text-[#173740]">{title}</h1>
+          {onRetake ? (
+            <Button
+              type="button"
+              onClick={onRetake}
+              disabled={isProceeding}
+              className="h-10 shrink-0 rounded-lg bg-primary px-5 text-sm font-medium text-white hover:bg-primary/90"
+            >
+              Retake
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
 
-      <article className="mt-5 rounded-2xl border border-[#DCE5E9] bg-white p-4 shadow-[0_8px_18px_rgba(18,57,67,0.06)] sm:p-8">
+      <article
+        className={
+          embedded
+            ? "bg-white"
+            : "mt-5 rounded-2xl border border-[#DCE5E9] bg-white p-4 shadow-[0_8px_18px_rgba(18,57,67,0.06)] sm:p-8"
+        }
+      >
         <div className="mx-auto max-w-md text-center">
           <ScoreRing
             score={totalScore}
@@ -125,7 +136,7 @@ const ReadinessTestResult = ({
         </div>
 
         <div className="mx-auto mt-6 max-w-lg rounded-xl bg-[#E8EFF1] p-4 sm:p-5">
-          <h3 className="text-lg font-semibold text-[#2F6A78]">Summary</h3>
+          <h3 className="text-base font-semibold text-[#2F6A78]">Summary</h3>
           <p className="mt-2 text-sm leading-relaxed text-[#3F5E68] sm:text-base">
             {config.summary}
           </p>
@@ -160,6 +171,16 @@ const ReadinessTestResult = ({
           ) : null}
         </div>
       </article>
+    </>
+  );
+
+  if (embedded) {
+    return <div className="flex h-full flex-col">{content}</div>;
+  }
+
+  return (
+    <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
+      {content}
     </section>
   );
 };
