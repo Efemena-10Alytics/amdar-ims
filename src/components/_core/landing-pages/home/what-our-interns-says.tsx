@@ -13,7 +13,11 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ArrowLeftCurve, ArrowRightCurve } from "./svg";
 import { VideoPlayerModal } from "../shared/video-player-modal";
-import { useYoutubeCaptions } from "../../../../features/youtube/use-youtube-caption";
+import {
+  getYoutubeThumbnail,
+  TESTIMONIAL_VIDEOS,
+} from "@/features/testimonials/constants";
+import { useYoutubeCaptions } from "@/features/youtube/use-youtube-caption";
 import Aos from "aos";
 
 // Custom Curved Arrow Icons
@@ -103,13 +107,6 @@ const CustomCarouselNext = ({
   );
 };
 
-/** Get YouTube thumbnail image URL from a watch URL or video ID. */
-function getYoutubeThumbnail(urlOrId: string): string {
-  const match = urlOrId.match(/(?:v=|\/vi\/)([a-zA-Z0-9_-]{11})/);
-  const videoId = match ? match[1] : urlOrId;
-  return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-}
-
 const WhatOurInternsSays = () => {
   const [api, setApi] = React.useState<CarouselApi>();
   const [imageErrors, setImageErrors] = React.useState<Record<number, boolean>>(
@@ -119,39 +116,7 @@ const WhatOurInternsSays = () => {
     null,
   );
 
-  const testimonials = [
-    {
-      id: 1,
-      videoUrl:
-        "https://www.youtube.com/watch?v=MME05VFUbUY&list=PLZNtzcTK9hBYzlV-VPg-JZjbRjl4PP52Z",
-    },
-    {
-      id: 2,
-      videoUrl:
-        "https://www.youtube.com/watch?v=OzipG-7I3bU&list=PLZNtzcTK9hBYzlV-VPg-JZjbRjl4PP52Z&index=3",
-    },
-    {
-      id: 3,
-      videoUrl:
-        "https://www.youtube.com/watch?v=ab_c-mPVzEA&list=PLZNtzcTK9hBYzlV-VPg-JZjbRjl4PP52Z&index=8",
-    },
-    {
-      id: 4,
-      videoUrl:
-        "https://www.youtube.com/watch?v=GRSz3ndb-tQ&list=PLZNtzcTK9hBYzlV-VPg-JZjbRjl4PP52Z&index=9",
-    },
-    {
-      id: 5,
-      videoUrl:
-        "https://www.youtube.com/watch?v=kX1LWvJx9Ks&list=PLZNtzcTK9hBYzlV-VPg-JZjbRjl4PP52Z&index=10",
-    },
-    {
-      id: 6,
-      videoUrl:
-        "https://www.youtube.com/watch?v=jY-j0xYXzpo&list=PLZNtzcTK9hBYzlV-VPg-JZjbRjl4PP52Z&index=12",
-    },
-  ];
-
+  const testimonials = TESTIMONIAL_VIDEOS;
   const videoUrls = testimonials.map((t) => t.videoUrl);
   const { captions, isLoaded } = useYoutubeCaptions(videoUrls);
 

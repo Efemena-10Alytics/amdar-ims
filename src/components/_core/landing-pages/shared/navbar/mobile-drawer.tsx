@@ -123,6 +123,17 @@ const MobileDrawer = ({
                         "text-base font-medium transition-colors py-2 relative",
                         "text-primary hover:text-[#0f4d5a]",
                       )}
+                      href="/testimonial"
+                    >
+                      <h2>Testimonials</h2>
+                    </Link>
+                  </div>
+                  <div>
+                    <Link
+                      className={cn(
+                        "text-base font-medium transition-colors py-2 relative",
+                        "text-primary hover:text-[#0f4d5a]",
+                      )}
                       href="/contact"
                     >
                       <h2>Chat With Us</h2>

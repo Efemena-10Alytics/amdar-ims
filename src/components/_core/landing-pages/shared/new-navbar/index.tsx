@@ -33,10 +33,17 @@ const linkClass = (isActive: boolean, useWhiteText: boolean) =>
   );
 
 /** Keep More Program text color in sync with other top-level nav links. */
-function MoreProgramOnTealNav({ useWhiteText }: { useWhiteText: boolean }) {
+function MoreProgramOnTealNav({
+  useWhiteText,
+  isActive,
+}: {
+  useWhiteText: boolean;
+  isActive: boolean;
+}) {
   return (
     <MoreDropdown
       showWhiteNav={!useWhiteText}
+      isActive={isActive}
       className={
         useWhiteText
           ? "[&_button]:text-white! [&_button:hover]:text-white/90!"
@@ -76,6 +83,12 @@ const Navbar = () => {
     pathname.startsWith("/payment") ||
     pathname.startsWith("/internship");
   const isAboutRoute = pathname === "/about" || pathname.startsWith("/about/");
+  const isMoreProgramRoute =
+    pathname.startsWith("/blog") ||
+    pathname.startsWith("/testimonial") ||
+    pathname.startsWith("/hackathon") ||
+    pathname.startsWith("/talent-loop") ||
+    pathname.startsWith("/contact");
 
   const showSalesBanner =
     !pathname.startsWith("/internship/") && !pathname.startsWith("/payment");
@@ -217,7 +230,10 @@ const Navbar = () => {
                     </Link>
                   );
                 })}
-                <MoreProgramOnTealNav useWhiteText={useWhiteNavLinkText} />
+                <MoreProgramOnTealNav
+                  useWhiteText={useWhiteNavLinkText}
+                  isActive={isMoreProgramRoute}
+                />
               </div>
 
               <div className="hidden shrink-0 items-center gap-3 lg:flex">
