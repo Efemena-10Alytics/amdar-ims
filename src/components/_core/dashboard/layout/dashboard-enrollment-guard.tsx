@@ -11,7 +11,8 @@ function DashboardEnrollmentGuard({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { data: enrollment, isPending, isError } = useGetUserEnrollment();
+  const { data: enrollment, isPending, isError, isAuthReady } =
+    useGetUserEnrollment();
 
   const redirectHref = enrollment
     ? resolveEnrollmentJourneyRedirect(enrollment)
@@ -22,7 +23,7 @@ function DashboardEnrollmentGuard({
     router.replace(redirectHref);
   }, [isPending, isError, redirectHref, router]);
 
-  if (isPending) {
+  if (!isAuthReady || isPending) {
     return (
       <div className="flex flex-1 items-center justify-center p-8">
         <p className="text-sm text-[#64748B]">Loading your enrollment...</p>

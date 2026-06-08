@@ -148,7 +148,8 @@ export function useGetOnboarding() {
     enrollment: enrollmentQuery.data,
     cohortId,
     programId,
-    isEnrollmentLoading: enrollmentQuery.isLoading,
+    isEnrollmentLoading:
+      !enrollmentQuery.isAuthReady || enrollmentQuery.isLoading,
     isEnrollmentError: enrollmentQuery.isError,
     enrollmentError: enrollmentQuery.error,
     refetchEnrollment: enrollmentQuery.refetch,

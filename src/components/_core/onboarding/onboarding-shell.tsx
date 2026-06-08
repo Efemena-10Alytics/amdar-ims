@@ -102,7 +102,7 @@ function OnboardingShellContent({
           backgroundPosition: "0 0",
         }}
       >
-        <div className="w-full max-w-190 px-4 pt-5 sm:px-0 sm:pt-8">
+        <div className="w-full px-4 pt-5 sm:px-0 sm:pt-8">
           <JourneyStepper activeStep={1} />
         </div>
         <div className="pb-8">{content}</div>
