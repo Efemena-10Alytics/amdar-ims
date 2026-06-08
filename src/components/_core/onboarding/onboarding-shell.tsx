@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 import Aside from "@/components/_core/onboarding/aside";
-import { JourneyStepper } from "@/components/_core/onboarding/journey-stepper";
+import { JourneyLayoutHeader } from "@/components/_core/onboarding/journey-layout-header";
 import { OnboardingProvider } from "@/components/_core/onboarding/onboarding-context";
 import { useGetOnboarding } from "@/features/onboarding/use-get-onboarding";
 
@@ -102,9 +102,7 @@ function OnboardingShellContent({
           backgroundPosition: "0 0",
         }}
       >
-        <div className="w-full px-4 pt-5 sm:px-0 sm:pt-8">
-          <JourneyStepper activeStep={1} />
-        </div>
+        <JourneyLayoutHeader activeStep={1} />
         <div className="pb-8">{content}</div>
       </div>
     </div>

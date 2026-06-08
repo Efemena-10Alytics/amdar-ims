@@ -79,7 +79,7 @@ export function JourneyStepper({ activeStep, className }: JourneyStepperProps) {
     <nav
       aria-label="Onboarding progress"
       className={cn(
-        "mb-6 flex w-full  items-center gap-2 sm:gap-3",
+        "mb-6 flex w-fullitems-center gap-2 sm:gap-3",
         className,
       )}
     >
