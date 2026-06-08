@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Pause, Play } from "lucide-react";
 import ReactPlayer from "react-player";
 
@@ -10,16 +10,65 @@ function formatPlaybackRate(rate: number) {
   return rate === 1 ? "1x" : `${rate}x`;
 }
 
+function formatVideoTime(seconds: number) {
+  if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+
+  const total = Math.floor(seconds);
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const remainingSeconds = total % 60;
+
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
+  }
+
+  return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
+}
+
 type OnboardingVideoPlayerProps = {
   src: string;
   onEnded: () => void;
 };
 
 const OnboardingVideoPlayer = ({ src, onEnded }: OnboardingVideoPlayerProps) => {
+  const playerRef = useRef<HTMLVideoElement | null>(null);
   const [videoPlaying, setVideoPlaying] = useState(true);
   const [volume, setVolume] = useState(0.5);
   const [playbackRate, setPlaybackRate] = useState(1);
+  const [playedSeconds, setPlayedSeconds] = useState(0);
+  const [durationSeconds, setDurationSeconds] = useState(0);
   const [hasVideoEnded, setHasVideoEnded] = useState(false);
+
+  const syncPlaybackTime = useCallback(() => {
+    const player = playerRef.current;
+    if (!player) return;
+
+    const duration = player.duration;
+    if (Number.isFinite(duration) && duration > 0) {
+      setDurationSeconds(duration);
+    }
+
+    const currentTime = player.currentTime;
+    if (Number.isFinite(currentTime) && currentTime >= 0) {
+      setPlayedSeconds(currentTime);
+    }
+  }, []);
+
+  useEffect(() => {
+    setPlayedSeconds(0);
+    setDurationSeconds(0);
+    setHasVideoEnded(false);
+    setVideoPlaying(true);
+  }, [src]);
+
+  useEffect(() => {
+    if (!videoPlaying || hasVideoEnded) return;
+
+    syncPlaybackTime();
+    const intervalId = window.setInterval(syncPlaybackTime, 500);
+
+    return () => window.clearInterval(intervalId);
+  }, [videoPlaying, hasVideoEnded, src, syncPlaybackTime]);
 
   const togglePlayback = () => {
     if (hasVideoEnded) return;
@@ -41,6 +90,7 @@ const OnboardingVideoPlayer = ({ src, onEnded }: OnboardingVideoPlayerProps) => 
       aria-label={videoPlaying ? "Pause video" : "Play video"}
     >
       <ReactPlayer
+        ref={playerRef}
         src={src}
         playing={videoPlaying}
         loop={false}
@@ -49,12 +99,23 @@ const OnboardingVideoPlayer = ({ src, onEnded }: OnboardingVideoPlayerProps) => 
         width="100%"
         height="100%"
         controls={false}
+        onReady={syncPlaybackTime}
+        onDurationChange={syncPlaybackTime}
+        onTimeUpdate={syncPlaybackTime}
         onEnded={() => {
+          syncPlaybackTime();
           setVideoPlaying(false);
           setHasVideoEnded(true);
           onEnded();
         }}
       />
+
+      <span
+        className="pointer-events-none absolute top-3 right-3 z-10 rounded-md bg-black px-2.5 py-1 text-xs font-semibold whitespace-nowrap text-white tabular-nums"
+        aria-live="polite"
+      >
+        {formatVideoTime(playedSeconds)} / {formatVideoTime(durationSeconds)}
+      </span>
 
       <button
         type="button"
@@ -62,7 +123,7 @@ const OnboardingVideoPlayer = ({ src, onEnded }: OnboardingVideoPlayerProps) => 
           event.stopPropagation();
           togglePlayback();
         }}
-        className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full px-3 py-1.5 text-base font-medium text-white backdrop-blur-sm transition hover:bg-black/40"
+        className="absolute bottom-4 left-4 z-10 flex items-center gap-2 rounded-full px-3 py-1.5 text-base font-medium text-white backdrop-blur-sm transition hover:bg-black/40"
       >
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E7C8D]">
           {videoPlaying ? (
@@ -75,7 +136,7 @@ const OnboardingVideoPlayer = ({ src, onEnded }: OnboardingVideoPlayerProps) => 
       </button>
 
       <div
-        className="absolute right-4 bottom-4 flex items-center gap-2 rounded-lg bg-black/45 px-2 py-1"
+        className="absolute right-4 bottom-4 z-10 flex items-center gap-2 rounded-lg bg-black/45 px-2 py-1"
         onClick={(event) => event.stopPropagation()}
         onKeyDown={(event) => event.stopPropagation()}
       >

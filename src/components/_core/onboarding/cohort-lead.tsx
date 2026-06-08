@@ -60,7 +60,7 @@ const CohortLead = () => {
                   />
                 </div>
                 <div className="absolute right-2 bottom-2 left-2 rounded-md bg-black/55 px-3 py-2.5 backdrop-blur-[1px]">
-                  <p className="text-xs font-semibold text-[#DFEEF2]">{lead.name}</p>
+                  <p className="text-xs font-semibold text-[#DFEEF2]">{lead.name} {lead.position ? `(${lead.position})` : null}</p>
                   <div className="mt-0.5 flex items-center justify-between gap-3">
                     <p className="text-xs text-[#BCD2D8]">{phone}</p>
                     <button

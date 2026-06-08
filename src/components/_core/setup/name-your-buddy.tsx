@@ -15,7 +15,7 @@ const NameYourBuddy = () => {
 
     try {
       await submitBuddyName(buddyName);
-      router.push("/home");
+      router.push("/dashboard");
     } catch {
       // errorMessage is set by the hook
     }
