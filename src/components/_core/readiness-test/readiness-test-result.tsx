@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Flag, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WHATSAPP_URL } from "@/components/_core/landing-pages/shared/whatsapp-widget";
+import { getInternsWhatsappGroupUrl } from "@/constants/interns-whatsapp-group";
+import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
 import {
   getReadinessScoreProgressPercent,
   getReadinessScoreTierConfig,
@@ -81,11 +83,14 @@ const ReadinessTestResult = ({
   isProceeding = false,
   embedded = false,
 }: ReadinessTestResultProps) => {
+  const { data: enrollment } = useGetUserEnrollment();
+  const whatsappGroupUrl = getInternsWhatsappGroupUrl(enrollment?.program);
   const config = getReadinessScoreTierConfig(totalScore);
 
   const handlePrimaryClick = () => {
     if (config.primaryAction === "support") {
-      window.open(WHATSAPP_URL, "_blank", "noopener,noreferrer");
+      const supportUrl = whatsappGroupUrl ?? WHATSAPP_URL;
+      window.open(supportUrl, "_blank", "noopener,noreferrer");
       return;
     }
     onProceed?.();
@@ -157,17 +162,33 @@ const ReadinessTestResult = ({
           </Button>
 
           {config.showCommunityButton ? (
-            <Button
-              type="button"
-              variant="outline"
-              asChild
-              className="h-12 w-full rounded-full border-[#C5E6CE] bg-[#E8F7EC] text-base font-medium text-[#173740] hover:bg-[#DCF3E2]"
-            >
-              <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+            whatsappGroupUrl ? (
+              <Button
+                type="button"
+                variant="outline"
+                asChild
+                className="h-12 w-full rounded-full border-[#C5E6CE] bg-[#E8F7EC] text-base font-medium text-[#173740] hover:bg-[#DCF3E2]"
+              >
+                <Link
+                  href={whatsappGroupUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <MessageCircle className="size-5 text-[#3A8E53]" aria-hidden />
+                  Join our community
+                </Link>
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                variant="outline"
+                disabled
+                className="h-12 w-full rounded-full border-[#C5E6CE] bg-[#E8F7EC] text-base font-medium text-[#173740] opacity-70"
+              >
                 <MessageCircle className="size-5 text-[#3A8E53]" aria-hidden />
                 Join our community
-              </Link>
-            </Button>
+              </Button>
+            )
           ) : null}
         </div>
       </article>
