@@ -19,18 +19,44 @@ import type {
   UserEnrollment,
 } from "@/types/user/enrollment";
 
-/** Reads cohort version from nested cohort or enrollment root (API shape varies). */
-export function getEnrollmentCohortVersion(
-  enrollment: UserEnrollment,
-): string | number | null | undefined {
-  const fromCohort = enrollment.cohort?.version;
-  if (fromCohort != null) return fromCohort;
-  return enrollment.version;
+/** Cohorts starting on or after this date are sent through onboarding/pre-diagnostic. */
+export const ENROLLMENT_JOURNEY_COHORT_START_DATE_CUTOFF = "2026-03-07";
+
+function toDateOnlyUtcMs(value: string): number | null {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+
+  const isoPrefix = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (isoPrefix) {
+    const [, year, month, day] = isoPrefix;
+    return Date.UTC(Number(year), Number(month) - 1, Number(day));
+  }
+
+  const parsed = new Date(trimmed);
+  if (Number.isNaN(parsed.getTime())) return null;
+
+  return Date.UTC(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
 }
 
-/** Journey redirects run only when the cohort has a non-null version assigned. */
-export function hasEnrollmentJourneyVersion(enrollment: UserEnrollment): boolean {
-  return getEnrollmentCohortVersion(enrollment) != null;
+export function getEnrollmentCohortStartDate(
+  enrollment: UserEnrollment,
+): string | null {
+  const startDate = enrollment.cohort?.start_date?.trim();
+  return startDate || null;
+}
+
+/** Journey redirects run for cohorts with a start date on or after the cutoff. */
+export function isEnrollmentJourneyCohortEligible(
+  enrollment: UserEnrollment,
+): boolean {
+  const startDate = getEnrollmentCohortStartDate(enrollment);
+  if (!startDate) return false;
+
+  const cohortStartMs = toDateOnlyUtcMs(startDate);
+  const cutoffMs = toDateOnlyUtcMs(ENROLLMENT_JOURNEY_COHORT_START_DATE_CUTOFF);
+  if (cohortStartMs == null || cutoffMs == null) return false;
+
+  return cohortStartMs >= cutoffMs;
 }
 
 function getPreDiagnosticStepRoute(step: string): string | null {
@@ -98,7 +124,7 @@ export function getFirstPendingPreDiagnosticHref(
 export function resolveEnrollmentJourneyRedirect(
   enrollment: UserEnrollment,
 ): string | null {
-  if (!hasEnrollmentJourneyVersion(enrollment)) return null;
+  if (!isEnrollmentJourneyCohortEligible(enrollment)) return null;
 
   const onboardingHref = getFirstPendingOnboardingHref(
     enrollment.isOnboardingStepsCompleted,
