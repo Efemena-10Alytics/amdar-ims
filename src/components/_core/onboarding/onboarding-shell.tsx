@@ -17,6 +17,7 @@ function OnboardingShellContent({
   const {
     data,
     isLoading,
+    isPending,
     isError,
     error,
     errorMessage,
@@ -30,7 +31,7 @@ function OnboardingShellContent({
     refetchEnrollment,
   } = useGetOnboarding();
 
-  if (!isAuthReady) return null;
+  const isOnboardingLoading = isPending || isLoading;
 
   const rightPanel = () => {
     if (isEnrollmentLoading) {
@@ -68,7 +69,7 @@ function OnboardingShellContent({
       );
     }
 
-    if (isLoading) {
+    if (isOnboardingLoading) {
       return (
         <p className="px-4 text-sm text-[#64748B] sm:px-0">Loading onboarding...</p>
       );
@@ -86,6 +87,12 @@ function OnboardingShellContent({
             Retry
           </button>
         </div>
+      );
+    }
+
+    if (!data) {
+      return (
+        <p className="px-4 text-sm text-[#64748B] sm:px-0">Loading onboarding...</p>
       );
     }
 

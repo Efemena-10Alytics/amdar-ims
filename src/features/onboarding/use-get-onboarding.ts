@@ -135,6 +135,7 @@ export function useGetOnboarding() {
       }),
     enabled:
       !!apiBaseURL &&
+      enrollmentQuery.isAuthReady &&
       enrollmentQuery.isSuccess &&
       hasValidId(cohortId) &&
       hasValidId(programId),
@@ -149,7 +150,9 @@ export function useGetOnboarding() {
     cohortId,
     programId,
     isEnrollmentLoading:
-      !enrollmentQuery.isAuthReady || enrollmentQuery.isLoading,
+      !enrollmentQuery.isAuthReady ||
+      enrollmentQuery.isLoading ||
+      (enrollmentQuery.isFetching && !enrollmentQuery.data),
     isEnrollmentError: enrollmentQuery.isError,
     enrollmentError: enrollmentQuery.error,
     refetchEnrollment: enrollmentQuery.refetch,

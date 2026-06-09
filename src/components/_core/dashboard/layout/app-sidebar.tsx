@@ -13,7 +13,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
 import {
   BillingIcon,
   BlogIcon,
@@ -26,7 +25,6 @@ import {
   ProjectVaultIcon,
 } from "../svg";
 import { NavMain } from "./nav-main";
-import { Leaf } from "lucide-react";
 
 const navMain = [
   { title: "Dashboard", url: "/dashboard", icon: DashboardFilledIcon },
