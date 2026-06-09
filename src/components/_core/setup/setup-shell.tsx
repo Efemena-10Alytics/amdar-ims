@@ -3,6 +3,7 @@
 import { Suspense } from "react";
 import { JourneyLayoutHeader } from "@/components/_core/onboarding/journey-layout-header";
 import Aside from "@/components/_core/setup/aside";
+import { useRequireUserId } from "@/hooks/use-require-user-id";
 
 const RIGHT_PANEL_STYLE = {
   backgroundColor: "#E8EFF1",
@@ -17,6 +18,10 @@ export default function SetupShell({
 }: {
   children: React.ReactNode;
 }) {
+  const { isAuthReady } = useRequireUserId();
+
+  if (!isAuthReady) return null;
+
   return (
     <div className="flex h-screen w-full overflow-hidden bg-white p-3 2xl:p-5">
       <Suspense fallback={<div className="hidden lg:flex lg:w-[45%] xl:w-[42%]" />}>

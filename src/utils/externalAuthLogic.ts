@@ -84,8 +84,11 @@ function getFallbackRedirectUrl(): URL {
   return new URL(`${base}/dashboard`);
 }
 
-function isSafeDashboardPathname(pathname: string): boolean {
-  return pathname === "/dashboard" || pathname.startsWith("/dashboard/");
+function isSafePathname(pathname: string): boolean {
+  const safePaths = ["/dashboard", "/onboarding", "/pre-diagnostic-test", "/setup"];
+  return safePaths.some(
+    (safe) => pathname === safe || pathname.startsWith(`${safe}/`),
+  );
 }
 
 function resolveSafeRedirectUrl(redirectParam?: string): URL {
@@ -105,7 +108,7 @@ function resolveSafeRedirectUrl(redirectParam?: string): URL {
       if (
         isHttp &&
         resolved.origin === baseOrigin &&
-        isSafeDashboardPathname(resolved.pathname)
+        isSafePathname(resolved.pathname)
       ) {
         return resolved;
       }

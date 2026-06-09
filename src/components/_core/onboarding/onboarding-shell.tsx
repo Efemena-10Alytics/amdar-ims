@@ -5,12 +5,15 @@ import Aside from "@/components/_core/onboarding/aside";
 import { JourneyLayoutHeader } from "@/components/_core/onboarding/journey-layout-header";
 import { OnboardingProvider } from "@/components/_core/onboarding/onboarding-context";
 import { useGetOnboarding } from "@/features/onboarding/use-get-onboarding";
+import { useRequireUserId } from "@/hooks/use-require-user-id";
 
 function OnboardingShellContent({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { isAuthReady } = useRequireUserId();
+
   const {
     data,
     isLoading,
@@ -26,6 +29,8 @@ function OnboardingShellContent({
     enrollmentError,
     refetchEnrollment,
   } = useGetOnboarding();
+
+  if (!isAuthReady) return null;
 
   const rightPanel = () => {
     if (isEnrollmentLoading) {
