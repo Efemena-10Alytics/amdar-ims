@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -12,6 +13,7 @@ import {
 import { ONBOARDING_CHECKLIST_ITEMS } from "@/features/onboarding/types";
 import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
 import { isOnboardingEnrollmentStepComplete } from "@/features/internship/use-update-completed-onboarding-step";
+import { getInternsWhatsappGroupUrl } from "@/constants/interns-whatsapp-group";
 import Flag from "../landing-pages/home/hero/flag";
 import { Button } from "@/components/ui/button";
 import { WhatsappSVG } from "./svg";
@@ -24,6 +26,16 @@ const Aside = () => {
   const studentName = getStudentDisplayName(user);
   const welcomeLabel = studentName ? `WELCOME ${studentName.toUpperCase()}!` : "WELCOME!";
   const onboardingStepsCompleted = enrollment?.isOnboardingStepsCompleted;
+  const whatsappGroupUrl = getInternsWhatsappGroupUrl(enrollment?.program);
+
+  useEffect(() => {
+    if (!enrollment?.program) return;
+
+    console.log(
+      "[onboarding aside] internship_title:",
+      enrollment.program.internship_title ?? enrollment.program.intern_title,
+    );
+  }, [enrollment?.program]);
 
   return (
     <aside className="hidden overflow-y-auto rounded-l-xl bg-[#0F6A79] px-4 py-5 text-white lg:flex lg:w-[45%] lg:flex-col xl:w-[42%] xl:px-5 xl:py-6">
@@ -107,9 +119,24 @@ const Aside = () => {
           <span>+10K interns Across the world Got hired</span>
         </div>
       </div>
-      <Button className="mb-10 h-11 w-full cursor-pointer rounded-full bg-[#ACF0C5] text-[#092A31] hover:bg-[#ACF0C5]/80">
-        <WhatsappSVG /> Join Our community
-      </Button>
+      {whatsappGroupUrl ? (
+        <Button
+          asChild
+          className="mb-10 h-11 w-full cursor-pointer rounded-full bg-[#ACF0C5] text-[#092A31] hover:bg-[#ACF0C5]/80"
+        >
+          <a href={whatsappGroupUrl} target="_blank" rel="noopener noreferrer">
+            <WhatsappSVG /> Join Our community
+          </a>
+        </Button>
+      ) : (
+        <Button
+          type="button"
+          disabled
+          className="mb-10 h-11 w-full rounded-full bg-[#ACF0C5] text-[#092A31] opacity-70"
+        >
+          <WhatsappSVG /> Join Our community
+        </Button>
+      )}
     </aside>
   );
 };
