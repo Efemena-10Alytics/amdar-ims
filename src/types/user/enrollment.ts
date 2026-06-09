@@ -15,6 +15,8 @@ export type EnrollmentProgram = {
   daily_motivation: string | null;
   video_url: string | null;
   intern_title: string | null;
+  /** Some API responses use this key instead of `intern_title`. */
+  internship_title?: string | null;
   overviews: unknown;
   tools: unknown;
   slug: string;
