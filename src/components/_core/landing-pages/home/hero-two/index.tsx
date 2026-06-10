@@ -11,7 +11,7 @@ import Slider from "./slider";
 import Flag from "../hero/flag";
 import ServiceCard from "../hero/service-card";
 import IconOrbit from "./icon-orbit";
-import Link from "next/link";
+import { SpeakToExpertPopover } from "./speak-to-our-expert";
 
 const InternshipHeroTwo = () => {
   const [showPopUpVid, setShowPopUpVid] = React.useState(false);
@@ -24,34 +24,19 @@ const InternshipHeroTwo = () => {
     <div id="home-hero-section" className="text-white relative overflow-hidden -translate-y-25">
       {/* Primary Color Background */}
       <div className="absolute inset-0 bg-primary z-0" />
-      {/* Ellipse Overlay */}
-      {/* <div
-        className="absolute inset-0 z-1"
-        style={{
-          backgroundImage: "url(/images/svgs/hero-ellipse.svg)",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-        }}
-      /> */}
       <IconOrbit />
 
-      {/* Hero Section */}
       <div className="relative mt-20 z-10 max-w-325 mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-20 lg:py-24">
         <div className="text-center max-w-202.5 mx-auto">
-          {/* Main Headline */}
           <h1 className="text-4xl sm:text-5xl lg:text-[48px] font-semibold mb-6 leading-12 md:leading-16">
             <WordDrop />
             <br />
-            {/* Carousel */}
             <span className="inline-block overflow-hidden h-[1.2em] relative align-middle">
               <Slider />
             </span>
           </h1>
 
-          {/* Description */}
           <p
-            // data-aos="zoom-out"
             className="text-lg sm:text-xl text-white/90 max-w-3xl mx-auto mb-10"
           >
             Join the Work Experience Platform Trusted by Aspiring Tech
@@ -61,7 +46,7 @@ const InternshipHeroTwo = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-            <Link href="/internship">
+            <SpeakToExpertPopover side="bottom" align="end" sideOffset={12}>
               <Button
                 className={cn(
                   "group bg-[#0F4652] text-white hover:bg-amdari-yellow hover:text-primary rounded-full py-6 h-12 text-base",
@@ -69,12 +54,12 @@ const InternshipHeroTwo = () => {
                   "transition-colors duration-300",
                 )}
               >
-                Get started
+                Speak to an Expert
                 <div className="flex h-5 w-5 rounded-full justify-center items-center bg-amdari-yellow group-hover:bg-primary text-primary group-hover:text-white">
                   <ArrowUpRight className="w-3! h-3! text-current" />
                 </div>
               </Button>
-            </Link>
+            </SpeakToExpertPopover>
             <Button
               onClick={() => setShowPopUpVid(true)}
               className={cn(
