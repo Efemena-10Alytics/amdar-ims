@@ -9,6 +9,7 @@ import SuccessStories from "@/components/_core/landing-pages/home/success-storie
 import CareerNeeds from "@/components/_core/landing-pages/home/career-needs";
 import JobReady from "@/components/_core/landing-pages/internship-program/job-ready";
 import InternshipHeroTwo from "@/components/_core/landing-pages/home/hero-two";
+import SpeakToExpertWidget from "@/components/_core/landing-pages/shared/speak-to-expert-widget";
 
 const InternShipProgram = () => {
   return (
@@ -24,6 +25,7 @@ const InternShipProgram = () => {
       <Experience />
       <RoadMap />
       <SuccessStories />
+      <SpeakToExpertWidget />
     </div>
   );
 };
