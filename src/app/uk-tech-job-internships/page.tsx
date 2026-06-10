@@ -1,6 +1,7 @@
 "use client"
 
 import React from 'react'
+import Image from 'next/image'
 import './animations.css'
 
 // TODO: replace with the real webinar YouTube video ID
@@ -117,7 +118,7 @@ const CHAT_AUTO_REPLY =
     'Thanks for reaching out! A member of our team will respond shortly. In the meantime, feel free to fill in the form below to secure your spot.'
 
 const inputClasses =
-    'w-full rounded-lg border border-[#1b5e73]/50 bg-[#111d22] px-3.5 py-3 text-sm text-[#f0f4f6] outline-none transition-colors placeholder:text-[#4d6b76] focus:border-[#2a7d9b]'
+    'w-full rounded-lg border border-[#156374]/50 bg-[#0C3640] px-3.5 py-3 text-sm text-[#F2F7F7] outline-none transition-colors placeholder:text-[#4A6A7A] focus:border-[#2B7F95]'
 
 const UkTechJobInternshipsPage = () => {
     // ── Video ──
@@ -227,7 +228,7 @@ const UkTechJobInternshipsPage = () => {
     )
 
     return (
-        <div className="min-h-screen overflow-x-hidden bg-[#080d10] leading-[1.6] text-[#f0f4f6]">
+        <div className="min-h-screen overflow-x-hidden bg-[#092A31] leading-[1.6] text-[#F2F7F7]">
             {/* TOAST NOTIFICATIONS (social proof while watching) */}
             <div className="pointer-events-none fixed bottom-[90px] left-5 z-[200] flex flex-col gap-2.5 max-[600px]:hidden">
                 {TOASTS.map((toast) => {
@@ -237,14 +238,14 @@ const UkTechJobInternshipsPage = () => {
                     return (
                         <div
                             key={toast.id}
-                            className={`pointer-events-auto flex max-w-[300px] items-center gap-3 rounded-[10px] border border-[#1b5e73]/50 border-l-[3px] border-l-[#E8A020] bg-[#152129] px-4 py-3 text-[13px] text-[#f0f4f6] transition-[transform,opacity] duration-[400ms] ease-[cubic-bezier(0.34,1.56,0.64,1)] ${visibleToasts[toast.id] ? 'translate-x-0 opacity-100' : '-translate-x-[360px] opacity-0'}`}
+                            className={`pointer-events-auto flex max-w-[300px] items-center gap-3 rounded-[10px] border border-[#156374]/50 border-l-[3px] border-l-[#FFE082] bg-[#0F4652] px-4 py-3 text-[13px] text-[#F2F7F7] transition-[transform,opacity] duration-[400ms] ease-[cubic-bezier(0.34,1.56,0.64,1)] ${visibleToasts[toast.id] ? 'translate-x-0 opacity-100' : '-translate-x-[360px] opacity-0'}`}
                         >
-                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1B5E73] text-sm font-bold text-white">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#156374] text-sm font-bold text-white">
                                 {toast.avatar}
                             </div>
                             <div className="leading-[1.4]">
-                                <strong className="block text-[13px] text-[#E8A020]">{title}</strong>
-                                <span className="text-[11px] text-[#8ba4ae]">{sub}</span>
+                                <strong className="block text-[13px] text-[#FFE082]">{title}</strong>
+                                <span className="text-[11px] text-[#C7D5D6]">{sub}</span>
                             </div>
                         </div>
                     )
@@ -252,20 +253,18 @@ const UkTechJobInternshipsPage = () => {
             </div>
 
             {/* TOP BAR */}
-            <div className="sticky top-0 z-[100] bg-[#E8A020] px-5 py-2.5 text-center text-[13px] font-bold tracking-[0.02em] text-[#1a1a1a]">
+            <div className="sticky top-0 z-[100] bg-[#FFE082] px-5 py-2.5 text-center text-[13px] font-bold tracking-[0.02em] text-[#0C2730]">
                 <span className="animate-[pulse-text_2s_ease-in-out_infinite]">
                     🔥 Next Cohort Starts Soon — Only 10 Spots Left. Don&apos;t Miss Out.
                 </span>
             </div>
 
             {/* NAV */}
-            <nav className="sticky top-[37px] z-[99] flex items-center justify-between border-b border-[#1b5e73]/25 bg-[#080d10]/95 px-[5%] py-[18px] backdrop-blur-[10px]">
-                <div className="text-[22px] font-black tracking-[-0.04em] text-[#f0f4f6]">
-                    Am<span className="text-[#E8A020]">dari</span>
-                </div>
+            <nav className="sticky top-[37px] z-[99] flex items-center justify-between border-b border-[#156374]/25 bg-[#092A31]/95 px-[5%] py-[18px] backdrop-blur-[10px]">
+                <Image src="/logo-white.svg" width={154} height={22} alt="Amdari" />
                 <a
                     href="#enroll"
-                    className="rounded-md bg-[#E8A020] px-6 py-2.5 text-[13px] font-bold text-[#111] transition-colors hover:bg-[#f0b840]"
+                    className="rounded-md bg-[#FFE082] px-6 py-2.5 text-[13px] font-bold text-[#0C2730] transition-colors hover:bg-[#FFD54F]"
                 >
                     Reserve My Spot →
                 </a>
@@ -273,15 +272,15 @@ const UkTechJobInternshipsPage = () => {
 
             {/* HERO */}
             <div className="mx-auto max-w-[1100px] px-[5%] pb-10 pt-[60px] text-center">
-                <div className="mb-6 inline-block rounded-full border border-[#E8A020]/30 bg-[#E8A020]/12 px-[18px] py-1.5 text-xs font-semibold uppercase tracking-[0.08em] text-[#E8A020]">
+                <div className="mb-6 inline-block rounded-full border border-[#FFE082]/30 bg-[#FFE082]/12 px-[18px] py-1.5 text-xs font-semibold uppercase tracking-[0.08em] text-[#FFE082]">
                     Free Live Webinar · 45 Minutes
                 </div>
                 <h1 className="mb-5 text-[clamp(28px,5vw,52px)] font-black leading-[1.1] tracking-[-0.03em] text-white">
                     Land a Tech Job in the UK
                     <br />
-                    <em className="not-italic text-[#E8A020]">Within 60 Days</em>
+                    <em className="not-italic text-[#FFE082]">Within 60 Days</em>
                 </h1>
-                <p className="mx-auto mb-8 max-w-[600px] text-[clamp(15px,2vw,18px)] text-[#8ba4ae]">
+                <p className="mx-auto mb-8 max-w-[600px] text-[clamp(15px,2vw,18px)] text-[#C7D5D6]">
                     Watch our free career webinar and discover exactly how career switchers are breaking
                     into Project Management, Data, and Cybersecurity — even with zero prior experience.
                 </p>
@@ -290,9 +289,9 @@ const UkTechJobInternshipsPage = () => {
                         (badge) => (
                             <div
                                 key={badge}
-                                className="flex items-center gap-1.5 rounded-full border border-[#1b5e73]/50 bg-[#111d22] px-4 py-[7px] text-xs font-medium text-[#8ba4ae]"
+                                className="flex items-center gap-1.5 rounded-full border border-[#156374]/50 bg-[#0C3640] px-4 py-[7px] text-xs font-medium text-[#C7D5D6]"
                             >
-                                <div className="h-[7px] w-[7px] animate-[blink_1.5s_ease-in-out_infinite] rounded-full bg-[#E8A020]" />
+                                <div className="h-[7px] w-[7px] animate-[blink_1.5s_ease-in-out_infinite] rounded-full bg-[#FFE082]" />
                                 {badge}
                             </div>
                         )
@@ -302,7 +301,7 @@ const UkTechJobInternshipsPage = () => {
 
             {/* VIDEO */}
             <div className="relative mx-auto mb-5 max-w-[900px] px-[5%]">
-                <div className="overflow-hidden rounded-2xl border border-[#1b5e73]/50 bg-[#111d22] shadow-[0_0_60px_rgba(27,94,115,0.2)]">
+                <div className="overflow-hidden rounded-2xl border border-[#156374]/50 bg-[#0C3640] shadow-[0_0_60px_rgba(27,94,115,0.2)]">
                     {videoLoaded ? (
                         <iframe
                             className="block aspect-video w-full border-0"
@@ -317,27 +316,27 @@ const UkTechJobInternshipsPage = () => {
                             onClick={() => setVideoLoaded(true)}
                             className="group flex aspect-video w-full cursor-pointer flex-col items-center justify-center gap-4 bg-gradient-to-br from-[#0d1e26] to-[#0a1920]"
                         >
-                            <div className="flex h-[72px] w-[72px] items-center justify-center rounded-full bg-[#E8A020] transition-[transform,background-color] duration-200 group-hover:scale-[1.08] group-hover:bg-[#f0b840]">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="#111" className="ml-[5px]">
+                            <div className="flex h-[72px] w-[72px] items-center justify-center rounded-full bg-[#FFE082] transition-[transform,background-color] duration-200 group-hover:scale-[1.08] group-hover:bg-[#FFD54F]">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="#0C2730" className="ml-[5px]">
                                     <polygon points="5,3 19,12 5,21" />
                                 </svg>
                             </div>
-                            <p className="text-sm text-[#8ba4ae]">Click to watch · 45-minute free webinar</p>
+                            <p className="text-sm text-[#C7D5D6]">Click to watch · 45-minute free webinar</p>
                         </button>
                     )}
                 </div>
             </div>
 
             {/* SOCIAL PROOF TICKER */}
-            <div className="overflow-hidden whitespace-nowrap border-y border-[#1b5e73]/25 bg-[#1b5e73]/8 py-3">
+            <div className="overflow-hidden whitespace-nowrap border-y border-[#156374]/25 bg-[#156374]/8 py-3">
                 <div className="inline-flex animate-[ticker_30s_linear_infinite]">
                     {[...PROOF_ITEMS, ...PROOF_ITEMS].map((item, index) => (
                         <div
                             key={index}
-                            className="inline-flex items-center gap-2.5 border-r border-[#1b5e73]/25 px-10 text-[13px] text-[#8ba4ae]"
+                            className="inline-flex items-center gap-2.5 border-r border-[#156374]/25 px-10 text-[13px] text-[#C7D5D6]"
                         >
-                            <span className="text-[15px] text-[#E8A020]">{item.icon}</span>{' '}
-                            <strong className="text-[#f0f4f6]">{item.strong}</strong> {item.text}
+                            <span className="text-[15px] text-[#FFE082]">{item.icon}</span>{' '}
+                            <strong className="text-[#F2F7F7]">{item.strong}</strong> {item.text}
                         </div>
                     ))}
                 </div>
@@ -345,25 +344,25 @@ const UkTechJobInternshipsPage = () => {
 
             {/* URGENCY BAR */}
             <div className="mx-auto mb-12 mt-8 max-w-[900px] px-[5%]">
-                <div className="flex flex-wrap items-center justify-between gap-4 rounded-[10px] border border-[#E8A020]/40 bg-[#111d22] px-6 py-4 max-[600px]:justify-center max-[600px]:text-center">
+                <div className="flex flex-wrap items-center justify-between gap-4 rounded-[10px] border border-[#FFE082]/40 bg-[#0C3640] px-6 py-4 max-[600px]:justify-center max-[600px]:text-center">
                     <div className="flex items-center gap-3.5">
-                        <div className="text-4xl font-black leading-none text-[#E8A020]">10</div>
-                        <div className="text-[13px] text-[#8ba4ae]">
-                            <strong className="block text-[15px] text-[#f0f4f6]">Spots Remaining</strong>
+                        <div className="text-4xl font-black leading-none text-[#FFE082]">10</div>
+                        <div className="text-[13px] text-[#C7D5D6]">
+                            <strong className="block text-[15px] text-[#F2F7F7]">Spots Remaining</strong>
                             June Cohort · Starting Soon
                         </div>
                     </div>
                     <div className="min-w-[160px] flex-1">
                         <div className="h-2 overflow-hidden rounded-full bg-white/8">
-                            <div className="h-full w-[80%] animate-[progress-shine_2s_ease-in-out_infinite] rounded-full bg-[#E8A020]" />
+                            <div className="h-full w-[80%] animate-[progress-shine_2s_ease-in-out_infinite] rounded-full bg-[#FFE082]" />
                         </div>
-                        <div className="mt-[5px] text-[11px] text-[#8ba4ae]">
+                        <div className="mt-[5px] text-[11px] text-[#C7D5D6]">
                             40 of 50 seats claimed — filling fast
                         </div>
                     </div>
                     <a
                         href="#enroll"
-                        className="inline-block whitespace-nowrap rounded-lg bg-[#E8A020] px-7 py-3 text-sm font-extrabold text-[#111] transition-[background-color,transform] hover:scale-[1.02] hover:bg-[#f0b840]"
+                        className="inline-block whitespace-nowrap rounded-lg bg-[#FFE082] px-7 py-3 text-sm font-extrabold text-[#0C2730] transition-[background-color,transform] hover:scale-[1.02] hover:bg-[#FFD54F]"
                     >
                         Secure My Spot →
                     </a>
@@ -371,36 +370,36 @@ const UkTechJobInternshipsPage = () => {
             </div>
 
             {/* STATS */}
-            <div className="flex flex-wrap justify-center gap-10 border-b border-[#1b5e73]/25 px-[5%] py-12">
+            <div className="flex flex-wrap justify-center gap-10 border-b border-[#156374]/25 px-[5%] py-12">
                 {STATS.map((stat) => (
                     <div key={stat.label} className="text-center">
-                        <div className="text-4xl font-black tracking-[-0.03em] text-[#E8A020]">{stat.num}</div>
-                        <div className="mt-0.5 text-xs font-medium text-[#8ba4ae]">{stat.label}</div>
+                        <div className="text-4xl font-black tracking-[-0.03em] text-[#FFE082]">{stat.num}</div>
+                        <div className="mt-0.5 text-xs font-medium text-[#C7D5D6]">{stat.label}</div>
                     </div>
                 ))}
             </div>
 
             {/* WHAT'S INSIDE */}
             <div className="mx-auto max-w-[1100px] px-[5%] py-12">
-                <div className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#2a7d9b]">
+                <div className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#2B7F95]">
                     What you&apos;ll discover
                 </div>
                 <h2 className="mb-9 text-[clamp(22px,3.5vw,36px)] font-extrabold tracking-[-0.02em] text-white">
                     Everything you need to
                     <br />
-                    <em className="not-italic text-[#E8A020]">make the switch</em>
+                    <em className="not-italic text-[#FFE082]">make the switch</em>
                 </h2>
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-4">
                     {FEATURES.map((feature) => (
                         <div
                             key={feature.title}
-                            className="rounded-2xl border border-[#1b5e73]/25 bg-[#111d22] p-6 transition-[border-color,transform] duration-200 hover:-translate-y-0.5 hover:border-[#2a7d9b]"
+                            className="rounded-2xl border border-[#156374]/25 bg-[#0C3640] p-6 transition-[border-color,transform] duration-200 hover:-translate-y-0.5 hover:border-[#2B7F95]"
                         >
-                            <div className="mb-3.5 flex h-11 w-11 items-center justify-center rounded-[10px] bg-[#1b5e73]/20 text-xl">
+                            <div className="mb-3.5 flex h-11 w-11 items-center justify-center rounded-[10px] bg-[#156374]/20 text-xl">
                                 {feature.icon}
                             </div>
                             <h3 className="mb-1.5 text-[15px] font-bold text-white">{feature.title}</h3>
-                            <p className="text-[13px] leading-relaxed text-[#8ba4ae]">{feature.description}</p>
+                            <p className="text-[13px] leading-relaxed text-[#C7D5D6]">{feature.description}</p>
                         </div>
                     ))}
                 </div>
@@ -408,22 +407,22 @@ const UkTechJobInternshipsPage = () => {
 
             {/* TRACKS */}
             <div className="mx-auto max-w-[1100px] px-[5%] pb-12">
-                <div className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#2a7d9b]">
+                <div className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#2B7F95]">
                     Career tracks
                 </div>
                 <h2 className="mb-9 text-[clamp(22px,3.5vw,36px)] font-extrabold tracking-[-0.02em] text-white">
                     Choose your path
                     <br />
-                    into <em className="not-italic text-[#E8A020]">tech</em>
+                    into <em className="not-italic text-[#FFE082]">tech</em>
                 </h2>
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3">
                     {TRACKS.map((trackName) => (
                         <div
                             key={trackName}
-                            className="flex items-center gap-3 rounded-[10px] border border-[#1b5e73]/25 bg-[#111d22] px-5 py-[18px] transition-colors hover:border-[#2a7d9b]"
+                            className="flex items-center gap-3 rounded-[10px] border border-[#156374]/25 bg-[#0C3640] px-5 py-[18px] transition-colors hover:border-[#2B7F95]"
                         >
-                            <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#E8A020]" />
-                            <span className="text-sm font-semibold text-[#f0f4f6]">{trackName}</span>
+                            <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#FFE082]" />
+                            <span className="text-sm font-semibold text-[#F2F7F7]">{trackName}</span>
                         </div>
                     ))}
                 </div>
@@ -431,31 +430,31 @@ const UkTechJobInternshipsPage = () => {
 
             {/* TESTIMONIALS */}
             <div className="mx-auto max-w-[1100px] px-[5%] pb-12">
-                <div className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#2a7d9b]">
+                <div className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#2B7F95]">
                     Success stories
                 </div>
                 <h2 className="mb-9 text-[clamp(22px,3.5vw,36px)] font-extrabold tracking-[-0.02em] text-white">
                     People who got hired
                     <br />
-                    <em className="not-italic text-[#E8A020]">in 60 days or less</em>
+                    <em className="not-italic text-[#FFE082]">in 60 days or less</em>
                 </h2>
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4">
                     {TESTIMONIALS.map((testimonial) => (
                         <div
                             key={testimonial.name}
-                            className="rounded-2xl border border-[#1b5e73]/25 bg-[#111d22] p-6"
+                            className="rounded-2xl border border-[#156374]/25 bg-[#0C3640] p-6"
                         >
-                            <div className="mb-3 text-sm tracking-[2px] text-[#E8A020]">★★★★★</div>
-                            <blockquote className="mb-4 text-sm italic leading-[1.7] text-[#8ba4ae]">
+                            <div className="mb-3 text-sm tracking-[2px] text-[#FFE082]">★★★★★</div>
+                            <blockquote className="mb-4 text-sm italic leading-[1.7] text-[#C7D5D6]">
                                 {testimonial.quote}
                             </blockquote>
                             <div className="flex items-center gap-2.5">
-                                <div className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full bg-[#1B5E73] text-[13px] font-bold text-white">
+                                <div className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full bg-[#156374] text-[13px] font-bold text-white">
                                     {testimonial.avatar}
                                 </div>
                                 <div>
                                     <div className="text-[13px] font-bold text-white">{testimonial.name}</div>
-                                    <div className="text-[11px] text-[#4d6b76]">{testimonial.role}</div>
+                                    <div className="text-[11px] text-[#4A6A7A]">{testimonial.role}</div>
                                 </div>
                                 <div className="ml-auto rounded-full border border-[#22c55e]/25 bg-[#22c55e]/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.05em] text-[#4ade80]">
                                     Hired ✓
@@ -467,15 +466,15 @@ const UkTechJobInternshipsPage = () => {
             </div>
 
             {/* ENROLL FORM */}
-            <div id="enroll" className="border-y border-[#1b5e73]/25 bg-[#0d1518] px-[5%] py-16">
+            <div id="enroll" className="border-y border-[#156374]/25 bg-[#061A20] px-[5%] py-16">
                 <div className="mx-auto max-w-[560px] text-center">
-                    <div className="mb-4 inline-block rounded-full border border-[#E8A020]/30 bg-[#E8A020]/12 px-[18px] py-1.5 text-xs font-semibold uppercase tracking-[0.08em] text-[#E8A020]">
+                    <div className="mb-4 inline-block rounded-full border border-[#FFE082]/30 bg-[#FFE082]/12 px-[18px] py-1.5 text-xs font-semibold uppercase tracking-[0.08em] text-[#FFE082]">
                         Only 10 spots left
                     </div>
                     <h2 className="mb-2 text-[clamp(22px,3.5vw,32px)] font-extrabold tracking-[-0.02em] text-white">
                         Secure Your Place in the June Cohort
                     </h2>
-                    <p className="mb-8 text-sm text-[#8ba4ae]">
+                    <p className="mb-8 text-sm text-[#C7D5D6]">
                         Fill in your details and our team will reach out to confirm your enrollment within
                         24 hours.
                     </p>
@@ -489,7 +488,7 @@ const UkTechJobInternshipsPage = () => {
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3 grid grid-cols-2 gap-3 text-left max-[600px]:grid-cols-1">
                                 <label className="flex flex-col gap-[5px]">
-                                    <span className="text-xs font-semibold text-[#8ba4ae]">First Name</span>
+                                    <span className="text-xs font-semibold text-[#C7D5D6]">First Name</span>
                                     <input
                                         type="text"
                                         value={firstName}
@@ -500,7 +499,7 @@ const UkTechJobInternshipsPage = () => {
                                     />
                                 </label>
                                 <label className="flex flex-col gap-[5px]">
-                                    <span className="text-xs font-semibold text-[#8ba4ae]">Last Name</span>
+                                    <span className="text-xs font-semibold text-[#C7D5D6]">Last Name</span>
                                     <input
                                         type="text"
                                         value={lastName}
@@ -513,7 +512,7 @@ const UkTechJobInternshipsPage = () => {
                             </div>
                             <div className="mb-3 grid grid-cols-1 gap-3 text-left">
                                 <label className="flex flex-col gap-[5px]">
-                                    <span className="text-xs font-semibold text-[#8ba4ae]">Email Address</span>
+                                    <span className="text-xs font-semibold text-[#C7D5D6]">Email Address</span>
                                     <input
                                         type="email"
                                         value={email}
@@ -526,7 +525,7 @@ const UkTechJobInternshipsPage = () => {
                             </div>
                             <div className="mb-3 grid grid-cols-1 gap-3 text-left">
                                 <label className="flex flex-col gap-[5px]">
-                                    <span className="text-xs font-semibold text-[#8ba4ae]">WhatsApp / Phone</span>
+                                    <span className="text-xs font-semibold text-[#C7D5D6]">WhatsApp / Phone</span>
                                     <input
                                         type="tel"
                                         value={phone}
@@ -538,13 +537,13 @@ const UkTechJobInternshipsPage = () => {
                             </div>
                             <div className="mb-3 grid grid-cols-1 gap-3 text-left">
                                 <label className="flex flex-col gap-[5px]">
-                                    <span className="text-xs font-semibold text-[#8ba4ae]">
+                                    <span className="text-xs font-semibold text-[#C7D5D6]">
                                         Career Track You&apos;re Interested In
                                     </span>
                                     <select
                                         value={track}
                                         onChange={(e) => setTrack(e.target.value)}
-                                        className={`${inputClasses} [&>option]:bg-[#111d22]`}
+                                        className={`${inputClasses} [&>option]:bg-[#0C3640]`}
                                     >
                                         <option value="">Select a track…</option>
                                         {TRACKS.map((trackName) => (
@@ -558,11 +557,11 @@ const UkTechJobInternshipsPage = () => {
                             </div>
                             <div className="mb-3 grid grid-cols-1 gap-3 text-left">
                                 <label className="flex flex-col gap-[5px]">
-                                    <span className="text-xs font-semibold text-[#8ba4ae]">Current Situation</span>
+                                    <span className="text-xs font-semibold text-[#C7D5D6]">Current Situation</span>
                                     <select
                                         value={situation}
                                         onChange={(e) => setSituation(e.target.value)}
-                                        className={`${inputClasses} [&>option]:bg-[#111d22]`}
+                                        className={`${inputClasses} [&>option]:bg-[#0C3640]`}
                                     >
                                         <option value="">Tell us where you are now…</option>
                                         {SITUATIONS.map((item) => (
@@ -578,11 +577,11 @@ const UkTechJobInternshipsPage = () => {
                             ) : null}
                             <button
                                 type="submit"
-                                className="mt-2 w-full cursor-pointer rounded-lg bg-[#E8A020] p-[15px] text-base font-extrabold text-[#111] transition-[background-color,transform] hover:scale-[1.01] hover:bg-[#f0b840]"
+                                className="mt-2 w-full cursor-pointer rounded-lg bg-[#FFE082] p-[15px] text-base font-extrabold text-[#0C2730] transition-[background-color,transform] hover:scale-[1.01] hover:bg-[#FFD54F]"
                             >
                                 Reserve My Spot — It&apos;s Free →
                             </button>
-                            <p className="mt-2.5 text-[11px] text-[#4d6b76]">
+                            <p className="mt-2.5 text-[11px] text-[#4A6A7A]">
                                 🔒 We respect your privacy. No spam, ever. You&apos;ll only hear from our team.
                             </p>
                         </form>
@@ -592,19 +591,19 @@ const UkTechJobInternshipsPage = () => {
 
             {/* CONTACT */}
             <div className="mx-auto max-w-[1100px] px-[5%] py-12 text-center">
-                <div className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#2a7d9b]">
+                <div className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#2B7F95]">
                     Get in touch
                 </div>
                 <h2 className="mb-4 text-[clamp(22px,3.5vw,36px)] font-extrabold tracking-[-0.02em] text-white">
-                    Have questions? <em className="not-italic text-[#E8A020]">We&apos;re here.</em>
+                    Have questions? <em className="not-italic text-[#FFE082]">We&apos;re here.</em>
                 </h2>
-                <p className="mb-6 text-sm text-[#8ba4ae]">
+                <p className="mb-6 text-sm text-[#C7D5D6]">
                     Chat with us live using the button in the corner, or reach out directly.
                 </p>
                 <div className="flex flex-wrap justify-center gap-4">
                     <a
                         href="mailto:hello@amdari.io"
-                        className="flex items-center gap-2 rounded-lg border border-[#1b5e73]/50 bg-[#111d22] px-6 py-3 text-sm font-semibold text-[#f0f4f6]"
+                        className="flex items-center gap-2 rounded-lg border border-[#156374]/50 bg-[#0C3640] px-6 py-3 text-sm font-semibold text-[#F2F7F7]"
                     >
                         ✉️ hello@amdari.io
                     </a>
@@ -620,17 +619,17 @@ const UkTechJobInternshipsPage = () => {
             </div>
 
             {/* FOOTER */}
-            <footer className="border-t border-[#1b5e73]/25 px-[5%] py-10 text-center text-xs text-[#4d6b76]">
-                <div className="mb-2 text-xl font-black text-[#f0f4f6]">
-                    Am<span className="text-[#E8A020]">dari</span>
+            <footer className="border-t border-[#156374]/25 px-[5%] py-10 text-center text-xs text-[#4A6A7A]">
+                <div className="mb-2 flex justify-center">
+                    <Image src="/logo-white.svg" width={140} height={20} alt="Amdari" />
                 </div>
                 <p className="mb-2">Helping career switchers land tech jobs in the UK.</p>
                 <p>
-                    <a href="#" className="text-[#8ba4ae]">
+                    <a href="#" className="text-[#C7D5D6]">
                         Privacy Policy
                     </a>{' '}
                     ·{' '}
-                    <a href="#" className="text-[#8ba4ae]">
+                    <a href="#" className="text-[#C7D5D6]">
                         Terms
                     </a>{' '}
                     · © 2025 Amdari. All rights reserved.
@@ -643,9 +642,9 @@ const UkTechJobInternshipsPage = () => {
                     type="button"
                     onClick={toggleChat}
                     title="Chat with us"
-                    className="relative flex h-14 w-14 cursor-pointer items-center justify-center rounded-full border-2 border-[#2a7d9b] bg-[#1B5E73] shadow-[0_4px_20px_rgba(27,94,115,0.5)] transition-[transform,background-color] duration-200 hover:scale-[1.08] hover:bg-[#2a7d9b]"
+                    className="relative flex h-14 w-14 cursor-pointer items-center justify-center rounded-full border-2 border-[#2B7F95] bg-[#156374] shadow-[0_4px_20px_rgba(27,94,115,0.5)] transition-[transform,background-color] duration-200 hover:scale-[1.08] hover:bg-[#2B7F95]"
                 >
-                    <div className="absolute -right-[3px] -top-[3px] h-3.5 w-3.5 animate-[blink_1.5s_ease-in-out_infinite] rounded-full border-2 border-[#080d10] bg-[#E8A020]" />
+                    <div className="absolute -right-[3px] -top-[3px] h-3.5 w-3.5 animate-[blink_1.5s_ease-in-out_infinite] rounded-full border-2 border-[#092A31] bg-[#FFE082]" />
                     <svg
                         width="22"
                         height="22"
@@ -660,8 +659,8 @@ const UkTechJobInternshipsPage = () => {
                     </svg>
                 </button>
                 {chatOpen ? (
-                    <div className="absolute bottom-[68px] right-0 flex w-[320px] flex-col overflow-hidden rounded-2xl border border-[#1b5e73]/50 bg-[#152129] shadow-[0_8px_40px_rgba(0,0,0,0.5)] max-[600px]:w-[280px]">
-                        <div className="flex items-center gap-2.5 bg-[#1B5E73] px-4 py-3.5">
+                    <div className="absolute bottom-[68px] right-0 flex w-[320px] flex-col overflow-hidden rounded-2xl border border-[#156374]/50 bg-[#0F4652] shadow-[0_8px_40px_rgba(0,0,0,0.5)] max-[600px]:w-[280px]">
+                        <div className="flex items-center gap-2.5 bg-[#156374] px-4 py-3.5">
                             <div className="h-2 w-2 animate-[blink_1.5s_ease-in-out_infinite] rounded-full bg-[#4ade80]" />
                             <div>
                                 <div className="text-[13px] font-bold text-white">Amdari Team</div>
@@ -679,15 +678,15 @@ const UkTechJobInternshipsPage = () => {
                                     key={index}
                                     className={
                                         message.from === 'user'
-                                            ? 'ml-auto max-w-[85%] rounded-[10px_10px_0_10px] bg-[#E8A020]/15 px-3 py-2.5 text-xs text-[#f0f4f6]'
-                                            : 'max-w-[85%] rounded-[10px_10px_10px_0] bg-[#1b5e73]/18 px-3 py-2.5 text-xs text-[#8ba4ae]'
+                                            ? 'ml-auto max-w-[85%] rounded-[10px_10px_0_10px] bg-[#FFE082]/15 px-3 py-2.5 text-xs text-[#F2F7F7]'
+                                            : 'max-w-[85%] rounded-[10px_10px_10px_0] bg-[#156374]/18 px-3 py-2.5 text-xs text-[#C7D5D6]'
                                     }
                                 >
                                     {message.text}
                                 </div>
                             ))}
                         </div>
-                        <div className="flex gap-2 border-t border-[#1b5e73]/25 bg-[#111d22] px-3 py-2.5">
+                        <div className="flex gap-2 border-t border-[#156374]/25 bg-[#0C3640] px-3 py-2.5">
                             <input
                                 type="text"
                                 value={chatInput}
@@ -696,12 +695,12 @@ const UkTechJobInternshipsPage = () => {
                                     if (e.key === 'Enter') sendChat()
                                 }}
                                 placeholder="Type a message…"
-                                className="flex-1 rounded-md border border-[#1b5e73]/50 bg-[#0d1518] px-2.5 py-2 text-xs text-[#f0f4f6] outline-none focus:border-[#2a7d9b]"
+                                className="flex-1 rounded-md border border-[#156374]/50 bg-[#061A20] px-2.5 py-2 text-xs text-[#F2F7F7] outline-none focus:border-[#2B7F95]"
                             />
                             <button
                                 type="button"
                                 onClick={sendChat}
-                                className="cursor-pointer rounded-md bg-[#E8A020] px-3 py-2 text-xs font-bold text-[#111]"
+                                className="cursor-pointer rounded-md bg-[#FFE082] px-3 py-2 text-xs font-bold text-[#0C2730]"
                             >
                                 Send
                             </button>
