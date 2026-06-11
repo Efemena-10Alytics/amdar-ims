@@ -45,7 +45,9 @@ const ImsDiagnostics = () => {
     isDrawerOpen,
     setIsDrawerOpen,
     handleSubmitted,
-  } = useReadinessTestEntry(diagnosticForm?.id, isStepCompleted);
+  } = useReadinessTestEntry(diagnosticForm?.id, isStepCompleted, {
+    markStepComplete: () => markPreDiagnosticStepComplete("ims-diagnostics"),
+  });
 
   const fields = useMemo(
     () => getSortedReadinessTestFields(diagnosticForm),
@@ -56,14 +58,7 @@ const ImsDiagnostics = () => {
   const diagnosticTitle = diagnosticForm?.title ?? "IMS Diagnostics";
 
   const handleProceed = async () => {
-    if (isUpdating) return;
-
-    try {
-      await markPreDiagnosticStepComplete("ims-diagnostics");
-      router.push("/setup");
-    } catch {
-      // errorMessage is set by the hook
-    }
+    router.push("/setup");
   };
 
   return (

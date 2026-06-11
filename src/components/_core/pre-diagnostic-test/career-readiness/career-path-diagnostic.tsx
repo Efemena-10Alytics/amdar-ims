@@ -45,7 +45,10 @@ const CareerPathDiagnostic = () => {
     isDrawerOpen,
     setIsDrawerOpen,
     handleSubmitted,
-  } = useReadinessTestEntry(diagnosticForm?.id, isStepCompleted);
+  } = useReadinessTestEntry(diagnosticForm?.id, isStepCompleted, {
+    markStepComplete: () =>
+      markPreDiagnosticStepComplete("career-path-diagnostics"),
+  });
 
   const fields = useMemo(
     () => getSortedReadinessTestFields(diagnosticForm),
@@ -56,14 +59,7 @@ const CareerPathDiagnostic = () => {
   const diagnosticTitle = diagnosticForm?.title ?? "Career Diagnostics";
 
   const handleProceed = async () => {
-    if (isUpdating) return;
-
-    try {
-      await markPreDiagnosticStepComplete("career-path-diagnostics");
-      router.push("/pre-diagnostic-test/technology-readiness");
-    } catch {
-      // errorMessage is set by the hook
-    }
+    router.push("/pre-diagnostic-test/technology-readiness");
   };
 
   return (
