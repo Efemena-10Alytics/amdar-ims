@@ -6,7 +6,6 @@ import ReadinessTestDrawer from "@/components/_core/readiness-test/readiness-tes
 import { getReadinessTestGuidelines } from "@/features/readiness-test/get-readiness-test-guidelines";
 import { getSortedReadinessTestFields } from "@/features/readiness-test/get-sorted-form-fields";
 import { useReadinessTestEntry } from "@/features/readiness-test/use-readiness-test-entry";
-import type { ReadinessTestSubmitResultData } from "@/features/readiness-test/types";
 import {
   isOnboardingEnrollmentStepComplete,
   useUpdateCompletedOnboardingStep,
@@ -41,7 +40,9 @@ const ReadinessTest = () => {
     isDrawerOpen,
     setIsDrawerOpen,
     handleSubmitted,
-  } = useReadinessTestEntry(readinessForm?.id, isStepCompleted);
+  } = useReadinessTestEntry(readinessForm?.id, isStepCompleted, {
+    markStepComplete: () => markOnboardingStepComplete("readiness-test"),
+  });
 
   const fields = useMemo(
     () => getSortedReadinessTestFields(readinessForm),
@@ -52,15 +53,8 @@ const ReadinessTest = () => {
   const quizMinutes = readinessForm?.duration ?? 10;
   const quizTitle = readinessForm?.title ?? "Readiness Quiz";
 
-  const handleProceed = async (_result: ReadinessTestSubmitResultData) => {
-    if (isUpdating) return;
-
-    try {
-      await markOnboardingStepComplete("readiness-test");
-      router.push("/pre-diagnostic-test");
-    } catch {
-      // errorMessage is set by the hook
-    }
+  const handleProceed = async () => {
+    router.push("/pre-diagnostic-test");
   };
 
   return (

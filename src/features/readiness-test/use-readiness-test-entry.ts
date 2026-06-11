@@ -6,10 +6,16 @@ import {
 } from "@/features/readiness-test/use-get-my-result";
 import type { ReadinessTestSubmitResultData } from "@/features/readiness-test/types";
 
+type UseReadinessTestEntryOptions = {
+  markStepComplete?: () => Promise<unknown>;
+};
+
 export function useReadinessTestEntry(
   formId: string | number | null | undefined,
   isStepCompleted: boolean,
+  options: UseReadinessTestEntryOptions = {},
 ) {
+  const { markStepComplete } = options;
   const queryClient = useQueryClient();
   const { data: latestResult, isLoading: isLoadingLatest } = useGetMyResult(
     formId,
@@ -21,11 +27,16 @@ export function useReadinessTestEntry(
   const savedResult = isStepCompleted ? (latestResult ?? null) : null;
 
   const handleSubmitted = useCallback(
-    (_result: ReadinessTestSubmitResultData) => {
-      if (!isStepCompleted || formId == null || formId === "") return;
-      void invalidateReadinessMyLatestSubmission(queryClient, formId);
+    async (_result: ReadinessTestSubmitResultData) => {
+      if (formId == null || formId === "") return;
+
+      if (!isStepCompleted && markStepComplete) {
+        await markStepComplete();
+      }
+
+      await invalidateReadinessMyLatestSubmission(queryClient, formId);
     },
-    [formId, isStepCompleted, queryClient],
+    [formId, isStepCompleted, markStepComplete, queryClient],
   );
 
   return {

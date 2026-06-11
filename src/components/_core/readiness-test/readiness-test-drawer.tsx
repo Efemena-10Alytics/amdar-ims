@@ -28,7 +28,7 @@ type ReadinessTestDrawerProps = {
   isProceeding?: boolean;
   /** Latest submission from API — shown in the drawer when reopening after a prior attempt. */
   savedResult?: ReadinessTestSubmitResultData | null;
-  onSubmitted?: (result: ReadinessTestSubmitResultData) => void;
+  onSubmitted?: (result: ReadinessTestSubmitResultData) => void | Promise<void>;
   onComplete?: (result: ReadinessTestSubmitResultData) => void | Promise<void>;
 };
 
@@ -52,7 +52,9 @@ const ReadinessTestDrawer = ({
   const [isRetaking, setIsRetaking] = useState(false);
   const [submitResult, setSubmitResult] =
     useState<ReadinessTestSubmitResultData | null>(null);
+  const [isSavingProgress, setIsSavingProgress] = useState(false);
   const { submitForm, isSubmitting, errorMessage } = useSubmitReadinessTestForm();
+  const isBusy = isSubmitting || isSavingProgress;
 
   const activeField = fields[fieldIndex];
   const activeAnswer = activeField ? answers[String(activeField.id)] : undefined;
@@ -106,12 +108,12 @@ const ReadinessTestDrawer = ({
   }, [open, showResult, secondsLeft, totalFields]);
 
   const handleBack = () => {
-    if (!canGoBack || isSubmitting) return;
+    if (!canGoBack || isBusy) return;
     setFieldIndex((prev) => prev - 1);
   };
 
   const handleContinue = async () => {
-    if (!activeField || !canContinue || isSubmitting) return;
+    if (!activeField || !canContinue || isBusy) return;
 
     if (!isLastField) {
       setFieldIndex((prev) => prev + 1);
@@ -133,7 +135,17 @@ const ReadinessTestDrawer = ({
       }
 
       setSubmitResult(response.data);
-      onSubmitted?.(response.data);
+
+      setIsSavingProgress(true);
+      try {
+        await onSubmitted?.(response.data);
+      } catch {
+        setLocalError(
+          "Your answers were submitted, but we couldn't save your progress. Please try again.",
+        );
+      } finally {
+        setIsSavingProgress(false);
+      }
     } catch {
       // errorMessage is set by the hook
     }
@@ -250,7 +262,7 @@ const ReadinessTestDrawer = ({
                 <Button
                   type="button"
                   variant="outline"
-                  disabled={!canGoBack || isSubmitting}
+                  disabled={!canGoBack || isBusy}
                   onClick={handleBack}
                   className="h-12 flex-1 rounded-full border-[#C5D6DC] bg-white text-base font-medium text-[#2D6A78] hover:bg-[#EEF4F6] disabled:opacity-50"
                 >
@@ -260,15 +272,17 @@ const ReadinessTestDrawer = ({
 
                 <Button
                   type="button"
-                  disabled={!canContinue || isSubmitting}
+                  disabled={!canContinue || isBusy}
                   onClick={() => void handleContinue()}
                   className="h-12 flex-1 rounded-full bg-primary text-base text-white hover:bg-primary/90 disabled:bg-[#9DB8C0]"
                 >
                   {isSubmitting
                     ? "Submitting..."
-                    : isLastField
-                      ? finishLabel
-                      : "Continue"}
+                    : isSavingProgress
+                      ? "Saving..."
+                      : isLastField
+                        ? finishLabel
+                        : "Continue"}
                 </Button>
               </div>
             </div>
