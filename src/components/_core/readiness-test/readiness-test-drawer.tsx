@@ -176,7 +176,7 @@ const ReadinessTestDrawer = ({
       <SheetContent
         side="right"
         showCloseButton={false}
-        className="w-full border-l-0 bg-[#F7FAFB] p-0 sm:max-w-135"
+        className="w-full border-l-0 p-0 sm:max-w-140"
       >
         {showResult && displayedResult ? (
           <div className="flex h-full flex-col">
