@@ -34,7 +34,7 @@ export function useGetBlog(
     queryKey: BLOG_QUERY_KEY(normalizedSlug),
     queryFn: async (): Promise<BlogDetail | null> => {
       const { data } = await axiosInstance.get<BlogDetailApiResponse>(
-        `/blogs/${normalizedSlug}`,
+        `/blogs/${normalizedSlug}/`,
       );
 
       if (!data || typeof data !== "object") return null;

@@ -85,7 +85,7 @@ async function fetchAllBlogsForSitemap(
 
   do {
     const res = await fetch(
-      `${apiBase}/blogs/all?page=${page}`,
+      `${apiBase}/blogs/all/?page=${page}`,
       {
         ...FETCH_INIT,
         signal: AbortSignal.timeout(SITEMAP_REQUEST_TIMEOUT_MS),

@@ -3,6 +3,7 @@ import { ArrowLeft, MessageCircle } from "lucide-react";
 import BlogCard, {
     type BlogCardData,
 } from "@/components/_core/landing-pages/blog/blog-card";
+import { BlogReaderInfoDialog } from "@/components/_core/landing-pages/blog/blog-reader-info";
 import type { BlogDetail } from "@/features/blog/use-get-blog";
 import { imageStorageUrl } from "@/lib/utils";
 
@@ -15,7 +16,6 @@ type BlogDetailsProps = {
 const PARAGRAPH =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.";
 
-const FALLBACK_BLOG_IMAGE = "/images/pngs/template/classic.png";
 
 const CAREER_COACH_WHATSAPP_URL = "https://wa.me/447782293725";
 
@@ -51,8 +51,11 @@ export default function BlogDetails({ slug, blog, recommendedPosts }: BlogDetail
         );
     }
 
+    
+
     return (
         <main className="app-width py-10">
+            <BlogReaderInfoDialog blogSlug={slug} />
             <div className="grid gap-10 lg:gap-20 lg:grid-cols-[260px_minmax(0,1fr)]">
                 <aside className="space-y-8 pt-2 lg:sticky lg:top-24 lg:self-start">
                     <Link

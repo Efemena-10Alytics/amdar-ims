@@ -63,7 +63,7 @@ export function useGetAllBlog(options: UseGetAllBlogOptions = {}) {
     queryKey: ALL_BLOGS_QUERY_KEY(page, normalizedSearch, normalizedCategories),
     queryFn: async (): Promise<AllBlogsResponse> => {
       const { data } = await axiosInstance.get<AllBlogsApiResponse>(
-        "/blogs/all",
+        "/blogs/all/",
         {
           params: {
             page,
