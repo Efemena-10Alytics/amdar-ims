@@ -39,7 +39,7 @@ function ScoreRing({
     circumference - (progress / 100) * circumference;
 
   return (
-    <div className="relative mx-auto size-18">
+    <div className="relative mx-auto size-16">
       <svg
         className="size-full -rotate-90"
         viewBox={`0 0 ${radius * 2} ${radius * 2}`}
@@ -104,7 +104,7 @@ const ReadinessTestResult = ({
     <>
       {!embedded ? (
         <div className="flex items-start justify-between gap-4">
-          <h1 className="text-lg font-semibold text-[#173740]">{title}</h1>
+          <h1 className="text-base! font-semibold text-[#173740]">{title}</h1>
           {onRetake ? (
             <Button
               type="button"
@@ -132,7 +132,7 @@ const ReadinessTestResult = ({
             trackColor={config.trackColor}
           />
 
-          <h2 className="mt-5 text-xl font-semibold text-[#173740] sm:text-2xl">
+          <h2 className="mt-4 text-lg font-semibold text-[#173740] sm:text-xl">
             {config.heading}
           </h2>
 
@@ -146,16 +146,16 @@ const ReadinessTestResult = ({
 
         <div className="mx-auto mt-6 max-w-lg rounded-xl bg-[#E8EFF1] p-4 sm:p-5">
           <h3 className="text-base font-semibold text-[#2F6A78]">Summary</h3>
-          <p className="mt-2 text-sm leading-relaxed text-[#3F5E68] sm:text-base">
+          <p className="mt-2 text-xs leading-relaxed text-[#3F5E68] sm:text-sm">
             {config.summary}
           </p>
         </div>
 
         <p className="mx-auto mt-4 max-w-lg rounded-lg bg-[#EFF3F6] px-4 py-3 text-center text-sm text-[#6C7D88]">
-          A team member will reach out with your personalized readiness plan.
+          You can proceed to the next steps regardless of your score. A team member will reach out with your personalized readiness plan.
         </p>
 
-        <div className="mx-auto mt-6 flex max-w-lg flex-col gap-3">
+        <div className="mx-auto mt-5 flex max-w-lg flex-col gap-3 pb-4">
           <Button
             type="button"
             onClick={handlePrimaryClick}
