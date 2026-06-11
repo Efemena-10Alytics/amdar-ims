@@ -34,6 +34,10 @@ const inputBase = cn(
   "focus:outline-none focus:ring-2 focus:ring-[#156374] focus:ring-offset-0",
 );
 
+const selectDropdownClassName = "z-[1001]";
+
+const selectItemClassName = "py-2";
+
 type BlogReaderInfoDialogProps = {
   blogSlug?: string;
 };
@@ -94,10 +98,12 @@ export function BlogReaderInfoDialog({ blogSlug }: BlogReaderInfoDialogProps) {
   }, [blogSlug]);
 
   const handleOpenChange = (nextOpen: boolean) => {
-    setOpen(nextOpen);
-    if (!nextOpen && typeof window !== "undefined") {
-      sessionStorage.setItem(getStorageKey(blogSlug), "1");
-    }
+    setOpen((prevOpen) => {
+      if (!nextOpen && prevOpen && typeof window !== "undefined") {
+        sessionStorage.setItem(getStorageKey(blogSlug), "1");
+      }
+      return nextOpen;
+    });
   };
 
   const canSubmit =
@@ -255,9 +261,13 @@ export function BlogReaderInfoDialog({ blogSlug }: BlogReaderInfoDialogProps) {
                       }
                     />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className={selectDropdownClassName}>
                     {programs.map((program) => (
-                      <SelectItem key={program.id} value={String(program.id)}>
+                      <SelectItem
+                        key={program.id}
+                        value={String(program.id)}
+                        className={selectItemClassName}
+                      >
                         {program.title}
                       </SelectItem>
                     ))}
@@ -285,19 +295,25 @@ export function BlogReaderInfoDialog({ blogSlug }: BlogReaderInfoDialogProps) {
                       }
                     />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className={selectDropdownClassName}>
                     {countries.map((country) => (
-                      <SelectItem key={country.code} value={country.code}>
-                        <span className="flex items-center gap-2">
+                      <SelectItem
+                        key={country.code}
+                        value={country.code}
+                        className={selectItemClassName}
+                      >
+                        <span className="flex min-w-0 items-start gap-2">
                           <Image
                             src={country.flag}
                             alt=""
                             width={20}
                             height={14}
-                            className="shrink-0 rounded object-cover"
+                            className="mt-0.5 shrink-0 rounded object-cover"
                             unoptimized
                           />
-                          {country.name}
+                          <span className="whitespace-normal break-words">
+                            {country.name}
+                          </span>
                         </span>
                       </SelectItem>
                     ))}
