@@ -22,7 +22,7 @@ import type {
 /**
  * Cohort IDs that must complete onboarding/pre-diagnostic before dashboard access.
  */
-export const ENROLLMENT_JOURNEY_COHORT_IDS = [] as const;
+export const ENROLLMENT_JOURNEY_COHORT_IDS = [38, 43] as const;
 
 const ENROLLMENT_JOURNEY_COHORT_ID_SET = new Set<number>(
   ENROLLMENT_JOURNEY_COHORT_IDS,
