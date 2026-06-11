@@ -25,7 +25,7 @@ function formatBlogDate(value: string | null | undefined): string {
 async function getBlog(slug: string): Promise<BlogDetail | null> {
   if (!apiBaseURL || !slug.trim()) return null;
   try {
-    const response = await fetch(`${apiBaseURL}/blogs/${encodeURIComponent(slug)}`, {
+    const response = await fetch(`${apiBaseURL}/blogs/${encodeURIComponent(slug)}/`, {
       cache: "no-store",
     });
     if (!response.ok) return null;
@@ -47,7 +47,7 @@ async function getBlog(slug: string): Promise<BlogDetail | null> {
 async function getAllBlogsFirstPage(): Promise<BlogItem[]> {
   if (!apiBaseURL) return [];
   try {
-    const response = await fetch(`${apiBaseURL}/blogs/all?page=1`, {
+    const response = await fetch(`${apiBaseURL}/blogs/all/?page=1`, {
       cache: "no-store",
     });
     if (!response.ok) return [];

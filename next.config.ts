@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+const apiUrl = process.env.NEXT_PUBLIC_REACT_APP_API_URL?.replace(/\/$/, "");
+
 const nextConfig: NextConfig = {
   reactCompiler: true,
   transpilePackages: ["@n8n/chat"],
@@ -45,7 +47,27 @@ const nextConfig: NextConfig = {
         hostname: "res.cloudinary.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "flagcdn.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
+        pathname: "/**",
+      },
     ],
+  },
+  async rewrites() {
+    if (!apiUrl) return [];
+
+    return [
+      {
+        source: "/api/proxy/:path*",
+        destination: `${apiUrl}/:path*`,
+      },
+    ];
   },
 };
 
