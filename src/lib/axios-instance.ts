@@ -30,16 +30,12 @@ function handle401() {
 export const apiBaseURL =
   process.env.NEXT_PUBLIC_REACT_APP_API_URL ?? "";
 
-const DEV_API_PROXY = "/api/proxy";
+const BROWSER_API_PROXY = "/api/proxy";
 
-/** Browser dev requests go through Next.js rewrite to avoid CORS on api.amdari.io. */
+/** Browser requests go through Next.js rewrite to avoid CORS on api.amdari.io. */
 function resolveApiBaseURL(): string {
-  if (
-    process.env.NODE_ENV === "development" &&
-    typeof window !== "undefined" &&
-    apiBaseURL
-  ) {
-    return DEV_API_PROXY;
+  if (typeof window !== "undefined" && apiBaseURL) {
+    return BROWSER_API_PROXY;
   }
 
   return apiBaseURL;
