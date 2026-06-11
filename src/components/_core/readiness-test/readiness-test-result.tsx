@@ -87,10 +87,14 @@ const ReadinessTestResult = ({
   const whatsappGroupUrl = getInternsWhatsappGroupUrl(enrollment?.program);
   const config = getReadinessScoreTierConfig(totalScore);
 
+  const openSupport = () => {
+    const supportUrl = whatsappGroupUrl ?? WHATSAPP_URL;
+    window.open(supportUrl, "_blank", "noopener,noreferrer");
+  };
+
   const handlePrimaryClick = () => {
     if (config.primaryAction === "support") {
-      const supportUrl = whatsappGroupUrl ?? WHATSAPP_URL;
-      window.open(supportUrl, "_blank", "noopener,noreferrer");
+      openSupport();
       return;
     }
     onProceed?.();
@@ -160,6 +164,19 @@ const ReadinessTestResult = ({
           >
             {isProceeding ? "Saving..." : config.primaryLabel}
           </Button>
+
+          {config.showSupportButton ? (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={openSupport}
+              disabled={isProceeding}
+              className="h-12 w-full rounded-full border-[#DCE5E9] bg-white text-base font-medium text-[#173740] hover:bg-[#F3F7F8]"
+            >
+              <MessageCircle className="size-5 text-[#2F6A78]" aria-hidden />
+              Reach out to support
+            </Button>
+          ) : null}
 
           {config.showCommunityButton ? (
             whatsappGroupUrl ? (
