@@ -9,6 +9,7 @@ export type ReadinessScoreTierConfig = {
   trackColor: string;
   badgeClassName: string;
   showCommunityButton: boolean;
+  showSupportButton: boolean;
   primaryLabel: string;
   primaryAction: "proceed" | "support";
 };
@@ -48,6 +49,7 @@ export function getReadinessScoreTierConfig(
         trackColor: "#D8F6DC",
         badgeClassName: "bg-[#D8F6DC] text-[#3A8E53]",
         showCommunityButton: false,
+        showSupportButton: false,
         primaryLabel: "Proceed",
         primaryAction: "proceed",
       };
@@ -61,6 +63,7 @@ export function getReadinessScoreTierConfig(
         trackColor: "#FFF1C6",
         badgeClassName: "bg-[#FFF1C6] text-[#564103]",
         showCommunityButton: true,
+        showSupportButton: false,
         primaryLabel: "Proceed",
         primaryAction: "proceed",
       };
@@ -74,6 +77,7 @@ export function getReadinessScoreTierConfig(
         trackColor: "#FDECEC",
         badgeClassName: "bg-[#FDECEC] text-[#AA3030]",
         showCommunityButton: true,
+        showSupportButton: false,
         primaryLabel: "Proceed",
         primaryAction: "proceed",
       };
@@ -87,8 +91,9 @@ export function getReadinessScoreTierConfig(
         trackColor: "#FDECEC",
         badgeClassName: "bg-[#AA3030] text-white",
         showCommunityButton: true,
-        primaryLabel: "Reach out to support",
-        primaryAction: "support",
+        showSupportButton: true,
+        primaryLabel: "Proceed",
+        primaryAction: "proceed",
       };
   }
 }
