@@ -19,44 +19,39 @@ import type {
   UserEnrollment,
 } from "@/types/user/enrollment";
 
-/** Cohorts starting on or after this date are sent through onboarding/pre-diagnostic. */
-export const ENROLLMENT_JOURNEY_COHORT_START_DATE_CUTOFF = "2026-03-07";
+/**
+ * Cohort IDs that must complete onboarding/pre-diagnostic before dashboard access.
+ */
+export const ENROLLMENT_JOURNEY_COHORT_IDS = [] as const;
 
-function toDateOnlyUtcMs(value: string): number | null {
-  const trimmed = value.trim();
-  if (!trimmed) return null;
+const ENROLLMENT_JOURNEY_COHORT_ID_SET = new Set<number>(
+  ENROLLMENT_JOURNEY_COHORT_IDS,
+);
 
-  const isoPrefix = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if (isoPrefix) {
-    const [, year, month, day] = isoPrefix;
-    return Date.UTC(Number(year), Number(month) - 1, Number(day));
+function pickCohortId(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number.parseInt(value, 10);
+    return Number.isFinite(parsed) ? parsed : null;
   }
-
-  const parsed = new Date(trimmed);
-  if (Number.isNaN(parsed.getTime())) return null;
-
-  return Date.UTC(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+  return null;
 }
 
-export function getEnrollmentCohortStartDate(
+export function getEnrollmentCohortId(
   enrollment: UserEnrollment,
-): string | null {
-  const startDate = enrollment.cohort?.start_date?.trim();
-  return startDate || null;
+): number | null {
+  return (
+    pickCohortId(enrollment.cohort_id) ?? pickCohortId(enrollment.cohort?.id)
+  );
 }
 
-/** Journey redirects run for cohorts with a start date on or after the cutoff. */
+/** Journey redirects run only for enrollments in configured cohort IDs. */
 export function isEnrollmentJourneyCohortEligible(
   enrollment: UserEnrollment,
 ): boolean {
-  const startDate = getEnrollmentCohortStartDate(enrollment);
-  if (!startDate) return false;
-
-  const cohortStartMs = toDateOnlyUtcMs(startDate);
-  const cutoffMs = toDateOnlyUtcMs(ENROLLMENT_JOURNEY_COHORT_START_DATE_CUTOFF);
-  if (cohortStartMs == null || cutoffMs == null) return false;
-
-  return cohortStartMs >= cutoffMs;
+  const cohortId = getEnrollmentCohortId(enrollment);
+  if (cohortId == null) return false;
+  return ENROLLMENT_JOURNEY_COHORT_ID_SET.has(cohortId);
 }
 
 function getPreDiagnosticStepRoute(step: string): string | null {
