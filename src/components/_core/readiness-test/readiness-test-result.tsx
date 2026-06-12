@@ -126,22 +126,22 @@ const ReadinessTestResult = ({
         }
       >
         <div className="mx-auto max-w-md text-center">
-          <ScoreRing
+          {/* <ScoreRing
             score={totalScore}
             progressColor={config.progressColor}
             trackColor={config.trackColor}
-          />
+          /> */}
 
-          <h2 className="mt-4 text-lg font-semibold text-[#173740] sm:text-xl">
+          {/* <h2 className="mt-4 text-lg font-semibold text-[#173740] sm:text-xl">
             {config.heading}
-          </h2>
+          </h2> */}
 
-          <div
+          {/* <div
             className={`mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold ${config.badgeClassName}`}
           >
             <Flag className="size-3.5 shrink-0" aria-hidden />
             {config.badgeLabel}
-          </div>
+          </div> */}
         </div>
 
         <div className="mx-auto mt-6 max-w-lg rounded-xl bg-[#E8EFF1] p-4 sm:p-5">
