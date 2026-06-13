@@ -8,30 +8,52 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { OnboardingInstallationTool } from "@/features/onboarding/types";
-import { useUpdateCompletedOnboardingStep } from "@/features/internship/use-update-completed-onboarding-step";
+import {
+  isOnboardingEnrollmentStepComplete,
+  useUpdateCompletedOnboardingStep,
+} from "@/features/internship/use-update-completed-onboarding-step";
+import {
+  canContinueJourneyStep,
+  shouldMarkJourneyStepComplete,
+} from "@/hooks/can-continue-journey-step";
 import OnboardingVideoPlayer from "./onboarding-video-player";
+import { useOnboardingData } from "./onboarding-context";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
 const IntallationVideo = () => {
   const { onboarding, goToStep } = useOnboardingNavigation();
+  const { enrollment } = useOnboardingData();
   const { markOnboardingStepComplete, isUpdating, errorMessage } =
     useUpdateCompletedOnboardingStep();
   const [confirmed, setConfirmed] = useState(false);
   const [selectedTool, setSelectedTool] =
     useState<OnboardingInstallationTool | null>(null);
 
+  const isStepCompleted = isOnboardingEnrollmentStepComplete(
+    enrollment?.isOnboardingStepsCompleted,
+    "installation-videos",
+  );
+
   const tools = useMemo(
     () => onboarding.installation_video ?? [],
     [onboarding.installation_video],
   );
 
-  const canContinue = confirmed && !isUpdating;
+  const canContinue = canContinueJourneyStep(
+    confirmed,
+    isStepCompleted,
+    isUpdating,
+  );
 
   const handleContinue = async () => {
-    if (!canContinue) return;
+    if (!canContinueJourneyStep(confirmed, isStepCompleted, isUpdating)) {
+      return;
+    }
 
     try {
-      await markOnboardingStepComplete("installation-videos");
+      if (shouldMarkJourneyStepComplete(isStepCompleted)) {
+        await markOnboardingStepComplete("installation-videos");
+      }
       goToStep("readiness-test");
     } catch {
       // errorMessage is set by the hook

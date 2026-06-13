@@ -3,24 +3,46 @@
 import Image from "next/image";
 import { useState } from "react";
 import { formatLeadPhone } from "@/features/onboarding/use-get-onboarding";
-import { useUpdateCompletedOnboardingStep } from "@/features/internship/use-update-completed-onboarding-step";
+import {
+  isOnboardingEnrollmentStepComplete,
+  useUpdateCompletedOnboardingStep,
+} from "@/features/internship/use-update-completed-onboarding-step";
+import {
+  canContinueJourneyStep,
+  shouldMarkJourneyStepComplete,
+} from "@/hooks/can-continue-journey-step";
 import { CopySVG } from "./svg";
+import { useOnboardingData } from "./onboarding-context";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
 const CohortLead = () => {
   const { onboarding, goToStep } = useOnboardingNavigation();
+  const { enrollment } = useOnboardingData();
   const { markOnboardingStepComplete, isUpdating, errorMessage } =
     useUpdateCompletedOnboardingStep();
   const [isConfirmed, setIsConfirmed] = useState(false);
   const leads = onboarding.cohort_lead ?? [];
 
-  const canContinue = isConfirmed && !isUpdating;
+  const isStepCompleted = isOnboardingEnrollmentStepComplete(
+    enrollment?.isOnboardingStepsCompleted,
+    "cohort-lead",
+  );
+
+  const canContinue = canContinueJourneyStep(
+    isConfirmed,
+    isStepCompleted,
+    isUpdating,
+  );
 
   const handleContinue = async () => {
-    if (!canContinue) return;
+    if (!canContinueJourneyStep(isConfirmed, isStepCompleted, isUpdating)) {
+      return;
+    }
 
     try {
-      await markOnboardingStepComplete("cohort-lead");
+      if (shouldMarkJourneyStepComplete(isStepCompleted)) {
+        await markOnboardingStepComplete("cohort-lead");
+      }
       goToStep("internship-rules");
     } catch {
       // errorMessage is set by the hook

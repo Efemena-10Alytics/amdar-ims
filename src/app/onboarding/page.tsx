@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import OnboardingPageContent from "@/components/_core/onboarding/onboarding-page-content";
+import OnboardingPageContent from "@/components/_core/onboarding";
 
 function OnboardingFallback() {
   return (

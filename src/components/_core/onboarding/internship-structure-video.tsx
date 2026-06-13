@@ -1,21 +1,37 @@
 "use client";
 
 import { useState } from "react";
-import OnboardingVideoPlayer from "@/components/_core/onboarding/onboarding-video-player";
-import { useUpdateCompletedOnboardingStep } from "@/features/internship/use-update-completed-onboarding-step";
+import {
+  isOnboardingEnrollmentStepComplete,
+  useUpdateCompletedOnboardingStep,
+} from "@/features/internship/use-update-completed-onboarding-step";
+import {
+  canContinueJourneyStep,
+  shouldMarkJourneyStepComplete,
+} from "@/hooks/can-continue-journey-step";
+import OnboardingVideoPlayer from "./onboarding-video-player";
+import { useOnboardingData } from "./onboarding-context";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
 const InternshipStructureVideo = () => {
   const { onboarding, goToStep } = useOnboardingNavigation();
+  const { enrollment } = useOnboardingData();
   const { markOnboardingStepComplete, isUpdating, errorMessage } =
     useUpdateCompletedOnboardingStep();
   const videos = onboarding.internshp_structure_video ?? [];
   const [videoIndex, setVideoIndex] = useState(0);
   const [completedIndexes, setCompletedIndexes] = useState<number[]>([]);
 
+  const isStepCompleted = isOnboardingEnrollmentStepComplete(
+    enrollment?.isOnboardingStepsCompleted,
+    "internship-structure-video",
+  );
+
   const currentVideo = videos[videoIndex];
   const allVideosCompleted =
     videos.length > 0 && completedIndexes.length >= videos.length;
+  const currentVideoRequirementsMet =
+    completedIndexes.includes(videoIndex) || allVideosCompleted;
 
   const handleVideoEnded = () => {
     setCompletedIndexes((prev) =>
@@ -24,12 +40,17 @@ const InternshipStructureVideo = () => {
   };
 
   const handleContinue = async () => {
+    if (isStepCompleted) {
+      goToStep("cohort-lead");
+      return;
+    }
+
     if (!allVideosCompleted && videoIndex < videos.length - 1) {
       setVideoIndex((prev) => prev + 1);
       return;
     }
 
-    if (isUpdating) return;
+    if (isUpdating || !currentVideoRequirementsMet) return;
 
     try {
       await markOnboardingStepComplete("internship-structure-video");
@@ -80,15 +101,18 @@ const InternshipStructureVideo = () => {
       <button
         type="button"
         disabled={
-          isUpdating ||
-          (!completedIndexes.includes(videoIndex) && !allVideosCompleted)
+          !canContinueJourneyStep(
+            currentVideoRequirementsMet,
+            isStepCompleted,
+            isUpdating,
+          )
         }
         onClick={handleContinue}
         className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
       >
         {isUpdating
           ? "Saving..."
-          : allVideosCompleted || videoIndex >= videos.length - 1
+          : isStepCompleted || allVideosCompleted || videoIndex >= videos.length - 1
             ? "Continue"
             : "Next video"}
       </button>

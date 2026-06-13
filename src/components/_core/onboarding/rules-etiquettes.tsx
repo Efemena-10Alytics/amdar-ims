@@ -1,29 +1,49 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useUpdateCompletedOnboardingStep } from "@/features/internship/use-update-completed-onboarding-step";
+import { useState } from "react";
+import {
+  isOnboardingEnrollmentStepComplete,
+  useUpdateCompletedOnboardingStep,
+} from "@/features/internship/use-update-completed-onboarding-step";
+import {
+  canContinueJourneyStep,
+  shouldMarkJourneyStepComplete,
+} from "@/hooks/can-continue-journey-step";
+import { useOnboardingData } from "./onboarding-context";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
 const RulesEtiquettes = () => {
   const { onboarding, goToStep } = useOnboardingNavigation();
+  const { enrollment } = useOnboardingData();
   const { markOnboardingStepComplete, isUpdating, errorMessage } =
     useUpdateCompletedOnboardingStep();
   const [confirmRules, setConfirmRules] = useState(false);
   const [confirmTerms, setConfirmTerms] = useState(false);
 
+  const isStepCompleted = isOnboardingEnrollmentStepComplete(
+    enrollment?.isOnboardingStepsCompleted,
+    "internship-rules",
+  );
+
   const rules = onboarding.rule_and_etiquette;
   const docLink = rules.docLink;
 
-  const canContinue = useMemo(
-    () => confirmRules && confirmTerms && !isUpdating,
-    [confirmRules, confirmTerms, isUpdating],
+  const requirementsMet = confirmRules && confirmTerms;
+  const canContinue = canContinueJourneyStep(
+    requirementsMet,
+    isStepCompleted,
+    isUpdating,
   );
 
   const handleContinue = async () => {
-    if (!confirmRules || !confirmTerms || isUpdating) return;
+    if (!canContinueJourneyStep(requirementsMet, isStepCompleted, isUpdating)) {
+      return;
+    }
 
     try {
-      await markOnboardingStepComplete("internship-rules");
+      if (shouldMarkJourneyStepComplete(isStepCompleted)) {
+        await markOnboardingStepComplete("internship-rules");
+      }
       goToStep("installation-videos");
     } catch {
       // errorMessage is set by the hook
