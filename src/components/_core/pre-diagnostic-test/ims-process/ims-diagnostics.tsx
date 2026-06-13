@@ -58,7 +58,7 @@ const ImsDiagnostics = () => {
   const diagnosticTitle = diagnosticForm?.title ?? "IMS Diagnostics";
 
   const handleProceed = async () => {
-    router.push("/setup");
+    router.push("/dashboard");
   };
 
   return (

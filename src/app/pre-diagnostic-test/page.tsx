@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import CareerReadinessPageContent from "@/components/_core/pre-diagnostic-test/career-readiness-page-content";
+import CareerReadinessPageContent from "@/components/_core/pre-diagnostic-test";
 
 function CareerReadinessFallback() {
   return (

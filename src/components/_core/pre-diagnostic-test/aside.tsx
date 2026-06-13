@@ -205,17 +205,14 @@ const Aside = () => {
                   isOpen && "bg-[#0E6370]",
                 )}
               >
-                <Link
-                  href={group.href}
-                  className="flex min-h-12 items-center justify-between gap-4 px-4 py-3"
-                >
+                <div className="flex min-h-12 items-center justify-between gap-4 px-4 py-3">
                   <h3 className="text-base font-semibold text-white">{group.title}</h3>
                   <ChevronRight
                     className={cn("size-4 text-white transition-transform", isOpen && "rotate-90")}
                     strokeWidth={3}
                     aria-hidden
                   />
-                </Link>
+                </div>
 
                 {isOpen ? (
                   <ul className="space-y-3 px-4 pt-1 pb-4">
@@ -275,13 +272,9 @@ const Aside = () => {
                                         className="absolute top-4 left-1.75 z-0 h-full w-px bg-[#5A9AA4]"
                                       />
                                     )}
-                                    <Link
-                                      href={`${group.href}?step=${child.key}`}
+                                    <div
                                       aria-current={isChildCurrent ? "step" : undefined}
-                                      className={cn(
-                                        "relative flex items-start gap-2.5",
-                                        isChildLocked && "pointer-events-none",
-                                      )}
+                                      className="relative flex items-start gap-2.5"
                                     >
                                       <span className="relative z-10 mt-0.5 flex size-3.5 shrink-0 items-center justify-center">
                                         {isChildDone ? (
@@ -310,7 +303,7 @@ const Aside = () => {
                                       >
                                         {child.label}
                                       </span>
-                                    </Link>
+                                    </div>
                                   </li>
                                 );
                               })}
@@ -337,13 +330,9 @@ const Aside = () => {
                           key={entry.key}
                           className="grid grid-cols-[1fr_auto] items-center gap-3"
                         >
-                          <Link
-                            href={`${group.href}?step=${entry.key}`}
+                          <div
                             aria-current={isCurrent ? "step" : undefined}
-                            className={cn(
-                              "flex min-w-0 items-center gap-2.5",
-                              isLocked && "pointer-events-none",
-                            )}
+                            className="flex min-w-0 items-center gap-2.5"
                           >
                             <span
                               className={cn(
@@ -367,7 +356,7 @@ const Aside = () => {
                             >
                               {entry.label}
                             </span>
-                          </Link>
+                          </div>
                           <StatusBadge isDone={isDone} />
                         </li>
                       );

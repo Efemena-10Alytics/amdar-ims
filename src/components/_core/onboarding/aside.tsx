@@ -7,7 +7,6 @@ import { useSearchParams } from "next/navigation";
 import { Check, Loader } from "lucide-react";
 import { useAuthStore } from "@/store/auth-store";
 import {
-  buildOnboardingStepHref,
   getStudentDisplayName,
 } from "@/features/onboarding/use-get-onboarding";
 import { ONBOARDING_CHECKLIST_ITEMS } from "@/features/onboarding/types";
@@ -74,8 +73,7 @@ const Aside = () => {
                     />
                   )}
 
-                  <Link
-                    href={buildOnboardingStepHref(item.key)}
+                  <div
                     aria-current={isActive ? "step" : undefined}
                     className="relative flex items-start gap-3"
                   >
@@ -107,7 +105,7 @@ const Aside = () => {
                     >
                       {item.label}
                     </span>
-                  </Link>
+                  </div>
                 </li>
               );
             })}
