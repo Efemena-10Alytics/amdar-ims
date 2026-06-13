@@ -3,8 +3,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import OnboardingVideoPlayer from "@/components/_core/onboarding/onboarding-video-player";
+import { usePreDiagnosticData } from "@/components/_core/pre-diagnostic-test/pre-diagnostic-context";
 import { usePreDiagnosticNavigation } from "@/components/_core/pre-diagnostic-test/use-pre-diagnostic-navigation";
-import { useUpdateCompletedPreDiagnostic } from "@/features/internship/use-update-completed-pre-diagnostic";
+import {
+  isPreDiagnosticEnrollmentStepComplete,
+  useUpdateCompletedPreDiagnostic,
+} from "@/features/internship/use-update-completed-pre-diagnostic";
+import {
+  canContinueJourneyStep,
+  shouldMarkJourneyStepComplete,
+} from "@/hooks/can-continue-journey-step";
 import {
   buildPracticalWalkthroughHref,
   getFirstPracticalWalkthroughStepKey,
@@ -23,6 +31,7 @@ const PracticalWalkthrough = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { preDiagnostic } = usePreDiagnosticNavigation();
+  const { enrollment } = usePreDiagnosticData();
   const { markPreDiagnosticStepComplete, isUpdating, errorMessage } =
     useUpdateCompletedPreDiagnostic();
   const [hasVideoEnded, setHasVideoEnded] = useState(false);
@@ -49,14 +58,26 @@ const PracticalWalkthrough = () => {
     [stepNumber],
   );
 
+  const isStepCompleted = isPreDiagnosticEnrollmentStepComplete(
+    enrollment?.isPreDiagnosticStepsCompleted,
+    stepKey,
+    { practicalWalkthroughCount: walkthroughCount },
+  );
+
   useEffect(() => {
     setHasVideoEnded(false);
   }, [stepKey, src]);
 
-  const canContinue = hasVideoEnded && !isUpdating;
+  const canContinue = canContinueJourneyStep(
+    hasVideoEnded,
+    isStepCompleted,
+    isUpdating,
+  );
 
   const handleContinue = async () => {
-    if (!canContinue) return;
+    if (!canContinueJourneyStep(hasVideoEnded, isStepCompleted, isUpdating)) {
+      return;
+    }
 
     if (!isLastStep) {
       const nextStepKey = getNextPracticalWalkthroughStepKey(
@@ -70,7 +91,9 @@ const PracticalWalkthrough = () => {
     }
 
     try {
-      await markPreDiagnosticStepComplete(PRACTICAL_WALKTHROUGH_ENROLLMENT_STEP_KEY);
+      if (shouldMarkJourneyStepComplete(isStepCompleted)) {
+        await markPreDiagnosticStepComplete(PRACTICAL_WALKTHROUGH_ENROLLMENT_STEP_KEY);
+      }
       router.push(
         "/pre-diagnostic-test/technology-readiness?step=technology-diagnostics",
       );

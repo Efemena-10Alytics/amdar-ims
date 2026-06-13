@@ -1,15 +1,29 @@
 "use client";
 
 import { useState } from "react";
-import { useUpdateCompletedOnboardingStep } from "@/features/internship/use-update-completed-onboarding-step";
+import {
+  isOnboardingEnrollmentStepComplete,
+  useUpdateCompletedOnboardingStep,
+} from "@/features/internship/use-update-completed-onboarding-step";
+import {
+  canContinueJourneyStep,
+  shouldMarkJourneyStepComplete,
+} from "@/hooks/can-continue-journey-step";
 import OnboardingVideoPlayer from "./onboarding-video-player";
+import { useOnboardingData } from "./onboarding-context";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
 const OrientationVideo = () => {
   const { onboarding, goToStep } = useOnboardingNavigation();
+  const { enrollment } = useOnboardingData();
   const { markOnboardingStepComplete, isUpdating, errorMessage } =
     useUpdateCompletedOnboardingStep();
   const [hasVideoEnded, setHasVideoEnded] = useState(false);
+
+  const isStepCompleted = isOnboardingEnrollmentStepComplete(
+    enrollment?.isOnboardingStepsCompleted,
+    "orientation-video",
+  );
 
   const orientation = onboarding.orientation_video;
   const description =
@@ -17,13 +31,21 @@ const OrientationVideo = () => {
     orientation.instructions?.trim() ||
     "Get familiar with your learning environment, understand what to expect, and how to make the most of your learning experience.";
 
-  const canContinue = hasVideoEnded && !isUpdating;
+  const canContinue = canContinueJourneyStep(
+    hasVideoEnded,
+    isStepCompleted,
+    isUpdating,
+  );
 
   const handleContinue = async () => {
-    if (!canContinue) return;
+    if (!canContinueJourneyStep(hasVideoEnded, isStepCompleted, isUpdating)) {
+      return;
+    }
 
     try {
-      await markOnboardingStepComplete("orientation-video");
+      if (shouldMarkJourneyStepComplete(isStepCompleted)) {
+        await markOnboardingStepComplete("orientation-video");
+      }
       goToStep("internship-structure-video");
     } catch {
       // errorMessage is set by the hook

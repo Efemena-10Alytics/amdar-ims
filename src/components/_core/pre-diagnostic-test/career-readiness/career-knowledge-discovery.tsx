@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import OnboardingVideoPlayer from "@/components/_core/onboarding/onboarding-video-player";
+import { usePreDiagnosticData } from "@/components/_core/pre-diagnostic-test/pre-diagnostic-context";
 import { usePreDiagnosticNavigation } from "@/components/_core/pre-diagnostic-test/use-pre-diagnostic-navigation";
 import {
   buildCareerKnowledgeDiscoveryHref,
@@ -12,7 +13,14 @@ import {
   isLastCareerKnowledgeDiscoveryStep,
   parseCareerKnowledgeDiscoveryStepNumber,
 } from "@/features/pre-diagnostic/career-knowledge-discovery-steps";
-import { useUpdateCompletedPreDiagnostic } from "@/features/internship/use-update-completed-pre-diagnostic";
+import {
+  isPreDiagnosticEnrollmentStepComplete,
+  useUpdateCompletedPreDiagnostic,
+} from "@/features/internship/use-update-completed-pre-diagnostic";
+import {
+  canContinueJourneyStep,
+  shouldMarkJourneyStepComplete,
+} from "@/hooks/can-continue-journey-step";
 import { getPreDiagnosticVideoDescription } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 
 const FALLBACK_VIDEO_SRC = "https://vimeo.com/1123856639";
@@ -22,6 +30,7 @@ const CareerKnowledgeDiscovery = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { preDiagnostic } = usePreDiagnosticNavigation();
+  const { enrollment } = usePreDiagnosticData();
   const { markPreDiagnosticStepComplete, isUpdating, errorMessage } =
     useUpdateCompletedPreDiagnostic();
   const [hasVideoEnded, setHasVideoEnded] = useState(false);
@@ -48,14 +57,26 @@ const CareerKnowledgeDiscovery = () => {
     [stepNumber],
   );
 
+  const isStepCompleted = isPreDiagnosticEnrollmentStepComplete(
+    enrollment?.isPreDiagnosticStepsCompleted,
+    stepKey,
+    { careerKnowledgeDiscoveryCount: discoveryCount },
+  );
+
   useEffect(() => {
     setHasVideoEnded(false);
   }, [stepKey, src]);
 
-  const canContinue = hasVideoEnded && !isUpdating;
+  const canContinue = canContinueJourneyStep(
+    hasVideoEnded,
+    isStepCompleted,
+    isUpdating,
+  );
 
   const handleContinue = async () => {
-    if (!canContinue) return;
+    if (!canContinueJourneyStep(hasVideoEnded, isStepCompleted, isUpdating)) {
+      return;
+    }
 
     if (!isLastStep) {
       const nextStepKey = getNextCareerKnowledgeDiscoveryStepKey(
@@ -69,9 +90,11 @@ const CareerKnowledgeDiscovery = () => {
     }
 
     try {
-      await markPreDiagnosticStepComplete(
-        CAREER_KNOWLEDGE_DISCOVERY_ENROLLMENT_STEP_KEY,
-      );
+      if (shouldMarkJourneyStepComplete(isStepCompleted)) {
+        await markPreDiagnosticStepComplete(
+          CAREER_KNOWLEDGE_DISCOVERY_ENROLLMENT_STEP_KEY,
+        );
+      }
       router.push("/pre-diagnostic-test?step=career-path-diagnostics");
     } catch {
       // errorMessage is set by the hook

@@ -3,8 +3,16 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import OnboardingVideoPlayer from "@/components/_core/onboarding/onboarding-video-player";
+import { usePreDiagnosticData } from "@/components/_core/pre-diagnostic-test/pre-diagnostic-context";
 import { usePreDiagnosticNavigation } from "@/components/_core/pre-diagnostic-test/use-pre-diagnostic-navigation";
-import { useUpdateCompletedPreDiagnostic } from "@/features/internship/use-update-completed-pre-diagnostic";
+import {
+  isPreDiagnosticEnrollmentStepComplete,
+  useUpdateCompletedPreDiagnostic,
+} from "@/features/internship/use-update-completed-pre-diagnostic";
+import {
+  canContinueJourneyStep,
+  shouldMarkJourneyStepComplete,
+} from "@/hooks/can-continue-journey-step";
 import {
   buildCareerKnowledgeDiscoveryHref,
   getFirstCareerKnowledgeDiscoveryStepKey,
@@ -18,9 +26,15 @@ const FALLBACK_DESCRIPTION =
 const WelcomeVideo = () => {
   const router = useRouter();
   const { preDiagnostic } = usePreDiagnosticNavigation();
+  const { enrollment } = usePreDiagnosticData();
   const { markPreDiagnosticStepComplete, isUpdating, errorMessage } =
     useUpdateCompletedPreDiagnostic();
   const [hasVideoEnded, setHasVideoEnded] = useState(false);
+
+  const isStepCompleted = isPreDiagnosticEnrollmentStepComplete(
+    enrollment?.isPreDiagnosticStepsCompleted,
+    "welcome-video",
+  );
 
   const welcomeVideo = preDiagnostic.career_readiness.welcomeVideo[0];
   const src = welcomeVideo?.link?.trim() || FALLBACK_VIDEO_SRC;
@@ -29,13 +43,21 @@ const WelcomeVideo = () => {
     FALLBACK_DESCRIPTION,
   );
 
-  const canContinue = hasVideoEnded && !isUpdating;
+  const canContinue = canContinueJourneyStep(
+    hasVideoEnded,
+    isStepCompleted,
+    isUpdating,
+  );
 
   const handleContinue = async () => {
-    if (!canContinue) return;
+    if (!canContinueJourneyStep(hasVideoEnded, isStepCompleted, isUpdating)) {
+      return;
+    }
 
     try {
-      await markPreDiagnosticStepComplete("welcome-video");
+      if (shouldMarkJourneyStepComplete(isStepCompleted)) {
+        await markPreDiagnosticStepComplete("welcome-video");
+      }
       const discoveryCount = Math.max(
         preDiagnostic.career_readiness.careerKnowledgeDiscovery.length,
         1,

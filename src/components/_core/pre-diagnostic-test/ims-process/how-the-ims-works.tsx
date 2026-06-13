@@ -3,8 +3,16 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import OnboardingVideoPlayer from "@/components/_core/onboarding/onboarding-video-player";
+import { usePreDiagnosticData } from "@/components/_core/pre-diagnostic-test/pre-diagnostic-context";
 import { usePreDiagnosticNavigation } from "@/components/_core/pre-diagnostic-test/use-pre-diagnostic-navigation";
-import { useUpdateCompletedPreDiagnostic } from "@/features/internship/use-update-completed-pre-diagnostic";
+import {
+  isPreDiagnosticEnrollmentStepComplete,
+  useUpdateCompletedPreDiagnostic,
+} from "@/features/internship/use-update-completed-pre-diagnostic";
+import {
+  canContinueJourneyStep,
+  shouldMarkJourneyStepComplete,
+} from "@/hooks/can-continue-journey-step";
 import { getPreDiagnosticVideoDescription } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 
 const FALLBACK_VIDEO_SRC = "https://vimeo.com/1123856639";
@@ -14,9 +22,15 @@ const FALLBACK_DESCRIPTION =
 const HowTheImsWorks = () => {
   const router = useRouter();
   const { preDiagnostic } = usePreDiagnosticNavigation();
+  const { enrollment } = usePreDiagnosticData();
   const { markPreDiagnosticStepComplete, isUpdating, errorMessage } =
     useUpdateCompletedPreDiagnostic();
   const [hasVideoEnded, setHasVideoEnded] = useState(false);
+
+  const isStepCompleted = isPreDiagnosticEnrollmentStepComplete(
+    enrollment?.isPreDiagnosticStepsCompleted,
+    "how-the-ims-works",
+  );
 
   const imsVideo = preDiagnostic.ims_readiness.howTheImsWorks;
   const src = imsVideo?.link?.trim() || FALLBACK_VIDEO_SRC;
@@ -25,13 +39,21 @@ const HowTheImsWorks = () => {
     FALLBACK_DESCRIPTION,
   );
 
-  const canContinue = hasVideoEnded && !isUpdating;
+  const canContinue = canContinueJourneyStep(
+    hasVideoEnded,
+    isStepCompleted,
+    isUpdating,
+  );
 
   const handleContinue = async () => {
-    if (!canContinue) return;
+    if (!canContinueJourneyStep(hasVideoEnded, isStepCompleted, isUpdating)) {
+      return;
+    }
 
     try {
-      await markPreDiagnosticStepComplete("how-the-ims-works");
+      if (shouldMarkJourneyStepComplete(isStepCompleted)) {
+        await markPreDiagnosticStepComplete("how-the-ims-works");
+      }
       router.push("/pre-diagnostic-test/ims-readiness?step=ims-diagnostics");
     } catch {
       // errorMessage is set by the hook
