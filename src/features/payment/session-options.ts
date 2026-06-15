@@ -6,11 +6,11 @@ export const SESSION_OPTIONS = [
     label: "Thursday & Friday Career Session",
     key: "tech-career",
   },
-  {
-    value: "Saturday Info Session",
-    label: "Saturday Info Session",
-    key: "info",
-  },
+  // {
+  //   value: "Saturday Info Session",
+  //   label: "Saturday Info Session",
+  //   key: "info",
+  // },
   {
     value: "1 Week Free Internship",
     label: "1 Week Free Internship",
