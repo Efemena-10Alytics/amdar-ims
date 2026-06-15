@@ -228,7 +228,7 @@ const UkTechJobInternshipsPage = () => {
     )
 
     return (
-        <div className="min-h-screen overflow-x-hidden bg-[#092A31] leading-[1.6] text-[#F2F7F7]">
+        <div className="min-h-screen bg-[#092A31] leading-[1.6] text-[#F2F7F7]">
             {/* TOAST NOTIFICATIONS (social proof while watching) */}
             <div className="pointer-events-none fixed bottom-[90px] left-5 z-[200] flex flex-col gap-2.5 max-[600px]:hidden">
                 {TOASTS.map((toast) => {
@@ -271,20 +271,20 @@ const UkTechJobInternshipsPage = () => {
             </nav>
 
             {/* HERO */}
-            <div className="mx-auto max-w-[1100px] px-[5%] pb-10 pt-[60px] text-center">
-                <div className="mb-6 inline-block rounded-full border border-[#FFE082]/30 bg-[#FFE082]/12 px-[18px] py-1.5 text-xs font-semibold uppercase tracking-[0.08em] text-[#FFE082]">
+            <div className="mx-auto max-w-[1100px] px-[5%] pb-16 pt-[80px] text-center">
+                <div className="mb-8 inline-block rounded-full border border-[#FFE082]/30 bg-[#FFE082]/12 px-[18px] py-1.5 text-xs font-semibold uppercase tracking-[0.08em] text-[#FFE082]">
                     Free Live Webinar · 45 Minutes
                 </div>
-                <h1 className="mb-5 text-[clamp(28px,5vw,52px)] font-black leading-[1.1] tracking-[-0.03em] text-white">
+                <h1 className="mb-8 text-[clamp(28px,5vw,52px)] font-black leading-[1.15] tracking-[-0.03em] text-white">
                     Land a Tech Job in the UK
                     <br />
                     <em className="not-italic text-[#FFE082]">Within 60 Days</em>
                 </h1>
-                <p className="mx-auto mb-8 max-w-[600px] text-[clamp(15px,2vw,18px)] text-[#C7D5D6]">
+                <p className="mx-auto mb-10 max-w-[600px] text-[clamp(15px,2vw,18px)] leading-relaxed text-[#C7D5D6]">
                     Watch our free career webinar and discover exactly how career switchers are breaking
                     into Project Management, Data, and Cybersecurity — even with zero prior experience.
                 </p>
-                <div className="mb-9 flex flex-wrap justify-center gap-2.5">
+                <div className="mb-10 flex flex-wrap justify-center gap-2.5">
                     {['100+ hired graduates', 'Real recruiters. Real jobs.', 'Free to watch now'].map(
                         (badge) => (
                             <div
