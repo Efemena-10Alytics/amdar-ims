@@ -274,7 +274,7 @@ const ReadinessTestDrawer = ({
                   type="button"
                   disabled={!canContinue || isBusy}
                   onClick={() => void handleContinue()}
-                  className="h-12 flex-1 rounded-full bg-primary text-base text-white hover:bg-primary/90 disabled:bg-[#9DB8C0]"
+                  className="h-12 flex-1 cursor-pointer rounded-full bg-primary text-base text-white hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-[#9DB8C0]"
                 >
                   {isSubmitting
                     ? "Submitting..."

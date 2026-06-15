@@ -14,6 +14,11 @@ import type {
 import { USER_ENROLLMENT_QUERY_KEY } from "@/features/internship/use-get-user-enrollment";
 import { updateEnrollmentOnboardingSteps } from "@/features/internship/use-update-completed-onboarding-step";
 import {
+  isCareerKnowledgeDiscoveryAsideStepComplete,
+  isCareerKnowledgeDiscoveryAsideStepLocked,
+} from "@/features/pre-diagnostic/career-knowledge-discovery-progress";
+import {
+  buildCareerKnowledgeDiscoveryStepKey,
   CAREER_KNOWLEDGE_DISCOVERY_ENROLLMENT_STEP_KEY,
   getCareerKnowledgeDiscoveryStepKeys,
   getLastCareerKnowledgeDiscoveryStepKey,
@@ -21,6 +26,11 @@ import {
   parseCareerKnowledgeDiscoveryStepNumber,
 } from "@/features/pre-diagnostic/career-knowledge-discovery-steps";
 import {
+  isPracticalWalkthroughAsideStepComplete,
+  isPracticalWalkthroughAsideStepLocked,
+} from "@/features/pre-diagnostic/practical-walkthrough-progress";
+import {
+  buildPracticalWalkthroughStepKey,
   getLastPracticalWalkthroughStepKey,
   getPracticalWalkthroughStepKeys,
   isPracticalWalkthroughStep,
@@ -90,9 +100,10 @@ export type PreDiagnosticAsideStepKey =
   | "how-the-ims-works"
   | "ims-diagnostics";
 
-type PreDiagnosticAsideStepOptions = {
+export type PreDiagnosticAsideStepOptions = {
   careerKnowledgeDiscoveryCount?: number;
   practicalWalkthroughCount?: number;
+  enrollmentId?: number;
 };
 
 /** Aside step keys shown in the pre-diagnostic UI (includes sub-steps without their own API field). */
@@ -196,7 +207,8 @@ function getPreDiagnosticStepUnlockAfter(
   const discoveryStepNumber =
     parseCareerKnowledgeDiscoveryStepNumber(asideStepKey);
   if (discoveryStepNumber != null) {
-    return discoveryStepNumber === 1 ? ["welcome-video"] : ["welcome-video"];
+    if (discoveryStepNumber === 1) return ["welcome-video"];
+    return [buildCareerKnowledgeDiscoveryStepKey(discoveryStepNumber - 2)];
   }
 
   if (asideStepKey === "career-path-diagnostics") {
@@ -206,8 +218,10 @@ function getPreDiagnosticStepUnlockAfter(
   if (asideStepKey === "welcome-video") return [];
   if (asideStepKey === "technology-use-case") return ["career-path-diagnostics"];
 
-  if (parsePracticalWalkthroughStepNumber(asideStepKey) != null) {
-    return ["technology-use-case"];
+  const walkthroughStepNumber = parsePracticalWalkthroughStepNumber(asideStepKey);
+  if (walkthroughStepNumber != null) {
+    if (walkthroughStepNumber === 1) return ["technology-use-case"];
+    return [buildPracticalWalkthroughStepKey(walkthroughStepNumber - 2)];
   }
 
   if (asideStepKey === "technology-diagnostics") {
@@ -234,10 +248,18 @@ export function isPreDiagnosticEnrollmentStepComplete(
 
   if (mapping === null) {
     if (isCareerKnowledgeDiscoveryStep(asideStepKey)) {
-      return steps?.carrerReadiness?.careerKnowledgeDiscovery === "completed";
+      return isCareerKnowledgeDiscoveryAsideStepComplete(
+        options?.enrollmentId,
+        asideStepKey,
+        steps,
+      );
     }
     if (isPracticalWalkthroughStep(asideStepKey)) {
-      return steps?.TechnologyDiagnostic?.practicalWalkthrough === "completed";
+      return isPracticalWalkthroughAsideStepComplete(
+        options?.enrollmentId,
+        asideStepKey,
+        steps,
+      );
     }
     return false;
   }
@@ -250,6 +272,24 @@ export function isPreDiagnosticAsideStepLocked(
   asideStepKey: string,
   options?: PreDiagnosticAsideStepOptions,
 ): boolean {
+  if (isCareerKnowledgeDiscoveryStep(asideStepKey)) {
+    return isCareerKnowledgeDiscoveryAsideStepLocked(
+      options?.enrollmentId,
+      asideStepKey,
+      steps,
+      isPreDiagnosticEnrollmentStepComplete(steps, "welcome-video", options),
+    );
+  }
+
+  if (isPracticalWalkthroughStep(asideStepKey)) {
+    return isPracticalWalkthroughAsideStepLocked(
+      options?.enrollmentId,
+      asideStepKey,
+      steps,
+      isPreDiagnosticEnrollmentStepComplete(steps, "technology-use-case", options),
+    );
+  }
+
   const prerequisites = getPreDiagnosticStepUnlockAfter(
     asideStepKey,
     options?.careerKnowledgeDiscoveryCount ?? 2,
@@ -273,10 +313,24 @@ function getErrorMessage(error: unknown): string {
 }
 
 export function buildPreDiagnosticStepCompletionPayload(
-  step: PreDiagnosticStepKey,
+  step: PreDiagnosticStepKey | string,
   status: EnrollmentStepStatus = "completed",
+  options?: PreDiagnosticAsideStepOptions,
 ): UpdateEnrollmentStepsPayload {
-  const { group, step: enrollmentStepKey } = PRE_DIAGNOSTIC_STEP_TO_ENROLLMENT[step];
+  const asideMapping = getPreDiagnosticAsideStepEnrollmentMapping(
+    step,
+    options?.careerKnowledgeDiscoveryCount ?? 2,
+    options?.practicalWalkthroughCount ?? 2,
+  );
+  const mapping =
+    asideMapping ??
+    PRE_DIAGNOSTIC_STEP_TO_ENROLLMENT[step as PreDiagnosticStepKey];
+
+  if (!mapping) {
+    throw new Error(`Unknown pre-diagnostic step: ${step}`);
+  }
+
+  const { group, step: enrollmentStepKey } = mapping;
 
   return {
     isPreDiagnosticStepsCompleted: {
@@ -288,11 +342,12 @@ export function buildPreDiagnosticStepCompletionPayload(
 }
 
 export async function updateCompletedPreDiagnosticStep(
-  step: PreDiagnosticStepKey,
+  step: PreDiagnosticStepKey | string,
   status: EnrollmentStepStatus = "completed",
+  options?: PreDiagnosticAsideStepOptions,
 ): Promise<UpdateEnrollmentStepsResponse> {
   return updateEnrollmentOnboardingSteps(
-    buildPreDiagnosticStepCompletionPayload(step, status),
+    buildPreDiagnosticStepCompletionPayload(step, status, options),
   );
 }
 
@@ -303,14 +358,19 @@ export function useUpdateCompletedPreDiagnostic() {
 
   const markPreDiagnosticStepComplete = useCallback(
     async (
-      step: PreDiagnosticStepKey,
+      step: PreDiagnosticStepKey | string,
       status: EnrollmentStepStatus = "completed",
+      options?: PreDiagnosticAsideStepOptions,
     ) => {
       setIsUpdating(true);
       setErrorMessage("");
 
       try {
-        const result = await updateCompletedPreDiagnosticStep(step, status);
+        const result = await updateCompletedPreDiagnosticStep(
+          step,
+          status,
+          options,
+        );
         await queryClient.invalidateQueries({ queryKey: USER_ENROLLMENT_QUERY_KEY });
         return result;
       } catch (error) {

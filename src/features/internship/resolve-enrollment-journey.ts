@@ -87,9 +87,14 @@ export function hasPendingOnboardingSteps(
 
 export function hasPendingPreDiagnosticSteps(
   steps: PreDiagnosticStepsCompletedState | undefined,
+  options?: {
+    enrollmentId?: number;
+    careerKnowledgeDiscoveryCount?: number;
+    practicalWalkthroughCount?: number;
+  },
 ): boolean {
-  return getPreDiagnosticAsideStepKeys().some(
-    (step) => !isPreDiagnosticEnrollmentStepComplete(steps, step),
+  return getPreDiagnosticAsideStepKeys(options).some(
+    (step) => !isPreDiagnosticEnrollmentStepComplete(steps, step, options),
   );
 }
 
@@ -106,9 +111,14 @@ export function getFirstPendingOnboardingHref(
 
 export function getFirstPendingPreDiagnosticHref(
   steps: PreDiagnosticStepsCompletedState | undefined,
+  options?: {
+    enrollmentId?: number;
+    careerKnowledgeDiscoveryCount?: number;
+    practicalWalkthroughCount?: number;
+  },
 ): string | null {
-  for (const step of getPreDiagnosticAsideStepKeys()) {
-    if (!isPreDiagnosticEnrollmentStepComplete(steps, step)) {
+  for (const step of getPreDiagnosticAsideStepKeys(options)) {
+    if (!isPreDiagnosticEnrollmentStepComplete(steps, step, options)) {
       return getPreDiagnosticStepRoute(step);
     }
   }
@@ -118,6 +128,10 @@ export function getFirstPendingPreDiagnosticHref(
 /** Returns the next journey URL if onboarding or pre-diagnostic work remains. */
 export function resolveEnrollmentJourneyRedirect(
   enrollment: UserEnrollment,
+  options?: {
+    careerKnowledgeDiscoveryCount?: number;
+    practicalWalkthroughCount?: number;
+  },
 ): string | null {
   if (!isEnrollmentJourneyCohortEligible(enrollment)) return null;
 
@@ -128,6 +142,11 @@ export function resolveEnrollmentJourneyRedirect(
 
   const preDiagnosticHref = getFirstPendingPreDiagnosticHref(
     enrollment.isPreDiagnosticStepsCompleted,
+    {
+      enrollmentId: enrollment.id,
+      careerKnowledgeDiscoveryCount: options?.careerKnowledgeDiscoveryCount,
+      practicalWalkthroughCount: options?.practicalWalkthroughCount,
+    },
   );
   if (preDiagnosticHref) return preDiagnosticHref;
 

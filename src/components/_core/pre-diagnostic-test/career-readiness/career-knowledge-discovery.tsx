@@ -7,12 +7,16 @@ import { usePreDiagnosticData } from "@/components/_core/pre-diagnostic-test/pre
 import { usePreDiagnosticNavigation } from "@/components/_core/pre-diagnostic-test/use-pre-diagnostic-navigation";
 import {
   buildCareerKnowledgeDiscoveryHref,
-  CAREER_KNOWLEDGE_DISCOVERY_ENROLLMENT_STEP_KEY,
   getFirstCareerKnowledgeDiscoveryStepKey,
+  getLastCareerKnowledgeDiscoveryStepKey,
   getNextCareerKnowledgeDiscoveryStepKey,
   isLastCareerKnowledgeDiscoveryStep,
   parseCareerKnowledgeDiscoveryStepNumber,
 } from "@/features/pre-diagnostic/career-knowledge-discovery-steps";
+import {
+  isCareerKnowledgeDiscoveryStepLocallyComplete,
+  markCareerKnowledgeDiscoveryStepLocallyComplete,
+} from "@/features/pre-diagnostic/career-knowledge-discovery-progress";
 import {
   isPreDiagnosticEnrollmentStepComplete,
   useUpdateCompletedPreDiagnostic,
@@ -57,15 +61,25 @@ const CareerKnowledgeDiscovery = () => {
     [stepNumber],
   );
 
+  const enrollmentId = enrollment?.id;
+  const stepOptions = useMemo(
+    () => ({ careerKnowledgeDiscoveryCount: discoveryCount, enrollmentId }),
+    [discoveryCount, enrollmentId],
+  );
+
   const isStepCompleted = isPreDiagnosticEnrollmentStepComplete(
     enrollment?.isPreDiagnosticStepsCompleted,
     stepKey,
-    { careerKnowledgeDiscoveryCount: discoveryCount },
+    stepOptions,
   );
 
   useEffect(() => {
-    setHasVideoEnded(false);
-  }, [stepKey, src]);
+    const hasWatchedLocally = isCareerKnowledgeDiscoveryStepLocallyComplete(
+      enrollmentId,
+      stepKey,
+    );
+    setHasVideoEnded(hasWatchedLocally || isStepCompleted);
+  }, [enrollmentId, isStepCompleted, stepKey, src]);
 
   const canContinue = canContinueJourneyStep(
     hasVideoEnded,
@@ -73,10 +87,17 @@ const CareerKnowledgeDiscovery = () => {
     isUpdating,
   );
 
+  const handleVideoEnded = () => {
+    setHasVideoEnded(true);
+    markCareerKnowledgeDiscoveryStepLocallyComplete(enrollmentId, stepKey);
+  };
+
   const handleContinue = async () => {
     if (!canContinueJourneyStep(hasVideoEnded, isStepCompleted, isUpdating)) {
       return;
     }
+
+    markCareerKnowledgeDiscoveryStepLocallyComplete(enrollmentId, stepKey);
 
     if (!isLastStep) {
       const nextStepKey = getNextCareerKnowledgeDiscoveryStepKey(
@@ -92,7 +113,9 @@ const CareerKnowledgeDiscovery = () => {
     try {
       if (shouldMarkJourneyStepComplete(isStepCompleted)) {
         await markPreDiagnosticStepComplete(
-          CAREER_KNOWLEDGE_DISCOVERY_ENROLLMENT_STEP_KEY,
+          getLastCareerKnowledgeDiscoveryStepKey(discoveryCount),
+          "completed",
+          stepOptions,
         );
       }
       router.push("/pre-diagnostic-test?step=career-path-diagnostics");
@@ -111,7 +134,7 @@ const CareerKnowledgeDiscovery = () => {
         <OnboardingVideoPlayer
           key={`${stepKey}-${src}`}
           src={src}
-          onEnded={() => setHasVideoEnded(true)}
+          onEnded={handleVideoEnded}
         />
 
         <p className="mt-3 text-base leading-relaxed font-semibold text-[#64748B]">
@@ -133,7 +156,7 @@ const CareerKnowledgeDiscovery = () => {
         type="button"
         disabled={!canContinue}
         onClick={handleContinue}
-        className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
+        className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] cursor-pointer transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
       >
         {isUpdating ? "Saving..." : "Continue"}
       </button>

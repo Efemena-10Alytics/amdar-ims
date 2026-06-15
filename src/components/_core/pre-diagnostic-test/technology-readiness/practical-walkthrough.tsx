@@ -16,11 +16,15 @@ import {
 import {
   buildPracticalWalkthroughHref,
   getFirstPracticalWalkthroughStepKey,
+  getLastPracticalWalkthroughStepKey,
   getNextPracticalWalkthroughStepKey,
   isLastPracticalWalkthroughStep,
   parsePracticalWalkthroughStepNumber,
-  PRACTICAL_WALKTHROUGH_ENROLLMENT_STEP_KEY,
 } from "@/features/pre-diagnostic/practical-walkthrough-steps";
+import {
+  isPracticalWalkthroughStepLocallyComplete,
+  markPracticalWalkthroughStepLocallyComplete,
+} from "@/features/pre-diagnostic/practical-walkthrough-progress";
 import { getPreDiagnosticVideoDescription } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 
 const FALLBACK_VIDEO_SRC = "https://vimeo.com/1123856639";
@@ -58,15 +62,25 @@ const PracticalWalkthrough = () => {
     [stepNumber],
   );
 
+  const enrollmentId = enrollment?.id;
+  const stepOptions = useMemo(
+    () => ({ practicalWalkthroughCount: walkthroughCount, enrollmentId }),
+    [walkthroughCount, enrollmentId],
+  );
+
   const isStepCompleted = isPreDiagnosticEnrollmentStepComplete(
     enrollment?.isPreDiagnosticStepsCompleted,
     stepKey,
-    { practicalWalkthroughCount: walkthroughCount },
+    stepOptions,
   );
 
   useEffect(() => {
-    setHasVideoEnded(false);
-  }, [stepKey, src]);
+    const hasWatchedLocally = isPracticalWalkthroughStepLocallyComplete(
+      enrollmentId,
+      stepKey,
+    );
+    setHasVideoEnded(hasWatchedLocally || isStepCompleted);
+  }, [enrollmentId, isStepCompleted, stepKey, src]);
 
   const canContinue = canContinueJourneyStep(
     hasVideoEnded,
@@ -74,10 +88,17 @@ const PracticalWalkthrough = () => {
     isUpdating,
   );
 
+  const handleVideoEnded = () => {
+    setHasVideoEnded(true);
+    markPracticalWalkthroughStepLocallyComplete(enrollmentId, stepKey);
+  };
+
   const handleContinue = async () => {
     if (!canContinueJourneyStep(hasVideoEnded, isStepCompleted, isUpdating)) {
       return;
     }
+
+    markPracticalWalkthroughStepLocallyComplete(enrollmentId, stepKey);
 
     if (!isLastStep) {
       const nextStepKey = getNextPracticalWalkthroughStepKey(
@@ -92,7 +113,11 @@ const PracticalWalkthrough = () => {
 
     try {
       if (shouldMarkJourneyStepComplete(isStepCompleted)) {
-        await markPreDiagnosticStepComplete(PRACTICAL_WALKTHROUGH_ENROLLMENT_STEP_KEY);
+        await markPreDiagnosticStepComplete(
+          getLastPracticalWalkthroughStepKey(walkthroughCount),
+          "completed",
+          stepOptions,
+        );
       }
       router.push(
         "/pre-diagnostic-test/technology-readiness?step=technology-diagnostics",
@@ -112,7 +137,7 @@ const PracticalWalkthrough = () => {
         <OnboardingVideoPlayer
           key={`${stepKey}-${src}`}
           src={src}
-          onEnded={() => setHasVideoEnded(true)}
+          onEnded={handleVideoEnded}
         />
 
         <p className="mt-3 text-base leading-relaxed font-semibold text-[#64748B]">
@@ -134,7 +159,7 @@ const PracticalWalkthrough = () => {
         type="button"
         disabled={!canContinue}
         onClick={handleContinue}
-        className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
+        className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] cursor-pointer transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
       >
         {isUpdating ? "Saving..." : "Continue"}
       </button>
