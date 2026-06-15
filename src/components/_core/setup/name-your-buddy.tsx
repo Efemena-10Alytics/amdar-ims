@@ -62,7 +62,7 @@ const NameYourBuddy = () => {
             type="button"
             disabled={!canContinue}
             onClick={handleContinue}
-            className="mt-8 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
+            className="mt-8 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] cursor-pointer transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
           >
             {isSubmitting ? "Saving..." : "Continue"}
           </button>

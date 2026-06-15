@@ -160,7 +160,7 @@ const ReadinessTestResult = ({
             type="button"
             onClick={handlePrimaryClick}
             disabled={isProceeding}
-            className="h-12 w-full rounded-full bg-primary text-base font-medium text-white hover:bg-primary/90 disabled:opacity-70"
+            className="h-12 w-full cursor-pointer rounded-full bg-primary text-base font-medium text-white hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-70"
           >
             {isProceeding ? "Saving..." : config.primaryLabel}
           </Button>

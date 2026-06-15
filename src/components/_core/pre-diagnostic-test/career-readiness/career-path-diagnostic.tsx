@@ -125,7 +125,7 @@ const CareerPathDiagnostic = () => {
             : questionCount === 0 || isUpdating || isLoadingLatest
         }
         onClick={() => setIsDrawerOpen(true)}
-        className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0]"
+        className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] cursor-pointer transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0]"
       >
         {isUpdating
           ? "Saving..."

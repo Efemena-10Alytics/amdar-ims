@@ -11,6 +11,14 @@ import {
   isPreDiagnosticAsideStepLocked,
   isPreDiagnosticEnrollmentStepComplete,
 } from "@/features/internship/use-update-completed-pre-diagnostic";
+import {
+  isCareerKnowledgeDiscoveryGroupCompleteOnBackend,
+  useCareerKnowledgeDiscoveryProgress,
+} from "@/features/pre-diagnostic/career-knowledge-discovery-progress";
+import {
+  isPracticalWalkthroughGroupCompleteOnBackend,
+  usePracticalWalkthroughProgress,
+} from "@/features/pre-diagnostic/practical-walkthrough-progress";
 import { buildCareerKnowledgeDiscoveryStepKey } from "@/features/pre-diagnostic/career-knowledge-discovery-steps";
 import { buildPracticalWalkthroughStepKey } from "@/features/pre-diagnostic/practical-walkthrough-steps";
 import { useGetPreDiagnostic } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
@@ -123,11 +131,38 @@ function resolveCurrentStep(group: ReadinessGroup, stepParam: string | null) {
 function isPreDiagnosticGroupComplete(
   preDiagnosticSteps: PreDiagnosticStepsCompletedState | undefined,
   groupKey: "career-knowledge" | "practical-walkthrough",
+  locallyCompletedDiscoverySteps: string[] = [],
+  careerKnowledgeDiscoveryCount = 1,
+  locallyCompletedWalkthroughSteps: string[] = [],
+  practicalWalkthroughCount = 1,
 ) {
   if (groupKey === "career-knowledge") {
-    return preDiagnosticSteps?.carrerReadiness?.careerKnowledgeDiscovery === "completed";
+    if (isCareerKnowledgeDiscoveryGroupCompleteOnBackend(preDiagnosticSteps)) {
+      return true;
+    }
+
+    const requiredSteps = Array.from(
+      { length: careerKnowledgeDiscoveryCount },
+      (_, index) => buildCareerKnowledgeDiscoveryStepKey(index),
+    );
+
+    return requiredSteps.every((stepKey) =>
+      locallyCompletedDiscoverySteps.includes(stepKey),
+    );
   }
-  return preDiagnosticSteps?.TechnologyDiagnostic?.practicalWalkthrough === "completed";
+
+  if (isPracticalWalkthroughGroupCompleteOnBackend(preDiagnosticSteps)) {
+    return true;
+  }
+
+  const requiredWalkthroughSteps = Array.from(
+    { length: practicalWalkthroughCount },
+    (_, index) => buildPracticalWalkthroughStepKey(index),
+  );
+
+  return requiredWalkthroughSteps.every((stepKey) =>
+    locallyCompletedWalkthroughSteps.includes(stepKey),
+  );
 }
 
 function StatusBadge({ isDone }: { isDone: boolean }) {
@@ -160,8 +195,12 @@ const Aside = () => {
     1,
   );
   const stepOptions = useMemo(
-    () => ({ careerKnowledgeDiscoveryCount, practicalWalkthroughCount }),
-    [careerKnowledgeDiscoveryCount, practicalWalkthroughCount],
+    () => ({
+      careerKnowledgeDiscoveryCount,
+      practicalWalkthroughCount,
+      enrollmentId: enrollment?.id,
+    }),
+    [careerKnowledgeDiscoveryCount, practicalWalkthroughCount, enrollment?.id],
   );
   const readinessGroups = useMemo(
     () =>
@@ -176,6 +215,10 @@ const Aside = () => {
   const activeGroupKey = activeGroup.key;
   const currentStepKey = resolveCurrentStep(activeGroup, searchParams.get("step"));
   const preDiagnosticStepsCompleted = enrollment?.isPreDiagnosticStepsCompleted;
+  const locallyCompletedDiscoverySteps =
+    useCareerKnowledgeDiscoveryProgress(enrollment?.id);
+  const locallyCompletedWalkthroughSteps =
+    usePracticalWalkthroughProgress(enrollment?.id);
 
   return (
     <aside className="hidden overflow-y-auto rounded-l-xl bg-[#156F7D] px-5 py-6 text-white lg:flex lg:w-[45%] lg:flex-col xl:w-[42%] xl:px-6 xl:py-7">
@@ -221,6 +264,10 @@ const Aside = () => {
                         const groupDone = isPreDiagnosticGroupComplete(
                           preDiagnosticStepsCompleted,
                           entry.key as "career-knowledge" | "practical-walkthrough",
+                          locallyCompletedDiscoverySteps,
+                          careerKnowledgeDiscoveryCount,
+                          locallyCompletedWalkthroughSteps,
+                          practicalWalkthroughCount,
                         );
 
                         return (
