@@ -47,7 +47,7 @@ const Streak = () => {
       <div className="mt-6 border-t border-[#EEF2F6] pt-4">
         <p className="text-sm text-[#667085]">Complete a task today to keep your streak going.</p>
         <Link
-          href="/dashboard/internship"
+          href="/dashboard/internship-program"
           className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-[#1A6B8A] hover:text-[#0E6174]"
         >
           Submit assignment
