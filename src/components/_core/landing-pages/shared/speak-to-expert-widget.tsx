@@ -68,7 +68,7 @@ export function SpeakToExpertWidget() {
       aria-hidden={!showWidget}
     >
       {open ? (
-        <SpeakToOurExpertPanel />
+        <SpeakToOurExpertPanel onActionClick={() => setOpen(false)} />
       ) : (
         <button
           type="button"
