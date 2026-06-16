@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { Calendar } from "lucide-react";
 import { WHATSAPP_URL } from "@/components/_core/landing-pages/shared/whatsapp-widget";
@@ -10,7 +11,7 @@ import {
 } from "@/components/ui/popover";
 
 const BOOK_CONSULTATION_URL =
-  "https://calendly.com/efemena-amdari/land-a-data-role-via-work-experience";
+  "https://calendly.com/efemena-amdari/1-1-career-strategy-session";
 
 const EXPERT_AVATARS = [
   {
@@ -128,8 +129,17 @@ export function SpeakToExpertPopover({
   open,
   onOpenChange,
 }: SpeakToExpertPopoverProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = open !== undefined;
+  const resolvedOpen = isControlled ? open : internalOpen;
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!isControlled) setInternalOpen(nextOpen);
+    onOpenChange?.(nextOpen);
+  };
+
   return (
-    <Popover open={open} onOpenChange={onOpenChange}>
+    <Popover open={resolvedOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent
         side={side}
@@ -137,13 +147,17 @@ export function SpeakToExpertPopover({
         sideOffset={sideOffset}
         className="w-auto border-0 bg-transparent p-0 shadow-none"
       >
-        <SpeakToOurExpertPanel />
+        <SpeakToOurExpertPanel onActionClick={() => handleOpenChange(false)} />
       </PopoverContent>
     </Popover>
   );
 }
 
-const SpeakToOurExpertPanel = () => {
+type SpeakToOurExpertPanelProps = {
+  onActionClick?: () => void;
+};
+
+const SpeakToOurExpertPanel = ({ onActionClick }: SpeakToOurExpertPanelProps) => {
   return (
     <div className="w-[min(90vw,22.5rem)] rounded-2xl bg-[#FFF4D6] p-5 shadow-[0_12px_40px_rgba(18,57,67,0.18)]">
       <div className="flex items-start justify-between gap-3">
@@ -165,6 +179,7 @@ const SpeakToOurExpertPanel = () => {
         href={BOOK_CONSULTATION_URL}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={onActionClick}
         className="mt-5 flex items-center gap-3 rounded-2xl bg-primary p-3 transition-colors hover:bg-[#125a68]"
       >
         <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-amdari-yellow">
@@ -182,6 +197,7 @@ const SpeakToOurExpertPanel = () => {
         href={WHATSAPP_URL}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={onActionClick}
         className="mt-3 flex items-center gap-3 rounded-2xl bg-[#C9BC8E] p-3 transition-colors hover:bg-[#BFB28A]"
       >
         <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-amdari-yellow">

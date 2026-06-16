@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-export const WHATSAPP_URL = "https://wa.me/+447411531285";
+export const WHATSAPP_URL = "https://wa.me/+447782293725";
 
 const ASSISTANCE_OPTIONS = [
   "Internship program",
