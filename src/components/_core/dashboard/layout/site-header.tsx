@@ -20,7 +20,7 @@ import { useAuthStore } from "@/store/auth-store";
 
 const pathToTitle: Record<string, string> = {
   "/dashboard": "Dashboard",
-  "/dashboard/internship": "Internship Program",
+  "/dashboard/internship-program": "Internship Program",
   "/dashboard/portfolio": "Portfolio",
 };
 
