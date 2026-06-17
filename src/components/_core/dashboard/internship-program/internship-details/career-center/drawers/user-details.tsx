@@ -1,11 +1,12 @@
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 import type { AuthUser } from "@/store/auth-store";
 import type { EnrollmentCohort } from "@/types/user/enrollment";
 import { useGetUserEnrollment } from '@/features/internship/use-get-user-enrollment';
-import { Calendar, MapPin, Pencil, User, } from "lucide-react";
+import { MapPin, } from "lucide-react";
 import { useGetUserInfo } from "@/features/auth/use-get-user-info";
 import { useAuthStore } from "@/store/auth-store";
-import { CohortIcon } from '@/components/_core/dashboard/svg';
+import { CohortIcon, PencilFilledIcon } from '@/components/_core/dashboard/svg';
+import { UserFillSVG } from '@/components/_core/landing-pages/internship-program/svg';
 
 
 function DetailItem({
@@ -17,7 +18,7 @@ function DetailItem({
 }) {
     return (
         <div className="flex min-w-0 items-start gap-2">
-            <span className="mt-0.5 shrink-0 text-[#64748B]" aria-hidden>
+            <span className="mt-0.5 shrink-0 text-primary" aria-hidden>
                 {icon}
             </span>
             <div className="min-w-0 text-sm text-[#092A31]">{children}</div>
@@ -83,7 +84,7 @@ const UserDetails = () => {
                     <DetailItem icon={<CohortIcon />}>
                         {cohortLabel}
                     </DetailItem>
-                    <DetailItem icon={<Pencil className="size-4" />}>
+                    <DetailItem icon={<PencilFilledIcon />}>
                         <span className="flex flex-wrap items-center gap-2">
                             <span>{programTitle}</span>
                             <span className="rounded-full bg-[#E2E8F0] px-2 py-0.5 text-xs font-medium text-[#092A31]">
@@ -94,7 +95,7 @@ const UserDetails = () => {
                     <DetailItem icon={<MapPin className="size-4" />}>
                         {locationLabel}
                     </DetailItem>
-                    <DetailItem icon={<User className="size-4" />}>
+                    <DetailItem icon={<UserFillSVG />}>
                         {affiliationLabel}
                     </DetailItem>
                 </div>
