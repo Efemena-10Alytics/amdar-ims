@@ -2,11 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import {
-  Calendar,
-  MapPin,
-  Pencil,
   Upload,
-  User,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,12 +15,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import { useGetUserInfo } from "@/features/auth/use-get-user-info";
-import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
 import { cn } from "@/lib/utils";
-import { useAuthStore } from "@/store/auth-store";
-import type { AuthUser } from "@/store/auth-store";
-import type { EnrollmentCohort } from "@/types/user/enrollment";
+import UserDetails from "./user-details";
 
 const COMPANY_LOCATIONS = [
   "United Kingdom",
@@ -54,79 +46,18 @@ const INITIAL_FORM_STATE: InterviewPrepFormState = {
   cvFile: null,
 };
 
-function getUserFullName(user: AuthUser | null | undefined): string {
-  if (!user || typeof user !== "object") return "Oluwajuwonlo Olunga";
-
-  const record = user as Record<string, unknown>;
-  const nested =
-    record.user && typeof record.user === "object"
-      ? (record.user as Record<string, unknown>)
-      : record;
-
-  const firstName = nested.firstName ?? nested.first_name ?? nested.name;
-  const lastName = nested.lastName ?? nested.last_name;
-  const first =
-    typeof firstName === "string" ? firstName.trim() : "";
-  const last = typeof lastName === "string" ? lastName.trim() : "";
-  const fullName = [first, last].filter(Boolean).join(" ").trim();
-
-  return fullName || "Oluwajuwonlo Olunga";
-}
-
-function formatCohortLabel(cohort: EnrollmentCohort | undefined): string {
-  if (!cohort) return "Feb Cohort, 2026.";
-
-  const name = cohort.name?.trim();
-  if (name) return name.endsWith(".") ? name : `${name}.`;
-
-  const month = cohort.month?.trim();
-  const year = cohort.year?.trim();
-  if (month && year) return `${month} Cohort, ${year}.`;
-
-  return "—";
-}
-
-function DetailItem({
-  icon,
-  children,
-}: {
-  icon: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex min-w-0 items-start gap-2">
-      <span className="mt-0.5 shrink-0 text-[#64748B]" aria-hidden>
-        {icon}
-      </span>
-      <div className="min-w-0 text-sm text-[#475467]">{children}</div>
-    </div>
-  );
-}
-
 const InterviewPrepDrawer = ({
   open,
   onOpenChange,
 }: InterviewPrepDrawerProps) => {
   const cvInputId = useId();
   const cvInputRef = useRef<HTMLInputElement>(null);
-  const authUser = useAuthStore((state) => state.user);
-  const { data: userInfo } = useGetUserInfo();
-  const { data: enrollment } = useGetUserEnrollment();
 
   const [form, setForm] = useState<InterviewPrepFormState>(INITIAL_FORM_STATE);
   const [cvError, setCvError] = useState("");
   const [isDragOver, setIsDragOver] = useState(false);
 
-  const displayName = getUserFullName(userInfo ?? authUser);
-  const cohortLabel = formatCohortLabel(enrollment?.cohort);
-  const programTitle =
-    enrollment?.program?.title?.trim() ||
-    enrollment?.program?.intern_title?.trim() ||
-    enrollment?.program?.internship_title?.trim() ||
-    "Product design";
-  const skillLevel = enrollment?.program?.level?.trim() || "Professional";
-  const locationLabel = "United Kingdom";
-  const affiliationLabel = "Uniformity stage";
+
 
   useEffect(() => {
     if (!open) {
@@ -187,33 +118,7 @@ const InterviewPrepDrawer = ({
           </div>
 
           <div className="flex-1 overflow-y-auto px-6 py-5">
-            <p className="text-sm font-medium text-[#64748B]">Your details</p>
-
-            <div className="mt-2 rounded-xl bg-[#F6F8FA] p-4">
-              <p className="text-base font-semibold text-[#092A31]">
-                {displayName}
-              </p>
-
-              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <DetailItem icon={<Calendar className="size-4" />}>
-                  {cohortLabel}
-                </DetailItem>
-                <DetailItem icon={<Pencil className="size-4" />}>
-                  <span className="flex flex-wrap items-center gap-2">
-                    <span>{programTitle}</span>
-                    <span className="rounded-full bg-[#E2E8F0] px-2 py-0.5 text-xs font-medium text-[#64748B]">
-                      {skillLevel}
-                    </span>
-                  </span>
-                </DetailItem>
-                <DetailItem icon={<MapPin className="size-4" />}>
-                  {locationLabel}
-                </DetailItem>
-                <DetailItem icon={<User className="size-4" />}>
-                  {affiliationLabel}
-                </DetailItem>
-              </div>
-            </div>
+            <UserDetails />
 
             <p className="mt-6 text-sm font-medium text-[#64748B]">
               Fill in this section

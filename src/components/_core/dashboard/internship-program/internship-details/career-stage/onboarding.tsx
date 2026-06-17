@@ -20,17 +20,19 @@ const OnboardingSession = () => {
         Getting you familiar with your learning environment
       </p>
 
-      <div className="my-4 border-t border-[#E2E8F0]" aria-hidden />
+      {/* <div className="my-4 border-t border-[#E2E8F0]" aria-hidden /> */}
 
-      <ul className="space-y-3">
+      <ul className="space-y-3 mt-3">
         {ONBOARDING_CHECKLIST_ITEMS.map((task) => (
           <li key={task.key} className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-2.5">
-              <Check
-                className="size-4 shrink-0 text-[#238A50]"
-                strokeWidth={2.5}
-                aria-hidden
-              />
+              <div className="bg-[#C7F5D8] p-0.5 rounded">
+                <Check
+                  className="size-4 shrink-0 text-[#238A50]"
+                  strokeWidth={2.5}
+                  aria-hidden
+                />
+              </div>
               <Link
                 href={buildOnboardingStepHref(task.key)}
                 className="text-sm font-medium text-[#092A31] underline-offset-2 hover:underline"
