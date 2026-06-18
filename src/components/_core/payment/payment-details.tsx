@@ -1,10 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
+import { useCountries } from "@/features/portfolio/use-countries";
 import type { CheckoutSelections } from "@/types/payment";
 import {
   INTERNSHIP_FALLBACK_PLAN_TOTAL,
@@ -129,6 +131,7 @@ const PaymentDetails = ({
   const isInstallmentPlan =
     checkoutSelections?.planId && checkoutSelections.planId !== "full";
   const { user } = useAuthStore();
+  const { data: countries = [] } = useCountries();
   const profile =
     user &&
       typeof user === "object" &&
@@ -141,6 +144,22 @@ const PaymentDetails = ({
     () => getPersonalDataFromUser(profile),
     [profile],
   );
+
+  const userLocation = useMemo(() => {
+    if (!profile) return "";
+    return (
+      ((profile.location as string) || (profile.country as string)) ?? ""
+    ).trim();
+  }, [profile]);
+
+  const locationCountry = useMemo(() => {
+    if (!userLocation || countries.length === 0) return undefined;
+
+    const normalizedLocation = userLocation.trim().toLowerCase();
+    return countries.find(
+      (country) => country.name.trim().toLowerCase() === normalizedLocation,
+    );
+  }, [countries, userLocation]);
 
   const editInitialData = useMemo((): Partial<PersonalDataForm> | null => {
     if (!profile) return null;
@@ -233,11 +252,16 @@ const PaymentDetails = ({
                 <div className="flex items-center justify-between gap-2 text-right text-sm font-medium text-[#092A31]">
                   <div className="text-sm text-[#6b7280]">{label}</div>
                   <div className="flex gap-2 text-[#092A31]">
-                    {withFlag && (
-                      <span className="text-base leading-none" aria-hidden>
-                        🇳🇬
-                      </span>
-                    )}
+                    {withFlag && locationCountry?.flag ? (
+                      <Image
+                        src={locationCountry.flag}
+                        alt=""
+                        width={20}
+                        height={14}
+                        className="shrink-0 rounded object-cover"
+                        unoptimized
+                      />
+                    ) : null}
                     {value}
                   </div>
                 </div>
