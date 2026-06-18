@@ -4,7 +4,13 @@ import { useState } from "react";
 import Image from "next/image";
 import { CalendarCheck, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import CvReviewDrawer from "@/components/_core/dashboard/internship-program/internship-details/career-center/drawers/cv-review";
 import LinkedInOptimizationDrawer from "@/components/_core/dashboard/internship-program/internship-details/career-center/drawers/linkedIn-optimization";
 
 const SERVICE_FLAGS = [
@@ -12,8 +18,26 @@ const SERVICE_FLAGS = [
   { src: "/images/svgs/country/USA.svg", alt: "United States" },
 ];
 
+const BOOKING_SESSION_OPTIONS = [
+  { id: "linkedin", label: "LinkedIn Optimization" },
+  { id: "cv-review", label: "CV Review" },
+] as const;
+
 const LinkedInCvReview = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [isLinkedInDrawerOpen, setIsLinkedInDrawerOpen] = useState(false);
+  const [isCvReviewDrawerOpen, setIsCvReviewDrawerOpen] = useState(false);
+
+  const handleSelectSession = (sessionId: (typeof BOOKING_SESSION_OPTIONS)[number]["id"]) => {
+    setIsPopoverOpen(false);
+
+    if (sessionId === "linkedin") {
+      setIsLinkedInDrawerOpen(true);
+      return;
+    }
+
+    setIsCvReviewDrawerOpen(true);
+  };
 
   return (
     <>
@@ -74,19 +98,51 @@ const LinkedInCvReview = () => {
           ))}
         </div>
 
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => setIsDrawerOpen(true)}
-          className="mt-5 h-11 w-full rounded-full border-[#0A66C2] bg-transparent text-sm font-semibold text-[#0A66C2] hover:bg-[#E8F0FF] hover:text-[#084d94]"
-        >
-          Book session
-        </Button>
+        <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="outline"
+              className="mt-5 h-11 w-full rounded-full border-[#0A66C2] bg-transparent text-sm font-semibold text-[#0A66C2] hover:bg-[#E8F0FF] hover:text-[#084d94]"
+            >
+              Book session
+            </Button>
+          </PopoverTrigger>
+
+          <PopoverContent
+            align="end"
+            side="top"
+            sideOffset={12}
+            className="w-72 rounded-xl border border-[#E2E8F0] bg-white p-4 shadow-lg"
+          >
+            <p className="text-sm font-semibold text-[#0F4652]">
+              What session are you booking?
+            </p>
+
+            <ul className="mt-3 space-y-1">
+              {BOOKING_SESSION_OPTIONS.map((option) => (
+                <li key={option.id}>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectSession(option.id)}
+                    className="w-full cursor-pointer rounded-lg px-2 py-2 text-left text-sm font-medium text-[#64748B] transition hover:bg-[#F6F8FA] hover:text-[#173740]"
+                  >
+                    {option.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </PopoverContent>
+        </Popover>
       </section>
 
       <LinkedInOptimizationDrawer
-        open={isDrawerOpen}
-        onOpenChange={setIsDrawerOpen}
+        open={isLinkedInDrawerOpen}
+        onOpenChange={setIsLinkedInDrawerOpen}
+      />
+      <CvReviewDrawer
+        open={isCvReviewDrawerOpen}
+        onOpenChange={setIsCvReviewDrawerOpen}
       />
     </>
   );
