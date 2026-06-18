@@ -200,6 +200,7 @@ const ReadinessTestDrawer = ({
               <ReadinessTestResult
                 embedded
                 totalScore={displayedResult.total_score}
+                percentageScore={displayedResult.percentage_score}
                 title={title}
                 onProceed={handleProceed}
                 isProceeding={isProceeding}

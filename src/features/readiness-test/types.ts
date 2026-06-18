@@ -132,15 +132,31 @@ export type ReadinessTestSubmitPayload = {
   answers: ReadinessTestSubmitAnswer[];
 };
 
+export type ReadinessTestSubmitResultDataRaw = {
+  submission_id: number;
+  attempt_number: number;
+  total_score: number | string;
+  percentage_score?: number | string | null;
+  passed?: boolean | null;
+  submitted_at: string;
+};
+
 export type ReadinessTestSubmitResultData = {
   submission_id: number;
   attempt_number: number;
   total_score: number;
-  passed: boolean;
+  percentage_score: number;
+  passed: boolean | null;
   submitted_at: string;
 };
 
 export type ReadinessTestSubmitResponse = {
+  success: boolean;
+  message: string;
+  data?: ReadinessTestSubmitResultDataRaw;
+};
+
+export type ReadinessTestSubmitNormalizedResponse = {
   success: boolean;
   message: string;
   data?: ReadinessTestSubmitResultData;
@@ -149,5 +165,5 @@ export type ReadinessTestSubmitResponse = {
 export type ReadinessTestLatestSubmissionResponse = {
   success: boolean;
   message: string;
-  data: ReadinessTestSubmitResultData | null;
+  data: ReadinessTestSubmitResultDataRaw | null;
 };

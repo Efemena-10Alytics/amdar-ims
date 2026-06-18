@@ -13,6 +13,7 @@ import {
 
 type ReadinessTestResultProps = {
   totalScore: number;
+  percentageScore?: number;
   title?: string;
   onRetake?: () => void;
   onProceed?: () => void;
@@ -23,10 +24,12 @@ type ReadinessTestResultProps = {
 
 function ScoreRing({
   score,
+  progressPercent,
   progressColor,
   trackColor,
 }: {
   score: number;
+  progressPercent: number;
   progressColor: string;
   trackColor: string;
 }) {
@@ -34,7 +37,7 @@ function ScoreRing({
   const stroke = 10;
   const normalizedRadius = radius - stroke / 2;
   const circumference = normalizedRadius * 2 * Math.PI;
-  const progress = getReadinessScoreProgressPercent(score);
+  const progress = Math.min(100, Math.max(0, progressPercent));
   const strokeDashoffset =
     circumference - (progress / 100) * circumference;
 
@@ -77,6 +80,7 @@ function ScoreRing({
 
 const ReadinessTestResult = ({
   totalScore,
+  percentageScore,
   title = "Readiness Quiz",
   onRetake,
   onProceed,
@@ -86,6 +90,11 @@ const ReadinessTestResult = ({
   const { data: enrollment } = useGetUserEnrollment();
   const whatsappGroupUrl = getInternsWhatsappGroupUrl(enrollment?.program);
   const config = getReadinessScoreTierConfig(totalScore);
+  const ringScore = percentageScore ?? totalScore;
+  const ringProgress =
+    percentageScore != null
+      ? percentageScore
+      : getReadinessScoreProgressPercent(totalScore);
 
   const openSupport = () => {
     const supportUrl = whatsappGroupUrl ?? WHATSAPP_URL;
@@ -127,12 +136,13 @@ const ReadinessTestResult = ({
       >
         <div className="mx-auto max-w-md text-center">
           {/* <ScoreRing
-            score={totalScore}
+            score={ringScore}
+            progressPercent={ringProgress}
             progressColor={config.progressColor}
             trackColor={config.trackColor}
-          /> */}
+          />
 
-          {/* <h2 className="mt-4 text-lg font-semibold text-[#173740] sm:text-xl">
+          <h2 className="mt-4 text-lg font-semibold text-[#173740] sm:text-xl">
             {config.heading}
           </h2> */}
 
