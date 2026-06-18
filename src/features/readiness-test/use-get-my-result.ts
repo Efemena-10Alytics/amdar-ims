@@ -5,6 +5,7 @@ import type {
   ReadinessTestLatestSubmissionResponse,
   ReadinessTestSubmitResultData,
 } from "@/features/readiness-test/types";
+import { normalizeReadinessSubmitResultData } from "@/features/readiness-test/normalize-submit-result";
 
 export const READINESS_MY_LATEST_SUBMISSION_QUERY_KEY = (
   formId: string | number,
@@ -32,7 +33,7 @@ export async function getMyLatestSubmission(
     throw new Error(data.message?.trim() || "Failed to load submission result.");
   }
 
-  return data.data ?? null;
+  return data.data ? normalizeReadinessSubmitResultData(data.data) : null;
 }
 
 export function useGetMyResult(

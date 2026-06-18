@@ -3,8 +3,10 @@ import axios from "axios";
 import { axiosInstance } from "@/lib/axios-instance";
 import type {
   ReadinessTestSubmitPayload,
+  ReadinessTestSubmitNormalizedResponse,
   ReadinessTestSubmitResponse,
 } from "@/features/readiness-test/types";
+import { normalizeReadinessSubmitResultData } from "@/features/readiness-test/normalize-submit-result";
 
 function getErrorMessage(error: unknown): string {
   if (axios.isAxiosError(error)) {
@@ -20,7 +22,7 @@ function getErrorMessage(error: unknown): string {
 export async function submitReadinessTestForm(
   formId: string | number,
   payload: ReadinessTestSubmitPayload,
-): Promise<ReadinessTestSubmitResponse> {
+): Promise<ReadinessTestSubmitNormalizedResponse> {
   const { data } = await axiosInstance.post<ReadinessTestSubmitResponse>(
     `v3/forms/${formId}/submit`,
     payload,
@@ -30,7 +32,10 @@ export async function submitReadinessTestForm(
     throw new Error(data.message?.trim() || "Failed to submit form.");
   }
 
-  return data;
+  return {
+    ...data,
+    data: data.data ? normalizeReadinessSubmitResultData(data.data) : undefined,
+  };
 }
 
 export function useSubmitReadinessTestForm() {
