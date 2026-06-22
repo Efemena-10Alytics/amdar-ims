@@ -1,14 +1,8 @@
 import { isPreDiagnosticEnrollmentStepComplete } from "@/features/internship/use-update-completed-pre-diagnostic";
 import { getResumeCareerKnowledgeDiscoveryStep } from "@/features/pre-diagnostic/career-knowledge-discovery-progress";
-import {
-  buildCareerKnowledgeDiscoveryHref,
-  isCareerKnowledgeDiscoveryStep,
-} from "@/features/pre-diagnostic/career-knowledge-discovery-steps";
+import { buildCareerKnowledgeDiscoveryHref } from "@/features/pre-diagnostic/career-knowledge-discovery-steps";
 import { getResumePracticalWalkthroughStep } from "@/features/pre-diagnostic/practical-walkthrough-progress";
-import {
-  buildPracticalWalkthroughHref,
-  isPracticalWalkthroughStep,
-} from "@/features/pre-diagnostic/practical-walkthrough-steps";
+import { buildPracticalWalkthroughHref } from "@/features/pre-diagnostic/practical-walkthrough-steps";
 import type { PreDiagnosticStepsCompletedState } from "@/types/user/enrollment";
 
 export type PreDiagnosticResumeOptions = {
@@ -76,17 +70,8 @@ export function resolveCareerReadinessResumeHref({
     stepOptions,
   );
 
-  if (!careerPathComplete && normalizedStep !== "career-path-diagnostics") {
+  if (!careerPathComplete && normalizedStep === "welcome-video") {
     return "/pre-diagnostic-test?step=career-path-diagnostics";
-  }
-
-  if (
-    isCareerKnowledgeDiscoveryStep(normalizedStep) &&
-    !resumeDiscoveryStep
-  ) {
-    return careerPathComplete
-      ? "/pre-diagnostic-test?step=welcome-video"
-      : "/pre-diagnostic-test?step=career-path-diagnostics";
   }
 
   return null;
@@ -135,15 +120,9 @@ export function resolveTechnologyReadinessResumeHref({
 
   if (
     !technologyDiagnosticsComplete &&
-    normalizedStep !== "technology-diagnostics"
+    normalizedStep === "technology-use-case"
   ) {
     return "/pre-diagnostic-test/technology-readiness?step=technology-diagnostics";
-  }
-
-  if (isPracticalWalkthroughStep(normalizedStep) && !resumeWalkthroughStep) {
-    return technologyDiagnosticsComplete
-      ? "/pre-diagnostic-test/technology-readiness?step=technology-use-case"
-      : "/pre-diagnostic-test/technology-readiness?step=technology-diagnostics";
   }
 
   return null;

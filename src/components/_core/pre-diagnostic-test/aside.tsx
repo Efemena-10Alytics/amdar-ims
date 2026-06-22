@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useMemo } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { Check, ChevronRight, Loader } from "lucide-react";
+import { Check, ChevronRight, Loader, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
 import {
@@ -12,15 +12,23 @@ import {
   isPreDiagnosticEnrollmentStepComplete,
 } from "@/features/internship/use-update-completed-pre-diagnostic";
 import {
+  getCareerKnowledgeDiscoveryLastActiveStep,
   isCareerKnowledgeDiscoveryGroupCompleteOnBackend,
   useCareerKnowledgeDiscoveryProgress,
 } from "@/features/pre-diagnostic/career-knowledge-discovery-progress";
 import {
+  getPracticalWalkthroughLastActiveStep,
   isPracticalWalkthroughGroupCompleteOnBackend,
   usePracticalWalkthroughProgress,
 } from "@/features/pre-diagnostic/practical-walkthrough-progress";
-import { buildCareerKnowledgeDiscoveryStepKey } from "@/features/pre-diagnostic/career-knowledge-discovery-steps";
-import { buildPracticalWalkthroughStepKey } from "@/features/pre-diagnostic/practical-walkthrough-steps";
+import {
+  buildCareerKnowledgeDiscoveryStepKey,
+  isCareerKnowledgeDiscoveryStep,
+} from "@/features/pre-diagnostic/career-knowledge-discovery-steps";
+import {
+  buildPracticalWalkthroughStepKey,
+  isPracticalWalkthroughStep,
+} from "@/features/pre-diagnostic/practical-walkthrough-steps";
 import { useGetPreDiagnostic } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 import type { PreDiagnosticStepsCompletedState } from "@/types/user/enrollment";
 
@@ -122,10 +130,49 @@ function getActiveGroup(pathname: string, groups: ReadinessGroup[]) {
 function resolveCurrentStep(group: ReadinessGroup, stepParam: string | null) {
   const flatSteps = getFlatStepsForGroup(group);
   const defaultStep = flatSteps[0]?.key ?? "welcome-video";
+
   if (!stepParam) return defaultStep;
 
   const matchedStep = flatSteps.find((item) => item.key === stepParam)?.key;
-  return matchedStep ?? defaultStep;
+  if (matchedStep) return matchedStep;
+
+  if (
+    isCareerKnowledgeDiscoveryStep(stepParam) ||
+    isPracticalWalkthroughStep(stepParam)
+  ) {
+    return stepParam;
+  }
+
+  return defaultStep;
+}
+
+function getPlayingSubStepKey(
+  entryKey: string,
+  stepParam: string | null,
+  activeGroupKey: string,
+  enrollmentId: number | undefined,
+): string | null {
+  if (entryKey === "career-knowledge") {
+    if (stepParam && isCareerKnowledgeDiscoveryStep(stepParam)) {
+      return stepParam;
+    }
+    if (activeGroupKey === "career-readiness") {
+      return getCareerKnowledgeDiscoveryLastActiveStep(enrollmentId);
+    }
+    return null;
+  }
+
+  if (entryKey === "practical-walkthrough") {
+    if (stepParam && isPracticalWalkthroughStep(stepParam)) {
+      return stepParam;
+    }
+    if (activeGroupKey === "technology-readiness") {
+      return getPracticalWalkthroughLastActiveStep(enrollmentId);
+    }
+    return null;
+  }
+
+  return null;
 }
 
 function isPreDiagnosticGroupComplete(
@@ -213,7 +260,8 @@ const Aside = () => {
 
   const activeGroup = getActiveGroup(pathname, readinessGroups);
   const activeGroupKey = activeGroup.key;
-  const currentStepKey = resolveCurrentStep(activeGroup, searchParams.get("step"));
+  const stepParam = searchParams.get("step");
+  const currentStepKey = resolveCurrentStep(activeGroup, stepParam);
   const preDiagnosticStepsCompleted = enrollment?.isPreDiagnosticStepsCompleted;
   const locallyCompletedDiscoverySteps =
     useCareerKnowledgeDiscoveryProgress(enrollment?.id);
@@ -295,6 +343,12 @@ const Aside = () => {
 
                             <ul className="space-y-4">
                               {entry.children.map((child, childIndex) => {
+                                const playingSubStepKey = getPlayingSubStepKey(
+                                  entry.key,
+                                  stepParam,
+                                  activeGroupKey,
+                                  enrollment?.id,
+                                );
                                 const isChildDone = isPreDiagnosticEnrollmentStepComplete(
                                   preDiagnosticStepsCompleted,
                                   child.key,
@@ -302,7 +356,8 @@ const Aside = () => {
                                 );
                                 const isChildCurrent =
                                   group.key === activeGroupKey &&
-                                  child.key === currentStepKey;
+                                  playingSubStepKey != null &&
+                                  child.key === playingSubStepKey;
                                 const isChildLocked = isPreDiagnosticAsideStepLocked(
                                   preDiagnosticStepsCompleted,
                                   child.key,
@@ -324,15 +379,15 @@ const Aside = () => {
                                       className="relative flex items-start gap-2.5"
                                     >
                                       <span className="relative z-10 mt-0.5 flex size-3.5 shrink-0 items-center justify-center">
-                                        {isChildDone ? (
-                                          <Check
-                                            className="size-3 text-[#BDF3D0]"
-                                            strokeWidth={3}
-                                          />
-                                        ) : isChildCurrent ? (
+                                        {isChildCurrent ? (
                                           <Loader
                                             className="size-3.5 animate-spin text-[#BDF3D0]"
                                             strokeWidth={2.5}
+                                          />
+                                        ) : isChildDone ? (
+                                          <Check
+                                            className="size-3 text-[#BDF3D0]"
+                                            strokeWidth={3}
                                           />
                                         ) : (
                                           <span className="size-2.5 rounded-full border border-[#8BB9C1]" />
