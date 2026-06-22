@@ -24,6 +24,7 @@ import {
 import {
   isPracticalWalkthroughStepLocallyComplete,
   markPracticalWalkthroughStepLocallyComplete,
+  setPracticalWalkthroughLastActiveStep,
 } from "@/features/pre-diagnostic/practical-walkthrough-progress";
 import { getPreDiagnosticVideoDescription } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 
@@ -73,6 +74,10 @@ const PracticalWalkthrough = () => {
     stepKey,
     stepOptions,
   );
+
+  useEffect(() => {
+    setPracticalWalkthroughLastActiveStep(enrollmentId, stepKey);
+  }, [enrollmentId, stepKey]);
 
   useEffect(() => {
     const hasWatchedLocally = isPracticalWalkthroughStepLocallyComplete(
