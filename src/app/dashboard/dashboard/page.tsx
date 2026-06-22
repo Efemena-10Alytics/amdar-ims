@@ -27,7 +27,7 @@ const DashboardPage = () => {
 
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_320px]">
-        <div>
+        <div className="space-y-4">
           <InternshipBasicInfo />
           <YourRoadMap />
 
