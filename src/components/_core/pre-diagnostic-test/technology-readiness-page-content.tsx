@@ -5,6 +5,7 @@ import PracticalWalkthrough from "@/components/_core/pre-diagnostic-test/technol
 import TechnologyDiagnostic from "@/components/_core/pre-diagnostic-test/technology-readiness/technology-dianostic";
 import TechnologyUseCase from "@/components/_core/pre-diagnostic-test/technology-readiness/technology-use-case";
 import { isPracticalWalkthroughStep } from "@/features/pre-diagnostic/practical-walkthrough-steps";
+import { useTechnologyReadinessResumeRedirect } from "@/features/pre-diagnostic/use-pre-diagnostic-resume-redirect";
 
 const STEP_COMPONENTS = {
   "technology-use-case": TechnologyUseCase,
@@ -16,6 +17,8 @@ type TechnologyReadinessStep = keyof typeof STEP_COMPONENTS;
 const TechnologyReadinessPageContent = () => {
   const searchParams = useSearchParams();
   const step = searchParams.get("step") ?? "technology-use-case";
+
+  useTechnologyReadinessResumeRedirect();
 
   if (isPracticalWalkthroughStep(step)) {
     return <PracticalWalkthrough />;

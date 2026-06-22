@@ -12,6 +12,7 @@ const STORAGE_PREFIX = "amdari-career-knowledge-discovery";
 
 type StoredProgress = {
   completedStepKeys: string[];
+  lastActiveStepKey?: string;
 };
 
 const progressListeners = new Set<() => void>();
@@ -48,6 +49,11 @@ function readStoredProgress(enrollmentId: number): StoredProgress {
         (key): key is string =>
           typeof key === "string" && isCareerKnowledgeDiscoveryStep(key),
       ),
+      lastActiveStepKey:
+        typeof parsed.lastActiveStepKey === "string" &&
+        isCareerKnowledgeDiscoveryStep(parsed.lastActiveStepKey)
+          ? parsed.lastActiveStepKey
+          : undefined,
     };
   } catch {
     return { completedStepKeys: [] };
@@ -79,6 +85,70 @@ export function isCareerKnowledgeDiscoveryStepLocallyComplete(
   return getCompletedCareerKnowledgeDiscoverySteps(enrollmentId).includes(stepKey);
 }
 
+export function getCareerKnowledgeDiscoveryLastActiveStep(
+  enrollmentId: number | undefined,
+): string | null {
+  if (enrollmentId == null) return null;
+  return readStoredProgress(enrollmentId).lastActiveStepKey ?? null;
+}
+
+export function setCareerKnowledgeDiscoveryLastActiveStep(
+  enrollmentId: number | undefined,
+  stepKey: string,
+): void {
+  if (enrollmentId == null || !isCareerKnowledgeDiscoveryStep(stepKey)) return;
+
+  const progress = readStoredProgress(enrollmentId);
+  if (progress.lastActiveStepKey === stepKey) return;
+
+  writeStoredProgress(enrollmentId, {
+    ...progress,
+    lastActiveStepKey: stepKey,
+  });
+}
+
+export function getResumeCareerKnowledgeDiscoveryStep(
+  enrollmentId: number | undefined,
+  steps: PreDiagnosticStepsCompletedState | undefined,
+  count: number,
+  welcomeVideoComplete: boolean,
+): string | null {
+  if (isCareerKnowledgeDiscoveryGroupCompleteOnBackend(steps)) return null;
+
+  const stepKeys = Array.from({ length: Math.max(count, 1) }, (_, index) =>
+    buildCareerKnowledgeDiscoveryStepKey(index),
+  );
+
+  const isStepIncomplete = (key: string) =>
+    !isCareerKnowledgeDiscoveryAsideStepComplete(enrollmentId, key, steps);
+
+  const isStepLocked = (key: string) =>
+    isCareerKnowledgeDiscoveryAsideStepLocked(
+      enrollmentId,
+      key,
+      steps,
+      welcomeVideoComplete,
+    );
+
+  const lastActiveStep = getCareerKnowledgeDiscoveryLastActiveStep(enrollmentId);
+  if (
+    lastActiveStep &&
+    stepKeys.includes(lastActiveStep) &&
+    isStepIncomplete(lastActiveStep) &&
+    !isStepLocked(lastActiveStep)
+  ) {
+    return lastActiveStep;
+  }
+
+  for (const stepKey of stepKeys) {
+    if (!isStepLocked(stepKey) && isStepIncomplete(stepKey)) {
+      return stepKey;
+    }
+  }
+
+  return null;
+}
+
 export function markCareerKnowledgeDiscoveryStepLocallyComplete(
   enrollmentId: number | undefined,
   stepKey: string,
@@ -90,6 +160,7 @@ export function markCareerKnowledgeDiscoveryStepLocallyComplete(
 
   writeStoredProgress(enrollmentId, {
     completedStepKeys: [...progress.completedStepKeys, stepKey],
+    lastActiveStepKey: progress.lastActiveStepKey,
   });
 }
 

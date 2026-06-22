@@ -5,6 +5,7 @@ import CareerKnowledgeDiscovery from "@/components/_core/pre-diagnostic-test/car
 import CareerPathDiagnostic from "@/components/_core/pre-diagnostic-test/career-readiness/career-path-diagnostic";
 import WelcomeVideo from "@/components/_core/pre-diagnostic-test/career-readiness/welcome-video";
 import { isCareerKnowledgeDiscoveryStep } from "@/features/pre-diagnostic/career-knowledge-discovery-steps";
+import { useCareerReadinessResumeRedirect } from "@/features/pre-diagnostic/use-pre-diagnostic-resume-redirect";
 
 const STEP_COMPONENTS = {
   "welcome-video": WelcomeVideo,
@@ -16,6 +17,8 @@ type CareerReadinessStep = keyof typeof STEP_COMPONENTS;
 const CareerReadinessPageContent = () => {
   const searchParams = useSearchParams();
   const step = searchParams.get("step") ?? "welcome-video";
+
+  useCareerReadinessResumeRedirect();
 
   if (isCareerKnowledgeDiscoveryStep(step)) {
     return <CareerKnowledgeDiscovery />;

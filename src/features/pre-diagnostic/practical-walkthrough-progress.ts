@@ -12,6 +12,7 @@ const STORAGE_PREFIX = "amdari-practical-walkthrough";
 
 type StoredProgress = {
   completedStepKeys: string[];
+  lastActiveStepKey?: string;
 };
 
 const progressListeners = new Set<() => void>();
@@ -48,6 +49,11 @@ function readStoredProgress(enrollmentId: number): StoredProgress {
         (key): key is string =>
           typeof key === "string" && isPracticalWalkthroughStep(key),
       ),
+      lastActiveStepKey:
+        typeof parsed.lastActiveStepKey === "string" &&
+        isPracticalWalkthroughStep(parsed.lastActiveStepKey)
+          ? parsed.lastActiveStepKey
+          : undefined,
     };
   } catch {
     return { completedStepKeys: [] };
@@ -79,6 +85,70 @@ export function isPracticalWalkthroughStepLocallyComplete(
   return getCompletedPracticalWalkthroughSteps(enrollmentId).includes(stepKey);
 }
 
+export function getPracticalWalkthroughLastActiveStep(
+  enrollmentId: number | undefined,
+): string | null {
+  if (enrollmentId == null) return null;
+  return readStoredProgress(enrollmentId).lastActiveStepKey ?? null;
+}
+
+export function setPracticalWalkthroughLastActiveStep(
+  enrollmentId: number | undefined,
+  stepKey: string,
+): void {
+  if (enrollmentId == null || !isPracticalWalkthroughStep(stepKey)) return;
+
+  const progress = readStoredProgress(enrollmentId);
+  if (progress.lastActiveStepKey === stepKey) return;
+
+  writeStoredProgress(enrollmentId, {
+    ...progress,
+    lastActiveStepKey: stepKey,
+  });
+}
+
+export function getResumePracticalWalkthroughStep(
+  enrollmentId: number | undefined,
+  steps: PreDiagnosticStepsCompletedState | undefined,
+  count: number,
+  technologyUseCaseComplete: boolean,
+): string | null {
+  if (isPracticalWalkthroughGroupCompleteOnBackend(steps)) return null;
+
+  const stepKeys = Array.from({ length: Math.max(count, 1) }, (_, index) =>
+    buildPracticalWalkthroughStepKey(index),
+  );
+
+  const isStepIncomplete = (key: string) =>
+    !isPracticalWalkthroughAsideStepComplete(enrollmentId, key, steps);
+
+  const isStepLocked = (key: string) =>
+    isPracticalWalkthroughAsideStepLocked(
+      enrollmentId,
+      key,
+      steps,
+      technologyUseCaseComplete,
+    );
+
+  const lastActiveStep = getPracticalWalkthroughLastActiveStep(enrollmentId);
+  if (
+    lastActiveStep &&
+    stepKeys.includes(lastActiveStep) &&
+    isStepIncomplete(lastActiveStep) &&
+    !isStepLocked(lastActiveStep)
+  ) {
+    return lastActiveStep;
+  }
+
+  for (const stepKey of stepKeys) {
+    if (!isStepLocked(stepKey) && isStepIncomplete(stepKey)) {
+      return stepKey;
+    }
+  }
+
+  return null;
+}
+
 export function markPracticalWalkthroughStepLocallyComplete(
   enrollmentId: number | undefined,
   stepKey: string,
@@ -90,6 +160,7 @@ export function markPracticalWalkthroughStepLocallyComplete(
 
   writeStoredProgress(enrollmentId, {
     completedStepKeys: [...progress.completedStepKeys, stepKey],
+    lastActiveStepKey: progress.lastActiveStepKey,
   });
 }
 

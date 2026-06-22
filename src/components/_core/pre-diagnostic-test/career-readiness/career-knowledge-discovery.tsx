@@ -16,6 +16,7 @@ import {
 import {
   isCareerKnowledgeDiscoveryStepLocallyComplete,
   markCareerKnowledgeDiscoveryStepLocallyComplete,
+  setCareerKnowledgeDiscoveryLastActiveStep,
 } from "@/features/pre-diagnostic/career-knowledge-discovery-progress";
 import {
   isPreDiagnosticEnrollmentStepComplete,
@@ -72,6 +73,10 @@ const CareerKnowledgeDiscovery = () => {
     stepKey,
     stepOptions,
   );
+
+  useEffect(() => {
+    setCareerKnowledgeDiscoveryLastActiveStep(enrollmentId, stepKey);
+  }, [enrollmentId, stepKey]);
 
   useEffect(() => {
     const hasWatchedLocally = isCareerKnowledgeDiscoveryStepLocallyComplete(
