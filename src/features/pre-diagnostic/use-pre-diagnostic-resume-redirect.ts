@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { usePreDiagnosticData } from "@/components/_core/pre-diagnostic-test/pre-diagnostic-context";
 import {
@@ -12,10 +12,11 @@ export function useCareerReadinessResumeRedirect() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { enrollment, data, isLoading } = usePreDiagnosticData();
+  const hasResumedRef = useRef(false);
   const currentStep = searchParams.get("step");
 
   useEffect(() => {
-    if (isLoading || !enrollment) return;
+    if (isLoading || !enrollment || hasResumedRef.current) return;
 
     const discoveryCount = Math.max(
       data?.career_readiness?.careerKnowledgeDiscovery?.length ?? 1,
@@ -29,6 +30,8 @@ export function useCareerReadinessResumeRedirect() {
       currentStep,
     });
 
+    hasResumedRef.current = true;
+
     if (resumeHref) {
       router.replace(resumeHref);
     }
@@ -39,10 +42,11 @@ export function useTechnologyReadinessResumeRedirect() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { enrollment, data, isLoading } = usePreDiagnosticData();
+  const hasResumedRef = useRef(false);
   const currentStep = searchParams.get("step");
 
   useEffect(() => {
-    if (isLoading || !enrollment) return;
+    if (isLoading || !enrollment || hasResumedRef.current) return;
 
     const walkthroughCount = Math.max(
       data?.technology_readiness?.PracticalWalkthrough?.length ?? 1,
@@ -55,6 +59,8 @@ export function useTechnologyReadinessResumeRedirect() {
       practicalWalkthroughCount: walkthroughCount,
       currentStep,
     });
+
+    hasResumedRef.current = true;
 
     if (resumeHref) {
       router.replace(resumeHref);

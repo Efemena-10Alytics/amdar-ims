@@ -204,7 +204,9 @@ export function isCareerKnowledgeDiscoveryAsideStepLocked(
 function getCareerKnowledgeDiscoveryProgressSnapshot(
   enrollmentId: number | undefined,
 ): string {
-  return getCompletedCareerKnowledgeDiscoverySteps(enrollmentId).join(",");
+  if (enrollmentId == null) return "";
+  const progress = readStoredProgress(enrollmentId);
+  return `${progress.completedStepKeys.join(",")}|${progress.lastActiveStepKey ?? ""}`;
 }
 
 export function useCareerKnowledgeDiscoveryProgress(
@@ -216,5 +218,7 @@ export function useCareerKnowledgeDiscoveryProgress(
     () => "",
   );
 
-  return snapshot ? snapshot.split(",").filter(Boolean) : [];
+  if (!snapshot) return [];
+  const [completedPart] = snapshot.split("|");
+  return completedPart ? completedPart.split(",").filter(Boolean) : [];
 }
