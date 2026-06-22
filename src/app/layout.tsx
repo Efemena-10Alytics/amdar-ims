@@ -8,6 +8,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NextTopLoader from "nextjs-toploader";
 import { GoogleAnalytics } from '@next/third-parties/google'
 import MetaPixel from "@/components/_core/meta-pixel";
+import SnapPixel from "@/components/_core/snap-pixel";
 import { GoogleTagManagerScript, GoogleTagManagerNoScript, GoogleAdsScript } from "@/components/_core/google-tag-manager";
 
 const sora = Sora({
@@ -58,6 +59,7 @@ export default function RootLayout({
         <GoogleAdsScript />
         <GoogleAnalytics gaId="G-TNPG0WCNFB" />
         <MetaPixel />
+        <SnapPixel />
       </body>
     </html>
   );
