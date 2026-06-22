@@ -38,6 +38,21 @@ export const SESSION_OPTIONS = [
     label: "Clarity Session",
     key: "clarity-session",
   },
+  {
+    value: "Data Tech career",
+    label: "Data Tech career",
+    key: "data-tech-career",
+  },
+  {
+    value: "PM/BA Tech career",
+    label: "PM/BA Tech career",
+    key: "pm-ba-tech-career",
+  },
+  {
+    value: "Cyber Tech Career",
+    label: "Cyber Tech Career",
+    key: "cyber-tech-career",
+  },
   { value: "None of the above", label: "None of the above", key: "none" },
 ] as const;
 
