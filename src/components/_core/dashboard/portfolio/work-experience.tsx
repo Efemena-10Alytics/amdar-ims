@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Calendar as CalendarIcon, Trash2 } from "lucide-react";
+import { Calendar as CalendarIcon, GripVertical, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { InfoToastBanner } from "@/components/ui/info-toast-banner";
@@ -88,6 +88,7 @@ function DatePickerField({
 }
 
 export type WorkExperienceEntry = {
+    id: string;
     companyName: string;
     jobTitle: string;
     industry: string;
@@ -170,6 +171,7 @@ export function payloadToWorkExperience(payload: {
 }): WorkExperienceData {
     const raw = payload.workExperience ?? [];
     const entries = raw.map((e) => ({
+        id: crypto.randomUUID(),
         companyName: e.companyName ?? "",
         jobTitle: e.jobTitle ?? "",
         industry: e.industry ?? "",
@@ -181,27 +183,33 @@ export function payloadToWorkExperience(payload: {
         currentlyWorkHere: !!e.currentlyWorkThere,
     }));
     return {
-        entries: entries.length > 0 ? entries : [{ ...defaultEntry }],
+        entries: entries.length > 0 ? entries : [createWorkExperienceEntry()],
     };
 }
 
-const defaultEntry: WorkExperienceEntry = {
-    companyName: "",
-    jobTitle: "",
-    industry: "",
-    jobDescription: [],
-    startDate: "",
-    endDate: "",
-    currentlyWorkHere: false,
-};
+function createWorkExperienceEntry(
+    overrides?: Partial<Omit<WorkExperienceEntry, "id">>,
+): WorkExperienceEntry {
+    return {
+        id: crypto.randomUUID(),
+        companyName: "",
+        jobTitle: "",
+        industry: "",
+        jobDescription: [],
+        startDate: "",
+        endDate: "",
+        currentlyWorkHere: false,
+        ...overrides,
+    };
+}
 
 export const initialWorkExperienceData: WorkExperienceData = {
-    entries: [{ ...defaultEntry }],
+    entries: [createWorkExperienceEntry()],
 };
 
 /** Fresh initial state for useState (avoids shared reference). */
 export function getInitialWorkExperienceData(): WorkExperienceData {
-    return { entries: [{ ...defaultEntry }] };
+    return { entries: [createWorkExperienceEntry()] };
 }
 
 type WorkExperienceProps = {
@@ -212,6 +220,8 @@ type WorkExperienceProps = {
 export function WorkExperience({ value, onChange }: WorkExperienceProps) {
     const { data: portfolioData } = useGetPortfolio();
     const [warningToast, setWarningToast] = useState<string | null>(null);
+    const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+    const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
     const warningTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const showWarningToast = (message: string) => {
@@ -314,25 +324,93 @@ export function WorkExperience({ value, onChange }: WorkExperienceProps) {
     };
 
     const addMore = () => {
-        onChange({ entries: [...value.entries, { ...defaultEntry }] });
+        onChange({ entries: [...value.entries, createWorkExperienceEntry()] });
     };
+
+    const reorderEntries = (fromIndex: number, toIndex: number) => {
+        if (fromIndex === toIndex) return;
+
+        const nextEntries = [...value.entries];
+        const [movedEntry] = nextEntries.splice(fromIndex, 1);
+        nextEntries.splice(toIndex, 0, movedEntry);
+        onChange({ entries: nextEntries });
+    };
+
+    const canReorder = value.entries.length > 1;
 
     return (
         <div className="max-w-md">
             <h2 className="text-lg font-semibold text-zinc-900">Work Experience</h2>
             <p className="mt-1 text-sm text-zinc-500 mb-6">
                 Let&apos;s know some of your work experience.
+                {canReorder ? " Drag to reorder entries." : ""}
             </p>
 
             <div className="space-y-6">
                 {value.entries.map((entry, index) => (
                     <div
-                        key={index}
-                        className="rounded-xl bg-white p-5 shadow-sm"
+                        key={entry.id}
+                        className={cn(
+                            "rounded-xl bg-white p-5 shadow-sm transition-[box-shadow,opacity]",
+                            draggedIndex === index && "opacity-50",
+                            dragOverIndex === index &&
+                                draggedIndex !== null &&
+                                draggedIndex !== index &&
+                                "ring-2 ring-[#3B82F6]/40",
+                        )}
+                        onDragOver={(event) => {
+                            if (!canReorder || draggedIndex === null) return;
+                            event.preventDefault();
+                            event.dataTransfer.dropEffect = "move";
+                            if (draggedIndex !== index) {
+                                setDragOverIndex(index);
+                            }
+                        }}
+                        onDragLeave={() => {
+                            if (dragOverIndex === index) {
+                                setDragOverIndex(null);
+                            }
+                        }}
+                        onDrop={(event) => {
+                            event.preventDefault();
+                            const fromIndex =
+                                draggedIndex ??
+                                Number.parseInt(
+                                    event.dataTransfer.getData("text/plain"),
+                                    10,
+                                );
+                            if (!Number.isNaN(fromIndex)) {
+                                reorderEntries(fromIndex, index);
+                            }
+                            setDraggedIndex(null);
+                            setDragOverIndex(null);
+                        }}
                     >
-                        <div className="flex flex-col gap-4">
-                            <div className="flex items-start justify-between gap-4">
-                                <div className="flex-1 space-y-2 min-w-0">
+                        <div className="flex items-start gap-3">
+                            {canReorder ? (
+                                <button
+                                    type="button"
+                                    draggable
+                                    onDragStart={(event) => {
+                                        setDraggedIndex(index);
+                                        event.dataTransfer.effectAllowed = "move";
+                                        event.dataTransfer.setData(
+                                            "text/plain",
+                                            String(index),
+                                        );
+                                    }}
+                                    onDragEnd={() => {
+                                        setDraggedIndex(null);
+                                        setDragOverIndex(null);
+                                    }}
+                                    className="mt-1 shrink-0 cursor-grab touch-none rounded p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 active:cursor-grabbing"
+                                    aria-label={`Reorder work experience ${index + 1}`}
+                                >
+                                    <GripVertical className="size-5" aria-hidden />
+                                </button>
+                            ) : null}
+                            <div className="flex min-w-0 flex-1 flex-col gap-4">
+                                <div className="space-y-2">
                                     <label
                                         htmlFor={`company-${index}`}
                                         className="text-sm font-medium text-zinc-900 block"
@@ -350,9 +428,7 @@ export function WorkExperience({ value, onChange }: WorkExperienceProps) {
                                     />
                                 </div>
 
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label
                                         htmlFor={`job-title-${index}`}
@@ -516,6 +592,7 @@ export function WorkExperience({ value, onChange }: WorkExperienceProps) {
                                         I currently work here
                                     </span>
                                 </label>
+                            </div>
                             </div>
                         </div>
                     </div>
