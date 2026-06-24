@@ -31,7 +31,7 @@ export const SESSION_OPTIONS = [
     label: "YouTube Live",
     key: "youTube-live",
   },
-  { value: "UK job lab session", label: "UK job lab sessione", key: "uk-job" },
+  { value: "UK Job hunt", label: "UK Job hunt", key: "uk-job-hunt" },
   { value: "Hackathon", label: "Hackathon", key: "hackathon" },
   {
     value: "Clarity Session",
