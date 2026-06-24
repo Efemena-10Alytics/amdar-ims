@@ -215,9 +215,10 @@ export function getInitialWorkExperienceData(): WorkExperienceData {
 type WorkExperienceProps = {
     value: WorkExperienceData;
     onChange: (data: WorkExperienceData) => void;
+    onReordered?: () => void;
 };
 
-export function WorkExperience({ value, onChange }: WorkExperienceProps) {
+export function WorkExperience({ value, onChange, onReordered }: WorkExperienceProps) {
     const { data: portfolioData } = useGetPortfolio();
     const [warningToast, setWarningToast] = useState<string | null>(null);
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -334,6 +335,7 @@ export function WorkExperience({ value, onChange }: WorkExperienceProps) {
         const [movedEntry] = nextEntries.splice(fromIndex, 1);
         nextEntries.splice(toIndex, 0, movedEntry);
         onChange({ entries: nextEntries });
+        onReordered?.();
     };
 
     const canReorder = value.entries.length > 1;

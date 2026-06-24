@@ -110,6 +110,7 @@ export function CreatePortfolioForm() {
   const [unsavedModalOpen, setUnsavedModalOpen] = useState(false);
   const [pendingStepTarget, setPendingStepTarget] = useState<number | null>(null);
   const [pendingPortfolioNavigation, setPendingPortfolioNavigation] = useState(false);
+  const [workExperienceReordered, setWorkExperienceReordered] = useState(false);
   const lastInteractionAtRef = useRef(0);
 
   const selectedCountry = countries.find(
@@ -211,6 +212,11 @@ export function CreatePortfolioForm() {
     hasUserEditedForm &&
     lastSavedSnapshot !== null &&
     createFormSnapshot !== lastSavedSnapshot;
+
+  const hasUnsavedWorkExperienceReorder = step === 7 && workExperienceReordered;
+
+  const shouldPromptUnsaved =
+    hasUnsavedChanges || hasUnsavedWorkExperienceReorder;
 
   const handleFormInteraction = (event: SyntheticEvent) => {
     if (!event.nativeEvent.isTrusted) return;
@@ -403,6 +409,7 @@ export function CreatePortfolioForm() {
     if (step === 7) {
       const ok = await saveWorkExperience(workExperienceData);
       if (!ok) return;
+      setWorkExperienceReordered(false);
     }
     if (step === 8) {
       const ok = await saveEducationBackground(educationData);
@@ -457,7 +464,7 @@ export function CreatePortfolioForm() {
 
   const handleBack = () => {
     if (step === 1) {
-      if (hasUnsavedChanges) {
+      if (shouldPromptUnsaved) {
         setPendingPortfolioNavigation(true);
         setUnsavedModalOpen(true);
         return;
@@ -465,13 +472,20 @@ export function CreatePortfolioForm() {
       router.push("/dashboard/portfolio");
       return;
     }
+
+    if (shouldPromptUnsaved) {
+      setPendingStepTarget(step - 1);
+      setUnsavedModalOpen(true);
+      return;
+    }
+
     setStep((s) => Math.max(1, s - 1));
   };
 
   const handleStepChange = (targetStep: number) => {
     if (targetStep === step) return;
 
-    if (hasUnsavedChanges) {
+    if (shouldPromptUnsaved) {
       setPendingStepTarget(targetStep);
       setUnsavedModalOpen(true);
       return;
@@ -507,7 +521,7 @@ export function CreatePortfolioForm() {
             type="button"
             variant="ghost"
             onClick={() => {
-              if (hasUnsavedChanges) {
+              if (shouldPromptUnsaved) {
                 setPendingPortfolioNavigation(true);
                 setUnsavedModalOpen(true);
                 return;
@@ -596,6 +610,7 @@ export function CreatePortfolioForm() {
               <WorkExperience
                 value={workExperienceData}
                 onChange={setWorkExperienceData}
+                onReordered={() => setWorkExperienceReordered(true)}
               />
             )}
             {step === 8 && (
@@ -679,6 +694,7 @@ export function CreatePortfolioForm() {
             onLeaveWithoutSaving={() => {
               setLastSavedSnapshot(createFormSnapshot);
               setHasUserEditedForm(false);
+              setWorkExperienceReordered(false);
               setUnsavedModalOpen(false);
               proceedPendingNavigation();
             }}
@@ -687,6 +703,7 @@ export function CreatePortfolioForm() {
               if (!ok) return;
               setLastSavedSnapshot(createFormSnapshot);
               setHasUserEditedForm(false);
+              setWorkExperienceReordered(false);
               setUnsavedModalOpen(false);
               proceedPendingNavigation();
             }}
