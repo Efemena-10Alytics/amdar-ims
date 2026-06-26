@@ -544,6 +544,10 @@ const Checkout = ({
         <div className="mt-4 space-y-3">
           {paymentPlans.map((plan) => {
             const isSelected = selectedPlan === plan.id;
+            const isWeeklyPlan =
+              plan.id === "8-installments" ||
+              plan.id === "9-installments" ||
+              plan.id === "10-installments";
             return (
               <button
                 key={plan.id}
@@ -551,17 +555,25 @@ const Checkout = ({
                 onClick={() => setSelectedPlan(plan.id)}
                 className={cn(
                   "group flex w-full items-start gap-4 rounded-lg border-2 p-4 text-left transition-colors text-[#64748B]",
-                  isSelected
-                    ? "border-[#22c55e] bg-[#f0fdf4]"
-                    : "border-transparent bg-[#F8FAFC] hover:bg-[#E8EFF1]",
+                  isWeeklyPlan
+                    ? isSelected
+                      ? "border-[#7C3AED] bg-[#EDE9FE]"
+                      : "border-[#DDD6FE] bg-[#F5F3FF] hover:bg-[#EDE9FE]"
+                    : isSelected
+                      ? "border-[#22c55e] bg-[#f0fdf4]"
+                      : "border-transparent bg-[#F8FAFC] hover:bg-[#E8EFF1]",
                 )}
               >
                 <span
                   className={cn(
                     "flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded border",
-                    isSelected
-                      ? "border-transprent bg-[#C7F5D8] text-primary"
-                      : "border-gray-300 bg-white",
+                    isWeeklyPlan
+                      ? isSelected
+                        ? "border-transparent bg-[#C4B5FD] text-[#7C3AED]"
+                        : "border-[#A78BFA] bg-white"
+                      : isSelected
+                        ? "border-transprent bg-[#C7F5D8] text-primary"
+                        : "border-gray-300 bg-white",
                   )}
                   aria-hidden
                 >
@@ -570,14 +582,21 @@ const Checkout = ({
                   ) : null}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <span
-                    className={cn(
-                      "font-clash-display font-semibold",
-                      isSelected ? "text-[#092A31]" : "text-[#4a5568]",
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span
+                      className={cn(
+                        "font-clash-display font-semibold",
+                        isSelected ? "text-[#092A31]" : "text-[#4a5568]",
+                      )}
+                    >
+                      {plan.label}
+                    </span>
+                    {isWeeklyPlan && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-[#7C3AED] px-2 py-0.5 text-[10px] font-semibold text-white">
+                        ⚡ Special
+                      </span>
                     )}
-                  >
-                    {plan.label}
-                  </span>
+                  </div>
                   <p className="mt-1 text-sm">{plan.description}</p>
                   {plan.breakdown && plan.breakdown.length > 0 && (
                     <div
