@@ -100,6 +100,14 @@ export function usePayNow({
         originalTotalAmount = Number(pricing.original_two_installments_amount);
         installments = 2;
         originalNextPaymentAmount = Number(pricing.two_installments_amount) / 2;
+      } else if (planId === "5-installments") {
+        originalTotalAmount = Number(pricing.original_five_installments_amount ?? pricing.five_installments_amount);
+        installments = 5;
+        originalNextPaymentAmount = Number(pricing.five_installments_amount) / 5;
+      } else if (planId === "6-installments") {
+        originalTotalAmount = Number(pricing.original_six_installments_amount ?? pricing.six_installments_amount);
+        installments = 6;
+        originalNextPaymentAmount = Number(pricing.six_installments_amount) / 6;
       } else {
         // 3-installments
         originalTotalAmount = Number(
@@ -113,14 +121,19 @@ export function usePayNow({
       const formattedNextPaymentAmount =
         Math.round(originalNextPaymentAmount * 100) / 100;
 
+      const isBiweekly = planId === "5-installments" || planId === "6-installments";
+
       // Next payment date for API
       let apiNextPaymentDate: string | null = null;
 
       if (nextPaymentDate) {
         apiNextPaymentDate = nextPaymentDate.toISOString().split("T")[0];
+      } else if (isBiweekly) {
+        const twoWeeksFromToday = new Date();
+        twoWeeksFromToday.setDate(twoWeeksFromToday.getDate() + 14);
+        apiNextPaymentDate = twoWeeksFromToday.toISOString().split("T")[0];
       } else {
-        const today = new Date();
-        const oneMonthFromToday = new Date(today);
+        const oneMonthFromToday = new Date();
         oneMonthFromToday.setMonth(oneMonthFromToday.getMonth() + 1);
         apiNextPaymentDate = oneMonthFromToday.toISOString().split("T")[0];
       }

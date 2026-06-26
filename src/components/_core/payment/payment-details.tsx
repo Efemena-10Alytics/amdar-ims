@@ -225,6 +225,30 @@ const PaymentDetails = ({
         ],
       };
     }
+    if (planId === "5-installments") {
+      const orig = pricing.original_five_installments_amount ?? pricing.five_installments_amount;
+      if (orig == null) return { originalPlanTotal: undefined, originalAmounts: [] };
+      const base = Math.round(orig / 5);
+      const amountStr = (n: number) => `${currency} ${n}`;
+      return {
+        originalPlanTotal: `${currency} ${orig}`,
+        originalAmounts: Array.from({ length: 5 }, (_, i) =>
+          amountStr(i === 4 ? orig - base * 4 : base),
+        ),
+      };
+    }
+    if (planId === "6-installments") {
+      const orig = pricing.original_six_installments_amount ?? pricing.six_installments_amount;
+      if (orig == null) return { originalPlanTotal: undefined, originalAmounts: [] };
+      const base = Math.round(orig / 6);
+      const amountStr = (n: number) => `${currency} ${n}`;
+      return {
+        originalPlanTotal: `${currency} ${orig}`,
+        originalAmounts: Array.from({ length: 6 }, (_, i) =>
+          amountStr(i === 5 ? orig - base * 5 : base),
+        ),
+      };
+    }
     return { originalPlanTotal: undefined, originalAmounts: [] };
   }, [checkoutSelections?.pricing, checkoutSelections?.planId]);
 

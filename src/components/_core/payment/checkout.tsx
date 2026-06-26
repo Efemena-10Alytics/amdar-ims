@@ -4,7 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CheckoutData } from "@/features/payment/use-get-checkout-data";
-import type { CheckoutPricing, CheckoutSelections, SplitFirstPayment } from "@/types/payment";
+import type {
+  CheckoutPricing,
+  CheckoutSelections,
+  SplitFirstPayment,
+} from "@/types/payment";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,6 +51,37 @@ function getNextPaymentDate(monthsFromNow: number): string {
   });
 }
 
+/** Format a date N * 14 days from today for bi-weekly "next payment" display. */
+function getBiweeklyPaymentDate(periodsFromNow: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + periodsFromNow * 14);
+  return d.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function buildBiweeklyBreakdown(
+  currency: string,
+  total: number,
+  count: number,
+  displayBreakdown?: number[],
+): { label: string; amount: string; dueDate?: string }[] {
+  const amounts =
+    displayBreakdown && displayBreakdown.length >= count
+      ? displayBreakdown
+      : Array.from({ length: count }, (_, i) => {
+          const base = Math.round(total / count);
+          return i === count - 1 ? total - base * (count - 1) : base;
+        });
+  return amounts.map((amt, i) => ({
+    label: `${getOrdinal(i)} payment`,
+    amount: `${currency} ${amt}`,
+    dueDate: i === 0 ? "Due now" : `Due ${getBiweeklyPaymentDate(i)}`,
+  }));
+}
+
 /** Derive payment plan options from the selected pricing (full = original_amount, 2 = two_installments_amount/2 each, 3 = display_three_installment_breakdown). */
 function getPaymentPlansFromPricing(
   price: CheckoutPricing,
@@ -57,6 +92,10 @@ function getPaymentPlansFromPricing(
     two_installments_amount,
     three_installments_amount,
     display_three_installment_breakdown,
+    five_installments_amount,
+    display_five_installment_breakdown,
+    six_installments_amount,
+    display_six_installment_breakdown,
   } = price;
   const half = Math.round(two_installments_amount / 2);
   const threeBreakdown =
@@ -70,7 +109,7 @@ function getPaymentPlansFromPricing(
             2 * Math.round(three_installments_amount / 3),
         ];
 
-  return [
+  const plans: PaymentPlanOption[] = [
     {
       id: "full",
       label: "Full Payment",
@@ -109,6 +148,38 @@ function getPaymentPlansFromPricing(
       })),
     },
   ];
+
+  if (five_installments_amount != null) {
+    plans.push({
+      id: "5-installments",
+      label: "Bi-weekly Installments",
+      description: "Pay in 5 installments, every 2 weeks",
+      total: `${currency} ${five_installments_amount}`,
+      breakdown: buildBiweeklyBreakdown(
+        currency,
+        five_installments_amount,
+        5,
+        display_five_installment_breakdown,
+      ),
+    });
+  }
+
+  if (six_installments_amount != null) {
+    plans.push({
+      id: "6-installments",
+      label: "6 Bi-weekly Installments",
+      description: "Pay in 6 installments, every 2 weeks",
+      total: `${currency} ${six_installments_amount}`,
+      breakdown: buildBiweeklyBreakdown(
+        currency,
+        six_installments_amount,
+        6,
+        display_six_installment_breakdown,
+      ),
+    });
+  }
+
+  return plans;
 }
 
 interface CheckoutProps {
@@ -139,7 +210,8 @@ const Checkout = ({
     persistSelections,
   } = useCheckoutFormStorage(program?.id, checkoutData, firstCurrency);
 
-  const [firstPaymentSplit, setFirstPaymentSplit] = useState<SplitFirstPayment | null>(null);
+  const [firstPaymentSplit, setFirstPaymentSplit] =
+    useState<SplitFirstPayment | null>(null);
   const [splitModalOpen, setSplitModalOpen] = useState(false);
 
   // Persist selections and notify parent; parent controls navigation (e.g. may open sign-in if not logged in)
@@ -193,13 +265,16 @@ const Checkout = ({
     setFirstPaymentSplit(null);
   }, [selectedPlan, selectedCohort]);
 
-  /** Numeric value of the first installment for the 3-installments plan. Used by FirstPaymentModal. */
+  /** Numeric value of the first installment. Used by FirstPaymentModal (3-installments only). */
   const firstInstallmentTotal = useMemo(() => {
     if (selectedPlan !== "3-installments" || !selectedPricing) return 0;
     const breakdown = selectedPricing.display_three_installment_breakdown;
     if (breakdown && breakdown.length >= 1) return breakdown[0];
     return Math.round(selectedPricing.three_installments_amount / 3);
   }, [selectedPlan, selectedPricing]);
+
+  const isBiweekly =
+    selectedPlan === "5-installments" || selectedPlan === "6-installments";
 
   const canProceed =
     selectedCohort !== null && !!selectedPricing && !!selectedPlan;
@@ -435,10 +510,9 @@ const Checkout = ({
                               plan.id === "3-installments" &&
                               firstPaymentSplit &&
                               i === 0;
-                            const displayAmount =
-                              showSplitAfter
-                                ? `${currency} ${firstPaymentSplit!.payNow}`
-                                : row.amount;
+                            const displayAmount = showSplitAfter
+                              ? `${currency} ${firstPaymentSplit!.payNow}`
+                              : row.amount;
                             return (
                               <div key={i}>
                                 <div className="flex items-center justify-between gap-x-4 gap-y-0.5">
@@ -455,13 +529,17 @@ const Checkout = ({
                                 {showSplitAfter && (
                                   <div className="mt-1 rounded-lg bg-[#FEFCE8] border border-[#FEF08A] px-3 py-2 space-y-1">
                                     <div className="flex items-center justify-between gap-x-4">
-                                      <span className="flex-1 text-[#854d0e]">Balance of 1st installment</span>
+                                      <span className="flex-1 text-[#854d0e]">
+                                        Balance of 1st installment
+                                      </span>
                                       <span className="font-bold text-[#854d0e]">
                                         {currency} {firstPaymentSplit!.balance}
                                       </span>
                                     </div>
                                     <div className="flex items-center justify-between gap-x-4">
-                                      <span className="text-[#854d0e]">Deadline</span>
+                                      <span className="text-[#854d0e]">
+                                        Deadline
+                                      </span>
                                       <span className="rounded-full bg-[#FEF08A] px-2 py-0.5 text-xs font-medium text-[#713F12]">
                                         {firstPaymentSplit!.deadline}
                                       </span>
@@ -486,7 +564,10 @@ const Checkout = ({
       </section>
 
       <div className="w-full">
-        {isUnique && selectedPlan === "3-installments" && !firstPaymentSplit ? (
+        {isUnique &&
+        selectedPlan === "3-installments" &&
+        !firstPaymentSplit &&
+        !isBiweekly ? (
           <div className="flex gap-3">
             <Button
               variant="outline"
