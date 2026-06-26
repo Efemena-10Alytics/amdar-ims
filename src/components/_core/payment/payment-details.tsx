@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -52,6 +52,49 @@ function getNextPaymentDateYmd(
     d.setDate(dayOfMonth);
   }
   return formatDateToLocalYmd(d);
+}
+
+function getIntervalDays(planId: string | undefined): number {
+  if (planId === "8-installments" || planId === "9-installments" || planId === "10-installments") return 7;
+  if (planId === "5-installments" || planId === "6-installments") return 14;
+  return 30;
+}
+
+function getTomorrow(): Date {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function getDefaultNextPaymentDateYmd(planId: string | undefined, cohortStartDate?: string): string {
+  const tomorrow = getTomorrow();
+  if (cohortStartDate) {
+    const cohortStart = new Date(cohortStartDate + "T00:00:00");
+    const minDate = cohortStart >= tomorrow ? cohortStart : tomorrow;
+    return formatDateToLocalYmd(minDate);
+  }
+  const intervalDays = getIntervalDays(planId);
+  const d = new Date();
+  d.setDate(d.getDate() + intervalDays);
+  return formatDateToLocalYmd(d);
+}
+
+function getNextPaymentWindow(
+  planId: string | undefined,
+  cohortStartDate: string | undefined,
+): { minDate: string; maxDate: string } | undefined {
+  if (!cohortStartDate || planId === "full" || planId == null) return undefined;
+  const intervalDays = getIntervalDays(planId);
+  const tomorrow = getTomorrow();
+  const cohortStart = new Date(cohortStartDate + "T00:00:00");
+  const minDate = cohortStart >= tomorrow ? cohortStart : tomorrow;
+  const maxDate = new Date(cohortStart);
+  maxDate.setDate(maxDate.getDate() + intervalDays);
+  return {
+    minDate: formatDateToLocalYmd(minDate),
+    maxDate: formatDateToLocalYmd(maxDate),
+  };
 }
 
 /** Format YYYY-MM-DD for display. */
@@ -121,12 +164,26 @@ const PaymentDetails = ({
   const [confirmTerms, setConfirmTerms] = useState(false);
   const [editDataOpen, setEditDataOpen] = useState(false);
   const [termsDialogOpen, setTermsDialogOpen] = useState(false);
+  const cohortStartDate = checkoutSelections?.cohort?.start_date;
+
   const [localNextPaymentDateYmd, setLocalNextPaymentDateYmd] = useState(() =>
-    getNextPaymentDateYmd(1),
+    getDefaultNextPaymentDateYmd(checkoutSelections?.planId, cohortStartDate),
   );
+
+  useEffect(() => {
+    setLocalNextPaymentDateYmd(
+      getDefaultNextPaymentDateYmd(checkoutSelections?.planId, cohortStartDate),
+    );
+  }, [checkoutSelections?.planId, cohortStartDate]);
+
   const nextPaymentDateYmd = nextPaymentDateYmdProp ?? localNextPaymentDateYmd;
   const setNextPaymentDateYmd =
     onNextPaymentDateChange ?? setLocalNextPaymentDateYmd;
+
+  const nextPaymentWindow = getNextPaymentWindow(
+    checkoutSelections?.planId,
+    cohortStartDate,
+  );
 
   const isInstallmentPlan =
     checkoutSelections?.planId && checkoutSelections.planId !== "full";
@@ -246,6 +303,42 @@ const PaymentDetails = ({
         originalPlanTotal: `${currency} ${orig}`,
         originalAmounts: Array.from({ length: 6 }, (_, i) =>
           amountStr(i === 5 ? orig - base * 5 : base),
+        ),
+      };
+    }
+    if (planId === "8-installments") {
+      const orig = pricing.original_eight_installments_amount ?? pricing.eight_installments_amount;
+      if (orig == null) return { originalPlanTotal: undefined, originalAmounts: [] };
+      const base = Math.round(orig / 8);
+      const amountStr = (n: number) => `${currency} ${n}`;
+      return {
+        originalPlanTotal: `${currency} ${orig}`,
+        originalAmounts: Array.from({ length: 8 }, (_, i) =>
+          amountStr(i === 7 ? orig - base * 7 : base),
+        ),
+      };
+    }
+    if (planId === "9-installments") {
+      const orig = pricing.original_nine_installments_amount ?? pricing.nine_installments_amount;
+      if (orig == null) return { originalPlanTotal: undefined, originalAmounts: [] };
+      const base = Math.round(orig / 9);
+      const amountStr = (n: number) => `${currency} ${n}`;
+      return {
+        originalPlanTotal: `${currency} ${orig}`,
+        originalAmounts: Array.from({ length: 9 }, (_, i) =>
+          amountStr(i === 8 ? orig - base * 8 : base),
+        ),
+      };
+    }
+    if (planId === "10-installments") {
+      const orig = pricing.original_ten_installments_amount ?? pricing.ten_installments_amount;
+      if (orig == null) return { originalPlanTotal: undefined, originalAmounts: [] };
+      const base = Math.round(orig / 10);
+      const amountStr = (n: number) => `${currency} ${n}`;
+      return {
+        originalPlanTotal: `${currency} ${orig}`,
+        originalAmounts: Array.from({ length: 10 }, (_, i) =>
+          amountStr(i === 9 ? orig - base * 9 : base),
         ),
       };
     }
@@ -392,6 +485,8 @@ const PaymentDetails = ({
                       <ChangeDate
                         value={nextPaymentDateYmd}
                         onChange={setNextPaymentDateYmd}
+                        minDate={nextPaymentWindow?.minDate}
+                        maxDate={nextPaymentWindow?.maxDate}
                       />
                     </div>
                   </div>

@@ -11,6 +11,8 @@ import {
 interface ChangeDateProps {
     value: string;
     onChange: (ymd: string) => void;
+    minDate?: string; // YYYY-MM-DD
+    maxDate?: string; // YYYY-MM-DD
 }
 
 function formatDateToLocalYmd(date: Date): string {
@@ -20,7 +22,7 @@ function formatDateToLocalYmd(date: Date): string {
     return `${year}-${month}-${day}`;
 }
 
-export const ChangeDate = ({ value, onChange }: ChangeDateProps) => {
+export const ChangeDate = ({ value, onChange, minDate, maxDate }: ChangeDateProps) => {
     const [calendarOpen, setCalendarOpen] = useState(false);
 
     return (
@@ -53,15 +55,17 @@ export const ChangeDate = ({ value, onChange }: ChangeDateProps) => {
                         }
                     }}
                     disabled={(date) => {
-                        if (!value) return false;
-                        const [valueYear, valueMonth] = value
-                            .split("-")
-                            .map(Number);
-                        return (
-                            date.getFullYear() > valueYear ||
-                            (date.getFullYear() === valueYear &&
-                                date.getMonth() >= valueMonth)
-                        );
+                        const d = new Date(date);
+                        d.setHours(0, 0, 0, 0);
+                        if (minDate) {
+                            const min = new Date(minDate + "T00:00:00");
+                            if (d < min) return true;
+                        }
+                        if (maxDate) {
+                            const max = new Date(maxDate + "T00:00:00");
+                            if (d > max) return true;
+                        }
+                        return false;
                     }}
                     initialFocus
                 />

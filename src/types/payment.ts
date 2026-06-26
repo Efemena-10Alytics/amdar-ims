@@ -39,6 +39,18 @@ export interface CheckoutPricing {
   original_six_installments_amount?: number;
   discounted_six_installments_amount?: number;
   display_six_installment_breakdown?: number[];
+  eight_installments_amount?: number;
+  original_eight_installments_amount?: number;
+  discounted_eight_installments_amount?: number;
+  display_eight_installment_breakdown?: number[];
+  nine_installments_amount?: number;
+  original_nine_installments_amount?: number;
+  discounted_nine_installments_amount?: number;
+  display_nine_installment_breakdown?: number[];
+  ten_installments_amount?: number;
+  original_ten_installments_amount?: number;
+  discounted_ten_installments_amount?: number;
+  display_ten_installment_breakdown?: number[];
 }
 
 /** Upcoming cohort in checkout */
@@ -86,7 +98,7 @@ export interface SplitFirstPayment {
 /** Collected checkout selections to pass to Payment / PaymentDetails */
 export type CheckoutSelections = {
   cohort: CheckoutCohort;
-  planId: "full" | "2-installments" | "3-installments" | "5-installments" | "6-installments";
+  planId: "full" | "2-installments" | "3-installments" | "5-installments" | "6-installments" | "8-installments" | "9-installments" | "10-installments";
   currency: string;
   pricing: CheckoutPricing;
   planLabel: string;

@@ -62,6 +62,17 @@ function getBiweeklyPaymentDate(periodsFromNow: number): string {
   });
 }
 
+/** Format a date N * 7 days from today for weekly "next payment" display. */
+function getWeeklyPaymentDate(periodsFromNow: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + periodsFromNow * 7);
+  return d.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 function buildBiweeklyBreakdown(
   currency: string,
   total: number,
@@ -82,6 +93,26 @@ function buildBiweeklyBreakdown(
   }));
 }
 
+function buildWeeklyBreakdown(
+  currency: string,
+  total: number,
+  count: number,
+  displayBreakdown?: number[],
+): { label: string; amount: string; dueDate?: string }[] {
+  const amounts =
+    displayBreakdown && displayBreakdown.length >= count
+      ? displayBreakdown
+      : Array.from({ length: count }, (_, i) => {
+          const base = Math.round(total / count);
+          return i === count - 1 ? total - base * (count - 1) : base;
+        });
+  return amounts.map((amt, i) => ({
+    label: `${getOrdinal(i)} payment`,
+    amount: `${currency} ${amt}`,
+    dueDate: i === 0 ? "Due now" : `Due ${getWeeklyPaymentDate(i)}`,
+  }));
+}
+
 /** Derive payment plan options from the selected pricing (full = original_amount, 2 = two_installments_amount/2 each, 3 = display_three_installment_breakdown). */
 function getPaymentPlansFromPricing(
   price: CheckoutPricing,
@@ -96,6 +127,12 @@ function getPaymentPlansFromPricing(
     display_five_installment_breakdown,
     six_installments_amount,
     display_six_installment_breakdown,
+    eight_installments_amount,
+    display_eight_installment_breakdown,
+    nine_installments_amount,
+    display_nine_installment_breakdown,
+    ten_installments_amount,
+    display_ten_installment_breakdown,
   } = price;
   const half = Math.round(two_installments_amount / 2);
   const threeBreakdown =
@@ -175,6 +212,51 @@ function getPaymentPlansFromPricing(
         six_installments_amount,
         6,
         display_six_installment_breakdown,
+      ),
+    });
+  }
+
+  if (eight_installments_amount != null) {
+    plans.push({
+      id: "8-installments",
+      label: "8 Weekly Installments",
+      description: "Pay in 8 installments, every week",
+      total: `${currency} ${eight_installments_amount}`,
+      breakdown: buildWeeklyBreakdown(
+        currency,
+        eight_installments_amount,
+        8,
+        display_eight_installment_breakdown,
+      ),
+    });
+  }
+
+  if (nine_installments_amount != null) {
+    plans.push({
+      id: "9-installments",
+      label: "9 Weekly Installments",
+      description: "Pay in 9 installments, every week",
+      total: `${currency} ${nine_installments_amount}`,
+      breakdown: buildWeeklyBreakdown(
+        currency,
+        nine_installments_amount,
+        9,
+        display_nine_installment_breakdown,
+      ),
+    });
+  }
+
+  if (ten_installments_amount != null) {
+    plans.push({
+      id: "10-installments",
+      label: "Weekly Installments",
+      description: "Pay in 10 installments, every week",
+      total: `${currency} ${ten_installments_amount}`,
+      breakdown: buildWeeklyBreakdown(
+        currency,
+        ten_installments_amount,
+        10,
+        display_ten_installment_breakdown,
       ),
     });
   }
@@ -275,6 +357,10 @@ const Checkout = ({
 
   const isBiweekly =
     selectedPlan === "5-installments" || selectedPlan === "6-installments";
+  const isWeekly =
+    selectedPlan === "8-installments" ||
+    selectedPlan === "9-installments" ||
+    selectedPlan === "10-installments";
 
   const canProceed =
     selectedCohort !== null && !!selectedPricing && !!selectedPlan;
@@ -567,7 +653,8 @@ const Checkout = ({
         {isUnique &&
         selectedPlan === "3-installments" &&
         !firstPaymentSplit &&
-        !isBiweekly ? (
+        !isBiweekly &&
+        !isWeekly ? (
           <div className="flex gap-3">
             <Button
               variant="outline"

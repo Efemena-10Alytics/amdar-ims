@@ -4,7 +4,7 @@ import type { CheckoutSelections } from "@/types/payment";
 const CHECKOUT_FORM_STORAGE_KEY = "payment_checkout_form";
 const CHECKOUT_SELECTIONS_STORAGE_KEY = "payment_checkout_selections";
 
-export type PaymentPlanId = "full" | "2-installments" | "3-installments" | "5-installments" | "6-installments";
+export type PaymentPlanId = "full" | "2-installments" | "3-installments" | "5-installments" | "6-installments" | "8-installments" | "9-installments" | "10-installments";
 
 export type StoredCheckoutForm = {
   selectedCohort: number | null;
@@ -126,7 +126,7 @@ export function useCheckoutFormStorage(
         (parsed.selectedCohort == null ||
           cohortIds.includes(parsed.selectedCohort)) &&
         (parsed.selectedPlan == null ||
-          ["full", "2-installments", "3-installments", "5-installments", "6-installments"].includes(
+          ["full", "2-installments", "3-installments", "5-installments", "6-installments", "8-installments", "9-installments", "10-installments"].includes(
             parsed.selectedPlan,
           )) &&
         (parsed.currency ? currencies.includes(parsed.currency) : true)

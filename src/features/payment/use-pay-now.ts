@@ -108,6 +108,18 @@ export function usePayNow({
         originalTotalAmount = Number(pricing.original_six_installments_amount ?? pricing.six_installments_amount);
         installments = 6;
         originalNextPaymentAmount = Number(pricing.six_installments_amount) / 6;
+      } else if (planId === "8-installments") {
+        originalTotalAmount = Number(pricing.original_eight_installments_amount ?? pricing.eight_installments_amount);
+        installments = 8;
+        originalNextPaymentAmount = Number(pricing.eight_installments_amount) / 8;
+      } else if (planId === "9-installments") {
+        originalTotalAmount = Number(pricing.original_nine_installments_amount ?? pricing.nine_installments_amount);
+        installments = 9;
+        originalNextPaymentAmount = Number(pricing.nine_installments_amount) / 9;
+      } else if (planId === "10-installments") {
+        originalTotalAmount = Number(pricing.original_ten_installments_amount ?? pricing.ten_installments_amount);
+        installments = 10;
+        originalNextPaymentAmount = Number(pricing.ten_installments_amount) / 10;
       } else {
         // 3-installments
         originalTotalAmount = Number(
@@ -122,12 +134,17 @@ export function usePayNow({
         Math.round(originalNextPaymentAmount * 100) / 100;
 
       const isBiweekly = planId === "5-installments" || planId === "6-installments";
+      const isWeekly = planId === "8-installments" || planId === "9-installments" || planId === "10-installments";
 
       // Next payment date for API
       let apiNextPaymentDate: string | null = null;
 
       if (nextPaymentDate) {
         apiNextPaymentDate = nextPaymentDate.toISOString().split("T")[0];
+      } else if (isWeekly) {
+        const oneWeekFromToday = new Date();
+        oneWeekFromToday.setDate(oneWeekFromToday.getDate() + 7);
+        apiNextPaymentDate = oneWeekFromToday.toISOString().split("T")[0];
       } else if (isBiweekly) {
         const twoWeeksFromToday = new Date();
         twoWeeksFromToday.setDate(twoWeeksFromToday.getDate() + 14);
