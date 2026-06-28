@@ -25,7 +25,10 @@ const Aside = () => {
   const studentName = getStudentDisplayName(user);
   const welcomeLabel = studentName ? `WELCOME ${studentName.toUpperCase()}!` : "WELCOME!";
   const onboardingStepsCompleted = enrollment?.isOnboardingStepsCompleted;
-  const whatsappGroupUrl = getInternsWhatsappGroupUrl(enrollment?.program);
+  const whatsappGroupUrl = getInternsWhatsappGroupUrl(
+    enrollment?.program,
+    enrollment?.cohort,
+  );
 
   useEffect(() => {
     if (!enrollment?.program) return;

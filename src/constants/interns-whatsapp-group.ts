@@ -1,19 +1,78 @@
-export const DATA_ANALYTICS_INTERNS_WHATSAPP_GROUP =
-  "https://chat.whatsapp.com/IfhrVcPBbM10227jli2S0b?mode=gi_t";
-export const DATA_SCIENCE_INTERNS_WHATSAPP_GROUP =
-  "https://chat.whatsapp.com/IYqKx5Y3xAKETczpzSnZv1?mode=gi_t";
-export const DATA_ENGINEERING_INTERNS_WHATSAPP_GROUP =
-  "https://chat.whatsapp.com/G3c34zhT40L6vWvXVgWreL?mode=gi_t";
-export const PROJECT_MANAGEMENT_INTERNS_WHATSAPP_GROUP =
-  "https://chat.whatsapp.com/DzxpHbDM9dYEhb0dEH6ZS8";
-export const BUSINESS_ANALYSIS_INTERNS_WHATSAPP_GROUP =
-  "https://chat.whatsapp.com/9sH8n7l2mLh1Xo5qj3u9bP?mode=gi_t";
-export const SOC_INTERNS_WHATSAPP_GROUP =
-  "https://chat.whatsapp.com/ClRLSJDCx2g0dhCcFvRwDW?mode=gi_t";
-export const GRC_INTERNS_WHATSAPP_GROUP =
-  "https://chat.whatsapp.com/FIrYDHKRWk99G8U8ZbWk9m?mode=gi_t";
-export const DEVOPS_INTERNS_WHATSAPP_GROUP =
-  "https://chat.whatsapp.com/IXSIdOk0sU4E74N66JqLED?mode=gi_t";
+type ProgramKey =
+  | "business_analysis"
+  | "data_analytics"
+  | "data_engineering"
+  | "data_science"
+  | "devops"
+  | "grc"
+  | "project_management"
+  | "soc";
+
+type CohortMonthKey =
+  | "january"
+  | "february"
+  | "march"
+  | "april"
+  | "may"
+  | "june"
+  | "july"
+  | "august"
+  | "september"
+  | "october"
+  | "november"
+  | "december";
+
+const COHORT_MONTH_KEYS: CohortMonthKey[] = [
+  "january",
+  "february",
+  "march",
+  "april",
+  "may",
+  "june",
+  "july",
+  "august",
+  "september",
+  "october",
+  "november",
+  "december",
+];
+
+const COHORT_MONTH_PATTERN_KEYS = [...COHORT_MONTH_KEYS].sort(
+  (a, b) => b.length - a.length,
+);
+
+const INTERNS_WHATSAPP_GROUPS: Partial<
+  Record<CohortMonthKey, Partial<Record<ProgramKey, string>>>
+> = {
+  june: {
+    business_analysis:
+      "https://chat.whatsapp.com/9sH8n7l2mLh1Xo5qj3u9bP?mode=gi_t",
+    data_analytics:
+      "https://chat.whatsapp.com/IfhrVcPBbM10227jli2S0b?mode=gi_t",
+    data_engineering:
+      "https://chat.whatsapp.com/G3c34zhT40L6vWvXVgWreL?mode=gi_t",
+    data_science:
+      "https://chat.whatsapp.com/IYqKx5Y3xAKETczpzSnZv1?mode=gi_t",
+    devops: "https://chat.whatsapp.com/IXSIdOk0sU4E74N66JqLED?mode=gi_t",
+    grc: "https://chat.whatsapp.com/FIrYDHKRWk99G8U8ZbWk9m?mode=gi_t",
+    project_management: "https://chat.whatsapp.com/DzxpHbDM9dYEhb0dEH6ZS8",
+    soc: "https://chat.whatsapp.com/ClRLSJDCx2g0dhCcFvRwDW?mode=gi_t",
+  },
+  july: {
+    business_analysis:
+      "https://chat.whatsapp.com/CQ5xfkVVejx20eCnMbKL3p?mode=gi_t",
+    data_analytics:
+      "https://chat.whatsapp.com/IfhrVcPBbM10227jli2S0b?mode=gi_t",
+    data_engineering:
+      "https://chat.whatsapp.com/G3c34zhT40L6vWvXVgWreL?mode=gi_t",
+    data_science:
+      "https://chat.whatsapp.com/IYqKx5Y3xAKETczpzSnZv1?mode=gi_t",
+    devops: "https://chat.whatsapp.com/IXSIdOk0sU4E74N66JqLED?mode=gi_t",
+    grc: "https://chat.whatsapp.com/FIrYDHKRWk99G8U8ZbWk9m?mode=gi_t",
+    project_management: "https://chat.whatsapp.com/DzxpHbDM9dYEhb0dEH6ZS8",
+    soc: "https://chat.whatsapp.com/ClRLSJDCx2g0dhCcFvRwDW?mode=gi_t",
+  },
+};
 
 type ProgramRef = {
   slug?: string | null;
@@ -22,7 +81,14 @@ type ProgramRef = {
   internship_title?: string | null;
 };
 
-function normalizeProgramText(value: string): string {
+type CohortRef = {
+  name?: string | null;
+  month?: string | null;
+  year?: string | null;
+  start_date?: string | null;
+};
+
+function normalizeText(value: string): string {
   return value
     .toLowerCase()
     .replace(/&/g, " and ")
@@ -40,13 +106,10 @@ function getProgramHaystack(program?: ProgramRef | null): string {
   const title = program.title?.trim() ?? "";
   const slug = program.slug?.replace(/-/g, " ").trim() ?? "";
 
-  return normalizeProgramText(`${internshipTitle} ${title} ${slug}`);
+  return normalizeText(`${internshipTitle} ${title} ${slug}`);
 }
 
-/** Resolves the interns WhatsApp community link for an enrolled program. */
-export function getInternsWhatsappGroupUrl(
-  program?: ProgramRef | null,
-): string | null {
+function resolveProgramKey(program?: ProgramRef | null): ProgramKey | null {
   const haystack = getProgramHaystack(program);
   if (!haystack) return null;
 
@@ -54,21 +117,21 @@ export function getInternsWhatsappGroupUrl(
     haystack.includes("business analysis") ||
     haystack.includes("business analyst")
   ) {
-    return BUSINESS_ANALYSIS_INTERNS_WHATSAPP_GROUP;
+    return "business_analysis";
   }
 
   if (
     haystack.includes("data engineering") ||
     haystack.includes("data engineer")
   ) {
-    return DATA_ENGINEERING_INTERNS_WHATSAPP_GROUP;
+    return "data_engineering";
   }
 
   if (
     haystack.includes("data science") ||
     haystack.includes("data scientist")
   ) {
-    return DATA_SCIENCE_INTERNS_WHATSAPP_GROUP;
+    return "data_science";
   }
 
   if (
@@ -76,22 +139,22 @@ export function getInternsWhatsappGroupUrl(
     haystack.includes("data analyst") ||
     haystack.includes("data analysis")
   ) {
-    return DATA_ANALYTICS_INTERNS_WHATSAPP_GROUP;
+    return "data_analytics";
   }
 
   if (
     haystack.includes("project management") ||
     haystack.includes("project manager")
   ) {
-    return PROJECT_MANAGEMENT_INTERNS_WHATSAPP_GROUP;
+    return "project_management";
   }
 
   if (haystack.includes("devops") || haystack.includes("dev ops")) {
-    return DEVOPS_INTERNS_WHATSAPP_GROUP;
+    return "devops";
   }
 
   if (haystack.includes("grc")) {
-    return GRC_INTERNS_WHATSAPP_GROUP;
+    return "grc";
   }
 
   if (
@@ -100,8 +163,54 @@ export function getInternsWhatsappGroupUrl(
     haystack.includes("app and cloud security") ||
     haystack.includes("cloud security")
   ) {
-    return SOC_INTERNS_WHATSAPP_GROUP;
+    return "soc";
   }
 
   return null;
+}
+
+function matchCohortMonthInText(value: string): CohortMonthKey | null {
+  const normalized = normalizeText(value);
+  if (!normalized) return null;
+
+  for (const month of COHORT_MONTH_PATTERN_KEYS) {
+    const pattern = new RegExp(`(^|\\s)${month}(\\s|$)`);
+    if (pattern.test(normalized)) return month;
+  }
+
+  return null;
+}
+
+function resolveCohortMonthKey(cohort?: CohortRef | null): CohortMonthKey | null {
+  if (!cohort) return null;
+
+  const fromMonth = cohort.month
+    ? matchCohortMonthInText(cohort.month)
+    : null;
+  if (fromMonth) return fromMonth;
+
+  const fromName = cohort.name ? matchCohortMonthInText(cohort.name) : null;
+  if (fromName) return fromName;
+
+  if (cohort.start_date?.trim()) {
+    const date = new Date(`${cohort.start_date.trim()}T12:00:00`);
+    if (!Number.isNaN(date.getTime())) {
+      return COHORT_MONTH_KEYS[date.getMonth()] ?? null;
+    }
+  }
+
+  return null;
+}
+
+/** Resolves the interns WhatsApp community link for a cohort + program enrollment. */
+export function getInternsWhatsappGroupUrl(
+  program?: ProgramRef | null,
+  cohort?: CohortRef | null,
+): string | null {
+  const cohortMonth = resolveCohortMonthKey(cohort);
+  const programKey = resolveProgramKey(program);
+
+  if (!cohortMonth || !programKey) return null;
+
+  return INTERNS_WHATSAPP_GROUPS[cohortMonth]?.[programKey] ?? null;
 }
