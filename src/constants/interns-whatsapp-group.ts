@@ -51,8 +51,7 @@ const INTERNS_WHATSAPP_GROUPS: Partial<
       "https://chat.whatsapp.com/IfhrVcPBbM10227jli2S0b?mode=gi_t",
     data_engineering:
       "https://chat.whatsapp.com/G3c34zhT40L6vWvXVgWreL?mode=gi_t",
-    data_science:
-      "https://chat.whatsapp.com/IYqKx5Y3xAKETczpzSnZv1?mode=gi_t",
+    data_science: "https://chat.whatsapp.com/IYqKx5Y3xAKETczpzSnZv1?mode=gi_t",
     devops: "https://chat.whatsapp.com/IXSIdOk0sU4E74N66JqLED?mode=gi_t",
     grc: "https://chat.whatsapp.com/FIrYDHKRWk99G8U8ZbWk9m?mode=gi_t",
     project_management: "https://chat.whatsapp.com/DzxpHbDM9dYEhb0dEH6ZS8",
@@ -60,17 +59,18 @@ const INTERNS_WHATSAPP_GROUPS: Partial<
   },
   july: {
     business_analysis:
-      "https://chat.whatsapp.com/CQ5xfkVVejx20eCnMbKL3p?mode=gi_t",
+      "https://chat.whatsapp.com/JjUBxL8KoaRB8JKqGwb9n4?s=cl&p=i&ilr=4",
     data_analytics:
-      "https://chat.whatsapp.com/IfhrVcPBbM10227jli2S0b?mode=gi_t",
+      "https://chat.whatsapp.com/J6gc284xy2Q5f2WvZb45Nm?s=cl&p=i&ilr=4",
     data_engineering:
-      "https://chat.whatsapp.com/G3c34zhT40L6vWvXVgWreL?mode=gi_t",
+      "https://chat.whatsapp.com/CTYrcbTz1HgGijM7GbRnSi?s=cl&p=i&ilr=4",
     data_science:
-      "https://chat.whatsapp.com/IYqKx5Y3xAKETczpzSnZv1?mode=gi_t",
-    devops: "https://chat.whatsapp.com/IXSIdOk0sU4E74N66JqLED?mode=gi_t",
-    grc: "https://chat.whatsapp.com/FIrYDHKRWk99G8U8ZbWk9m?mode=gi_t",
-    project_management: "https://chat.whatsapp.com/DzxpHbDM9dYEhb0dEH6ZS8",
-    soc: "https://chat.whatsapp.com/ClRLSJDCx2g0dhCcFvRwDW?mode=gi_t",
+      "https://chat.whatsapp.com/EVA97OLCOnc24tV94d08EL?s=cl&p=i&ilr=4",
+    devops: "https://chat.whatsapp.com/EpBBf9tSPB5A8N12wR1I8r?s=cl&p=i&ilr=4",
+    grc: "https://chat.whatsapp.com/JA4Ql86TRUm3gaxwOI8tTy?s=cl&p=i&ilr=4",
+    project_management:
+      "https://chat.whatsapp.com/DeyvLAvzwgG6M3Q2mvs5fA?s=cl&p=i&ilr=4",
+    soc: "https://chat.whatsapp.com/Cz6uahPGYs18fXDnhpXFqj?s=cl&p=i&ilr=4",
   },
 };
 
@@ -100,9 +100,7 @@ function getProgramHaystack(program?: ProgramRef | null): string {
   if (!program) return "";
 
   const internshipTitle =
-    program.intern_title?.trim() ??
-    program.internship_title?.trim() ??
-    "";
+    program.intern_title?.trim() ?? program.internship_title?.trim() ?? "";
   const title = program.title?.trim() ?? "";
   const slug = program.slug?.replace(/-/g, " ").trim() ?? "";
 
@@ -181,12 +179,12 @@ function matchCohortMonthInText(value: string): CohortMonthKey | null {
   return null;
 }
 
-function resolveCohortMonthKey(cohort?: CohortRef | null): CohortMonthKey | null {
+function resolveCohortMonthKey(
+  cohort?: CohortRef | null,
+): CohortMonthKey | null {
   if (!cohort) return null;
 
-  const fromMonth = cohort.month
-    ? matchCohortMonthInText(cohort.month)
-    : null;
+  const fromMonth = cohort.month ? matchCohortMonthInText(cohort.month) : null;
   if (fromMonth) return fromMonth;
 
   const fromName = cohort.name ? matchCohortMonthInText(cohort.name) : null;
