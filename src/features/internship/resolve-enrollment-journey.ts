@@ -22,7 +22,7 @@ import type {
 /**
  * Cohort IDs that must complete onboarding/pre-diagnostic before dashboard access.
  */
-export const ENROLLMENT_JOURNEY_COHORT_IDS = [38, 43] as const;
+export const ENROLLMENT_JOURNEY_COHORT_IDS = [38, 43, 48, 49] as const;
 
 const ENROLLMENT_JOURNEY_COHORT_ID_SET = new Set<number>(
   ENROLLMENT_JOURNEY_COHORT_IDS,
@@ -65,13 +65,16 @@ function getPreDiagnosticStepRoute(step: string): string | null {
 
   const routes: Record<string, string> = {
     "welcome-video": "/pre-diagnostic-test?step=welcome-video",
-    "career-path-diagnostics": "/pre-diagnostic-test?step=career-path-diagnostics",
+    "career-path-diagnostics":
+      "/pre-diagnostic-test?step=career-path-diagnostics",
     "technology-use-case":
       "/pre-diagnostic-test/technology-readiness?step=technology-use-case",
     "technology-diagnostics":
       "/pre-diagnostic-test/technology-readiness?step=technology-diagnostics",
-    "how-the-ims-works": "/pre-diagnostic-test/ims-readiness?step=how-the-ims-works",
-    "ims-diagnostics": "/pre-diagnostic-test/ims-readiness?step=ims-diagnostics",
+    "how-the-ims-works":
+      "/pre-diagnostic-test/ims-readiness?step=how-the-ims-works",
+    "ims-diagnostics":
+      "/pre-diagnostic-test/ims-readiness?step=ims-diagnostics",
   };
 
   return routes[step] ?? null;
