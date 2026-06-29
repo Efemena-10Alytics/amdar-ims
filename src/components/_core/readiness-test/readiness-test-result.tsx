@@ -88,7 +88,10 @@ const ReadinessTestResult = ({
   embedded = false,
 }: ReadinessTestResultProps) => {
   const { data: enrollment } = useGetUserEnrollment();
-  const whatsappGroupUrl = getInternsWhatsappGroupUrl(enrollment?.program);
+  const whatsappGroupUrl = getInternsWhatsappGroupUrl(
+    enrollment?.program,
+    enrollment?.cohort,
+  );
   const config = getReadinessScoreTierConfig(totalScore);
   const ringScore = percentageScore ?? totalScore;
   const ringProgress =

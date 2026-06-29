@@ -22,7 +22,7 @@ import type {
 /**
  * Cohort IDs that must complete onboarding/pre-diagnostic before dashboard access.
  */
-export const ENROLLMENT_JOURNEY_COHORT_IDS = [38, 43] as const;
+export const ENROLLMENT_JOURNEY_COHORT_IDS = [38, 43, 48, 49] as const;
 
 const ENROLLMENT_JOURNEY_COHORT_ID_SET = new Set<number>(
   ENROLLMENT_JOURNEY_COHORT_IDS,
@@ -65,13 +65,16 @@ function getPreDiagnosticStepRoute(step: string): string | null {
 
   const routes: Record<string, string> = {
     "welcome-video": "/pre-diagnostic-test?step=welcome-video",
-    "career-path-diagnostics": "/pre-diagnostic-test?step=career-path-diagnostics",
+    "career-path-diagnostics":
+      "/pre-diagnostic-test?step=career-path-diagnostics",
     "technology-use-case":
       "/pre-diagnostic-test/technology-readiness?step=technology-use-case",
     "technology-diagnostics":
       "/pre-diagnostic-test/technology-readiness?step=technology-diagnostics",
-    "how-the-ims-works": "/pre-diagnostic-test/ims-readiness?step=how-the-ims-works",
-    "ims-diagnostics": "/pre-diagnostic-test/ims-readiness?step=ims-diagnostics",
+    "how-the-ims-works":
+      "/pre-diagnostic-test/ims-readiness?step=how-the-ims-works",
+    "ims-diagnostics":
+      "/pre-diagnostic-test/ims-readiness?step=ims-diagnostics",
   };
 
   return routes[step] ?? null;
@@ -125,6 +128,20 @@ export function getFirstPendingPreDiagnosticHref(
   return null;
 }
 
+/** Returns whether the user has joined the WhatsApp community for their cohort. */
+export function isEnrollmentWhatsappVerified(
+  enrollment?: Pick<UserEnrollment, "isVerifiedWhatsapp"> | null,
+): boolean {
+  return enrollment?.isVerifiedWhatsapp === true;
+}
+
+export const WHATSAPP_COMMUNITY_TOAST_MESSAGE =
+  "Please click Join Our community in the sidebar to continue to pre-diagnostic.";
+
+export function buildWhatsappRequiredOnboardingHref(): string {
+  return `${buildOnboardingStepHref("readiness-test")}&whatsapp=required`;
+}
+
 /** Returns the next journey URL if onboarding or pre-diagnostic work remains. */
 export function resolveEnrollmentJourneyRedirect(
   enrollment: UserEnrollment,
@@ -139,6 +156,10 @@ export function resolveEnrollmentJourneyRedirect(
     enrollment.isOnboardingStepsCompleted,
   );
   if (onboardingHref) return onboardingHref;
+
+  if (!isEnrollmentWhatsappVerified(enrollment)) {
+    return buildWhatsappRequiredOnboardingHref();
+  }
 
   const preDiagnosticHref = getFirstPendingPreDiagnosticHref(
     enrollment.isPreDiagnosticStepsCompleted,

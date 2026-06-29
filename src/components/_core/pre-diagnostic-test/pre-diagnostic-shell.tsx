@@ -1,9 +1,11 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Aside from "@/components/_core/pre-diagnostic-test/aside";
 import { JourneyLayoutHeader } from "@/components/_core/onboarding/journey-layout-header";
 import { PreDiagnosticProvider } from "@/components/_core/pre-diagnostic-test/pre-diagnostic-context";
+import { isEnrollmentWhatsappVerified, buildWhatsappRequiredOnboardingHref } from "@/features/internship/resolve-enrollment-journey";
 import { useGetPreDiagnostic } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 import { useRequireUserId } from "@/hooks/use-require-user-id";
 
@@ -12,6 +14,7 @@ function PreDiagnosticShellContent({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
   const { isAuthReady } = useRequireUserId();
 
   const {
@@ -29,6 +32,13 @@ function PreDiagnosticShellContent({
     enrollmentError,
     refetchEnrollment,
   } = useGetPreDiagnostic();
+
+  useEffect(() => {
+    if (isEnrollmentLoading || !enrollment) return;
+    if (!isEnrollmentWhatsappVerified(enrollment)) {
+      router.replace(buildWhatsappRequiredOnboardingHref());
+    }
+  }, [enrollment, isEnrollmentLoading, router]);
 
   if (!isAuthReady) return null;
 
