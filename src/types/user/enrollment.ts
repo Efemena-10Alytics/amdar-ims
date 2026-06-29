@@ -107,6 +107,7 @@ export type UserEnrollment = {
   dropped_at: string | null;
   notes: string | null;
   buddy_name: string | null;
+  isVerifiedWhatsapp?: boolean;
   /** Present on some API responses when not nested under `cohort` */
   version?: string | number | null;
   created_at: string;

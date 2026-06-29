@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useMemo, useState, useEffect, useRef, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import ReadinessTestDrawer from "@/components/_core/readiness-test/readiness-test-drawer";
+import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import { getReadinessTestGuidelines } from "@/features/readiness-test/get-readiness-test-guidelines";
 import { getSortedReadinessTestFields } from "@/features/readiness-test/get-sorted-form-fields";
 import { useReadinessTestEntry } from "@/features/readiness-test/use-readiness-test-entry";
@@ -10,6 +11,10 @@ import {
   isOnboardingEnrollmentStepComplete,
   useUpdateCompletedOnboardingStep,
 } from "@/features/internship/use-update-completed-onboarding-step";
+import {
+  isEnrollmentWhatsappVerified,
+  WHATSAPP_COMMUNITY_TOAST_MESSAGE,
+} from "@/features/internship/resolve-enrollment-journey";
 import Flag from "../landing-pages/home/hero/flag";
 import { useOnboardingData } from "./onboarding-context";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
@@ -23,10 +28,24 @@ const GUIDELINES = [
 
 const ReadinessTest = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { onboarding } = useOnboardingNavigation();
   const { enrollment } = useOnboardingData();
   const { markOnboardingStepComplete, isUpdating, errorMessage } =
     useUpdateCompletedOnboardingStep();
+  const [whatsappToast, setWhatsappToast] = useState<string | null>(null);
+  const whatsappToastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showWhatsappToast = useCallback((message = WHATSAPP_COMMUNITY_TOAST_MESSAGE) => {
+    setWhatsappToast(message);
+    if (whatsappToastTimerRef.current) {
+      clearTimeout(whatsappToastTimerRef.current);
+    }
+    whatsappToastTimerRef.current = setTimeout(() => {
+      setWhatsappToast(null);
+      whatsappToastTimerRef.current = null;
+    }, 4500);
+  }, []);
 
   const readinessForm = onboarding.readiness_test;
   const isStepCompleted = isOnboardingEnrollmentStepComplete(
@@ -53,7 +72,32 @@ const ReadinessTest = () => {
   const quizMinutes = readinessForm?.duration ?? 10;
   const quizTitle = readinessForm?.title ?? "Readiness Quiz";
 
-  const handleProceed = async () => {
+  useEffect(() => {
+    return () => {
+      if (whatsappToastTimerRef.current) {
+        clearTimeout(whatsappToastTimerRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (searchParams.get("whatsapp") !== "required") return;
+    if (isEnrollmentWhatsappVerified(enrollment)) return;
+    showWhatsappToast();
+  }, [searchParams, enrollment, showWhatsappToast]);
+
+  useEffect(() => {
+    if (isEnrollmentWhatsappVerified(enrollment)) {
+      setWhatsappToast(null);
+    }
+  }, [enrollment?.isVerifiedWhatsapp]);
+
+  const handleProceed = () => {
+    if (!isEnrollmentWhatsappVerified(enrollment)) {
+      showWhatsappToast();
+      return;
+    }
+
     router.push("/pre-diagnostic-test");
   };
 
@@ -96,6 +140,20 @@ const ReadinessTest = () => {
 
       {errorMessage ? (
         <p className="mt-4 text-sm text-destructive">{errorMessage}</p>
+      ) : null}
+
+      {whatsappToast ? (
+        <InfoToastBanner
+          variant="danger"
+          message={whatsappToast}
+          onDismiss={() => {
+            if (whatsappToastTimerRef.current) {
+              clearTimeout(whatsappToastTimerRef.current);
+              whatsappToastTimerRef.current = null;
+            }
+            setWhatsappToast(null);
+          }}
+        />
       ) : null}
 
       <button

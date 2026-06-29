@@ -125,6 +125,20 @@ export function getFirstPendingPreDiagnosticHref(
   return null;
 }
 
+/** Returns whether the user has joined the WhatsApp community for their cohort. */
+export function isEnrollmentWhatsappVerified(
+  enrollment?: Pick<UserEnrollment, "isVerifiedWhatsapp"> | null,
+): boolean {
+  return enrollment?.isVerifiedWhatsapp === true;
+}
+
+export const WHATSAPP_COMMUNITY_TOAST_MESSAGE =
+  "Please click Join Our community in the sidebar to continue to pre-diagnostic.";
+
+export function buildWhatsappRequiredOnboardingHref(): string {
+  return `${buildOnboardingStepHref("readiness-test")}&whatsapp=required`;
+}
+
 /** Returns the next journey URL if onboarding or pre-diagnostic work remains. */
 export function resolveEnrollmentJourneyRedirect(
   enrollment: UserEnrollment,
@@ -139,6 +153,10 @@ export function resolveEnrollmentJourneyRedirect(
     enrollment.isOnboardingStepsCompleted,
   );
   if (onboardingHref) return onboardingHref;
+
+  if (!isEnrollmentWhatsappVerified(enrollment)) {
+    return buildWhatsappRequiredOnboardingHref();
+  }
 
   const preDiagnosticHref = getFirstPendingPreDiagnosticHref(
     enrollment.isPreDiagnosticStepsCompleted,

@@ -12,6 +12,8 @@ import {
 import { ONBOARDING_CHECKLIST_ITEMS } from "@/features/onboarding/types";
 import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
 import { isOnboardingEnrollmentStepComplete } from "@/features/internship/use-update-completed-onboarding-step";
+import { useUpdateWhatsappVerification } from "@/features/internship/use-update-whatsapp-verification";
+import { isEnrollmentWhatsappVerified } from "@/features/internship/resolve-enrollment-journey";
 import { getInternsWhatsappGroupUrl } from "@/constants/interns-whatsapp-group";
 import Flag from "../landing-pages/home/hero/flag";
 import { Button } from "@/components/ui/button";
@@ -21,6 +23,7 @@ const Aside = () => {
   const searchParams = useSearchParams();
   const user = useAuthStore((s) => s.user);
   const { data: enrollment } = useGetUserEnrollment();
+  const { updateVerification, isUpdating } = useUpdateWhatsappVerification();
   const activeStep = searchParams.get("step") ?? ONBOARDING_CHECKLIST_ITEMS[0].key;
   const studentName = getStudentDisplayName(user);
   const welcomeLabel = studentName ? `WELCOME ${studentName.toUpperCase()}!` : "WELCOME!";
@@ -29,6 +32,7 @@ const Aside = () => {
     enrollment?.program,
     enrollment?.cohort,
   );
+  const isWhatsappVerified = isEnrollmentWhatsappVerified(enrollment);
 
   useEffect(() => {
     if (!enrollment?.program) return;
@@ -38,6 +42,18 @@ const Aside = () => {
       enrollment.program.internship_title ?? enrollment.program.intern_title,
     );
   }, [enrollment?.program]);
+
+  const handleJoinCommunity = () => {
+    if (!whatsappGroupUrl) return;
+
+    window.open(whatsappGroupUrl, "_blank", "noopener,noreferrer");
+
+    if (enrollment?.isVerifiedWhatsapp) return;
+
+    void updateVerification(true).catch(() => {
+      // Best-effort: WhatsApp should still open even if verification fails.
+    });
+  };
 
   return (
     <aside className="hidden overflow-y-auto rounded-l-xl bg-[#0F6A79] px-4 py-5 text-white lg:flex lg:w-[45%] lg:flex-col xl:w-[42%] xl:px-5 xl:py-6">
@@ -121,14 +137,21 @@ const Aside = () => {
         </div>
       </div>
       {whatsappGroupUrl ? (
-        <Button
-          asChild
-          className="mb-10 h-11 w-full cursor-pointer rounded-full bg-[#ACF0C5] text-[#092A31] hover:bg-[#ACF0C5]/80"
-        >
-          <a href={whatsappGroupUrl} target="_blank" rel="noopener noreferrer">
+        <div className="mb-10 space-y-2">
+          <Button
+            type="button"
+            onClick={handleJoinCommunity}
+            disabled={isUpdating}
+            className="h-11 w-full cursor-pointer rounded-full bg-[#ACF0C5] text-[#092A31] hover:bg-[#ACF0C5]/80"
+          >
             <WhatsappSVG /> Join Our community
-          </a>
-        </Button>
+          </Button>
+          {!isWhatsappVerified ? (
+            <p className="text-center text-xs text-[#C4DEE3]">
+              Join the community to continue to pre-diagnostic.
+            </p>
+          ) : null}
+        </div>
       ) : (
         <Button
           type="button"
