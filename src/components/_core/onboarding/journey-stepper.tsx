@@ -13,6 +13,7 @@ const JOURNEY_STEPS = [
 type JourneyStepperProps = {
   activeStep: 1 | 2 | 3;
   className?: string;
+  showSteps?: boolean;
 };
 
 function StepBadge({
@@ -71,9 +72,23 @@ function ProgramPill({ title }: { title: string }) {
   );
 }
 
-export function JourneyStepper({ activeStep, className }: JourneyStepperProps) {
+export function JourneyStepper({
+  activeStep,
+  className,
+  showSteps = true,
+}: JourneyStepperProps) {
   const { data: enrollment } = useGetUserEnrollment();
   const programTitle = enrollment?.program?.title?.trim();
+
+  if (!showSteps) {
+    if (!programTitle) return null;
+
+    return (
+      <div className={cn("mb-6 flex w-full justify-end", className)}>
+        <ProgramPill title={programTitle} />
+      </div>
+    );
+  }
 
   return (
     <nav
