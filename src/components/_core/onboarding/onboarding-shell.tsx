@@ -1,10 +1,15 @@
 "use client";
 
 import { Suspense } from "react";
+import AuthAside from "@/components/_core/auth/aside";
 import Aside from "@/components/_core/onboarding/aside";
 import { JourneyLayoutHeader } from "@/components/_core/onboarding/journey-layout-header";
+import { OnboardingSettingUp } from "@/components/_core/onboarding/onboarding-setting-up";
 import { OnboardingProvider } from "@/components/_core/onboarding/onboarding-context";
-import { useGetOnboarding } from "@/features/onboarding/use-get-onboarding";
+import {
+  isOnboardingNotFoundError,
+  useGetOnboarding,
+} from "@/features/onboarding/use-get-onboarding";
 import { useRequireUserId } from "@/hooks/use-require-user-id";
 
 function OnboardingShellContent({
@@ -32,14 +37,23 @@ function OnboardingShellContent({
   } = useGetOnboarding();
 
   const isOnboardingLoading = isPending || isLoading;
+  const onboardingNotFound =
+    cohortId != null &&
+    programId != null &&
+    !isOnboardingLoading &&
+    !isEnrollmentLoading &&
+    isError &&
+    isOnboardingNotFoundError(error);
+  const showSettingUpExperience =
+    isEnrollmentLoading ||
+    (cohortId != null &&
+      programId != null &&
+      !isEnrollmentError &&
+      (isOnboardingLoading || onboardingNotFound || (!data && !isError)));
 
   const rightPanel = () => {
-    if (isEnrollmentLoading) {
-      return (
-        <p className="px-4 text-sm text-[#64748B] sm:px-0">
-          Loading your enrollment...
-        </p>
-      );
+    if (showSettingUpExperience) {
+      return <OnboardingSettingUp enrollment={enrollment} />;
     }
 
     if (isEnrollmentError) {
@@ -69,12 +83,6 @@ function OnboardingShellContent({
       );
     }
 
-    if (isOnboardingLoading) {
-      return (
-        <p className="px-4 text-sm text-[#64748B] sm:px-0">Loading onboarding...</p>
-      );
-    }
-
     if (isError) {
       return (
         <div className="px-4 sm:px-0">
@@ -90,38 +98,45 @@ function OnboardingShellContent({
       );
     }
 
-    if (!data) {
-      return (
-        <p className="px-4 text-sm text-[#64748B] sm:px-0">Loading onboarding...</p>
-      );
-    }
-
     return children;
   };
 
-  const layout = (content: React.ReactNode) => (
-    <div className="flex h-screen w-full overflow-hidden bg-white p-3 2xl:p-5">
-      <Suspense fallback={<div className="hidden lg:flex lg:w-[45%] xl:w-[42%]" />}>
-        <Aside />
-      </Suspense>
-      <div
-        className="relative h-full min-h-0 w-full overflow-y-auto sm:pl-10"
-        style={{
-          backgroundColor: "#E8EFF1",
-          backgroundImage: "url(/images/pngs/auth-pattern.png)",
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-          backgroundPosition: "0 0",
-        }}
-      >
-        <JourneyLayoutHeader activeStep={1} />
-        <div className="pb-8">{content}</div>
+  const layout = (
+    content: React.ReactNode,
+    options?: { aside?: "onboarding" | "marketing"; showStepper?: boolean },
+  ) => {
+    const asideVariant = options?.aside ?? "onboarding";
+    const showStepper = options?.showStepper ?? true;
+
+    return (
+      <div className="flex h-screen w-full overflow-hidden bg-white p-3 2xl:p-5">
+        <Suspense
+          fallback={<div className="hidden lg:flex lg:w-[45%] xl:w-[42%]" />}
+        >
+          {asideVariant === "marketing" ? <AuthAside /> : <Aside />}
+        </Suspense>
+        <div
+          className="relative h-full min-h-0 w-full overflow-y-auto sm:pl-10"
+          style={{
+            backgroundColor: "#E8EFF1",
+            backgroundImage: "url(/images/pngs/auth-pattern.png)",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
+            backgroundPosition: "0 0",
+          }}
+        >
+          <JourneyLayoutHeader activeStep={1} showStepper={showStepper} />
+          <div className="pb-8">{content}</div>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   if (!data) {
-    return layout(rightPanel());
+    return layout(rightPanel(), {
+      aside: showSettingUpExperience ? "marketing" : "onboarding",
+      showStepper: !showSettingUpExperience,
+    });
   }
 
   return (

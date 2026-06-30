@@ -42,6 +42,15 @@ export function getOnboardingErrorMessage(error: unknown): string {
   return "Unable to load onboarding.";
 }
 
+export function isOnboardingNotFoundError(error: unknown): boolean {
+  if (axios.isAxiosError(error) && error.response?.status === 404) {
+    return true;
+  }
+
+  const message = getOnboardingErrorMessage(error).toLowerCase();
+  return message.includes("not found") || message.includes("no onboarding");
+}
+
 function toOnboardingApiError(error: unknown): OnboardingApiError {
   if (error instanceof OnboardingApiError) return error;
   const apiMessage = axios.isAxiosError(error)
