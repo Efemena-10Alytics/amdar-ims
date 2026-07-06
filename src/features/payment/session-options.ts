@@ -1,11 +1,11 @@
 export const SESSION_INFLUENCED_STORAGE_KEY = "session_influenced";
 
 export const SESSION_OPTIONS = [
-  {
-    value: "Thursday & Friday Career Session",
-    label: "Thursday & Friday Career Session",
-    key: "tech-career",
-  },
+  // {
+  //   value: "Thursday & Friday Career Session",
+  //   label: "Thursday & Friday Career Session",
+  //   key: "tech-career",
+  // },
   // {
   //   value: "Saturday Info Session",
   //   label: "Saturday Info Session",
@@ -32,7 +32,11 @@ export const SESSION_OPTIONS = [
     key: "youTube-live",
   },
   { value: "UK Job hunt", label: "UK Job hunt", key: "uk-job-hunt" },
-  { value: "Job access submit", label: "Job access submit", key: "job-access-submit" },
+  {
+    value: "Job access submit",
+    label: "Job access submit",
+    key: "job-access-submit",
+  },
   { value: "Hackathon", label: "Hackathon", key: "hackathon" },
   {
     value: "Clarity Session",
