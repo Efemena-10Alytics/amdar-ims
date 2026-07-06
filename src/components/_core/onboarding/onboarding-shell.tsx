@@ -1,11 +1,18 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import AuthAside from "@/components/_core/auth/aside";
 import Aside from "@/components/_core/onboarding/aside";
 import { JourneyLayoutHeader } from "@/components/_core/onboarding/journey-layout-header";
 import { OnboardingSettingUp } from "@/components/_core/onboarding/onboarding-setting-up";
 import { OnboardingProvider } from "@/components/_core/onboarding/onboarding-context";
+import {
+  buildWhatsappRequiredOnboardingHref,
+  getFirstPendingPreDiagnosticHref,
+  hasPendingOnboardingSteps,
+  isEnrollmentWhatsappVerified,
+} from "@/features/internship/resolve-enrollment-journey";
 import {
   isOnboardingNotFoundError,
   useGetOnboarding,
@@ -17,6 +24,7 @@ function OnboardingShellContent({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
   const { isAuthReady } = useRequireUserId();
 
   const {
@@ -50,6 +58,23 @@ function OnboardingShellContent({
       programId != null &&
       !isEnrollmentError &&
       (isOnboardingLoading || onboardingNotFound || (!data && !isError)));
+
+  useEffect(() => {
+    if (!isAuthReady || isEnrollmentLoading || !enrollment) return;
+    if (hasPendingOnboardingSteps(enrollment.isOnboardingStepsCompleted)) return;
+
+    if (!isEnrollmentWhatsappVerified(enrollment)) {
+      router.replace(buildWhatsappRequiredOnboardingHref());
+      return;
+    }
+
+    const preDiagnosticHref =
+      getFirstPendingPreDiagnosticHref(enrollment.isPreDiagnosticStepsCompleted, {
+        enrollmentId: enrollment.id,
+      }) ?? "/pre-diagnostic-test";
+
+    router.replace(preDiagnosticHref);
+  }, [enrollment, isAuthReady, isEnrollmentLoading, router]);
 
   const rightPanel = () => {
     if (showSettingUpExperience) {
