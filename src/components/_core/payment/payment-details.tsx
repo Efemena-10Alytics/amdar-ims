@@ -88,12 +88,35 @@ function getNextPaymentWindow(
   const intervalDays = getIntervalDays(planId);
   const tomorrow = getTomorrow();
   const cohortStart = new Date(cohortStartDate + "T00:00:00");
-  const minDate = cohortStart >= tomorrow ? cohortStart : tomorrow;
-  const maxDate = new Date(cohortStart);
-  maxDate.setDate(maxDate.getDate() + intervalDays);
+  const fallbackMinDate = cohortStart >= tomorrow ? cohortStart : tomorrow;
+  const fallbackMaxDate = new Date(cohortStart);
+  fallbackMaxDate.setDate(fallbackMaxDate.getDate() + intervalDays);
+
+  const isWeeklyPlan =
+    planId === "8-installments" ||
+    planId === "9-installments" ||
+    planId === "10-installments";
+
+  if (isWeeklyPlan) {
+    // First payment happens today (at checkout), so the earliest selectable date is 7 days from today.
+    const minDate = new Date();
+    minDate.setHours(0, 0, 0, 0);
+    minDate.setDate(minDate.getDate() + 7);
+    const maxDate = new Date(cohortStart);
+    maxDate.setDate(maxDate.getDate() + 7);
+
+    if (minDate <= maxDate) {
+      return {
+        minDate: formatDateToLocalYmd(minDate),
+        maxDate: formatDateToLocalYmd(maxDate),
+      };
+    }
+    // Invalid range (cohort already started a while ago) — fall back to the cohort-based window.
+  }
+
   return {
-    minDate: formatDateToLocalYmd(minDate),
-    maxDate: formatDateToLocalYmd(maxDate),
+    minDate: formatDateToLocalYmd(fallbackMinDate),
+    maxDate: formatDateToLocalYmd(fallbackMaxDate),
   };
 }
 

@@ -87,6 +87,19 @@ const PaymentMain = ({
     return formatDateToLocalYmd(d);
   });
 
+  // Weekly plans (8/9/10-installments): next payment date defaults to 7 days after the first payment (today).
+  useEffect(() => {
+    const planId = checkoutSelections?.planId;
+    const isWeeklyPlan =
+      planId === "8-installments" ||
+      planId === "9-installments" ||
+      planId === "10-installments";
+    if (!isWeeklyPlan) return;
+    const firstPaymentPlusWeek = new Date();
+    firstPaymentPlusWeek.setDate(firstPaymentPlusWeek.getDate() + 7);
+    setNextPaymentDateYmd(formatDateToLocalYmd(firstPaymentPlusWeek));
+  }, [checkoutSelections?.planId]);
+
   console.log("checkoutData", checkoutData);
 
   // When 401 on payment page, open sign-in modal
