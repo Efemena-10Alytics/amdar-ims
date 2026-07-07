@@ -142,6 +142,7 @@ const Footer = () => {
     { name: "Rita", number: "+447471551285" },
     { name: "Ummi", number: "+447646442409" },
     { name: "Zuliah", number: "+447366485755 " },
+    { name: "Deborah", number: "+447700101979" },
   ];
 
   const callContacts = [
@@ -149,6 +150,7 @@ const Footer = () => {
     { name: "Rita", number: "+447427132271" },
     { name: "Ummi", number: "+44 7700 101979" },
     { name: "Zuliah", number: "⁠+447426460814" },
+    { name: "Deborah", number: "+447700101979" },
   ];
 
   const TikTokSvg = () => (
@@ -212,7 +214,7 @@ const Footer = () => {
 
       {/* CTA Banner */}
       <div className="relative z-10">
-       {isBusinessPartnersPage? <StillHaveQuestion /> : <CTAbanner />}
+        {isBusinessPartnersPage ? <StillHaveQuestion /> : <CTAbanner />}
       </div>
 
       {/* Main Footer Content */}
