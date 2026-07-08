@@ -1,11 +1,14 @@
 "use client";
 
-import { Suspense, useEffect } from "react";
+import { Suspense, useCallback, useEffect, useRef } from "react";
+import { SkipForward } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Aside from "@/components/_core/pre-diagnostic-test/aside";
 import { JourneyLayoutHeader } from "@/components/_core/onboarding/journey-layout-header";
 import { PreDiagnosticProvider } from "@/components/_core/pre-diagnostic-test/pre-diagnostic-context";
+import { useGetUserInfo } from "@/features/auth/use-get-user-info";
 import { isEnrollmentWhatsappVerified, buildWhatsappRequiredOnboardingHref } from "@/features/internship/resolve-enrollment-journey";
+import { useSkipEntrySetup } from "@/features/internship/use-skip-entry-setup";
 import { useGetPreDiagnostic } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 import { useRequireUserId } from "@/hooks/use-require-user-id";
 
@@ -16,6 +19,12 @@ function PreDiagnosticShellContent({
 }) {
   const router = useRouter();
   const { isAuthReady } = useRequireUserId();
+  const { data: userInfo } = useGetUserInfo();
+  const { skipEntrySetup, isSkipping, errorMessage: skipErrorMessage } =
+    useSkipEntrySetup();
+  const isSkipRedirectingRef = useRef(false);
+  const showSkipFab = ((userInfo as Record<string, unknown> | undefined)?.staff ??
+    null) !== null;
 
   const {
     data,
@@ -34,11 +43,22 @@ function PreDiagnosticShellContent({
   } = useGetPreDiagnostic();
 
   useEffect(() => {
+    if (isSkipRedirectingRef.current) return;
     if (isEnrollmentLoading || !enrollment) return;
     if (!isEnrollmentWhatsappVerified(enrollment)) {
       router.replace(buildWhatsappRequiredOnboardingHref());
     }
   }, [enrollment, isEnrollmentLoading, router]);
+
+  const handleSkipOnboarding = useCallback(async () => {
+    isSkipRedirectingRef.current = true;
+    try {
+      await skipEntrySetup();
+      window.location.assign("/dashboard");
+    } catch {
+      isSkipRedirectingRef.current = false;
+    }
+  }, [skipEntrySetup]);
 
   if (!isAuthReady) return null;
 
@@ -121,6 +141,24 @@ function PreDiagnosticShellContent({
       >
         <JourneyLayoutHeader activeStep={2} />
         <div className="pb-8">{content}</div>
+        {showSkipFab ? (
+          <div className="fixed right-10 bottom-10 z-40 flex flex-col items-end gap-2">
+            {skipErrorMessage ? (
+              <p className="max-w-xs rounded-md bg-white/95 px-3 py-2 text-xs text-destructive shadow-sm">
+                {skipErrorMessage}
+              </p>
+            ) : null}
+            <button
+              type="button"
+              onClick={handleSkipOnboarding}
+              disabled={isSkipping}
+              className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#156374] px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-[#124f5d] disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              <SkipForward className="size-4" />
+              {isSkipping ? "Skipping..." : "Skip Entry Setup"}
+            </button>
+          </div>
+        ) : null}
       </div>
     </div>
   );

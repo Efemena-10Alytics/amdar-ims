@@ -1,12 +1,14 @@
 "use client";
 
-import { Suspense, useEffect } from "react";
+import { Suspense, useCallback, useEffect, useRef } from "react";
+import { SkipForward } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AuthAside from "@/components/_core/auth/aside";
 import Aside from "@/components/_core/onboarding/aside";
 import { JourneyLayoutHeader } from "@/components/_core/onboarding/journey-layout-header";
 import { OnboardingSettingUp } from "@/components/_core/onboarding/onboarding-setting-up";
 import { OnboardingProvider } from "@/components/_core/onboarding/onboarding-context";
+import { useGetUserInfo } from "@/features/auth/use-get-user-info";
 import {
   buildWhatsappRequiredOnboardingHref,
   getFirstPendingPreDiagnosticHref,
@@ -17,6 +19,7 @@ import {
   isOnboardingNotFoundError,
   useGetOnboarding,
 } from "@/features/onboarding/use-get-onboarding";
+import { useSkipEntrySetup } from "@/features/internship/use-skip-entry-setup";
 import { useRequireUserId } from "@/hooks/use-require-user-id";
 
 function OnboardingShellContent({
@@ -26,6 +29,12 @@ function OnboardingShellContent({
 }) {
   const router = useRouter();
   const { isAuthReady } = useRequireUserId();
+  const { data: userInfo } = useGetUserInfo();
+  const { skipEntrySetup, isSkipping, errorMessage: skipErrorMessage } =
+    useSkipEntrySetup();
+  const isSkipRedirectingRef = useRef(false);
+  const showSkipFab = ((userInfo as Record<string, unknown> | undefined)?.staff ??
+    null) !== null;
 
   const {
     data,
@@ -52,14 +61,20 @@ function OnboardingShellContent({
     !isEnrollmentLoading &&
     isError &&
     isOnboardingNotFoundError(error);
-  const showSettingUpExperience =
+  const showOnboardingLoadingExperience =
     isEnrollmentLoading ||
     (cohortId != null &&
       programId != null &&
       !isEnrollmentError &&
-      (isOnboardingLoading || onboardingNotFound || (!data && !isError)));
+      isOnboardingLoading);
+  const showSettingUpExperience =
+    cohortId != null &&
+    programId != null &&
+    !isEnrollmentError &&
+    (onboardingNotFound || (!data && !isError && !isOnboardingLoading));
 
   useEffect(() => {
+    if (isSkipRedirectingRef.current) return;
     if (!isAuthReady || isEnrollmentLoading || !enrollment) return;
     if (hasPendingOnboardingSteps(enrollment.isOnboardingStepsCompleted)) return;
 
@@ -76,7 +91,25 @@ function OnboardingShellContent({
     router.replace(preDiagnosticHref);
   }, [enrollment, isAuthReady, isEnrollmentLoading, router]);
 
+  const handleSkipOnboarding = useCallback(async () => {
+    isSkipRedirectingRef.current = true;
+    try {
+      await skipEntrySetup();
+      window.location.assign("/dashboard");
+    } catch {
+      isSkipRedirectingRef.current = false;
+    }
+  }, [skipEntrySetup]);
+
   const rightPanel = () => {
+    if (showOnboardingLoadingExperience) {
+      return (
+        <div className="px-4 sm:px-0">
+          <p className="text-sm text-[#64748B]">Loading onboarding...</p>
+        </div>
+      );
+    }
+
     if (showSettingUpExperience) {
       return <OnboardingSettingUp enrollment={enrollment} />;
     }
@@ -128,7 +161,7 @@ function OnboardingShellContent({
 
   const layout = (
     content: React.ReactNode,
-    options?: { aside?: "onboarding" | "marketing"; showStepper?: boolean },
+    options?: { aside?: "onboarding" | "auth"; showStepper?: boolean },
   ) => {
     const asideVariant = options?.aside ?? "onboarding";
     const showStepper = options?.showStepper ?? true;
@@ -138,7 +171,7 @@ function OnboardingShellContent({
         <Suspense
           fallback={<div className="hidden lg:flex lg:w-[45%] xl:w-[42%]" />}
         >
-          {asideVariant === "marketing" ? <AuthAside /> : <Aside />}
+          {asideVariant === "auth" ? <AuthAside /> : <Aside />}
         </Suspense>
         <div
           className="relative h-full min-h-0 w-full overflow-y-auto sm:pl-10"
@@ -152,6 +185,24 @@ function OnboardingShellContent({
         >
           <JourneyLayoutHeader activeStep={1} showStepper={showStepper} />
           <div className="pb-8">{content}</div>
+          {showSkipFab ? (
+            <div className="fixed right-10 bottom-10 z-40 flex flex-col items-end gap-2">
+              {skipErrorMessage ? (
+                <p className="max-w-xs rounded-md bg-white/95 px-3 py-2 text-xs text-destructive shadow-sm">
+                  {skipErrorMessage}
+                </p>
+              ) : null}
+              <button
+                type="button"
+                onClick={handleSkipOnboarding}
+                disabled={isSkipping}
+                className="inline-flex items-center gap-2 rounded-full bg-[#156374] px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-[#124f5d] disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                <SkipForward className="size-4" />
+                {isSkipping ? "Skipping..." : "Skip Entry Setup"}
+              </button>
+            </div>
+          ) : null}
         </div>
       </div>
     );
@@ -159,8 +210,11 @@ function OnboardingShellContent({
 
   if (!data) {
     return layout(rightPanel(), {
-      aside: showSettingUpExperience ? "marketing" : "onboarding",
-      showStepper: !showSettingUpExperience,
+      aside:
+        showSettingUpExperience || showOnboardingLoadingExperience
+          ? "auth"
+          : "onboarding",
+      showStepper: !(showSettingUpExperience || showOnboardingLoadingExperience),
     });
   }
 
