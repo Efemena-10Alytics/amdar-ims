@@ -118,7 +118,7 @@ const ProjectViews = () => {
                         >
                             {section}
                             {active ? (
-                                <span className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-[#156374]" />
+                                <span className="absolute inset-x-0 -bottom-px h-1 rounded-full bg-[#156374]" />
                             ) : null}
                         </button>
                     );

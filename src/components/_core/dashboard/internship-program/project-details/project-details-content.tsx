@@ -41,7 +41,7 @@ export default function ProjectDetailsContent() {
           </div>
         </div>
 
-        <div>
+        <div className="flex gap-2 items-center">
           <h1 className="text-2xl font-semibold text-[#092A31]">Project view</h1>
           <span className="mt-1 inline-flex items-center rounded-full bg-[#E4F8E8] px-2.5 py-1 text-xs font-semibold text-[#1F7A4A]">
             Active
