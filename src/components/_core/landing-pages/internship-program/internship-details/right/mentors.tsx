@@ -116,17 +116,22 @@ const AUTO_SLIDE_INTERVAL_MS = 5000;
 
 const Mentors = ({ mentors }: MentorsProps) => {
   const [api, setApi] = useState<CarouselApi>();
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
-    if (!api) return;
+    if (!api || isHovered) return;
     const interval = setInterval(() => {
       api.scrollNext();
     }, AUTO_SLIDE_INTERVAL_MS);
     return () => clearInterval(interval);
-  }, [api]);
+  }, [api, isHovered]);
 
   return (
-    <div className="relative mb-10">
+    <div
+      className="relative mb-10"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <Carousel
         setApi={setApi}
         opts={{
@@ -138,7 +143,7 @@ const Mentors = ({ mentors }: MentorsProps) => {
         <CarouselContent>
           {mentors.map((mentor) => (
             <CarouselItem key={mentor.id} className="basis-full">
-              <div className="relative bg-[#E8EFF1] rounded-lg overflow-hidden mb-4">
+              <div className="relative mb-4 cursor-pointer overflow-hidden rounded-lg bg-[#E8EFF1]">
                 <div className="relative w-full h-92">
                   <Image
                     src={mentor.image}
@@ -158,7 +163,7 @@ const Mentors = ({ mentors }: MentorsProps) => {
                       </div>
 
                       {/* LinkedIn Icon */}
-                      <a
+                      {/* <a
                         href={mentor.linkedin}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -166,7 +171,7 @@ const Mentors = ({ mentors }: MentorsProps) => {
                         aria-label="LinkedIn profile"
                       >
                         <Linkedin className="w-4 h-4 text-white" />
-                      </a>
+                      </a> */}
                     </div>
                   </div>
                 </div>
