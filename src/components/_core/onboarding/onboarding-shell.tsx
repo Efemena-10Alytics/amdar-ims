@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useRef } from "react";
+import { Suspense, useCallback, useRef } from "react";
 import { SkipForward } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AuthAside from "@/components/_core/auth/aside";
@@ -9,12 +9,6 @@ import { JourneyLayoutHeader } from "@/components/_core/onboarding/journey-layou
 import { OnboardingSettingUp } from "@/components/_core/onboarding/onboarding-setting-up";
 import { OnboardingProvider } from "@/components/_core/onboarding/onboarding-context";
 import { useGetUserInfo } from "@/features/auth/use-get-user-info";
-import {
-  buildWhatsappRequiredOnboardingHref,
-  getFirstPendingPreDiagnosticHref,
-  hasPendingOnboardingSteps,
-  isEnrollmentWhatsappVerified,
-} from "@/features/internship/resolve-enrollment-journey";
 import {
   isOnboardingNotFoundError,
   useGetOnboarding,
@@ -72,24 +66,6 @@ function OnboardingShellContent({
     programId != null &&
     !isEnrollmentError &&
     (onboardingNotFound || (!data && !isError && !isOnboardingLoading));
-
-  useEffect(() => {
-    if (isSkipRedirectingRef.current) return;
-    if (!isAuthReady || isEnrollmentLoading || !enrollment) return;
-    if (hasPendingOnboardingSteps(enrollment.isOnboardingStepsCompleted)) return;
-
-    if (!isEnrollmentWhatsappVerified(enrollment)) {
-      router.replace(buildWhatsappRequiredOnboardingHref());
-      return;
-    }
-
-    const preDiagnosticHref =
-      getFirstPendingPreDiagnosticHref(enrollment.isPreDiagnosticStepsCompleted, {
-        enrollmentId: enrollment.id,
-      }) ?? "/pre-diagnostic-test";
-
-    router.replace(preDiagnosticHref);
-  }, [enrollment, isAuthReady, isEnrollmentLoading, router]);
 
   const handleSkipOnboarding = useCallback(async () => {
     isSkipRedirectingRef.current = true;
@@ -196,10 +172,9 @@ function OnboardingShellContent({
                 type="button"
                 onClick={handleSkipOnboarding}
                 disabled={isSkipping}
-                className="inline-flex items-center gap-2 rounded-full bg-[#156374] px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-[#124f5d] disabled:cursor-not-allowed disabled:opacity-70"
+                className="inline-flex items-center justify-center gap-2 size-16 rounded-full bg-[#156374] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#156374]/30 transition-all duration-300 animate-pulse hover:bg-[#124f5d] hover:shadow-xl hover:shadow-[#156374]/50 disabled:cursor-not-allowed disabled:opacity-70 disabled:animate-none"
               >
-                <SkipForward className="size-4" />
-                {isSkipping ? "Skipping..." : "Skip Entry Setup"}
+                {isSkipping ? "..." : "Skip"}
               </button>
             </div>
           ) : null}
@@ -243,3 +218,5 @@ export default function OnboardingShell({
 }) {
   return <OnboardingShellContent>{children}</OnboardingShellContent>;
 }
+
+

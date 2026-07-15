@@ -2,14 +2,13 @@ import Link from "next/link";
 import { ArrowLeft, } from "lucide-react";
 import type { ReactNode } from "react";
 import ProjectViews from "./project-view";
-import ProjectBrief from "./project-view/project-brief";
 
 const PROJECT_TABS = [
   "Project details",
   "Assessment",
-  "Task",
-  "Activities",
-  "Expectation",
+  "Todo",
+  "Resources",
+  "Leader board",
 ];
 
 

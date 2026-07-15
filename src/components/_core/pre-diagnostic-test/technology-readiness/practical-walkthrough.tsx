@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import OnboardingVideoPlayer from "@/components/_core/onboarding/onboarding-video-player";
+import PreviousStepButton from "@/components/_core/pre-diagnostic-test/previous-step-button";
 import { usePreDiagnosticData } from "@/components/_core/pre-diagnostic-test/pre-diagnostic-context";
 import { usePreDiagnosticNavigation } from "@/components/_core/pre-diagnostic-test/use-pre-diagnostic-navigation";
 import {
@@ -15,6 +16,7 @@ import {
 } from "@/hooks/can-continue-journey-step";
 import {
   buildPracticalWalkthroughHref,
+  buildPracticalWalkthroughStepKey,
   getFirstPracticalWalkthroughStepKey,
   getLastPracticalWalkthroughStepKey,
   getNextPracticalWalkthroughStepKey,
@@ -72,6 +74,19 @@ const PracticalWalkthrough = () => {
   const isStepCompleted = isPreDiagnosticEnrollmentStepComplete(
     enrollment?.isPreDiagnosticStepsCompleted,
     stepKey,
+    stepOptions,
+  );
+  const previousStepKey =
+    stepNumber > 1
+      ? buildPracticalWalkthroughStepKey(stepNumber - 2)
+      : "technology-use-case";
+  const previousStepHref =
+    stepNumber > 1
+      ? buildPracticalWalkthroughHref(previousStepKey)
+      : "/pre-diagnostic-test/technology-readiness?step=technology-use-case";
+  const canGoToPreviousStep = isPreDiagnosticEnrollmentStepComplete(
+    enrollment?.isPreDiagnosticStepsCompleted,
+    previousStepKey,
     stepOptions,
   );
 
@@ -134,7 +149,12 @@ const PracticalWalkthrough = () => {
 
   return (
     <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
-      <h1 className="text-2xl font-semibold text-[#173740]">{title}</h1>
+      <div className="flex flex-wrap items-center gap-2">
+        {canGoToPreviousStep ? (
+          <PreviousStepButton href={previousStepHref} />
+        ) : null}
+        <h1 className="text-2xl font-semibold text-[#173740]">{title}</h1>
+      </div>
 
       <article className="mt-5 rounded-2xl border border-[#DCE5E9] bg-[#F6F8FA] p-4 shadow-[0_8px_18px_rgba(18,57,67,0.06)] sm:p-5">
         <h2 className="text-lg font-semibold text-[#3B6B76]">Watch video</h2>
@@ -173,3 +193,7 @@ const PracticalWalkthrough = () => {
 };
 
 export default PracticalWalkthrough;
+
+
+
+
