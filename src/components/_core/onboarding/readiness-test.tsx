@@ -18,6 +18,7 @@ import {
 import Flag from "../landing-pages/home/hero/flag";
 import { useOnboardingData } from "./onboarding-context";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
+import OnboardingPreviousStepButton from "./onboarding-previous-step-button";
 
 const GUIDELINES = [
   "Answer honestly, this helps us make sure you get the right support from day one.",
@@ -29,7 +30,7 @@ const GUIDELINES = [
 const ReadinessTest = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { onboarding } = useOnboardingNavigation();
+  const { onboarding, goToStep } = useOnboardingNavigation();
   const { enrollment } = useOnboardingData();
   const { markOnboardingStepComplete, isUpdating, errorMessage } =
     useUpdateCompletedOnboardingStep();
@@ -103,7 +104,14 @@ const ReadinessTest = () => {
 
   return (
     <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
-      <h1 className="text-2xl font-semibold text-[#173740]">Readiness Quiz</h1>
+      <div className="flex flex-wrap items-center gap-2">
+        <OnboardingPreviousStepButton
+          enrollment={enrollment}
+          previousStep="installation-videos"
+          onClick={() => goToStep("installation-videos")}
+        />
+        <h1 className="text-2xl font-semibold text-[#173740]">Readiness Quiz</h1>
+      </div>
 
       <article className="mt-5 rounded-2xl border border-[#DCE5E9] bg-[#F6F8FA] p-4 shadow-[0_8px_18px_rgba(18,57,67,0.06)] sm:p-6">
         <h2 className="text-lg font-semibold text-[#2F6A78]">Your quiz</h2>
@@ -192,3 +200,4 @@ const ReadinessTest = () => {
 };
 
 export default ReadinessTest;
+
