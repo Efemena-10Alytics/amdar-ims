@@ -172,7 +172,7 @@ function OnboardingShellContent({
                 type="button"
                 onClick={handleSkipOnboarding}
                 disabled={isSkipping}
-                className="inline-flex items-center justify-center gap-2 size-16 rounded-full bg-[#156374] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#156374]/30 transition-all duration-300 animate-pulse hover:bg-[#124f5d] hover:shadow-xl hover:shadow-[#156374]/50 disabled:cursor-not-allowed disabled:opacity-70 disabled:animate-none"
+                className="inline-flex cursor-pointer items-center justify-center gap-2 size-16 rounded-full bg-[#156374] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#156374]/30 transition-all duration-300 animate-pulse hover:bg-[#124f5d] hover:shadow-xl hover:shadow-[#156374]/50 disabled:cursor-not-allowed disabled:opacity-70 disabled:animate-none"
               >
                 {isSkipping ? "..." : "Skip"}
               </button>

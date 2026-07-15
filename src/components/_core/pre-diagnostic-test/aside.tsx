@@ -32,7 +32,7 @@ import {
 import { useGetPreDiagnostic } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 import type { PreDiagnosticStepsCompletedState } from "@/types/user/enrollment";
 import { TriagleSVG } from "../onboarding/svg";
-import ExpandCollapse from "./expand-collapse";
+import SideNavExpandCollapse from "../side-nav-expand-collapse";
 
 type StepItem = {
   key: string;
@@ -306,7 +306,7 @@ const Aside = () => {
           )}
 
         </Link>
-        <ExpandCollapse
+        <SideNavExpandCollapse
           isCollapsed={isCollapsed}
           onToggle={() => setIsCollapsed((value) => !value)}
         />
