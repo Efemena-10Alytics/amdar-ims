@@ -1,13 +1,18 @@
 "use client";
 
 import { Fragment } from "react";
+import Link from "next/link";
+import {
+  hasPendingOnboardingSteps,
+  hasPendingPreDiagnosticSteps,
+} from "@/features/internship/resolve-enrollment-journey";
 import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
 import { cn } from "@/lib/utils";
 
 const JOURNEY_STEPS = [
-  { id: 1, label: "Onboarding" },
-  { id: 2, label: "Pre-entry diagnostics" },
-  { id: 3, label: "Profile" },
+  { id: 1, label: "Onboarding", href: "/onboarding" },
+  { id: 2, label: "Pre-entry diagnostics", href: "/pre-diagnostic-test" },
+  { id: 3, label: "Profile", href: "/dashboard/portfolio" },
 ] as const;
 
 type JourneyStepperProps = {
@@ -79,6 +84,17 @@ export function JourneyStepper({
 }: JourneyStepperProps) {
   const { data: enrollment } = useGetUserEnrollment();
   const programTitle = enrollment?.program?.title?.trim();
+  const completedJourneySteps = {
+    1:
+      enrollment != null &&
+      !hasPendingOnboardingSteps(enrollment.isOnboardingStepsCompleted),
+    2:
+      enrollment != null &&
+      !hasPendingPreDiagnosticSteps(enrollment.isPreDiagnosticStepsCompleted, {
+        enrollmentId: enrollment.id,
+      }),
+    3: false,
+  } as const;
 
   if (!showSteps) {
     if (!programTitle) return null;
@@ -100,23 +116,42 @@ export function JourneyStepper({
     >
       {JOURNEY_STEPS.map((step, index) => {
         const isActive = step.id === activeStep;
-        const isCompleted = step.id < activeStep;
+        const isCompleted =
+          completedJourneySteps[step.id as keyof typeof completedJourneySteps];
+        const isClickable = isCompleted && !isActive;
+        const stepContent = (
+          <>
+            <StepBadge
+              stepId={step.id}
+              activeStep={isCompleted && !isActive ? step.id + 1 : activeStep}
+            />
+            <span
+              className={cn(
+                "text-sm whitespace-nowrap sm:text-base",
+                isActive || isCompleted
+                  ? "font-semibold text-[#173740]"
+                  : "font-medium text-[#A9BEC5]",
+              )}
+            >
+              {step.label}
+            </span>
+          </>
+        );
 
         return (
           <Fragment key={step.id}>
-            <div className="flex shrink-0 items-center gap-2">
-              <StepBadge stepId={step.id} activeStep={activeStep} />
-              <span
+            {isClickable ? (
+              <Link
+                href={step.href}
                 className={cn(
-                  "text-sm whitespace-nowrap sm:text-base",
-                  isActive || isCompleted
-                    ? "font-semibold text-[#173740]"
-                    : "font-medium text-[#A9BEC5]",
+                  "flex shrink-0 items-center gap-2 rounded-full transition-opacity hover:opacity-80",
                 )}
               >
-                {step.label}
-              </span>
-            </div>
+                {stepContent}
+              </Link>
+            ) : (
+              <div className="flex shrink-0 items-center gap-2">{stepContent}</div>
+            )}
 
             {index < JOURNEY_STEPS.length - 1 && (
               <div
