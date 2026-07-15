@@ -152,10 +152,9 @@ function PreDiagnosticShellContent({
               type="button"
               onClick={handleSkipOnboarding}
               disabled={isSkipping}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#156374] px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-[#124f5d] disabled:cursor-not-allowed disabled:opacity-70"
+              className="inline-flex cursor-pointer items-center size-16 justify-center gap-2 rounded-full bg-[#156374] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#156374]/30 transition-all duration-300 animate-pulse hover:bg-[#124f5d] hover:shadow-xl hover:shadow-[#156374]/50 disabled:cursor-not-allowed disabled:opacity-70 disabled:animate-none"
             >
-              <SkipForward className="size-4" />
-              {isSkipping ? "Skipping..." : "Skip Entry Setup"}
+              {isSkipping ? "..." : "Skip"}
             </button>
           </div>
         ) : null}
@@ -192,3 +191,5 @@ export default function PreDiagnosticShell({
 }) {
   return <PreDiagnosticShellContent>{children}</PreDiagnosticShellContent>;
 }
+
+
