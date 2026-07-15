@@ -14,6 +14,7 @@ import {
 import { CopySVG } from "./svg";
 import { useOnboardingData } from "./onboarding-context";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
+import OnboardingPreviousStepButton from "./onboarding-previous-step-button";
 
 const CohortLead = () => {
   const { onboarding, goToStep } = useOnboardingNavigation();
@@ -59,7 +60,14 @@ const CohortLead = () => {
 
   return (
     <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
-      <h1 className="text-2xl font-semibold text-[#173740]">Your Program Leads &amp; Support</h1>
+      <div className="flex flex-wrap items-center gap-2">
+        <OnboardingPreviousStepButton
+          enrollment={enrollment}
+          previousStep="internship-structure-video"
+          onClick={() => goToStep("internship-structure-video")}
+        />
+        <h1 className="text-2xl font-semibold text-[#173740]">Your Program Leads &amp; Support</h1>
+      </div>
 
       <article className="mt-5 rounded-2xl border border-[#DCE5E9] bg-[#F6F8FA] p-4 shadow-[0_8px_18px_rgba(18,57,67,0.06)] sm:p-5">
         <h2 className="text-lg font-semibold text-[#3B6B76]">Save your leads contact</h2>
@@ -130,3 +138,4 @@ const CohortLead = () => {
 };
 
 export default CohortLead;
+

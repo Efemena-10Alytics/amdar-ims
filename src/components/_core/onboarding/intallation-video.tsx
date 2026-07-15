@@ -19,6 +19,7 @@ import {
 import OnboardingVideoPlayer from "./onboarding-video-player";
 import { useOnboardingData } from "./onboarding-context";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
+import OnboardingPreviousStepButton from "./onboarding-previous-step-button";
 
 const IntallationVideo = () => {
   const { onboarding, goToStep } = useOnboardingNavigation();
@@ -176,3 +177,4 @@ const IntallationVideo = () => {
 };
 
 export default IntallationVideo;
+
