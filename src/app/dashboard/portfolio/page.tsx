@@ -170,16 +170,12 @@ export default function PortfolioPage() {
     );
   }
 
-  if (error) {
+  if (shouldRedirectToCreate || error) {
     return (
-      <div className="flex min-h-[50vh] max-w-md text-center mx-auto items-center justify-center">
-        <p className="text-sm text-red-600">You have not created and Portfolio hence will be redirect to create portfolio page.</p>
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <p className="text-sm text-[#64748B]">Redirecting to create portfolio...</p>
       </div>
     );
-  }
-
-  if (shouldRedirectToCreate) {
-    return null;
   }
 
   return (

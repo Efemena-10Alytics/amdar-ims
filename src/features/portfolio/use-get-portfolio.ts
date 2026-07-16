@@ -124,6 +124,8 @@ export function useGetPortfolio() {
     if (!query.isError || query.error == null) return;
     if (!axios.isAxiosError(query.error)) return;
     if (query.error.response?.status !== 404) return;
+    // Already on create-portfolio (e.g. first-time setup) — don't bounce.
+    if (window.location.pathname.startsWith(CREATE_PORTFOLIO_PATH)) return;
     router.replace(CREATE_PORTFOLIO_PATH);
   }, [query.isError, query.error, router]);
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
 import { resolveEnrollmentJourneyRedirect } from "@/features/internship/resolve-enrollment-journey";
 
@@ -11,17 +11,22 @@ function DashboardEnrollmentGuard({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const { data: enrollment, isPending, isError, isAuthReady } =
     useGetUserEnrollment();
+
+  // Portfolio owns its own missing/incomplete redirects (→ create-portfolio).
+  // Don't let the enrollment journey guard steal those navigations to pre-diagnostic.
+  const isPortfolioRoute = pathname.startsWith("/dashboard/portfolio");
 
   const redirectHref = enrollment
     ? resolveEnrollmentJourneyRedirect(enrollment)
     : null;
 
   useEffect(() => {
-    if (isPending || isError || !redirectHref) return;
+    if (isPending || isError || !redirectHref || isPortfolioRoute) return;
     router.replace(redirectHref);
-  }, [isPending, isError, redirectHref, router]);
+  }, [isPending, isError, redirectHref, isPortfolioRoute, router]);
 
   if (!isAuthReady || isPending) {
     return (
@@ -31,7 +36,7 @@ function DashboardEnrollmentGuard({
     );
   }
 
-  if (isError || !redirectHref) {
+  if (isError || !redirectHref || isPortfolioRoute) {
     return children;
   }
 
