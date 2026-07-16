@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { Check, ChevronRight, Loader, Loader2 } from "lucide-react";
+import { Check, Loader } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
 import {
@@ -31,6 +31,8 @@ import {
 } from "@/features/pre-diagnostic/practical-walkthrough-steps";
 import { useGetPreDiagnostic } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 import type { PreDiagnosticStepsCompletedState } from "@/types/user/enrollment";
+import { TriagleSVG } from "../onboarding/svg";
+import SideNavExpandCollapse from "../side-nav-expand-collapse";
 
 type StepItem = {
   key: string;
@@ -228,6 +230,7 @@ function StatusBadge({ isDone }: { isDone: boolean }) {
 }
 
 const Aside = () => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { data: enrollment } = useGetUserEnrollment();
@@ -269,13 +272,48 @@ const Aside = () => {
     usePracticalWalkthroughProgress(enrollment?.id);
 
   return (
-    <aside className="hidden overflow-y-auto rounded-l-xl bg-[#156F7D] px-5 py-6 text-white lg:flex lg:w-[45%] lg:flex-col xl:w-[42%] xl:px-6 xl:py-7">
-      <Link href="/" className="inline-flex w-fit">
-        <Image src="/logo-white.svg" height={25} width={126} alt="amdari" />
-      </Link>
+    <aside
+      className={cn(
+        "relative hidden overflow-visible rounded-l-xl bg-[#156F7D] py-6 text-white transition-[width,padding] duration-300 lg:flex lg:flex-col xl:py-7",
+        isCollapsed
+          ? "lg:w-24 px-4 xl:px-4"
+          : "lg:w-[45%] px-5 xl:w-[42%] xl:px-6",
+      )}
+    >
+      <div
+        className={cn(
+          "flex items-center gap-3",
+          isCollapsed ? "justify-center" : "justify-between",
+        )}
+      >
+        <Link href="/" className="inline-flex w-fit">
+          {isCollapsed ? (
+            <Image
+              src="/favicon-white.svg"
+              height={25}
+              width={36}
+              alt="amdari"
+              className="h-7 w-7 object-contain object-left"
+            />
+          ) : (
+            <Image
+              src="/logo-white.svg"
+              height={25}
+              width={126}
+              alt="amdari"
+              className="object-contain object-left"
+            />
+          )}
 
-      <div className="mt-10 flex grow flex-col">
-        <div className="px-1">
+        </Link>
+        <SideNavExpandCollapse
+          isCollapsed={isCollapsed}
+          onToggle={() => setIsCollapsed((value) => !value)}
+        />
+      </div>
+
+      <div className="mt-10 flex min-h-0 grow flex-col overflow-y-auto">
+        <div className={cn("px-1", isCollapsed && "sr-only")}>
           <h2 className="text-base font-bold tracking-tight text-white">
             PRE-ENTRY DIAGNOSTIC
           </h2>
@@ -284,7 +322,7 @@ const Aside = () => {
           </p>
         </div>
 
-        <div className="mt-8 space-y-2.5">
+        <div className={cn("space-y-2.5", isCollapsed ? "mt-8" : "mt-8")}>
           {readinessGroups.map((group) => {
             const isOpen = group.key === activeGroupKey;
 
@@ -296,17 +334,36 @@ const Aside = () => {
                   isOpen && "bg-[#0E6370]",
                 )}
               >
-                <div className="flex min-h-12 items-center justify-between gap-4 px-4 py-3">
-                  <h3 className="text-base font-semibold text-white">{group.title}</h3>
-                  <ChevronRight
-                    className={cn("size-4 text-white transition-transform", isOpen && "rotate-90")}
-                    strokeWidth={3}
-                    aria-hidden
-                  />
+                <div
+                  className={cn(
+                    "flex min-h-12 items-center gap-4 px-4 py-3",
+                    isCollapsed ? "justify-center px-0" : "justify-between",
+                  )}
+                >
+                  <h3
+                    className={cn(
+                      "text-base font-semibold text-white",
+                      isCollapsed && "sr-only",
+                    )}
+                  >
+                    {group.title}
+                  </h3>
+                  <div
+                    className={cn("size-4 text-white transition-transform", isOpen && "rotate-90")}>
+                    <TriagleSVG
+                      aria-hidden
+                    />
+                  </div>
+
                 </div>
 
                 {isOpen ? (
-                  <ul className="space-y-3 px-4 pt-1 pb-4">
+                  <ul
+                    className={cn(
+                      "space-y-3 pt-1 pb-4",
+                      isCollapsed ? "px-0" : "px-4",
+                    )}
+                  >
                     {group.items.map((entry) => {
                       if (isGroupItem(entry)) {
                         const groupDone = isPreDiagnosticGroupComplete(
@@ -320,8 +377,18 @@ const Aside = () => {
 
                         return (
                           <li key={entry.key} className="space-y-2">
-                            <div className="grid grid-cols-[1fr_auto] items-center gap-3">
-                              <div className="flex min-w-0 items-center gap-2.5">
+                            <div
+                              className={cn(
+                                "grid items-center gap-3",
+                                isCollapsed ? "grid-cols-1 justify-items-center" : "grid-cols-[1fr_auto]",
+                              )}
+                            >
+                              <div
+                                className={cn(
+                                  "flex min-w-0 items-center gap-2.5",
+                                  isCollapsed && "justify-center",
+                                )}
+                              >
                                 <span
                                   className={cn(
                                     "flex size-4 shrink-0 items-center justify-center rounded-[3px] border",
@@ -334,14 +401,24 @@ const Aside = () => {
                                     <Check className="size-3" strokeWidth={3} />
                                   ) : null}
                                 </span>
-                                <span className="truncate text-sm font-medium text-[#A9D0D7]">
+                                <span
+                                  className={cn(
+                                    "truncate text-sm font-medium text-[#A9D0D7]",
+                                    isCollapsed && "sr-only",
+                                  )}
+                                >
                                   {entry.label}
                                 </span>
                               </div>
-                              <StatusBadge isDone={groupDone} />
+                              {!isCollapsed ? <StatusBadge isDone={groupDone} /> : null}
                             </div>
 
-                            <ul className="space-y-4">
+                            <ul
+                              className={cn(
+                                "space-y-4",
+                                isCollapsed && "flex flex-col items-center",
+                              )}
+                            >
                               {entry.children.map((child, childIndex) => {
                                 const playingSubStepKey = getPlayingSubStepKey(
                                   entry.key,
@@ -401,6 +478,7 @@ const Aside = () => {
                                             : isChildLocked
                                               ? "text-[#7EAAB2]"
                                               : "text-[#A9D0D7]",
+                                          isCollapsed && "sr-only",
                                         )}
                                       >
                                         {child.label}
@@ -430,11 +508,17 @@ const Aside = () => {
                       return (
                         <li
                           key={entry.key}
-                          className="grid grid-cols-[1fr_auto] items-center gap-3"
+                          className={cn(
+                            "grid items-center gap-3",
+                            isCollapsed ? "grid-cols-1 justify-items-center" : "grid-cols-[1fr_auto]",
+                          )}
                         >
                           <div
                             aria-current={isCurrent ? "step" : undefined}
-                            className="flex min-w-0 items-center gap-2.5"
+                            className={cn(
+                              "flex min-w-0 items-center gap-2.5",
+                              isCollapsed && "justify-center",
+                            )}
                           >
                             <span
                               className={cn(
@@ -454,12 +538,13 @@ const Aside = () => {
                                   : isLocked
                                     ? "text-[#7EAAB2]"
                                     : "text-[#A9D0D7]",
+                                isCollapsed && "sr-only",
                               )}
                             >
                               {entry.label}
                             </span>
                           </div>
-                          <StatusBadge isDone={isDone} />
+                          {!isCollapsed ? <StatusBadge isDone={isDone} /> : null}
                         </li>
                       );
                     })}

@@ -148,7 +148,7 @@ const PracticalWalkthrough = () => {
   };
 
   return (
-    <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
+    <section className="w-full max-w-none px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
       <div className="flex flex-wrap items-center gap-2">
         {canGoToPreviousStep ? (
           <PreviousStepButton href={previousStepHref} />
@@ -163,6 +163,7 @@ const PracticalWalkthrough = () => {
           key={`${stepKey}-${src}`}
           src={src}
           onEnded={handleVideoEnded}
+          className="h-[calc(100vh-18rem)] min-h-80 sm:h-[calc(100vh-20rem)]"
         />
 
         <p className="mt-3 text-base leading-relaxed font-semibold text-[#64748B]">
@@ -193,6 +194,8 @@ const PracticalWalkthrough = () => {
 };
 
 export default PracticalWalkthrough;
+
+
 
 
 

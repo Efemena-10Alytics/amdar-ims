@@ -31,9 +31,14 @@ function formatVideoTime(seconds: number) {
 type OnboardingVideoPlayerProps = {
   src: string;
   onEnded: () => void;
+  className?: string;
 };
 
-const OnboardingVideoPlayer = ({ src, onEnded }: OnboardingVideoPlayerProps) => {
+const OnboardingVideoPlayer = ({
+  src,
+  onEnded,
+  className,
+}: OnboardingVideoPlayerProps) => {
   const { containerRef, isFullscreen, toggleFullscreen } = useVideoFullscreen();
   const playerRef = useRef<HTMLVideoElement | null>(null);
   const [videoPlaying, setVideoPlaying] = useState(true);
@@ -87,6 +92,7 @@ const OnboardingVideoPlayer = ({ src, onEnded }: OnboardingVideoPlayerProps) => 
       className={cn(
         "relative mt-3 h-63.75 overflow-hidden rounded-2xl sm:h-80",
         "[&:fullscreen]:mt-0 [&:fullscreen]:flex [&:fullscreen]:h-screen [&:fullscreen]:max-h-none [&:fullscreen]:w-screen [&:fullscreen]:items-center [&:fullscreen]:justify-center [&:fullscreen]:rounded-none [&:fullscreen]:bg-black",
+        className,
       )}
       onClick={togglePlayback}
       onKeyDown={(event) => {

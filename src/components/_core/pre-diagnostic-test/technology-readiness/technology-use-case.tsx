@@ -78,7 +78,7 @@ const TechnologyUseCase = () => {
   };
 
   return (
-    <section className="w-full max-w-190 px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
+    <section className="w-full max-w-none px-4 pb-5 pt-0 sm:px-0 sm:pb-8">
       <div className="flex flex-wrap items-center gap-2">
         {canGoToPreviousStep ? (
           <PreviousStepButton href="/pre-diagnostic-test?step=career-path-diagnostics" />
@@ -89,7 +89,11 @@ const TechnologyUseCase = () => {
       <article className="mt-5 rounded-2xl border border-[#DCE5E9] bg-[#F6F8FA] p-4 shadow-[0_8px_18px_rgba(18,57,67,0.06)] sm:p-5">
         <h2 className="text-lg font-semibold text-[#3B6B76]">Watch video</h2>
 
-        <OnboardingVideoPlayer src={src} onEnded={() => setHasVideoEnded(true)} />
+        <OnboardingVideoPlayer
+          src={src}
+          onEnded={() => setHasVideoEnded(true)}
+          className="h-[calc(100vh-18rem)] min-h-80 sm:h-[calc(100vh-20rem)]"
+        />
 
         <p className="mt-3 text-base leading-relaxed font-semibold text-[#64748B]">
           {description}
@@ -113,6 +117,9 @@ const TechnologyUseCase = () => {
 };
 
 export default TechnologyUseCase;
+
+
+
 
 
 
