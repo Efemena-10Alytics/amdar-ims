@@ -14,7 +14,8 @@ type Options = {
 export function hasCompletedPortfolioSections(
   portfolio: UserPortfolioData | null | undefined,
 ): boolean {
-  if (!portfolio) return true;
+  // No portfolio yet → treat as incomplete so users are sent to create-portfolio.
+  if (!portfolio) return false;
   const hasText = (value: string | null | undefined) => !!value?.trim();
 
   // Completeness gate for redirect logic: require all non-project sections.
@@ -63,15 +64,15 @@ export function usePortfolioCompletionRedirect({
   const router = useRouter();
 
   const shouldRedirectToCreate = useMemo(
-    () => !hasCompletedPortfolioSections(portfolio),
-    [portfolio],
+    () => hasError || !hasCompletedPortfolioSections(portfolio),
+    [hasError, portfolio],
   );
 
   useEffect(() => {
-    if (isLoading || hasError) return;
+    if (isLoading) return;
     if (!shouldRedirectToCreate) return;
     router.replace(redirectTo);
-  }, [isLoading, hasError, shouldRedirectToCreate, router, redirectTo]);
+  }, [isLoading, shouldRedirectToCreate, router, redirectTo]);
 
   return { shouldRedirectToCreate };
 }
