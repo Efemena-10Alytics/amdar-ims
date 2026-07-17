@@ -328,6 +328,13 @@ export function WorkExperience({ value, onChange, onReordered }: WorkExperienceP
         onChange({ entries: [...value.entries, createWorkExperienceEntry()] });
     };
 
+    const removeEntry = (index: number) => {
+        if (value.entries.length <= 1) return;
+        onChange({
+            entries: value.entries.filter((_, i) => i !== index),
+        });
+    };
+
     const reorderEntries = (fromIndex: number, toIndex: number) => {
         if (fromIndex === toIndex) return;
 
@@ -353,7 +360,7 @@ export function WorkExperience({ value, onChange, onReordered }: WorkExperienceP
                     <div
                         key={entry.id}
                         className={cn(
-                            "rounded-xl bg-white p-5 shadow-sm transition-[box-shadow,opacity]",
+                            "relative rounded-xl bg-white p-5 shadow-sm transition-[box-shadow,opacity]",
                             draggedIndex === index && "opacity-50",
                             dragOverIndex === index &&
                                 draggedIndex !== null &&
@@ -388,6 +395,16 @@ export function WorkExperience({ value, onChange, onReordered }: WorkExperienceP
                             setDragOverIndex(null);
                         }}
                     >
+                        {value.entries.length > 1 && (
+                            <button
+                                type="button"
+                                onClick={() => removeEntry(index)}
+                                className="absolute top-4 right-4 rounded-md p-1 text-zinc-400 hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-200"
+                                aria-label="Remove work experience entry"
+                            >
+                                <Trash2 className="size-4" />
+                            </button>
+                        )}
                         <div className="flex items-start gap-3">
                             {canReorder ? (
                                 <button

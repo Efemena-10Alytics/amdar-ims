@@ -1,10 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
 import type { UserPortfolioData } from "./use-get-portfolio";
 import { PORTFOLIO_QUERY_KEY } from "./use-get-portfolio";
 
 export const PORTFOLIO_SHARE_QUERY_KEY = (pathname: string) =>
   [...PORTFOLIO_QUERY_KEY(pathname), "share"] as const;
+
+export function isPortfolioShareNotFoundError(error: unknown): boolean {
+  return axios.isAxiosError(error) && error.response?.status === 404;
+}
 
 export function useGetPortfolioBySharePathname(
   pathname: string | undefined | null,
