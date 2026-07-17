@@ -1,0 +1,36 @@
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes slideUpBounce {
+  0% { opacity: 0; transform: translateY(50px) scale(0.95); }
+  60% { opacity: 1; transform: translateY(-10px) scale(1.03); }
+  80% { transform: translateY(4px) scale(0.99); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  15% { transform: translateX(-7px) translateY(0) rotate(-1deg); }
+  30% { transform: translateX(7px) translateY(0) rotate(1deg); }
+  45% { transform: translateX(-5px) translateY(0); }
+  60% { transform: translateX(5px) translateY(0); }
+  75% { transform: translateX(-2px) translateY(0); }
+  90% { transform: translateX(2px) translateY(0); }
+}
+
+.benefit-card {
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.benefit-card.animate-in {
+  animation: slideUpBounce 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.benefit-card.shake-in {
+  animation:
+    slideUpBounce 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+    shake 0.55s ease 0.75s forwards;
+}
