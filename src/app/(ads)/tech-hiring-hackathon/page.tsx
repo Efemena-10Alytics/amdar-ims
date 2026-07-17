@@ -131,7 +131,9 @@ const TechHiringHackathonPage = () => {
       }
 
       // Open synchronously within the click gesture so browsers don't block it as a popup.
-      const whatsappWindow = window.open("", "_blank", "noopener,noreferrer");
+      // Note: passing "noopener" here would make window.open() return null, so we omit it
+      // and instead null out the opener manually once the window is navigated below.
+      const whatsappWindow = window.open("", "_blank");
 
       const res = await createNaRole({
         source: "TechHiringHackathon",
@@ -148,7 +150,10 @@ const TechHiringHackathonPage = () => {
         return;
       }
 
-      if (whatsappWindow) whatsappWindow.location.href = WHATSAPP_LINK;
+      if (whatsappWindow) {
+        whatsappWindow.opener = null;
+        whatsappWindow.location.href = WHATSAPP_LINK;
+      }
       router.push("/tech-hiring-hackathon/thank-you");
     },
     [createNaRole, email, firstName, lastName, phone, router, track]
