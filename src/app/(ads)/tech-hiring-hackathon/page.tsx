@@ -2,8 +2,11 @@
 
 import React from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useCreateAdsData } from "@/features/ads/use-create-ads-data";
 import "./animations.css";
+
+const WHATSAPP_LINK = "https://chat.whatsapp.com/Jt1XfqhcofE8bkIf5jCBTB";
 
 const TRACKS = [
   { value: "data", label: "Data" },
@@ -102,6 +105,7 @@ function BenefitCard({ title, body, index }: { title: string; body: string; inde
 }
 
 const TechHiringHackathonPage = () => {
+  const router = useRouter();
   const { createNaRole, isSubmitting, errorMessage } = useCreateAdsData();
 
   const [firstName, setFirstName] = React.useState("");
@@ -110,7 +114,6 @@ const TechHiringHackathonPage = () => {
   const [phone, setPhone] = React.useState("");
   const [track, setTrack] = React.useState("");
   const [formError, setFormError] = React.useState("");
-  const [submitted, setSubmitted] = React.useState(false);
 
   const handleSubmit = React.useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
@@ -127,6 +130,9 @@ const TechHiringHackathonPage = () => {
         return;
       }
 
+      // Open synchronously within the click gesture so browsers don't block it as a popup.
+      const whatsappWindow = window.open("", "_blank", "noopener,noreferrer");
+
       const res = await createNaRole({
         source: "TechHiringHackathon",
         firstName: trimFirst,
@@ -137,16 +143,15 @@ const TechHiringHackathonPage = () => {
         visaType: track,
       });
 
-      if (!res) return;
+      if (!res) {
+        whatsappWindow?.close();
+        return;
+      }
 
-      setSubmitted(true);
-      setFirstName("");
-      setLastName("");
-      setEmail("");
-      setPhone("");
-      setTrack("");
+      if (whatsappWindow) whatsappWindow.location.href = WHATSAPP_LINK;
+      router.push("/tech-hiring-hackathon/thank-you");
     },
-    [createNaRole, email, firstName, lastName, phone, track]
+    [createNaRole, email, firstName, lastName, phone, router, track]
   );
 
   return (
@@ -257,115 +262,100 @@ const TechHiringHackathonPage = () => {
               community after registering.
             </p>
 
-            {submitted ? (
-              <div className="py-5 text-center">
-                <div className="mx-auto mb-3.5 flex h-14 w-14 items-center justify-center rounded-full border border-[#22c55e]/30 bg-[#22c55e]/10 text-2xl">
-                  ✅
-                </div>
-                <h3 className="mb-1.5 text-[17px] font-extrabold text-white">
-                  You&apos;re registered!
-                </h3>
-                <p className="text-[13px] leading-[1.6] text-[#C7D5D6]">
-                  Check your inbox — we&apos;ll be in touch with the community
-                  link and everything you need to prepare.
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <label className="block">
-                  <span className="mb-2 block text-sm font-semibold text-white">
-                    First name
-                  </span>
-                  <input
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="Enter your first name"
-                    required
-                    className={inputCls}
-                  />
-                </label>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <label className="block">
+                <span className="mb-2 block text-sm font-semibold text-white">
+                  First name
+                </span>
+                <input
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="Enter your first name"
+                  required
+                  className={inputCls}
+                />
+              </label>
 
-                <label className="block">
-                  <span className="mb-2 block text-sm font-semibold text-white">
-                    Last name
-                  </span>
-                  <input
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Enter your last name"
-                    required
-                    className={inputCls}
-                  />
-                </label>
+              <label className="block">
+                <span className="mb-2 block text-sm font-semibold text-white">
+                  Last name
+                </span>
+                <input
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="Enter your last name"
+                  required
+                  className={inputCls}
+                />
+              </label>
 
-                <label className="block">
-                  <span className="mb-2 block text-sm font-semibold text-white">
-                    Email
-                  </span>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email address"
-                    required
-                    className={inputCls}
-                  />
-                </label>
+              <label className="block">
+                <span className="mb-2 block text-sm font-semibold text-white">
+                  Email
+                </span>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email address"
+                  required
+                  className={inputCls}
+                />
+              </label>
 
-                <label className="block">
-                  <span className="mb-2 block text-sm font-semibold text-white">
-                    Phone number
-                  </span>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="Your phone number"
-                    required
-                    className={inputCls}
-                  />
-                </label>
+              <label className="block">
+                <span className="mb-2 block text-sm font-semibold text-white">
+                  Phone number
+                </span>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Your phone number"
+                  required
+                  className={inputCls}
+                />
+              </label>
 
-                <label className="block">
-                  <span className="mb-2 block text-sm font-semibold text-white">
-                    Your Track
-                  </span>
-                  <select
-                    value={track}
-                    onChange={(e) => setTrack(e.target.value)}
-                    required
-                    className={`${inputCls} [&>option]:bg-[#0C3640]`}
-                  >
-                    <option value="">Select your track</option>
-                    {TRACKS.map((t) => (
-                      <option key={t.value} value={t.value}>
-                        {t.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                {formError ? (
-                  <p className="text-[13px] text-[#fca5a5]">{formError}</p>
-                ) : null}
-                {errorMessage ? (
-                  <p className="text-[13px] text-[#fca5a5]">{errorMessage}</p>
-                ) : null}
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full rounded-lg bg-[#FFE082] py-4 text-sm font-bold uppercase tracking-[0.02em] text-[#0C2730] transition-[background-color,transform] hover:scale-[1.01] hover:bg-[#FFD54F] disabled:cursor-not-allowed disabled:opacity-60"
+              <label className="block">
+                <span className="mb-2 block text-sm font-semibold text-white">
+                  Your Track
+                </span>
+                <select
+                  value={track}
+                  onChange={(e) => setTrack(e.target.value)}
+                  required
+                  className={`${inputCls} [&>option]:bg-[#0C3640]`}
                 >
-                  {isSubmitting ? "Reserving…" : "Reserve My Bootcamp Spot"}
-                </button>
-                <p className="mt-3 text-center text-xs text-[#C7D5D6]">
-                  🔒 Free · No credit card · Limited spots (20 per track)
-                </p>
-              </form>
-            )}
+                  <option value="">Select your track</option>
+                  {TRACKS.map((t) => (
+                    <option key={t.value} value={t.value}>
+                      {t.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              {formError ? (
+                <p className="text-[13px] text-[#fca5a5]">{formError}</p>
+              ) : null}
+              {errorMessage ? (
+                <p className="text-[13px] text-[#fca5a5]">{errorMessage}</p>
+              ) : null}
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full rounded-lg bg-[#FFE082] py-4 text-sm font-bold uppercase tracking-[0.02em] text-[#0C2730] transition-[background-color,transform] hover:scale-[1.01] hover:bg-[#FFD54F] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isSubmitting ? "Reserving…" : "Reserve My Bootcamp Spot"}
+              </button>
+              <p className="mt-3 text-center text-xs text-[#C7D5D6]">
+                🔒 Free · No credit card · Limited spots (20 per track)
+              </p>
+            </form>
           </section>
         </div>
       </div>
