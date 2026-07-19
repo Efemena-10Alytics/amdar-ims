@@ -4,19 +4,19 @@ import React from 'react'
 import Image from 'next/image'
 import { MapPin, Video, Timer, MessageCircle, Building2, Users, Lock, ChevronDown } from 'lucide-react'
 import { useCountries } from '@/features/portfolio/use-countries'
-import { useCreateAdsData } from '@/features/ads/use-create-ads-data'
 import SuccessDialog from '../real-uk-experience/content/success-dialog'
 import { ClockFillSvg, GoogleMeetSvg } from '../real-uk-experience/content/svg'
 
-const FIELDS = [
-    'Data science',
-    'Data analytics',
-    'Data Engineering',
-    'Project Management',
-    'Business analysis',
-    'SOC Analysis',
-    'Governance Risk & Compliance',
-    'App/cloud Security'
+const ZOHO_FORM_URL =
+    'https://forms.zohopublic.com/amdariinc1/form/JobAccessSummit/formperma/Dx-wP20cO-PeZ_ABry6xWuO8JVZyQoYMBYgi1NT2b0Q/htmlRecords/submit'
+
+const HEARD_ABOUT_US_OPTIONS = [
+    'Facebook/Instagram Ads',
+    'Faloh',
+    'Tiktok Ads',
+    'Youtube',
+    'Google',
+    'Family and friends'
 ]
 
 const gainItems = [
@@ -42,7 +42,6 @@ const gainItems = [
 
 const JobAccessPage = () => {
     const { data: countries = [], isLoading: countriesLoading } = useCountries()
-    const { createNaRole, isSubmitting, errorMessage } = useCreateAdsData()
     const [selectedPhoneCountryCode, setSelectedPhoneCountryCode] = React.useState('')
     const [selectedField, setSelectedField] = React.useState('')
     const [isSuccessOpen, setIsSuccessOpen] = React.useState(false)
@@ -51,6 +50,7 @@ const JobAccessPage = () => {
     const [email, setEmail] = React.useState('')
     const [phone, setPhone] = React.useState('')
     const [formError, setFormError] = React.useState('')
+    const [isSubmitting, setIsSubmitting] = React.useState(false)
 
     React.useEffect(() => {
         if (!countries.length) return
@@ -78,21 +78,32 @@ const JobAccessPage = () => {
             return
         }
 
-        const phoneWithCode = trimmedPhone.startsWith('+')
-            ? trimmedPhone
-            : `${selectedPhoneCountry?.callingCode ?? ''}${trimmedPhone}`
+        const formData = new FormData()
+        formData.append('zf_referrer_name', '')
+        formData.append('zf_redirect_url', '')
+        formData.append('zc_gad', '')
+        formData.append('Name_First', trimmedFirstName)
+        formData.append('Name_Last', trimmedLastName)
+        formData.append('Email1', trimmedEmail)
+        formData.append('PhoneNumber_countrycodeval', selectedPhoneCountry?.callingCode ?? '')
+        formData.append('PhoneNumber_countrycode', trimmedPhone)
+        formData.append('Dropdown', selectedField || '-Select-')
 
-        const response = await createNaRole({
-            source: 'JobAccess',
-            firstName: trimmedFirstName,
-            lastName: trimmedLastName || null,
-            email: trimmedEmail,
-            location,
-            phone: phoneWithCode,
-            visaType: selectedField || null,
-        })
-
-        if (!response) return
+        setIsSubmitting(true)
+        try {
+            // Zoho's htmlRecords/submit endpoint doesn't allow CORS, so the
+            // response is opaque — a resolved fetch only proves dispatch.
+            await fetch(ZOHO_FORM_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: formData,
+            })
+        } catch {
+            setFormError('Something went wrong. Please try again.')
+            return
+        } finally {
+            setIsSubmitting(false)
+        }
 
         setIsSuccessOpen(true)
         setFirstName('')
@@ -102,7 +113,6 @@ const JobAccessPage = () => {
         setSelectedField('')
         setFormError('')
     }, [
-        createNaRole,
         email,
         firstName,
         lastName,
@@ -253,17 +263,17 @@ const JobAccessPage = () => {
                             </div>
 
                             <div className="space-y-1.5">
-                                <span className="text-sm font-medium text-[#C7D5D6]">Your Field</span>
+                                <span className="text-sm font-medium text-[#C7D5D6]">Where did you hear about us?</span>
                                 <div className="relative">
                                     <select
                                         value={selectedField}
                                         onChange={(e) => setSelectedField(e.target.value)}
                                         className="h-11 w-full appearance-none rounded-lg border border-[#1E4A5A] bg-[#0F4652] px-4 pr-10 text-sm text-white outline-none focus:border-[#2C9AB3]"
                                     >
-                                        <option value="">Select your visa type</option>
-                                        {FIELDS.map((field) => (
-                                            <option key={field} value={field}>
-                                                {field}
+                                        <option value="">-Select-</option>
+                                        {HEARD_ABOUT_US_OPTIONS.map((option) => (
+                                            <option key={option} value={option}>
+                                                {option}
                                             </option>
                                         ))}
                                     </select>
@@ -272,9 +282,6 @@ const JobAccessPage = () => {
                             </div>
                             {formError ? (
                                 <p className="text-sm text-[#FCA5A5]">{formError}</p>
-                            ) : null}
-                            {errorMessage ? (
-                                <p className="text-sm text-[#FCA5A5]">{errorMessage}</p>
                             ) : null}
 
                             <button
