@@ -8,7 +8,7 @@ const LandingPageLayout = ({
   children,
 }: Readonly<{ children: React.ReactNode }>) => {
   return (
-    <div>
+    <div className="overflow-x-hidden">
       <ScrollToTopOnRoute />
       <Navbar />
       <div>{children}</div>

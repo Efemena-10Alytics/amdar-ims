@@ -105,8 +105,8 @@ const IconOrbit = () => {
 
     return (
         <>
-            <div className="pointer-events-none absolute inset-0 z-2 hidden lg:flex items-center justify-center">
-                <div className="hero-two-orbit-stage relative h-360 w-[min(calc(100vw-24px),1580px)] max-w-none">
+            <div className="pointer-events-none absolute inset-0 z-2 hidden overflow-hidden lg:flex items-center justify-center">
+                <div className="hero-two-orbit-stage relative h-360 w-full max-w-[1580px]">
                     {HERO_ORBIT_LAYERS.map((layer) => (
                         <div
                             key={layer.name}
