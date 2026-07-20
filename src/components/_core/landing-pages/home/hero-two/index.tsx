@@ -21,7 +21,10 @@ const InternshipHeroTwo = () => {
   }, []);
 
   return (
-    <div id="home-hero-section" className="text-white relative overflow-hidden -translate-y-25">
+    <div
+      id="home-hero-section"
+      className="relative w-full -translate-y-25 overflow-x-hidden overflow-y-hidden text-white"
+    >
       {/* Primary Color Background */}
       <div className="absolute inset-0 bg-primary z-0" />
       <IconOrbit />
