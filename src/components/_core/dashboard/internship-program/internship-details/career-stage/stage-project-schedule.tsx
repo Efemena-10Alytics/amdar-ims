@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Check, ChevronDown, Folder, Loader } from "lucide-react";
+import Link from "next/link";
+import { Check, Folder, Loader } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CustmDropdownIcon } from "@/components/_core/dashboard/internship-program/svg";
 
 export type DayStatus = "completed" | "in-progress" | "not-started";
 export type TaskStatus = "done" | "active" | "todo";
@@ -35,6 +37,7 @@ type StageProjectScheduleProps = {
   weekRange: string;
   weeks: WeekSchedule[];
   tone?: StageProjectScheduleTone;
+  projectHref?: string;
 };
 
 const TONE_STYLES: Record<
@@ -138,13 +141,15 @@ function DaySection({
         onClick={() => setIsOpen((value) => !value)}
         className="flex w-full cursor-pointer items-center gap-2 py-3 text-left"
       >
-        <ChevronDown
+        <span
           className={cn(
-            "size-4 shrink-0 text-[#173740] transition-transform",
-            !isOpen && "-rotate-90",
+            "flex size-4 shrink-0 items-center justify-center text-[#173740] transition-transform",
+            isOpen && "rotate-90",
           )}
           aria-hidden
-        />
+        >
+          <CustmDropdownIcon />
+        </span>
         <span className="text-sm font-semibold text-[#173740]">{day.label}</span>
         <span className="ml-auto">
           <DayStatusBadge status={day.status} />
@@ -193,6 +198,7 @@ export default function StageProjectSchedule({
   weekRange,
   weeks,
   tone = "active",
+  projectHref = "/dashboard/internship-program-5173/projects/tenant-retention-optimization",
 }: StageProjectScheduleProps) {
   const [activeWeekId, setActiveWeekId] = useState(weeks[0]?.id ?? "");
   const [isProjectOpen, setIsProjectOpen] = useState(true);
@@ -212,28 +218,57 @@ export default function StageProjectSchedule({
           styles.cardBg,
         )}
       >
-        <button
-          type="button"
-          onClick={() => setIsProjectOpen((value) => !value)}
-          className="flex w-full cursor-pointer items-start gap-3 px-3 py-3 text-left sm:px-4"
-        >
-          <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#2B6CB0] text-white">
-            <Folder className="size-4" aria-hidden />
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-[#173740] sm:text-base">
-              {projectTitle}
-            </p>
-            <p className="mt-0.5 text-xs text-[#64748B] sm:text-sm">{weekRange}</p>
+        <div className="flex items-start gap-3 px-3 py-3 sm:px-4">
+          <button
+            type="button"
+            onClick={() => setIsProjectOpen((value) => !value)}
+            className="flex min-w-0 flex-1 cursor-pointer items-start gap-3 text-left"
+            aria-expanded={isProjectOpen}
+          >
+            <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#2B6CB0] text-white">
+              <Folder className="size-4" aria-hidden />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-[#173740] sm:text-base">
+                {projectTitle}
+              </p>
+              <p className="mt-0.5 text-xs text-[#64748B] sm:text-sm">
+                {weekRange}
+              </p>
+            </div>
+          </button>
+
+          <div className="flex shrink-0 flex-col items-end gap-2">
+            <button
+              type="button"
+              onClick={() => setIsProjectOpen((value) => !value)}
+              className="flex size-6 cursor-pointer items-center justify-center rounded text-[#64748B]"
+              aria-label={
+                isProjectOpen
+                  ? "Collapse project schedule"
+                  : "Expand project schedule"
+              }
+              aria-expanded={isProjectOpen}
+            >
+              <span
+                className={cn(
+                  "flex size-4 items-center justify-center transition-transform",
+                  isProjectOpen && "rotate-90",
+                )}
+                aria-hidden
+              >
+                <CustmDropdownIcon />
+              </span>
+            </button>
+
+            <Link
+              href={projectHref}
+              className="text-right text-sm font-semibold whitespace-nowrap text-[#156374] underline underline-offset-2 transition hover:text-[#124F5D] mr-4"
+            >
+              Continue project
+            </Link>
           </div>
-          <ChevronDown
-            className={cn(
-              "mt-1 size-4 shrink-0 text-[#64748B] transition-transform",
-              !isProjectOpen && "-rotate-90",
-            )}
-            aria-hidden
-          />
-        </button>
+        </div>
 
         {isProjectOpen ? (
           <div
