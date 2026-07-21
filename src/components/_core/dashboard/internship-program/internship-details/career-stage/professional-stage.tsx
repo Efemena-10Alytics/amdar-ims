@@ -4,16 +4,16 @@ import StageProjectSchedule, {
   type WeekSchedule,
 } from "@/components/_core/dashboard/internship-program/internship-details/career-stage/stage-project-schedule";
 
-const FORMATIVE_DESCRIPTION =
-  "Builds applied competence through structured project execution, guided practice, and progressive skill development.";
+const PROFESSIONAL_DESCRIPTION =
+  "Consolidates professional readiness through polished delivery, stakeholder communication, and portfolio-grade outcomes.";
 
 const PROJECT_TITLE =
-  "Building a Sales Funnel Analytics Dashboard for a Retail Brand";
+  "Delivering an Executive-Ready Performance Insights Brief";
 
 const WEEK_SCHEDULES: WeekSchedule[] = [
   {
-    id: "week-3",
-    label: "Week 3",
+    id: "week-15",
+    label: "Week 15",
     days: [
       {
         id: "monday",
@@ -21,8 +21,8 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
         status: "not-started",
         tasks: [
           {
-            id: "brief-review",
-            label: "Review project brief & success metrics",
+            id: "executive-outline",
+            label: "Draft executive insights outline",
             status: "todo",
           },
         ],
@@ -33,13 +33,13 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
         status: "not-started",
         tasks: [
           {
-            id: "data-prep",
-            label: "Prepare and clean sales data set",
+            id: "visual-polish",
+            label: "Polish visuals for executive readability",
             status: "todo",
           },
           {
-            id: "kpi-map",
-            label: "Map funnel KPIs to dashboard views",
+            id: "narrative",
+            label: "Refine recommendation narrative",
             status: "todo",
           },
         ],
@@ -50,8 +50,8 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
         status: "not-started",
         tasks: [
           {
-            id: "prototype",
-            label: "Create first dashboard prototype",
+            id: "dry-run",
+            label: "Run stakeholder presentation dry run",
             status: "todo",
           },
         ],
@@ -59,8 +59,8 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
     ],
   },
   {
-    id: "week-4",
-    label: "Week 4",
+    id: "week-16",
+    label: "Week 16",
     days: [
       {
         id: "monday",
@@ -68,8 +68,8 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
         status: "not-started",
         tasks: [
           {
-            id: "iterate-visuals",
-            label: "Iterate chart visuals & filters",
+            id: "final-deck",
+            label: "Finalize presentation deck",
             status: "todo",
           },
         ],
@@ -80,13 +80,8 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
         status: "not-started",
         tasks: [
           {
-            id: "mentor-feedback",
-            label: "Incorporate mentor feedback",
-            status: "todo",
-          },
-          {
-            id: "storytelling",
-            label: "Draft insight storytelling notes",
+            id: "portfolio-pack",
+            label: "Package portfolio-ready artifacts",
             status: "todo",
           },
         ],
@@ -97,8 +92,8 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
         status: "not-started",
         tasks: [
           {
-            id: "checkpoint",
-            label: "Submit mid-stage checkpoint",
+            id: "capstone-submit",
+            label: "Submit professional stage capstone",
             status: "todo",
           },
         ],
@@ -107,16 +102,16 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
   },
 ];
 
-const FormativeStage = () => {
+const ProfessionalStage = () => {
   return (
     <StageProjectSchedule
-      description={FORMATIVE_DESCRIPTION}
+      description={PROFESSIONAL_DESCRIPTION}
       projectTitle={PROJECT_TITLE}
-      weekRange="Week 3-6"
+      weekRange="Week 15-16"
       weeks={WEEK_SCHEDULES}
-      tone="upcoming"
+      tone="locked"
     />
   );
 };
 
-export default FormativeStage;
+export default ProfessionalStage;

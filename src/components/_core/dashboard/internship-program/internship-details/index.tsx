@@ -5,15 +5,15 @@ import { MessageCircleMore } from "lucide-react";
 import { cn } from "@/lib/utils";
 import InternshipInfo from "@/components/_core/dashboard/internship-program/internship-details/internship-info";
 import CareerStage from "@/components/_core/dashboard/internship-program/internship-details/career-stage";
-import AssessmentRecords from "@/components/_core/dashboard/internship-program/internship-details/assessment-records";
 import CareerCenter from "@/components/_core/dashboard/internship-program/internship-details/career-center";
 import Resources from "@/components/_core/dashboard/internship-program/internship-details/resources";
 import type { InternshipInfoData } from "@/components/_core/dashboard/internship-program/internship-details/internship-info";
+import Performance from "@/components/_core/dashboard/internship-program/internship-details/performance";
 
 const TABS = [
   { id: "internship-info", label: "Internship info" },
   { id: "career-stage", label: "Career Stage" },
-  { id: "assessment-records", label: "Assessment records" },
+  { id: "performance", label: "Performance" },
   { id: "career-center", label: "Career center" },
   { id: "resources", label: "Resources" },
 ] as const;
@@ -54,8 +54,8 @@ const InternshipDetails = ({
         return <InternshipInfo info={internshipInfo} />;
       case "career-stage":
         return <CareerStage />;
-      case "assessment-records":
-        return <AssessmentRecords />;
+      case "performance":
+        return <Performance />;
       case "career-center":
         return <CareerCenter />;
       case "resources":
