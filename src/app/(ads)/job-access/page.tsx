@@ -78,6 +78,23 @@ const JobAccessPage = () => {
             return
         }
 
+        // Zoho rejects the record (409) when the calling code is missing, so
+        // don't let a blank selection through.
+        const callingCode = selectedPhoneCountry?.callingCode ?? ''
+        if (!callingCode) {
+            setFormError('Please select your phone country code.')
+            return
+        }
+
+        // Zoho also rejects (409) when the number repeats the calling code, which
+        // happens whenever someone types their full international number.
+        let nationalNumber = trimmedPhone.replace(/[\s()-]/g, '')
+        if (nationalNumber.startsWith('+')) {
+            nationalNumber = nationalNumber.startsWith(callingCode)
+                ? nationalNumber.slice(callingCode.length)
+                : nationalNumber.replace(/^\+\d{1,4}/, '')
+        }
+
         const formData = new FormData()
         formData.append('zf_referrer_name', '')
         formData.append('zf_redirect_url', '')
@@ -85,8 +102,8 @@ const JobAccessPage = () => {
         formData.append('Name_First', trimmedFirstName)
         formData.append('Name_Last', trimmedLastName)
         formData.append('Email1', trimmedEmail)
-        formData.append('PhoneNumber_countrycodeval', selectedPhoneCountry?.callingCode ?? '')
-        formData.append('PhoneNumber_countrycode', trimmedPhone)
+        formData.append('PhoneNumber_countrycodeval', callingCode)
+        formData.append('PhoneNumber_countrycode', nationalNumber)
         formData.append('Dropdown', selectedField || '-Select-')
 
         setIsSubmitting(true)
