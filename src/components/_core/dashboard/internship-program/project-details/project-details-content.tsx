@@ -5,7 +5,7 @@ import ProjectViews from "./project-view";
 
 const PROJECT_TABS = [
   "Project details",
-  "Assessment",
+  "Performance",
   "Todo",
   "Resources",
   "Leader board",

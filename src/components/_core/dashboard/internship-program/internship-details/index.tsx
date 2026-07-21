@@ -1,24 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { MessageCircleMore } from "lucide-react";
 import { cn } from "@/lib/utils";
 import InternshipInfo from "@/components/_core/dashboard/internship-program/internship-details/internship-info";
 import CareerStage from "@/components/_core/dashboard/internship-program/internship-details/career-stage";
-import AssessmentRecords from "@/components/_core/dashboard/internship-program/internship-details/assessment-records";
 import CareerCenter from "@/components/_core/dashboard/internship-program/internship-details/career-center";
 import Resources from "@/components/_core/dashboard/internship-program/internship-details/resources";
 import type { InternshipInfoData } from "@/components/_core/dashboard/internship-program/internship-details/internship-info";
+import Performance from "@/components/_core/dashboard/internship-program/internship-details/performance";
 
 const TABS = [
   { id: "internship-info", label: "Internship info" },
   { id: "career-stage", label: "Career Stage" },
-  { id: "assessment-records", label: "Assessment records" },
+  { id: "performance", label: "Performance" },
   { id: "career-center", label: "Career center" },
   { id: "resources", label: "Resources" },
 ] as const;
 
 export type InternshipProgramTabId = (typeof TABS)[number]["id"];
+
+function isInternshipProgramTabId(
+  value: string | null,
+): value is InternshipProgramTabId {
+  return TABS.some((tab) => tab.id === value);
+}
 
 type InternshipDetailsProps = {
   internshipInfo?: InternshipInfoData;
@@ -46,7 +53,25 @@ const InternshipDetails = ({
   defaultTab = "internship-info",
   onWhoIsOnlineClick,
 }: InternshipDetailsProps) => {
-  const [activeTab, setActiveTab] = useState<InternshipProgramTabId>(defaultTab);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const queryTab = searchParams.get("tab");
+  const activeTab = isInternshipProgramTabId(queryTab) ? queryTab : defaultTab;
+
+  useEffect(() => {
+    if (isInternshipProgramTabId(queryTab)) return;
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", defaultTab);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }, [defaultTab, pathname, queryTab, router, searchParams]);
+
+  const handleTabChange = (tabId: InternshipProgramTabId) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tabId);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -54,8 +79,8 @@ const InternshipDetails = ({
         return <InternshipInfo info={internshipInfo} />;
       case "career-stage":
         return <CareerStage />;
-      case "assessment-records":
-        return <AssessmentRecords />;
+      case "performance":
+        return <Performance />;
       case "career-center":
         return <CareerCenter />;
       case "resources":
@@ -83,7 +108,7 @@ const InternshipDetails = ({
                   type="button"
                   role="tab"
                   aria-selected={isActive}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => handleTabChange(tab.id)}
                   className={cn(
                     "cursor-pointer whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition",
                     isActive
