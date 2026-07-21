@@ -4,16 +4,16 @@ import StageProjectSchedule, {
   type WeekSchedule,
 } from "@/components/_core/dashboard/internship-program/internship-details/career-stage/stage-project-schedule";
 
-const FORMATIVE_DESCRIPTION =
-  "Builds applied competence through structured project execution, guided practice, and progressive skill development.";
+const COLLABORATIVE_DESCRIPTION =
+  "Develops collaborative delivery habits across shared ownership, communication rituals, and cross-functional execution.";
 
 const PROJECT_TITLE =
-  "Building a Sales Funnel Analytics Dashboard for a Retail Brand";
+  "Coordinating a Cross-Functional Product Launch Dashboard";
 
 const WEEK_SCHEDULES: WeekSchedule[] = [
   {
-    id: "week-3",
-    label: "Week 3",
+    id: "week-13",
+    label: "Week 13",
     days: [
       {
         id: "monday",
@@ -21,8 +21,8 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
         status: "not-started",
         tasks: [
           {
-            id: "brief-review",
-            label: "Review project brief & success metrics",
+            id: "team-kickoff",
+            label: "Facilitate cross-functional kickoff",
             status: "todo",
           },
         ],
@@ -33,13 +33,13 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
         status: "not-started",
         tasks: [
           {
-            id: "data-prep",
-            label: "Prepare and clean sales data set",
+            id: "shared-board",
+            label: "Set up shared delivery board",
             status: "todo",
           },
           {
-            id: "kpi-map",
-            label: "Map funnel KPIs to dashboard views",
+            id: "raci",
+            label: "Agree RACI across workstreams",
             status: "todo",
           },
         ],
@@ -50,8 +50,8 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
         status: "not-started",
         tasks: [
           {
-            id: "prototype",
-            label: "Create first dashboard prototype",
+            id: "sync-cadence",
+            label: "Establish sync cadence and updates",
             status: "todo",
           },
         ],
@@ -59,8 +59,8 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
     ],
   },
   {
-    id: "week-4",
-    label: "Week 4",
+    id: "week-14",
+    label: "Week 14",
     days: [
       {
         id: "monday",
@@ -68,8 +68,8 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
         status: "not-started",
         tasks: [
           {
-            id: "iterate-visuals",
-            label: "Iterate chart visuals & filters",
+            id: "integration",
+            label: "Integrate team deliverables into dashboard",
             status: "todo",
           },
         ],
@@ -80,13 +80,8 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
         status: "not-started",
         tasks: [
           {
-            id: "mentor-feedback",
-            label: "Incorporate mentor feedback",
-            status: "todo",
-          },
-          {
-            id: "storytelling",
-            label: "Draft insight storytelling notes",
+            id: "blocker-review",
+            label: "Resolve cross-team blockers",
             status: "todo",
           },
         ],
@@ -97,8 +92,8 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
         status: "not-started",
         tasks: [
           {
-            id: "checkpoint",
-            label: "Submit mid-stage checkpoint",
+            id: "launch-readiness",
+            label: "Complete launch readiness checklist",
             status: "todo",
           },
         ],
@@ -107,16 +102,16 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
   },
 ];
 
-const FormativeStage = () => {
+const CollaborativeStage = () => {
   return (
     <StageProjectSchedule
-      description={FORMATIVE_DESCRIPTION}
+      description={COLLABORATIVE_DESCRIPTION}
       projectTitle={PROJECT_TITLE}
-      weekRange="Week 3-6"
+      weekRange="Week 13-14"
       weeks={WEEK_SCHEDULES}
-      tone="upcoming"
+      tone="locked"
     />
   );
 };
 
-export default FormativeStage;
+export default CollaborativeStage;

@@ -6,17 +6,14 @@ import { cn } from "@/lib/utils";
 import { LockKeyHoleIcon, TrangleIcon } from "@/components/_core/dashboard/svg";
 import OnboardingSession from "@/components/_core/dashboard/internship-program/internship-details/career-stage/onboarding";
 import PreDiagnostic from "@/components/_core/dashboard/internship-program/internship-details/career-stage/pre-diagnostic";
+import UniformityStage from "@/components/_core/dashboard/internship-program/internship-details/career-stage/uniformitive-stage";
 import FormativeStage from "@/components/_core/dashboard/internship-program/internship-details/career-stage/formative-stage";
+import TransitionalStage from "@/components/_core/dashboard/internship-program/internship-details/career-stage/transitional-stage";
+import EmergingStage from "@/components/_core/dashboard/internship-program/internship-details/career-stage/emerging-stage";
+import CollaborativeStage from "@/components/_core/dashboard/internship-program/internship-details/career-stage/collaborative-stage";
+import ProfessionalStage from "@/components/_core/dashboard/internship-program/internship-details/career-stage/professional-stage";
 
 type CareerStageStatus = "completed" | "active" | "upcoming" | "locked";
-
-type CareerStageTaskStatus = "done" | "todo" | "external";
-
-type CareerStageTask = {
-  id: string;
-  label: string;
-  status: CareerStageTaskStatus;
-};
 
 type CareerStageNavItem = {
   id: string;
@@ -30,8 +27,6 @@ type CareerStageCardData = {
   subtitle: string;
   progress: number;
   status: CareerStageStatus;
-  description?: string;
-  tasks?: CareerStageTask[];
 };
 
 const CAREER_STAGE_NAV: CareerStageNavItem[] = [
@@ -66,27 +61,6 @@ const CAREER_STAGE_CARDS: CareerStageCardData[] = [
     subtitle: "Week 1-2",
     progress: 40,
     status: "active",
-    description:
-      "Establishes a consistent operational baseline by ensuring alignment in foundational knowledge, tools, and professional working standards.",
-    tasks: [
-      {
-        id: "foundational-videos",
-        label: "Foundational Introduction videos",
-        status: "done",
-      },
-      { id: "how-to-videos", label: "How-To-Videos", status: "done" },
-      {
-        id: "guided-walkthroughs",
-        label: "Guided Practical Walkthroughs",
-        status: "todo",
-      },
-      {
-        id: "assessments",
-        label: "Assessments and project submissions",
-        status: "todo",
-      },
-      { id: "games-nights", label: "Games nights", status: "external" },
-    ],
   },
   {
     id: "formative-stage",
@@ -180,30 +154,6 @@ function CareerStageProgressRing({
         {progress === 100 ? "100" : `${progress}%`}
       </span>
     </div>
-  );
-}
-
-function CareerStageTaskBadge({ status }: { status: CareerStageTaskStatus }) {
-  if (status === "done") {
-    return (
-      <span className="rounded-full bg-[#CFF6DA] px-2.5 py-0.5 text-xs font-semibold text-[#1F7A4A]">
-        Done
-      </span>
-    );
-  }
-
-  if (status === "external") {
-    return (
-      <span className="rounded-full bg-[#EDE4FF] px-2.5 py-0.5 text-xs font-semibold text-[#5B4B8A]">
-        - Externals
-      </span>
-    );
-  }
-
-  return (
-    <span className="rounded-full border border-[#DCE5E9] bg-[#F8FAFC] px-2.5 py-0.5 text-xs font-semibold text-[#94A3B8]">
-      Todo
-    </span>
   );
 }
 
@@ -394,33 +344,18 @@ function CareerStageCard({
         <OnboardingSession />
       ) : isExpanded && card.id === "pre-entry-diagnostic" ? (
         <PreDiagnostic />
+      ) : isExpanded && card.id === "uniformity-stage" ? (
+        <UniformityStage />
       ) : isExpanded && card.id === "formative-stage" ? (
         <FormativeStage />
-      ) : isExpanded && card.description ? (
-        <div className="border-t border-[#C8E6D0] px-3 pb-4 pt-3 sm:px-4">
-          <p className="text-sm leading-relaxed text-[#64748B]">
-            {card.description}
-          </p>
-
-          {card.tasks?.length ? (
-            <ul className="mt-4 space-y-3">
-              {card.tasks.map((task) => (
-                <li
-                  key={task.id}
-                  className="flex items-center justify-between gap-3"
-                >
-                  <div className="flex min-w-0 items-center gap-2.5">
-                    <CareerStageCheckIcon completed={task.status === "done"} />
-                    <span className="text-sm font-medium text-[#092A31]">
-                      {task.label}
-                    </span>
-                  </div>
-                  <CareerStageTaskBadge status={task.status} />
-                </li>
-              ))}
-            </ul>
-          ) : null}
-        </div>
+      ) : isExpanded && card.id === "transitional-stage" ? (
+        <TransitionalStage />
+      ) : isExpanded && card.id === "emerging-stage" ? (
+        <EmergingStage />
+      ) : isExpanded && card.id === "collaborative-stage" ? (
+        <CollaborativeStage />
+      ) : isExpanded && card.id === "professional-stage" ? (
+        <ProfessionalStage />
       ) : null}
     </article>
   );

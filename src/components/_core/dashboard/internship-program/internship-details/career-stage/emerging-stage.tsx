@@ -4,16 +4,16 @@ import StageProjectSchedule, {
   type WeekSchedule,
 } from "@/components/_core/dashboard/internship-program/internship-details/career-stage/stage-project-schedule";
 
-const FORMATIVE_DESCRIPTION =
-  "Builds applied competence through structured project execution, guided practice, and progressive skill development.";
+const EMERGING_DESCRIPTION =
+  "Strengthens emerging professional judgment through denser delivery cycles, peer critique, and outcome-focused iteration.";
 
 const PROJECT_TITLE =
-  "Building a Sales Funnel Analytics Dashboard for a Retail Brand";
+  "Launching a Self-Serve Insights Portal for Operations Teams";
 
 const WEEK_SCHEDULES: WeekSchedule[] = [
   {
-    id: "week-3",
-    label: "Week 3",
+    id: "week-11",
+    label: "Week 11",
     days: [
       {
         id: "monday",
@@ -21,8 +21,8 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
         status: "not-started",
         tasks: [
           {
-            id: "brief-review",
-            label: "Review project brief & success metrics",
+            id: "portal-requirements",
+            label: "Finalize portal requirements with ops leads",
             status: "todo",
           },
         ],
@@ -33,13 +33,13 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
         status: "not-started",
         tasks: [
           {
-            id: "data-prep",
-            label: "Prepare and clean sales data set",
+            id: "ia-design",
+            label: "Design information architecture",
             status: "todo",
           },
           {
-            id: "kpi-map",
-            label: "Map funnel KPIs to dashboard views",
+            id: "access-model",
+            label: "Define role-based access model",
             status: "todo",
           },
         ],
@@ -50,8 +50,8 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
         status: "not-started",
         tasks: [
           {
-            id: "prototype",
-            label: "Create first dashboard prototype",
+            id: "pilot-build",
+            label: "Build pilot portal screens",
             status: "todo",
           },
         ],
@@ -59,8 +59,8 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
     ],
   },
   {
-    id: "week-4",
-    label: "Week 4",
+    id: "week-12",
+    label: "Week 12",
     days: [
       {
         id: "monday",
@@ -68,8 +68,8 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
         status: "not-started",
         tasks: [
           {
-            id: "iterate-visuals",
-            label: "Iterate chart visuals & filters",
+            id: "peer-review",
+            label: "Run peer critique session",
             status: "todo",
           },
         ],
@@ -80,13 +80,8 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
         status: "not-started",
         tasks: [
           {
-            id: "mentor-feedback",
-            label: "Incorporate mentor feedback",
-            status: "todo",
-          },
-          {
-            id: "storytelling",
-            label: "Draft insight storytelling notes",
+            id: "iteration",
+            label: "Iterate based on critique feedback",
             status: "todo",
           },
         ],
@@ -97,8 +92,8 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
         status: "not-started",
         tasks: [
           {
-            id: "checkpoint",
-            label: "Submit mid-stage checkpoint",
+            id: "pilot-handoff",
+            label: "Prepare pilot handoff package",
             status: "todo",
           },
         ],
@@ -107,16 +102,16 @@ const WEEK_SCHEDULES: WeekSchedule[] = [
   },
 ];
 
-const FormativeStage = () => {
+const EmergingStage = () => {
   return (
     <StageProjectSchedule
-      description={FORMATIVE_DESCRIPTION}
+      description={EMERGING_DESCRIPTION}
       projectTitle={PROJECT_TITLE}
-      weekRange="Week 3-6"
+      weekRange="Week 11-12"
       weeks={WEEK_SCHEDULES}
-      tone="upcoming"
+      tone="locked"
     />
   );
 };
 
-export default FormativeStage;
+export default EmergingStage;

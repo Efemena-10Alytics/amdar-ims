@@ -1,6 +1,6 @@
 "use client";
 
-import { Pencil, Timer, Volume2 } from "lucide-react";
+import { Timer, Volume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PencilIcon } from "../svg";
 
