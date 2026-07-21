@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { MessageCircleMore } from "lucide-react";
 import { cn } from "@/lib/utils";
 import InternshipInfo from "@/components/_core/dashboard/internship-program/internship-details/internship-info";
@@ -19,6 +20,12 @@ const TABS = [
 ] as const;
 
 export type InternshipProgramTabId = (typeof TABS)[number]["id"];
+
+function isInternshipProgramTabId(
+  value: string | null,
+): value is InternshipProgramTabId {
+  return TABS.some((tab) => tab.id === value);
+}
 
 type InternshipDetailsProps = {
   internshipInfo?: InternshipInfoData;
@@ -46,7 +53,25 @@ const InternshipDetails = ({
   defaultTab = "internship-info",
   onWhoIsOnlineClick,
 }: InternshipDetailsProps) => {
-  const [activeTab, setActiveTab] = useState<InternshipProgramTabId>(defaultTab);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const queryTab = searchParams.get("tab");
+  const activeTab = isInternshipProgramTabId(queryTab) ? queryTab : defaultTab;
+
+  useEffect(() => {
+    if (isInternshipProgramTabId(queryTab)) return;
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", defaultTab);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }, [defaultTab, pathname, queryTab, router, searchParams]);
+
+  const handleTabChange = (tabId: InternshipProgramTabId) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tabId);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -83,7 +108,7 @@ const InternshipDetails = ({
                   type="button"
                   role="tab"
                   aria-selected={isActive}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => handleTabChange(tab.id)}
                   className={cn(
                     "cursor-pointer whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition",
                     isActive
