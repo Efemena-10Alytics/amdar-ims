@@ -1,19 +1,42 @@
+"use client";
+
 import Link from "next/link";
-import { ArrowLeft, } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { useState } from "react";
 import type { ReactNode } from "react";
 import ProjectViews from "./project-view";
+import Assessment from "./assessment";
+import LeaderBoard from "./leader-board";
+import ResourcesDetails from "./resources";
+import Todo from "./todo";
 
 const PROJECT_TABS = [
-  "Project details",
-  "Performance",
-  "Todo",
-  "Resources",
-  "Leader board",
-];
+  { id: "project-details", label: "Project details" },
+  { id: "assessment", label: "Assessment" },
+  { id: "todo", label: "Todo" },
+  { id: "resources", label: "Resources" },
+  { id: "leader-board", label: "Leader board" },
+] as const;
 
-
+type ProjectTabId = (typeof PROJECT_TABS)[number]["id"];
 
 export default function ProjectDetailsContent() {
+  const [activeTab, setActiveTab] =
+    useState<ProjectTabId>("project-details");
+
+  const activeTabContent =
+    activeTab === "project-details" ? (
+      <ProjectViews />
+    ) : activeTab === "assessment" ? (
+      <Assessment />
+    ) : activeTab === "todo" ? (
+      <Todo />
+    ) : activeTab === "resources" ? (
+      <ResourcesDetails />
+    ) : activeTab === "leader-board" ? (
+      <LeaderBoard />
+    ) : null;
+
   return (
     <div className="space-y-6 px-4 py-6 lg:px-6">
       <div className="space-y-4">
@@ -50,12 +73,14 @@ export default function ProjectDetailsContent() {
 
       <section className="space-y-5">
         <div className="inline-flex w-fit flex-wrap items-center gap-2 rounded-full bg-[#E4EBEF] px-1 py-2">
-          {PROJECT_TABS.map((tab, index) => {
-            const active = index === 0;
+          {PROJECT_TABS.map((tab) => {
+            const active = activeTab === tab.id;
             return (
               <button
-                key={tab}
+                key={tab.id}
                 type="button"
+                onClick={() => setActiveTab(tab.id)}
+                aria-selected={active}
                 className={[
                   "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
                   active
@@ -63,13 +88,13 @@ export default function ProjectDetailsContent() {
                     : "text-[#64748B] hover:bg-white/70 hover:text-[#156374]",
                 ].join(" ")}
               >
-                {tab}
+                {tab.label}
               </button>
             );
           })}
         </div>
 
-        <ProjectViews />
+        {activeTabContent}
       </section>
     </div>
   );

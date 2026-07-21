@@ -30,6 +30,10 @@ type ReadinessTestDrawerProps = {
   savedResult?: ReadinessTestSubmitResultData | null;
   onSubmitted?: (result: ReadinessTestSubmitResultData) => void | Promise<void>;
   onComplete?: (result: ReadinessTestSubmitResultData) => void | Promise<void>;
+  submitAnswers?: (
+    form: ReadinessTestForm,
+    answers: Record<string, ReadinessTestFieldAnswer>,
+  ) => ReadinessTestSubmitResultData | Promise<ReadinessTestSubmitResultData>;
 };
 
 const ReadinessTestDrawer = ({
@@ -43,6 +47,7 @@ const ReadinessTestDrawer = ({
   savedResult = null,
   onSubmitted,
   onComplete,
+  submitAnswers,
 }: ReadinessTestDrawerProps) => {
   const fields = useMemo(() => getSortedReadinessTestFields(form), [form]);
   const [answers, setAnswers] = useState<Record<string, ReadinessTestFieldAnswer>>({});
@@ -53,8 +58,9 @@ const ReadinessTestDrawer = ({
   const [submitResult, setSubmitResult] =
     useState<ReadinessTestSubmitResultData | null>(null);
   const [isSavingProgress, setIsSavingProgress] = useState(false);
+  const [isSubmittingAnswers, setIsSubmittingAnswers] = useState(false);
   const { submitForm, isSubmitting, errorMessage } = useSubmitReadinessTestForm();
-  const isBusy = isSubmitting || isSavingProgress;
+  const isBusy = isSubmitting || isSubmittingAnswers || isSavingProgress;
 
   const activeField = fields[fieldIndex];
   const activeAnswer = activeField ? answers[String(activeField.id)] : undefined;
@@ -120,25 +126,39 @@ const ReadinessTestDrawer = ({
       return;
     }
 
-    if (!form?.id) {
+    if (!form) {
       setLocalError("Unable to submit: form id is missing.");
       return;
     }
 
     try {
-      const payload = buildFormSubmitPayload(form, answers);
-      const response = await submitForm(form.id, payload);
+      let result: ReadinessTestSubmitResultData;
 
-      if (!response.data) {
-        setLocalError("Unable to load your quiz results. Please try again.");
-        return;
+      if (submitAnswers) {
+        setIsSubmittingAnswers(true);
+        result = await submitAnswers(form, answers);
+      } else {
+        if (!form.id) {
+          setLocalError("Unable to submit: form id is missing.");
+          return;
+        }
+
+        const payload = buildFormSubmitPayload(form, answers);
+        const response = await submitForm(form.id, payload);
+
+        if (!response.data) {
+          setLocalError("Unable to load your quiz results. Please try again.");
+          return;
+        }
+
+        result = response.data;
       }
 
-      setSubmitResult(response.data);
+      setSubmitResult(result);
 
       setIsSavingProgress(true);
       try {
-        await onSubmitted?.(response.data);
+        await onSubmitted?.(result);
       } catch {
         setLocalError(
           "Your answers were submitted, but we couldn't save your progress. Please try again.",
@@ -147,7 +167,11 @@ const ReadinessTestDrawer = ({
         setIsSavingProgress(false);
       }
     } catch {
-      // errorMessage is set by the hook
+      if (submitAnswers) {
+        setLocalError("Unable to submit your assessment. Please try again.");
+      }
+    } finally {
+      setIsSubmittingAnswers(false);
     }
   };
 
@@ -277,7 +301,7 @@ const ReadinessTestDrawer = ({
                   onClick={() => void handleContinue()}
                   className="h-12 flex-1 cursor-pointer rounded-full bg-primary text-base text-white hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-[#9DB8C0]"
                 >
-                  {isSubmitting
+                  {isSubmitting || isSubmittingAnswers
                     ? "Submitting..."
                     : isSavingProgress
                       ? "Saving..."
