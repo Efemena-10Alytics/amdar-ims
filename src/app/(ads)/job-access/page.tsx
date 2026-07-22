@@ -26,7 +26,7 @@ const HEARD_ABOUT_US_OPTIONS = [
 
 const VISA_STATUS_OPTIONS = ['Graduate visa', 'Student visa', 'Dependent visa']
 
-const TIMELINE_OPTIONS = ['1 month', '1-3 month']
+const TIMELINE_OPTIONS = ['1 month', '1-3 month', 'Just exploring for now']
 
 const CAREER_PATH_OPTIONS = [
     'Data Analytics',
