@@ -10,6 +10,11 @@ import { ClockFillSvg, GoogleMeetSvg } from '../real-uk-experience/content/svg'
 const ZOHO_FORM_URL =
     'https://forms.zohopublic.com/amdariinc1/form/JobAccessSummit/formperma/Dx-wP20cO-PeZ_ABry6xWuO8JVZyQoYMBYgi1NT2b0Q/htmlRecords/submit'
 
+// Zoho redirects here once it accepts a record. It's a static same-origin page,
+// so the app can read the hidden iframe's URL afterwards; a rejected record
+// leaves the iframe on Zoho's own cross-origin error page instead.
+const ZOHO_RETURN_PATH = '/zoho-thanks.html'
+
 const HEARD_ABOUT_US_OPTIONS = [
     'Facebook/Instagram Ads',
     'Faloh',
@@ -18,6 +23,114 @@ const HEARD_ABOUT_US_OPTIONS = [
     'Google',
     'Family and friends'
 ]
+
+const VISA_STATUS_OPTIONS = ['Graduate visa', 'Student visa', 'Dependent visa']
+
+const TIMELINE_OPTIONS = ['1 month', '1-3 month']
+
+const CAREER_PATH_OPTIONS = [
+    'Data Analytics',
+    'Project Management',
+    'Business Analysis',
+    'Data Science',
+    'Cybersecurity',
+    'GRC'
+]
+
+/**
+ * Posts to Zoho through a hidden iframe rather than fetch(). fetch with
+ * mode:"no-cors" returns an opaque response — status is always 0 and HTTP
+ * errors never throw — so a rejected record would look identical to a
+ * successful one. Watching where the iframe lands gives us a real signal.
+ */
+const submitToZoho = (fields: Record<string, string>) =>
+    new Promise<void>((resolve, reject) => {
+        // Zoho always redirects from https. When our own page is http (local
+        // dev), the browser mixed-content-upgrades that redirect to
+        // https://localhost, which the dev server can't serve — so the iframe
+        // never lands back here and an accepted record looks identical to a
+        // rejected one. Detection is only meaningful on an https origin.
+        const canDetectOutcome = window.location.protocol === 'https:'
+
+        const frameName = `zoho-submit-${Date.now()}`
+
+        const iframe = document.createElement('iframe')
+        iframe.name = frameName
+        iframe.style.display = 'none'
+        document.body.appendChild(iframe)
+
+        const form = document.createElement('form')
+        form.action = ZOHO_FORM_URL
+        form.method = 'POST'
+        form.enctype = 'multipart/form-data'
+        form.acceptCharset = 'UTF-8'
+        form.target = frameName
+        form.style.display = 'none'
+
+        Object.entries(fields).forEach(([name, value]) => {
+            const input = document.createElement('input')
+            input.type = 'hidden'
+            input.name = name
+            input.value = value
+            form.appendChild(input)
+        })
+        document.body.appendChild(form)
+
+        let settled = false
+        const cleanup = () => {
+            clearTimeout(timer)
+            iframe.remove()
+            form.remove()
+        }
+
+        const settle = (fn: () => void) => {
+            if (settled) return
+            settled = true
+            cleanup()
+            fn()
+        }
+
+        const timer = setTimeout(
+            () => {
+                // Without detection the POST has long since been sent; only
+                // treat a genuine stall as an error when we can observe it.
+                settle(() =>
+                    canDetectOutcome
+                        ? reject(new Error('Timed out waiting for Zoho'))
+                        : resolve()
+                )
+            },
+            canDetectOutcome ? 20000 : 2000
+        )
+
+        iframe.addEventListener('load', () => {
+            if (settled) return
+
+            let href: string | null = null
+            try {
+                href = iframe.contentWindow?.location.href ?? null
+            } catch {
+                // Cross-origin: still sitting on a Zoho page, i.e. not accepted.
+                href = null
+            }
+
+            // Fires once for the initial blank document before the POST lands.
+            if (href === 'about:blank') return
+
+            if (!canDetectOutcome) {
+                settle(resolve)
+                return
+            }
+
+            settle(() =>
+                href?.includes(ZOHO_RETURN_PATH)
+                    ? resolve()
+                    : reject(new Error('Zoho rejected the submission'))
+            )
+        })
+
+        form.submit()
+    })
 
 const gainItems = [
     {
@@ -49,6 +162,10 @@ const JobAccessPage = () => {
     const [lastName, setLastName] = React.useState('')
     const [email, setEmail] = React.useState('')
     const [phone, setPhone] = React.useState('')
+    const [country, setCountry] = React.useState('')
+    const [visaStatus, setVisaStatus] = React.useState('')
+    const [timeline, setTimeline] = React.useState('')
+    const [careerPath, setCareerPath] = React.useState('')
     const [formError, setFormError] = React.useState('')
     const [isSubmitting, setIsSubmitting] = React.useState(false)
 
@@ -73,7 +190,20 @@ const JobAccessPage = () => {
         const trimmedPhone = phone.trim()
         const location = selectedPhoneCountry?.name ?? ''
 
-        if (!trimmedFirstName || !trimmedEmail || !trimmedPhone || !location) {
+        const trimmedCountry = country.trim()
+
+        if (
+            !trimmedFirstName ||
+            !trimmedLastName ||
+            !trimmedEmail ||
+            !trimmedPhone ||
+            !location ||
+            !trimmedCountry ||
+            !visaStatus ||
+            !timeline ||
+            !careerPath ||
+            !selectedField
+        ) {
             setFormError('Please complete all required fields.')
             return
         }
@@ -95,28 +225,25 @@ const JobAccessPage = () => {
                 : nationalNumber.replace(/^\+\d{1,4}/, '')
         }
 
-        const formData = new FormData()
-        formData.append('zf_referrer_name', '')
-        formData.append('zf_redirect_url', '')
-        formData.append('zc_gad', '')
-        formData.append('Name_First', trimmedFirstName)
-        formData.append('Name_Last', trimmedLastName)
-        formData.append('Email1', trimmedEmail)
-        formData.append('PhoneNumber_countrycodeval', callingCode)
-        formData.append('PhoneNumber_countrycode', nationalNumber)
-        formData.append('Dropdown', selectedField || '-Select-')
-
         setIsSubmitting(true)
         try {
-            // Zoho's htmlRecords/submit endpoint doesn't allow CORS, so the
-            // response is opaque — a resolved fetch only proves dispatch.
-            await fetch(ZOHO_FORM_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: formData,
+            await submitToZoho({
+                zf_referrer_name: '',
+                zf_redirect_url: `${window.location.origin}${ZOHO_RETURN_PATH}`,
+                zc_gad: '',
+                SingleLine: trimmedFirstName,
+                SingleLine1: trimmedLastName,
+                Email1: trimmedEmail,
+                PhoneNumber_countrycodeval: callingCode,
+                PhoneNumber_countrycode: nationalNumber,
+                SingleLine2: trimmedCountry,
+                Dropdown1: visaStatus,
+                Dropdown: timeline,
+                Dropdown3: careerPath,
+                Dropdown2: selectedField,
             })
         } catch {
-            setFormError('Something went wrong. Please try again.')
+            setFormError("We couldn't complete your registration. Please check your details and try again.")
             return
         } finally {
             setIsSubmitting(false)
@@ -127,14 +254,22 @@ const JobAccessPage = () => {
         setLastName('')
         setEmail('')
         setPhone('')
+        setCountry('')
+        setVisaStatus('')
+        setTimeline('')
+        setCareerPath('')
         setSelectedField('')
         setFormError('')
     }, [
+        careerPath,
+        country,
         email,
         firstName,
         lastName,
         phone,
         selectedField,
+        timeline,
+        visaStatus,
         selectedPhoneCountry?.callingCode,
         selectedPhoneCountry?.name,
     ])
@@ -259,9 +394,9 @@ const JobAccessPage = () => {
                                             className="h-11 w-full appearance-none rounded-lg border border-[#1E4A5A] bg-[#0F4652] pl-3 pr-7 text-sm text-[#EAF1F7] outline-none focus:border-[#2C9AB3]"
                                         >
                                             <option value="">{countriesLoading ? '...' : 'Code'}</option>
-                                            {countries.map((country) => (
-                                                <option key={country.code} value={country.code}>
-                                                    {country.callingCode} ({country.code})
+                                            {countries.map((phoneCountry) => (
+                                                <option key={phoneCountry.code} value={phoneCountry.code}>
+                                                    {phoneCountry.callingCode} ({phoneCountry.code})
                                                 </option>
                                             ))}
                                         </select>
@@ -277,6 +412,78 @@ const JobAccessPage = () => {
                                 {selectedPhoneCountry?.callingCode ? (
                                     <p className="text-xs text-[#94A8BC]">Selected code: {selectedPhoneCountry.callingCode}</p>
                                 ) : null}
+                            </div>
+
+                            <label className="block space-y-1.5">
+                                <span className="text-sm font-medium text-[#C7D5D6]">Country</span>
+                                <input
+                                    required
+                                    value={country}
+                                    onChange={(e) => setCountry(e.target.value)}
+                                    className="h-11 w-full rounded-lg border border-[#1E4A5A] bg-[#0F4652] px-4 text-sm text-[#EAF1F7] placeholder:text-[#4A6A7A] outline-none focus:border-[#2C9AB3]"
+                                    placeholder="Where are you based?"
+                                />
+                            </label>
+
+                            <div className="space-y-1.5">
+                                <span className="text-sm font-medium text-[#C7D5D6]">Visa status</span>
+                                <div className="relative">
+                                    <select
+                                        value={visaStatus}
+                                        onChange={(e) => setVisaStatus(e.target.value)}
+                                        className="h-11 w-full appearance-none rounded-lg border border-[#1E4A5A] bg-[#0F4652] px-4 pr-10 text-sm text-white outline-none focus:border-[#2C9AB3]"
+                                    >
+                                        <option value="">-Select-</option>
+                                        {VISA_STATUS_OPTIONS.map((option) => (
+                                            <option key={option} value={option}>
+                                                {option}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white" />
+                                </div>
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <span className="text-sm font-medium text-[#C7D5D6]">
+                                    How soon will you like to land a job in the UK?
+                                </span>
+                                <div className="relative">
+                                    <select
+                                        value={timeline}
+                                        onChange={(e) => setTimeline(e.target.value)}
+                                        className="h-11 w-full appearance-none rounded-lg border border-[#1E4A5A] bg-[#0F4652] px-4 pr-10 text-sm text-white outline-none focus:border-[#2C9AB3]"
+                                    >
+                                        <option value="">-Select-</option>
+                                        {TIMELINE_OPTIONS.map((option) => (
+                                            <option key={option} value={option}>
+                                                {option}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white" />
+                                </div>
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <span className="text-sm font-medium text-[#C7D5D6]">
+                                    What career path are you interested in?
+                                </span>
+                                <div className="relative">
+                                    <select
+                                        value={careerPath}
+                                        onChange={(e) => setCareerPath(e.target.value)}
+                                        className="h-11 w-full appearance-none rounded-lg border border-[#1E4A5A] bg-[#0F4652] px-4 pr-10 text-sm text-white outline-none focus:border-[#2C9AB3]"
+                                    >
+                                        <option value="">-Select-</option>
+                                        {CAREER_PATH_OPTIONS.map((option) => (
+                                            <option key={option} value={option}>
+                                                {option}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white" />
+                                </div>
                             </div>
 
                             <div className="space-y-1.5">
