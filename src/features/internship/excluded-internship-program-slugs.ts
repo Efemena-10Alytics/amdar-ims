@@ -8,5 +8,7 @@ export const EXCLUDED_INTERNSHIP_PROGRAM_SLUGS: string[] = [
   "ethical-hacking-career-experience-internship",
   "devops-work-experience-internship-uk-canada",
   "product-design-work-experience-internship-uk-canada",
+  "data-engineering-work-experience-internship-uk-canada",
+  "app-cloud-security-work-experience-internship-uk-canada",
   // "data-engineering-career-experience-internship-decei",
 ];
