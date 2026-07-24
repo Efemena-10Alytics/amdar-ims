@@ -24,7 +24,15 @@ const HEARD_ABOUT_US_OPTIONS = [
     'Family and friends'
 ]
 
-const VISA_STATUS_OPTIONS = ['Graduate visa', 'Student visa', 'Dependent visa']
+const VISA_OTHER = 'Others'
+
+const VISA_STATUS_OPTIONS = [
+    'Short-Term Study Visa',
+    'Student visa',
+    'Dependent visa',
+    'Skilled worker visa',
+    VISA_OTHER,
+]
 
 const TIMELINE_OPTIONS = ['1 month', '1-3 month', 'Just exploring for now']
 
@@ -164,6 +172,7 @@ const JobAccessPage = () => {
     const [phone, setPhone] = React.useState('')
     const [country, setCountry] = React.useState('')
     const [visaStatus, setVisaStatus] = React.useState('')
+    const [visaStatusOther, setVisaStatusOther] = React.useState('')
     const [timeline, setTimeline] = React.useState('')
     const [careerPath, setCareerPath] = React.useState('')
     const [formError, setFormError] = React.useState('')
@@ -191,6 +200,7 @@ const JobAccessPage = () => {
         const location = selectedPhoneCountry?.name ?? ''
 
         const trimmedCountry = country.trim()
+        const trimmedVisaOther = visaStatusOther.trim()
 
         if (
             !trimmedFirstName ||
@@ -207,6 +217,14 @@ const JobAccessPage = () => {
             setFormError('Please complete all required fields.')
             return
         }
+
+        // "Others" reveals a free-text box; send what the user typed, not the
+        // literal "Others" placeholder.
+        if (visaStatus === VISA_OTHER && !trimmedVisaOther) {
+            setFormError('Please enter your visa type.')
+            return
+        }
+        const visaValue = visaStatus === VISA_OTHER ? trimmedVisaOther : visaStatus
 
         // Zoho rejects the record (409) when the calling code is missing, so
         // don't let a blank selection through.
@@ -237,7 +255,7 @@ const JobAccessPage = () => {
                 PhoneNumber_countrycodeval: callingCode,
                 PhoneNumber_countrycode: nationalNumber,
                 SingleLine2: trimmedCountry,
-                Dropdown1: visaStatus,
+                Dropdown1: visaValue,
                 Dropdown: timeline,
                 Dropdown3: careerPath,
                 Dropdown2: selectedField,
@@ -256,6 +274,7 @@ const JobAccessPage = () => {
         setPhone('')
         setCountry('')
         setVisaStatus('')
+        setVisaStatusOther('')
         setTimeline('')
         setCareerPath('')
         setSelectedField('')
@@ -270,6 +289,7 @@ const JobAccessPage = () => {
         selectedField,
         timeline,
         visaStatus,
+        visaStatusOther,
         selectedPhoneCountry?.callingCode,
         selectedPhoneCountry?.name,
     ])
@@ -421,7 +441,7 @@ const JobAccessPage = () => {
                                     value={country}
                                     onChange={(e) => setCountry(e.target.value)}
                                     className="h-11 w-full rounded-lg border border-[#1E4A5A] bg-[#0F4652] px-4 text-sm text-[#EAF1F7] placeholder:text-[#4A6A7A] outline-none focus:border-[#2C9AB3]"
-                                    placeholder="Where are you based?"
+                                    placeholder="Country of residence"
                                 />
                             </label>
 
@@ -442,6 +462,14 @@ const JobAccessPage = () => {
                                     </select>
                                     <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white" />
                                 </div>
+                                {visaStatus === VISA_OTHER ? (
+                                    <input
+                                        value={visaStatusOther}
+                                        onChange={(e) => setVisaStatusOther(e.target.value)}
+                                        className="mt-2 h-11 w-full rounded-lg border border-[#1E4A5A] bg-[#0F4652] px-4 text-sm text-[#EAF1F7] placeholder:text-[#4A6A7A] outline-none focus:border-[#2C9AB3]"
+                                        placeholder="Please specify your visa type"
+                                    />
+                                ) : null}
                             </div>
 
                             <div className="space-y-1.5">
