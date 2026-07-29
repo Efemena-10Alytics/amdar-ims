@@ -49,7 +49,10 @@ function deriveDayStatus(tasks: { status: TaskStatus }[]): DayStatus {
   return "not-started";
 }
 
-function mapTodosToWeekSchedules(todos: InternProjectTodo[]): WeekSchedule[] {
+function mapTodosToWeekSchedules(
+  todos: InternProjectTodo[],
+  projectSlug?: string | null,
+): WeekSchedule[] {
   const sortedTodos = [...todos].sort((a, b) => {
     if (a.week !== b.week) return a.week - b.week;
     if (a.sortOrder !== b.sortOrder) return a.sortOrder - b.sortOrder;
@@ -70,6 +73,8 @@ function mapTodosToWeekSchedules(todos: InternProjectTodo[]): WeekSchedule[] {
     dayMap.get(dayLabel)!.push(todo);
   }
 
+  const slug = projectSlug?.trim();
+
   return Array.from(weekMap.entries()).map(([weekNumber, dayMap]) => {
     const days: DaySchedule[] = Array.from(dayMap.entries())
       .sort(([dayA], [dayB]) => {
@@ -86,7 +91,9 @@ function mapTodosToWeekSchedules(todos: InternProjectTodo[]): WeekSchedule[] {
           id: String(todo.id),
           label: todo.title,
           status: "todo" as TaskStatus,
-          href: `/dashboard/internship-program-5173/classroom/${todo.id}`,
+          href: slug
+            ? `/dashboard/internship-program-5173/projects/${encodeURIComponent(slug)}/classroom/${todo.id}`
+            : undefined,
         }));
 
         return {
@@ -116,12 +123,10 @@ function buildWeekRange(weeks: WeekSchedule[]): string {
   return min === max ? `Week ${min}` : `Week ${min}-${max}`;
 }
 
-function buildProjectHref(project: InternProject): string {
+function buildProjectHref(project: InternProject): string | undefined {
   const slug = project.slug?.trim();
-  if (slug) {
-    return `/dashboard/internship-program-5173/projects/${slug}`;
-  }
-  return `/dashboard/internship-program-5173/projects/${project.id}`;
+  if (!slug) return undefined;
+  return `/dashboard/internship-program-5173/projects/${encodeURIComponent(slug)}`;
 }
 
 export function useStageProjectScheduleData(
@@ -147,8 +152,8 @@ export function useStageProjectScheduleData(
   const todosQuery = useGetTodosByProjectId(project?.id);
 
   const weeks = useMemo(
-    () => mapTodosToWeekSchedules(todosQuery.data ?? []),
-    [todosQuery.data],
+    () => mapTodosToWeekSchedules(todosQuery.data ?? [], project?.slug),
+    [project?.slug, todosQuery.data],
   );
 
   const isLoading =

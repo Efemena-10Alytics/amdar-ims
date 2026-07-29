@@ -198,7 +198,7 @@ export default function StageProjectSchedule({
   weekRange,
   weeks,
   tone = "active",
-  projectHref = "/dashboard/internship-program-5173/projects/tenant-retention-optimization",
+  projectHref,
 }: StageProjectScheduleProps) {
   const [activeWeekId, setActiveWeekId] = useState(weeks[0]?.id ?? "");
   const [isProjectOpen, setIsProjectOpen] = useState(true);
@@ -273,12 +273,14 @@ export default function StageProjectSchedule({
               </span>
             </button>
 
-            <Link
-              href={projectHref}
-              className="text-right text-sm font-semibold whitespace-nowrap text-[#156374] underline underline-offset-2 transition hover:text-[#124F5D] mr-4"
-            >
-              Continue project
-            </Link>
+            {projectHref ? (
+              <Link
+                href={projectHref}
+                className="mr-4 text-right text-sm font-semibold whitespace-nowrap text-[#156374] underline underline-offset-2 transition hover:text-[#124F5D]"
+              >
+                Continue project
+              </Link>
+            ) : null}
           </div>
         </div>
 

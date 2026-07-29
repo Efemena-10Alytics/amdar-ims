@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Building2,
   CalendarDays,
@@ -13,39 +13,53 @@ import {
   SlidersHorizontal,
   Type,
   User,
+  Video,
 } from "lucide-react";
+import type {
+  InternProject,
+  InternProjectTodo,
+  InternProjectTodoContentType,
+} from "@/features/interns-project/internship-project.types";
+import { useGetTodosByProjectId } from "@/features/interns-project/use-get-todos-by-project-id";
+import { formatDurationLabel } from "../project-content";
 import { cn } from "@/lib/utils";
 
-const WEEKS = ["Week 1", "Week 2", "Week 3"] as const;
 const DAYS = ["All", "Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"] as const;
 
+type DayFilter = (typeof DAYS)[number];
 type TodoCategory = "Task" | "Activity";
-type TodoType = "Text" | "Document";
+type TodoTypeLabel = "Text" | "Document" | "Video";
 
-type TodoItem = {
+type TodoRow = {
   id: number;
   title: string;
-  week: (typeof WEEKS)[number];
-  day: Exclude<(typeof DAYS)[number], "All">;
-  type: TodoType;
+  week: number;
+  weekLabel: string;
+  day: Exclude<DayFilter, "All">;
+  dayLabel: string;
+  type: TodoTypeLabel;
   category: TodoCategory;
 };
 
-const TODO_ITEMS: TodoItem[] = [
-  { id: 1, title: "Brand research moodboard", week: "Week 1", day: "Mon", type: "Text", category: "Task" },
-  { id: 2, title: "Brand research moodboard", week: "Week 1", day: "Mon", type: "Document", category: "Activity" },
-  { id: 3, title: "Brand research moodboard", week: "Week 1", day: "Tue", type: "Text", category: "Activity" },
-  { id: 4, title: "Review customer interview notes", week: "Week 1", day: "Wed", type: "Document", category: "Task" },
-  { id: 5, title: "Draft dashboard requirements", week: "Week 1", day: "Thur", type: "Text", category: "Task" },
-  { id: 6, title: "Prepare stakeholder update", week: "Week 1", day: "Fri", type: "Document", category: "Task" },
-  { id: 7, title: "Map ticket resolution workflow", week: "Week 1", day: "Sat", type: "Text", category: "Task" },
-  { id: 8, title: "Analyze support ticket data", week: "Week 1", day: "Sun", type: "Document", category: "Activity" },
-  { id: 9, title: "Create initial report outline", week: "Week 1", day: "Tue", type: "Text", category: "Task" },
-  { id: 10, title: "Build dashboard wireframe", week: "Week 2", day: "Mon", type: "Document", category: "Task" },
-  { id: 11, title: "Review mentor feedback", week: "Week 3", day: "Wed", type: "Text", category: "Activity" },
-];
+const DAY_SHORT_BY_LABEL: Record<string, Exclude<DayFilter, "All">> = {
+  sunday: "Sun",
+  sun: "Sun",
+  monday: "Mon",
+  mon: "Mon",
+  tuesday: "Tue",
+  tue: "Tue",
+  wednesday: "Wed",
+  wed: "Wed",
+  thursday: "Thur",
+  thur: "Thur",
+  thu: "Thur",
+  friday: "Fri",
+  fri: "Fri",
+  saturday: "Sat",
+  sat: "Sat",
+};
 
-const DAY_LABELS: Record<Exclude<(typeof DAYS)[number], "All">, string> = {
+const DAY_LABELS: Record<Exclude<DayFilter, "All">, string> = {
   Sun: "Sunday",
   Mon: "Monday",
   Tue: "Tuesday",
@@ -55,34 +69,78 @@ const DAY_LABELS: Record<Exclude<(typeof DAYS)[number], "All">, string> = {
   Sat: "Saturday",
 };
 
-function ProjectSummary() {
+function mapContentType(contentType?: InternProjectTodoContentType | null): TodoTypeLabel {
+  if (contentType === "document") return "Document";
+  if (contentType === "video") return "Video";
+  return "Text";
+}
+
+function mapDayOfWeek(dayOfWeek: string): Exclude<DayFilter, "All"> {
+  const key = dayOfWeek.trim().toLowerCase();
+  return DAY_SHORT_BY_LABEL[key] ?? "Mon";
+}
+
+function mapTodoToRow(todo: InternProjectTodo): TodoRow {
+  const primaryType = [...(todo.types ?? [])].sort(
+    (a, b) => a.sortOrder - b.sortOrder,
+  )[0];
+
+  return {
+    id: todo.id,
+    title: todo.title,
+    week: todo.week,
+    weekLabel: `Week ${todo.week}`,
+    day: mapDayOfWeek(todo.dayOfWeek),
+    dayLabel: DAY_LABELS[mapDayOfWeek(todo.dayOfWeek)],
+    type: mapContentType(primaryType?.contentType),
+    category: primaryType?.submissionRequired ? "Task" : "Activity",
+  };
+}
+
+function ProjectSummary({ project }: { project: InternProject }) {
+  const durationLabel = formatDurationLabel(project.duration);
+
   return (
     <>
       <div className="rounded-xl bg-[#F7F9FA] px-5 py-4 sm:px-7">
         <div className="flex items-start gap-3">
-          <span className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-white text-xs font-bold text-[#4285F4]">
-            G
-          </span>
+          {project.logoPreview ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={project.logoPreview}
+              alt={project.companyName || project.title}
+              className="mt-0.5 size-5 shrink-0 rounded-full object-cover"
+            />
+          ) : (
+            <span className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-white text-xs font-bold text-[#4285F4]">
+              {(project.companyName || project.title).charAt(0).toUpperCase()}
+            </span>
+          )}
           <h2 className="max-w-3xl text-xl leading-tight font-semibold text-[#34445E] sm:text-2xl">
-            Tenant Retention Optimization: Building an Interactive Power BI
-            Dashboard for...
+            {project.title}
           </h2>
         </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-2.5 py-1 text-xs font-medium text-[#78909C]">
-          <Building2 className="size-3.5" aria-hidden />
-          Healthcare
-        </span>
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-2.5 py-1 text-xs font-medium text-[#78909C]">
-          <CalendarDays className="size-3.5" aria-hidden />
-          3 weeks duration
-        </span>
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-2.5 py-1 text-xs font-medium text-[#78909C]">
-          <User className="size-3.5" aria-hidden />
-          Jennifer Okeke contributor
-        </span>
+        {project.industry ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-2.5 py-1 text-xs font-medium text-[#78909C]">
+            <Building2 className="size-3.5" aria-hidden />
+            {project.industry}
+          </span>
+        ) : null}
+        {durationLabel ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-2.5 py-1 text-xs font-medium text-[#78909C]">
+            <CalendarDays className="size-3.5" aria-hidden />
+            {durationLabel}
+          </span>
+        ) : null}
+        {project.companyName ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-2.5 py-1 text-xs font-medium text-[#78909C]">
+            <User className="size-3.5" aria-hidden />
+            {project.companyName}
+          </span>
+        ) : null}
       </div>
     </>
   );
@@ -110,8 +168,8 @@ function SummaryCard({
   );
 }
 
-function TypeLabel({ type }: { type: TodoType }) {
-  const Icon = type === "Document" ? FileText : Type;
+function TypeLabel({ type }: { type: TodoTypeLabel }) {
+  const Icon = type === "Document" ? FileText : type === "Video" ? Video : Type;
 
   return (
     <span className="inline-flex items-center gap-1.5">
@@ -123,60 +181,120 @@ function TypeLabel({ type }: { type: TodoType }) {
   );
 }
 
-const Todo = () => {
-  const [activeWeek, setActiveWeek] =
-    useState<(typeof WEEKS)[number]>("Week 1");
-  const [activeDay, setActiveDay] =
-    useState<(typeof DAYS)[number]>("All");
+type TodoProps = {
+  project: InternProject;
+};
+
+const Todo = ({ project }: TodoProps) => {
+  const { data: todos = [], isLoading, isError, refetch } =
+    useGetTodosByProjectId(project.id);
+
+  const rows = useMemo(() => todos.map(mapTodoToRow), [todos]);
+  const weekOptions = useMemo(() => {
+    const weeks = Array.from(new Set(rows.map((row) => row.week))).sort(
+      (a, b) => a - b,
+    );
+    return weeks.map((week) => ({ value: week, label: `Week ${week}` }));
+  }, [rows]);
+
+  const [activeWeek, setActiveWeek] = useState<number | null>(null);
+  const [activeDay, setActiveDay] = useState<DayFilter>("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] =
     useState<"All" | TodoCategory>("All");
   const [showFilters, setShowFilters] = useState(false);
   const [openActionId, setOpenActionId] = useState<number | null>(null);
 
-  const weekItems = TODO_ITEMS.filter((item) => item.week === activeWeek);
+  useEffect(() => {
+    if (!weekOptions.length) {
+      setActiveWeek(null);
+      return;
+    }
+    if (activeWeek == null || !weekOptions.some((week) => week.value === activeWeek)) {
+      setActiveWeek(weekOptions[0]?.value ?? null);
+    }
+  }, [activeWeek, weekOptions]);
+
+  const weekItems = useMemo(
+    () =>
+      activeWeek == null
+        ? []
+        : rows.filter((item) => item.week === activeWeek),
+    [activeWeek, rows],
+  );
+
   const filteredItems = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
 
-    return TODO_ITEMS.filter((item) => {
-      const matchesWeek = item.week === activeWeek;
+    return weekItems.filter((item) => {
       const matchesDay = activeDay === "All" || item.day === activeDay;
       const matchesCategory =
         categoryFilter === "All" || item.category === categoryFilter;
       const matchesSearch =
         !query || item.title.toLowerCase().includes(query);
 
-      return matchesWeek && matchesDay && matchesCategory && matchesSearch;
+      return matchesDay && matchesCategory && matchesSearch;
     });
-  }, [activeDay, activeWeek, categoryFilter, searchQuery]);
+  }, [activeDay, categoryFilter, searchQuery, weekItems]);
+
+  if (isLoading) {
+    return (
+      <section className="rounded-xl bg-[#F7F9FA] px-5 py-10 text-center text-sm text-[#64748B]">
+        Loading todos...
+      </section>
+    );
+  }
+
+  if (isError) {
+    return (
+      <section className="rounded-xl bg-[#F7F9FA] px-5 py-10 text-center">
+        <p className="text-sm text-[#64748B]">
+          Something went wrong while loading todos.
+        </p>
+        <button
+          type="button"
+          onClick={() => {
+            void refetch();
+          }}
+          className="mt-4 inline-flex h-10 cursor-pointer items-center rounded-full bg-[#156374] px-5 text-sm font-medium text-white hover:bg-[#124F5D]"
+        >
+          Retry
+        </button>
+      </section>
+    );
+  }
 
   return (
     <section className="space-y-6">
-      <ProjectSummary />
+      <ProjectSummary project={project} />
 
       <div>
-        <div className="flex items-end gap-6 border-b border-[#E2E8F0]">
-          {WEEKS.map((week) => {
-            const isActive = week === activeWeek;
-            return (
-              <button
-                key={week}
-                type="button"
-                onClick={() => setActiveWeek(week)}
-                className={cn(
-                  "relative cursor-pointer pb-2 text-sm font-medium transition-colors",
-                  isActive
-                    ? "text-[#156374]"
-                    : "text-[#BCD0D5] hover:text-[#78909C]",
-                )}
-              >
-                {week}
-                {isActive ? (
-                  <span className="absolute inset-x-0 -bottom-px h-0.5 bg-[#156374]" />
-                ) : null}
-              </button>
-            );
-          })}
+        <div className="flex items-end gap-6 overflow-x-auto border-b border-[#E2E8F0]">
+          {weekOptions.length ? (
+            weekOptions.map((week) => {
+              const isActive = week.value === activeWeek;
+              return (
+                <button
+                  key={week.value}
+                  type="button"
+                  onClick={() => setActiveWeek(week.value)}
+                  className={cn(
+                    "relative shrink-0 cursor-pointer pb-2 text-sm font-medium transition-colors",
+                    isActive
+                      ? "text-[#156374]"
+                      : "text-[#BCD0D5] hover:text-[#78909C]",
+                  )}
+                >
+                  {week.label}
+                  {isActive ? (
+                    <span className="absolute inset-x-0 -bottom-px h-0.5 bg-[#156374]" />
+                  ) : null}
+                </button>
+              );
+            })
+          ) : (
+            <p className="pb-2 text-sm text-[#94A3B8]">No weeks available</p>
+          )}
         </div>
 
         <div className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-8">
@@ -287,7 +405,7 @@ const Todo = () => {
                     className="border-t border-[#F1F5F9] text-sm text-[#173740]"
                   >
                     <td className="px-3 py-4 font-medium">{item.title}</td>
-                    <td className="px-3 py-4">{DAY_LABELS[item.day]}</td>
+                    <td className="px-3 py-4">{item.dayLabel}</td>
                     <td className="px-3 py-4">
                       <TypeLabel type={item.type} />
                     </td>
@@ -307,10 +425,10 @@ const Todo = () => {
                         <EllipsisVertical className="size-4" aria-hidden />
                       </button>
 
-                      {openActionId === item.id ? (
+                      {openActionId === item.id && project.slug ? (
                         <div className="absolute top-12 right-3 z-20 w-44 rounded-xl border border-[#E2E8F0] bg-white p-1.5 text-left shadow-lg">
                           <Link
-                            href="/dashboard/internship-program-5173/classroom/id"
+                            href={`/dashboard/internship-program-5173/projects/${encodeURIComponent(project.slug)}/classroom/${item.id}`}
                             onClick={() => setOpenActionId(null)}
                             className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-[#173740] transition-colors hover:bg-[#E8F0F3] hover:text-[#156374]"
                           >
