@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Check, Folder, Loader } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -204,6 +204,18 @@ export default function StageProjectSchedule({
   const [isProjectOpen, setIsProjectOpen] = useState(true);
   const styles = TONE_STYLES[tone];
   const activeWeek = weeks.find((week) => week.id === activeWeekId) ?? weeks[0];
+
+  useEffect(() => {
+    if (!weeks.length) {
+      setActiveWeekId("");
+      return;
+    }
+
+    const hasActiveWeek = weeks.some((week) => week.id === activeWeekId);
+    if (!hasActiveWeek) {
+      setActiveWeekId(weeks[0]?.id ?? "");
+    }
+  }, [activeWeekId, weeks]);
 
   if (!activeWeek) return null;
 

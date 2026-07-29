@@ -171,7 +171,7 @@ function ProjectTodoPanel() {
   const [openDay, setOpenDay] = useState("Monday");
 
   return (
-    <aside className="rounded-xl border border-[#DCE6E9] bg-[#F8FAFB] p-3">
+    <aside className="sticky top-6 self-start rounded-xl border border-[#DCE6E9] bg-[#F8FAFB] p-3 xl:max-h-[calc(100vh-3rem)] xl:overflow-y-auto">
       <div className="flex items-end gap-6 border-b border-[#DFE8EB]">
         {WEEKS.map((week) => (
           <button
