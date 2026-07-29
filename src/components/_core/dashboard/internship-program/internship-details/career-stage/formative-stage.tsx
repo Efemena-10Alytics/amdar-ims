@@ -1,119 +1,16 @@
 "use client";
 
-import StageProjectSchedule, {
-  type WeekSchedule,
-} from "@/components/_core/dashboard/internship-program/internship-details/career-stage/stage-project-schedule";
+import CareerStageSchedule from "@/components/_core/dashboard/internship-program/internship-details/career-stage/career-stage-schedule";
+import { InternProjectCareerStage } from "@/features/interns-project/internship-project.types";
 
 const FORMATIVE_DESCRIPTION =
   "Builds applied competence through structured project execution, guided practice, and progressive skill development.";
 
-const PROJECT_TITLE =
-  "Building a Sales Funnel Analytics Dashboard for a Retail Brand";
-
-const WEEK_SCHEDULES: WeekSchedule[] = [
-  {
-    id: "week-3",
-    label: "Week 3",
-    days: [
-      {
-        id: "monday",
-        label: "Monday",
-        status: "not-started",
-        tasks: [
-          {
-            id: "brief-review",
-            label: "Review project brief & success metrics",
-            status: "todo",
-          },
-        ],
-      },
-      {
-        id: "tuesday",
-        label: "Tuesday",
-        status: "not-started",
-        tasks: [
-          {
-            id: "data-prep",
-            label: "Prepare and clean sales data set",
-            status: "todo",
-          },
-          {
-            id: "kpi-map",
-            label: "Map funnel KPIs to dashboard views",
-            status: "todo",
-          },
-        ],
-      },
-      {
-        id: "wednesday",
-        label: "Wednesday",
-        status: "not-started",
-        tasks: [
-          {
-            id: "prototype",
-            label: "Create first dashboard prototype",
-            status: "todo",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "week-4",
-    label: "Week 4",
-    days: [
-      {
-        id: "monday",
-        label: "Monday",
-        status: "not-started",
-        tasks: [
-          {
-            id: "iterate-visuals",
-            label: "Iterate chart visuals & filters",
-            status: "todo",
-          },
-        ],
-      },
-      {
-        id: "tuesday",
-        label: "Tuesday",
-        status: "not-started",
-        tasks: [
-          {
-            id: "mentor-feedback",
-            label: "Incorporate mentor feedback",
-            status: "todo",
-          },
-          {
-            id: "storytelling",
-            label: "Draft insight storytelling notes",
-            status: "todo",
-          },
-        ],
-      },
-      {
-        id: "wednesday",
-        label: "Wednesday",
-        status: "not-started",
-        tasks: [
-          {
-            id: "checkpoint",
-            label: "Submit mid-stage checkpoint",
-            status: "todo",
-          },
-        ],
-      },
-    ],
-  },
-];
-
 const FormativeStage = () => {
   return (
-    <StageProjectSchedule
+    <CareerStageSchedule
+      careerStage={InternProjectCareerStage.Formative}
       description={FORMATIVE_DESCRIPTION}
-      projectTitle={PROJECT_TITLE}
-      weekRange="Week 3-6"
-      weeks={WEEK_SCHEDULES}
       tone="upcoming"
     />
   );

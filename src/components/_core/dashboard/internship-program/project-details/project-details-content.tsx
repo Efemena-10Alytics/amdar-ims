@@ -1,19 +1,105 @@
+"use client";
+
 import Link from "next/link";
-import { ArrowLeft, } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { useParams } from "next/navigation";
+import { useState } from "react";
 import type { ReactNode } from "react";
+import {
+  InternProjectStatus,
+  type InternProject,
+} from "@/features/interns-project/internship-project.types";
+import { useGetProjectBySlug } from "@/features/interns-project/use-get-project-by-slug";
+import { formatCareerStageLabel } from "./project-content";
 import ProjectViews from "./project-view";
+import Assessment from "./assessment";
+import LeaderBoard from "./leader-board";
+import ResourcesDetails from "./resources";
+import Todo from "./todo";
 
 const PROJECT_TABS = [
-  "Project details",
-  "Performance",
-  "Todo",
-  "Resources",
-  "Leader board",
-];
+  { id: "project-details", label: "Project details" },
+  { id: "assessment", label: "Assessment" },
+  { id: "todo", label: "Todo" },
+  { id: "resources", label: "Resources" },
+  { id: "leader-board", label: "Leader board" },
+] as const;
 
+type ProjectTabId = (typeof PROJECT_TABS)[number]["id"];
 
+function ProjectDetailsState({
+  message,
+  onRetry,
+}: {
+  message: string;
+  onRetry?: () => void;
+}) {
+  return (
+    <div className="flex min-h-[40vh] flex-col items-center justify-center px-4 text-center">
+      <p className="text-sm text-[#64748B]">{message}</p>
+      {onRetry ? (
+        <button
+          type="button"
+          onClick={onRetry}
+          className="mt-4 inline-flex h-10 cursor-pointer items-center rounded-full bg-[#156374] px-5 text-sm font-medium text-white hover:bg-[#124F5D]"
+        >
+          Retry
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
+function getStatusLabel(project: InternProject) {
+  if (project.status === InternProjectStatus.Active || project.status == null) {
+    return "Active";
+  }
+  return project.status.charAt(0).toUpperCase() + project.status.slice(1);
+}
 
 export default function ProjectDetailsContent() {
+  const params = useParams<{ slug?: string | string[] }>();
+  const slugParam = params?.slug;
+  const slug = Array.isArray(slugParam) ? slugParam[0] : slugParam;
+
+  const { data: project, isLoading, isError, refetch } = useGetProjectBySlug(slug);
+  const [activeTab, setActiveTab] =
+    useState<ProjectTabId>("project-details");
+
+  if (isLoading) {
+    return (
+      <div className="px-4 py-6 lg:px-6">
+        <ProjectDetailsState message="Loading project details..." />
+      </div>
+    );
+  }
+
+  if (isError || !project) {
+    return (
+      <div className="px-4 py-6 lg:px-6">
+        <ProjectDetailsState
+          message="Something went wrong while loading this project."
+          onRetry={() => {
+            void refetch();
+          }}
+        />
+      </div>
+    );
+  }
+
+  const activeTabContent =
+    activeTab === "project-details" ? (
+      <ProjectViews project={project} />
+    ) : activeTab === "assessment" ? (
+      <Assessment />
+    ) : activeTab === "todo" ? (
+      <Todo project={project} />
+    ) : activeTab === "resources" ? (
+      <ResourcesDetails />
+    ) : activeTab === "leader-board" ? (
+      <LeaderBoard />
+    ) : null;
+
   return (
     <div className="space-y-6 px-4 py-6 lg:px-6">
       <div className="space-y-4">
@@ -31,31 +117,35 @@ export default function ProjectDetailsContent() {
               <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[#238A50] text-white">
                 <FlagSvg />
               </span>
-              Formative stage
+              {formatCareerStageLabel(project.careerStage)}
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#CFF6DA] px-3 py-2 text-sm font-semibold text-[#1F7A4A]">
-              <span className="size-1.5 rounded-full bg-[#238A50]" aria-hidden />
-              Week 5 of 16
-            </span>
+            {project.duration ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#CFF6DA] px-3 py-2 text-sm font-semibold text-[#1F7A4A]">
+                <span className="size-1.5 rounded-full bg-[#238A50]" aria-hidden />
+                {project.duration} weeks
+              </span>
+            ) : null}
           </div>
         </div>
 
-        <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-2">
           <h1 className="text-2xl font-semibold text-[#092A31]">Project view</h1>
           <span className="mt-1 inline-flex items-center rounded-full bg-[#E4F8E8] px-2.5 py-1 text-xs font-semibold text-[#1F7A4A]">
-            Active
+            {getStatusLabel(project)}
           </span>
         </div>
       </div>
 
       <section className="space-y-5">
         <div className="inline-flex w-fit flex-wrap items-center gap-2 rounded-full bg-[#E4EBEF] px-1 py-2">
-          {PROJECT_TABS.map((tab, index) => {
-            const active = index === 0;
+          {PROJECT_TABS.map((tab) => {
+            const active = activeTab === tab.id;
             return (
               <button
-                key={tab}
+                key={tab.id}
                 type="button"
+                onClick={() => setActiveTab(tab.id)}
+                aria-selected={active}
                 className={[
                   "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
                   active
@@ -63,13 +153,13 @@ export default function ProjectDetailsContent() {
                     : "text-[#64748B] hover:bg-white/70 hover:text-[#156374]",
                 ].join(" ")}
               >
-                {tab}
+                {tab.label}
               </button>
             );
           })}
         </div>
 
-        <ProjectViews />
+        {activeTabContent}
       </section>
     </div>
   );
