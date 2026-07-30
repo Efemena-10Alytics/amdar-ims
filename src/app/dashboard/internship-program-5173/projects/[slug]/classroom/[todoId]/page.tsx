@@ -18,6 +18,7 @@ import {
 import { formatCareerStageLabel, RichTextContent } from "@/components/_core/dashboard/internship-program/project-details/project-content";
 import SubmitTodoDrawer from "@/components/_core/dashboard/internship-program/project-details/classroom/submit-todo-drawer";
 import type { InternProjectTodo } from "@/features/interns-project/internship-project.types";
+import { useGetMyTodoSubmission } from "@/features/interns-project/use-get-my-todo-submission";
 import { useGetProjectBySlug } from "@/features/interns-project/use-get-project-by-slug";
 import { useGetTodoById } from "@/features/interns-project/use-get-todo-by-id";
 import { useGetTodosByProjectId } from "@/features/interns-project/use-get-todos-by-project-id";
@@ -81,15 +82,34 @@ function ClassroomHeader({
   );
 }
 
+function resolveTodoSubmissionId(todo: InternProjectTodo): number | null {
+  if (typeof todo.submissionId === "number") return todo.submissionId;
+  if (typeof todo.latestSubmission?.id === "number") {
+    return todo.latestSubmission.id;
+  }
+  if (typeof todo.submission?.id === "number") return todo.submission.id;
+  if (Array.isArray(todo.submissions) && typeof todo.submissions[0]?.id === "number") {
+    return todo.submissions[0].id;
+  }
+  return null;
+}
+
 function LessonPanel({
   todo,
   careerStage,
+  projectId,
 }: {
   todo: InternProjectTodo;
   careerStage?: string | null;
+  projectId: number;
 }) {
   const [isOverviewOpen, setIsOverviewOpen] = useState(true);
   const [isSubmitOpen, setIsSubmitOpen] = useState(false);
+  const { data: mySubmission = null } = useGetMyTodoSubmission(
+    projectId,
+    todo.id,
+  );
+  const hasSubmittedSolution = Boolean(mySubmission?.id);
   const sortedTypes = [...(todo.types ?? [])].sort(
     (a, b) => a.sortOrder - b.sortOrder,
   );
@@ -98,7 +118,8 @@ function LessonPanel({
   );
   const submissionType =
     sortedTypes.find((type) => type.submissionRequired) ?? sortedTypes[0];
-  const solutionFormat = submissionType?.solutionFormat ?? null;
+  const solutionFormats = submissionType?.solutionFormat ?? null;
+  const submissionId = resolveTodoSubmissionId(todo);
 
   return (
     <div className="space-y-2">
@@ -142,7 +163,9 @@ function LessonPanel({
                 className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-lg bg-[#FFE49A] px-4 text-sm font-medium text-[#7C5A16] hover:bg-[#FFDC7A]"
               >
                 <Lightbulb className="size-4 fill-current" />
-                Submit your solution
+                {hasSubmittedSolution
+                  ? "View Solution"
+                  : "Submit your solution"}
               </button>
             </div>
           </div>
@@ -190,7 +213,10 @@ function LessonPanel({
         open={isSubmitOpen}
         onOpenChange={setIsSubmitOpen}
         careerStage={careerStage}
-        solutionFormat={solutionFormat}
+        solutionFormats={solutionFormats}
+        projectId={projectId}
+        todoId={todo.id}
+        submissionId={submissionId}
       />
     </div>
   );
@@ -423,6 +449,7 @@ export default function ClassroomPage() {
         <LessonPanel
           todo={todoQuery.data}
           careerStage={project.careerStage}
+          projectId={project.id}
         />
         <ProjectTodoPanel
           slug={slug}
