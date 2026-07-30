@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CloudUpload, Link2, Type, X } from "lucide-react";
 import {
   Sheet,
@@ -10,7 +10,14 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { formatCareerStageLabel } from "@/components/_core/dashboard/internship-program/project-details/project-content";
-import type { InternProjectTodoSolutionFormat } from "@/features/interns-project/internship-project.types";
+import type {
+  InternProjectTodoSolutionFormat,
+  InternProjectTodoSubmissionItem,
+} from "@/features/interns-project/internship-project.types";
+import { useEditMyTodoSubmission } from "@/features/interns-project/use-edit-my-todo-submission";
+import { useGetMyTodoSubmission } from "@/features/interns-project/use-get-my-todo-submission";
+import { useGetTodoSubmissionComments } from "@/features/interns-project/use-get-todo-submission-comment";
+import { useSubmitTodo } from "@/features/interns-project/use-submit-todo";
 import { useAuthStore } from "@/store/auth-store";
 import { cn } from "@/lib/utils";
 
@@ -23,12 +30,24 @@ const SOLUTION_OPTIONS = [
   { id: "url" as const, label: "URL", icon: Link2 },
 ];
 
+const DEFAULT_SOLUTION_FORMATS: InternProjectTodoSolutionFormat[] = [
+  "file",
+  "text",
+  "url",
+];
+
 type SubmitTodoDrawerProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   careerStage?: string | null;
   userName?: string | null;
-  solutionFormat?: InternProjectTodoSolutionFormat | null;
+  projectId?: number | string | null;
+  todoId?: number | string | null;
+  submissionId?: number | string | null;
+  solutionFormats?:
+    | InternProjectTodoSolutionFormat[]
+    | InternProjectTodoSolutionFormat
+    | null;
 };
 
 function getDisplayName(user: Record<string, unknown> | null): string {
@@ -65,32 +84,201 @@ function isValidHttpUrl(value: string) {
   }
 }
 
+function normalizeSolutionFormats(
+  formats?: InternProjectTodoSolutionFormat[] | InternProjectTodoSolutionFormat | null,
+): InternProjectTodoSolutionFormat[] {
+  const values = Array.isArray(formats)
+    ? formats
+    : typeof formats === "string" && formats.trim()
+      ? [formats]
+      : [];
+
+  const unique = Array.from(
+    new Set(values.filter(Boolean)),
+  ) as InternProjectTodoSolutionFormat[];
+
+  if (!unique.length) return DEFAULT_SOLUTION_FORMATS;
+
+  return SOLUTION_OPTIONS.map((option) => option.id).filter((id) =>
+    unique.includes(id),
+  );
+}
+
+function readSolutionField(
+  item: Record<string, unknown> | null | undefined,
+  ...keys: string[]
+): string | null {
+  if (!item) return null;
+  for (const key of keys) {
+    const value = item[key];
+    if (typeof value === "string" && value.trim()) return value.trim();
+  }
+  return null;
+}
+
+function extractUrlValue(item: Record<string, unknown> | undefined) {
+  return (
+    readSolutionField(item, "contentUrl", "content_url", "url", "link") ??
+    (() => {
+      const text = readSolutionField(item, "contentText", "content_text");
+      if (text && /^https?:\/\//i.test(text)) return text;
+      return null;
+    })()
+  );
+}
+
 export default function SubmitTodoDrawer({
   open,
   onOpenChange,
   careerStage,
   userName,
-  solutionFormat = null,
+  projectId = null,
+  todoId = null,
+  submissionId = null,
+  solutionFormats = null,
 }: SubmitTodoDrawerProps) {
   const authUser = useAuthStore((state) => state.user);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const lockedFormat = solutionFormat ?? null;
+  const isDirtyRef = useRef(false);
+  const wasOpenRef = useRef(false);
+  const availableFormats = useMemo(
+    () => normalizeSolutionFormats(solutionFormats),
+    [solutionFormats],
+  );
   const [activeFormat, setActiveFormat] =
-    useState<InternProjectTodoSolutionFormat>(lockedFormat ?? "file");
+    useState<InternProjectTodoSolutionFormat>(availableFormats[0] ?? "file");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [existingFileUrl, setExistingFileUrl] = useState<string | null>(null);
+  const [existingFileName, setExistingFileName] = useState<string | null>(null);
   const [textSolution, setTextSolution] = useState("");
   const [urlSolution, setUrlSolution] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  // Keep submission warm so edit opens already prefilled.
+  const {
+    data: mySubmission = null,
+    isLoading: isMySubmissionLoading,
+  } = useGetMyTodoSubmission(projectId, todoId);
+
+  const resolvedSubmissionId = mySubmission?.id ?? submissionId;
+  const hasExistingSubmission = Boolean(mySubmission?.id);
+
+  const {
+    data: comments = [],
+    isLoading: isCommentsLoading,
+    isError: isCommentsError,
+    refetch: refetchComments,
+  } = useGetTodoSubmissionComments(projectId, todoId, resolvedSubmissionId, {
+    enabled: open && !mySubmission?.feedback?.length,
+  });
+
+  const {
+    submitTodo,
+    isSubmitting,
+    errorMessage: submitErrorMessage,
+  } = useSubmitTodo();
+  const {
+    editTodoSubmission,
+    isSubmitting: isEditing,
+    errorMessage: editErrorMessage,
+  } = useEditMyTodoSubmission();
+
   const displayName = userName?.trim() || getDisplayName(authUser);
-  const canSwitchFormat = lockedFormat == null;
+  const visibleOptions = SOLUTION_OPTIONS.filter((option) =>
+    availableFormats.includes(option.id),
+  );
+  const showFormatTabs = visibleOptions.length > 1;
+  const isSaving = isSubmitting || isEditing;
+  const canSubmit = Boolean(projectId && todoId) && !isSaving;
+  const feedbackItems = mySubmission?.feedback?.length
+    ? mySubmission.feedback
+    : comments;
 
   useEffect(() => {
+    const justOpened = open && !wasOpenRef.current;
+    wasOpenRef.current = open;
+
+    if (justOpened) {
+      isDirtyRef.current = false;
+      setErrorMessage("");
+    }
+
     if (!open) return;
-    setActiveFormat(lockedFormat ?? "file");
-    setErrorMessage("");
-  }, [lockedFormat, open]);
+
+    setActiveFormat((current) =>
+      availableFormats.includes(current)
+        ? current
+        : (availableFormats[0] ?? "file"),
+    );
+  }, [availableFormats, open]);
+
+  useEffect(() => {
+    if (!open || isMySubmissionLoading || isDirtyRef.current) return;
+
+    setSelectedFile(null);
+    setPreviewUrl((current) => {
+      if (current) URL.revokeObjectURL(current);
+      return null;
+    });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+
+    if (!mySubmission?.solution?.length) {
+      setTextSolution("");
+      setUrlSolution("");
+      setExistingFileUrl(null);
+      setExistingFileName(null);
+      return;
+    }
+
+    const urlItem =
+      mySubmission.solution.find((item) => item.type === "url") ??
+      mySubmission.solution.find((item) =>
+        Boolean(extractUrlValue(item as unknown as Record<string, unknown>)),
+      );
+    const textItem = mySubmission.solution.find(
+      (item) => item.type === "text" && item !== urlItem,
+    );
+    const fileItem = mySubmission.solution.find((item) => item.type === "file");
+
+    setTextSolution(
+      readSolutionField(
+        textItem as Record<string, unknown> | undefined,
+        "contentText",
+        "content_text",
+      ) ?? "",
+    );
+    setUrlSolution(
+      extractUrlValue(urlItem as Record<string, unknown> | undefined) ?? "",
+    );
+    setExistingFileUrl(
+      readSolutionField(
+        fileItem as Record<string, unknown> | undefined,
+        "fileUrl",
+        "file_url",
+      ),
+    );
+    setExistingFileName(
+      readSolutionField(
+        fileItem as Record<string, unknown> | undefined,
+        "fileName",
+        "file_name",
+      ),
+    );
+
+    const preferredFormat = mySubmission.solution.find((item) =>
+      availableFormats.includes(item.type),
+    )?.type;
+    if (preferredFormat) {
+      setActiveFormat(preferredFormat);
+    }
+  }, [availableFormats, isMySubmissionLoading, mySubmission, open]);
+
+  const markDirty = () => {
+    isDirtyRef.current = true;
+  };
 
   const resetSolution = () => {
     setSelectedFile(null);
@@ -98,6 +286,8 @@ export default function SubmitTodoDrawer({
       if (current) URL.revokeObjectURL(current);
       return null;
     });
+    setExistingFileUrl(null);
+    setExistingFileName(null);
     setTextSolution("");
     setUrlSolution("");
     if (fileInputRef.current) {
@@ -107,14 +297,14 @@ export default function SubmitTodoDrawer({
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
-      resetSolution();
       setErrorMessage("");
+      isDirtyRef.current = false;
     }
     onOpenChange(nextOpen);
   };
 
   const handleFormatChange = (format: InternProjectTodoSolutionFormat) => {
-    if (!canSwitchFormat) return;
+    if (!availableFormats.includes(format)) return;
     setActiveFormat(format);
     setErrorMessage("");
   };
@@ -132,20 +322,108 @@ export default function SubmitTodoDrawer({
       return;
     }
 
+    markDirty();
     setErrorMessage("");
     setSelectedFile(file);
+    setExistingFileUrl(null);
+    setExistingFileName(null);
     setPreviewUrl((current) => {
       if (current) URL.revokeObjectURL(current);
       return URL.createObjectURL(file);
     });
   };
 
+  const buildSubmissionItems = (): InternProjectTodoSubmissionItem[] | null => {
+    const items: InternProjectTodoSubmissionItem[] = [];
+    let sortOrder = 0;
+
+    if (availableFormats.includes("text") && textSolution.trim()) {
+      items.push({
+        type: "text",
+        contentText: textSolution.trim(),
+        sortOrder: sortOrder++,
+      });
+    }
+
+    if (availableFormats.includes("url") && urlSolution.trim()) {
+      const contentUrl = urlSolution.trim();
+      if (!isValidHttpUrl(contentUrl)) {
+        setErrorMessage("Enter a valid http or https URL.");
+        return null;
+      }
+      items.push({
+        type: "url",
+        contentUrl,
+        sortOrder: sortOrder++,
+      });
+    }
+
+    if (availableFormats.includes("file") && selectedFile) {
+      setErrorMessage(
+        "File upload submission is not supported yet. Please use text or URL.",
+      );
+      return null;
+    }
+
+    if (!items.length) {
+      if (activeFormat === "file" && (existingFileUrl || selectedFile)) {
+        setErrorMessage(
+          "File upload submission is not supported yet. Please use text or URL.",
+        );
+      } else if (activeFormat === "text") {
+        setErrorMessage("Please enter your solution text.");
+      } else if (activeFormat === "url") {
+        setErrorMessage("Please paste your solution link.");
+      } else {
+        setErrorMessage("Please provide a solution.");
+      }
+      return null;
+    }
+
+    return items;
+  };
+
+  const handleSubmit = async () => {
+    if (!projectId || !todoId) {
+      setErrorMessage("Missing project or todo details.");
+      return;
+    }
+
+    const items = buildSubmissionItems();
+    if (!items) return;
+
+    try {
+      if (hasExistingSubmission) {
+        await editTodoSubmission({
+          projectId,
+          todoId,
+          payload: { items },
+        });
+      } else {
+        await submitTodo({
+          projectId,
+          todoId,
+          payload: { items },
+        });
+      }
+      resetSolution();
+      onOpenChange(false);
+    } catch {
+      // errorMessage is already set by the hook
+    }
+  };
+
+  const filePreviewSrc = previewUrl || existingFileUrl;
+  const fileLabel =
+    selectedFile?.name || existingFileName || "Click to upload file";
+  const mutationErrorMessage = submitErrorMessage || editErrorMessage;
+
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent
         side="right"
         showCloseButton={false}
-        className="w-full border-l-0 bg-[#F7F9FA] p-0 sm:max-w-md"
+        className="w-full border-l-0 bg-[#F7F9FA] p-0 sm:max-w-xl"
       >
         <div className="flex h-full flex-col">
           <div className="px-5 pt-5 pb-4">
@@ -158,7 +436,7 @@ export default function SubmitTodoDrawer({
             </SheetTitle>
           </div>
 
-          <div className="flex-1 space-y-6 overflow-y-auto px-5 pb-8">
+          <div className="flex-1 space-y-6 overflow-y-auto px-5 pb-6">
             <div className="flex items-center gap-3 rounded-2xl bg-[#0F4652] px-4 py-3 text-white">
               <Image
                 src="/images/svgs/illustration/Smug 2.svg"
@@ -179,16 +457,20 @@ export default function SubmitTodoDrawer({
             <div className="space-y-3">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-sm font-medium text-[#173740]">Solution</p>
-                {!canSwitchFormat ? (
+                {!showFormatTabs ? (
                   <span className="rounded-full bg-[#E8F0F3] px-2.5 py-1 text-xs font-medium capitalize text-[#156374]">
                     {activeFormat}
                   </span>
                 ) : null}
               </div>
 
-              {canSwitchFormat ? (
+              {isMySubmissionLoading ? (
+                <p className="text-sm text-[#94A3B8]">Loading your submission...</p>
+              ) : null}
+
+              {showFormatTabs ? (
                 <div className="inline-flex w-full rounded-full bg-[#E4EBEF] p-1">
-                  {SOLUTION_OPTIONS.map((option) => {
+                  {visibleOptions.map((option) => {
                     const isActive = option.id === activeFormat;
                     const Icon = option.icon;
                     return (
@@ -228,14 +510,15 @@ export default function SubmitTodoDrawer({
                     onClick={() => fileInputRef.current?.click()}
                     className={cn(
                       "flex min-h-44 w-full cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-[#D5E0E4] bg-[#EEF3F5] px-4 py-8 text-center transition hover:border-[#9DB8C0]",
-                      selectedFile && "border-solid border-[#156374] bg-[#E8F0F3]",
+                      (selectedFile || existingFileUrl) &&
+                        "border-solid border-[#156374] bg-[#E8F0F3]",
                     )}
                   >
-                    {previewUrl ? (
+                    {filePreviewSrc ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src={previewUrl}
-                        alt={selectedFile?.name || "Uploaded solution"}
+                        src={filePreviewSrc}
+                        alt={fileLabel}
                         className="mb-3 max-h-28 rounded-lg object-contain"
                       />
                     ) : (
@@ -244,17 +527,28 @@ export default function SubmitTodoDrawer({
                       </span>
                     )}
                     <p className="text-sm font-semibold text-[#173740]">
-                      {selectedFile ? selectedFile.name : "Click to upload file"}
+                      {fileLabel}
                     </p>
                     <p className="mt-1 text-xs text-[#94A3B8]">
                       Jpeg, png (max 5mb)
                     </p>
                   </button>
 
-                  {selectedFile ? (
+                  {selectedFile || existingFileUrl ? (
                     <button
                       type="button"
-                      onClick={resetSolution}
+                      onClick={() => {
+                        setSelectedFile(null);
+                        setExistingFileUrl(null);
+                        setExistingFileName(null);
+                        setPreviewUrl((current) => {
+                          if (current) URL.revokeObjectURL(current);
+                          return null;
+                        });
+                        if (fileInputRef.current) {
+                          fileInputRef.current.value = "";
+                        }
+                      }}
                       className="text-xs font-medium text-[#156374] underline underline-offset-2"
                     >
                       Remove file
@@ -267,6 +561,7 @@ export default function SubmitTodoDrawer({
                 <textarea
                   value={textSolution}
                   onChange={(event) => {
+                    markDirty();
                     setTextSolution(event.target.value);
                     setErrorMessage("");
                   }}
@@ -277,39 +572,106 @@ export default function SubmitTodoDrawer({
               ) : null}
 
               {activeFormat === "url" ? (
-                <div className="space-y-2">
+                <div className="relative">
                   <input
                     type="url"
                     value={urlSolution}
                     onChange={(event) => {
+                      markDirty();
                       setUrlSolution(event.target.value);
                       setErrorMessage("");
                     }}
                     onBlur={() => {
-                      if (urlSolution.trim() && !isValidHttpUrl(urlSolution.trim())) {
+                      if (
+                        urlSolution.trim() &&
+                        !isValidHttpUrl(urlSolution.trim())
+                      ) {
                         setErrorMessage("Enter a valid http or https URL.");
                       }
                     }}
-                    placeholder="https://example.com/your-solution"
-                    className="h-12 w-full rounded-xl border border-[#D5E0E4] bg-[#EEF3F5] px-4 text-sm text-[#173740] outline-none placeholder:text-[#94A3B8] focus:border-[#156374]"
+                    placeholder="Paste your solution Link"
+                    className="h-12 w-full rounded-xl border border-[#D5E0E4] bg-[#EEF3F5] py-3 pr-11 pl-4 text-sm text-[#173740] outline-none placeholder:text-[#94A3B8] focus:border-[#156374]"
                   />
-                  <p className="text-xs text-[#94A3B8]">
-                    Paste a public link to your solution
-                  </p>
+                  <Link2
+                    className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-[#94A3B8]"
+                    aria-hidden
+                  />
                 </div>
               ) : null}
 
-              {errorMessage ? (
-                <p className="text-xs font-medium text-[#C0392B]">{errorMessage}</p>
+              {errorMessage || mutationErrorMessage ? (
+                <p className="text-xs font-medium text-[#C0392B]">
+                  {errorMessage || mutationErrorMessage}
+                </p>
               ) : null}
             </div>
 
             <div className="space-y-2">
               <p className="text-sm font-medium text-[#173740]">Comment</p>
-              <div className="min-h-28 rounded-xl border border-[#E2E8F0] bg-white px-4 py-3 text-sm text-[#94A3B8]">
-                Comments from your specialist will show here
-              </div>
+              {!resolvedSubmissionId ? (
+                <p className="text-sm text-[#94A3B8]">
+                  Comments from your specialist will show here
+                </p>
+              ) : isCommentsLoading && !mySubmission?.feedback?.length ? (
+                <p className="text-sm text-[#94A3B8]">Loading comments...</p>
+              ) : isCommentsError && !mySubmission?.feedback?.length ? (
+                <div className="space-y-2">
+                  <p className="text-sm text-[#C0392B]">
+                    Failed to load comments.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void refetchComments();
+                    }}
+                    className="text-xs font-medium text-[#156374] underline underline-offset-2"
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : feedbackItems.length ? (
+                <div className="space-y-3">
+                  {feedbackItems.map((item) => (
+                    <article key={item.id} className="space-y-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-sm font-semibold text-[#173740]">
+                          {item.name}
+                        </p>
+                        <time className="text-[11px] text-[#94A3B8]">
+                          {new Date(item.created_at).toLocaleString()}
+                        </time>
+                      </div>
+                      <p className="text-sm leading-relaxed text-[#64748B]">
+                        {item.comment}
+                      </p>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-[#94A3B8]">
+                  Comments from your specialist will show here
+                </p>
+              )}
             </div>
+          </div>
+
+          <div className="border-t border-[#E2E8F0] bg-[#F7F9FA] px-5 py-4">
+            <button
+              type="button"
+              onClick={() => {
+                void handleSubmit();
+              }}
+              disabled={!canSubmit}
+              className="inline-flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-[#0F4652] text-sm font-semibold text-white transition hover:bg-[#0C3B45] disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {isSaving
+                ? hasExistingSubmission
+                  ? "Updating..."
+                  : "Submitting..."
+                : hasExistingSubmission
+                  ? "Update solution"
+                  : "Submit solution"}
+            </button>
           </div>
         </div>
       </SheetContent>
