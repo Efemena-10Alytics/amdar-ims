@@ -15,23 +15,24 @@ const ZOHO_FORM_URL =
 // leaves the iframe on Zoho's own cross-origin error page instead.
 const ZOHO_RETURN_PATH = '/zoho-thanks.html'
 
+const OTHER = 'Others'
+
 const HEARD_ABOUT_US_OPTIONS = [
     'Facebook/Instagram Ads',
     'Faloh',
     'Tiktok Ads',
     'Youtube',
     'Google',
-    'Family and friends'
+    'Family and friends',
+    OTHER,
 ]
-
-const VISA_OTHER = 'Others'
 
 const VISA_STATUS_OPTIONS = [
     'Short-Term Study Visa',
     'Student visa',
     'Dependent visa',
     'Skilled worker visa',
-    VISA_OTHER,
+    OTHER,
 ]
 
 const TIMELINE_OPTIONS = ['1 month', '1-3 month', 'Just exploring for now']
@@ -42,7 +43,8 @@ const CAREER_PATH_OPTIONS = [
     'Business Analysis',
     'Data Science',
     'Cybersecurity',
-    'GRC'
+    'GRC',
+    OTHER,
 ]
 
 /**
@@ -165,6 +167,7 @@ const JobAccessPage = () => {
     const { data: countries = [], isLoading: countriesLoading } = useCountries()
     const [selectedPhoneCountryCode, setSelectedPhoneCountryCode] = React.useState('')
     const [selectedField, setSelectedField] = React.useState('')
+    const [selectedFieldOther, setSelectedFieldOther] = React.useState('')
     const [isSuccessOpen, setIsSuccessOpen] = React.useState(false)
     const [firstName, setFirstName] = React.useState('')
     const [lastName, setLastName] = React.useState('')
@@ -175,6 +178,7 @@ const JobAccessPage = () => {
     const [visaStatusOther, setVisaStatusOther] = React.useState('')
     const [timeline, setTimeline] = React.useState('')
     const [careerPath, setCareerPath] = React.useState('')
+    const [careerPathOther, setCareerPathOther] = React.useState('')
     const [formError, setFormError] = React.useState('')
     const [isSubmitting, setIsSubmitting] = React.useState(false)
 
@@ -220,11 +224,23 @@ const JobAccessPage = () => {
 
         // "Others" reveals a free-text box; send what the user typed, not the
         // literal "Others" placeholder.
-        if (visaStatus === VISA_OTHER && !trimmedVisaOther) {
+        const trimmedCareerOther = careerPathOther.trim()
+        const trimmedFieldOther = selectedFieldOther.trim()
+        if (visaStatus === OTHER && !trimmedVisaOther) {
             setFormError('Please enter your visa type.')
             return
         }
-        const visaValue = visaStatus === VISA_OTHER ? trimmedVisaOther : visaStatus
+        if (careerPath === OTHER && !trimmedCareerOther) {
+            setFormError('Please enter your career path.')
+            return
+        }
+        if (selectedField === OTHER && !trimmedFieldOther) {
+            setFormError('Please tell us where you heard about us.')
+            return
+        }
+        const visaValue = visaStatus === OTHER ? trimmedVisaOther : visaStatus
+        const careerValue = careerPath === OTHER ? trimmedCareerOther : careerPath
+        const fieldValue = selectedField === OTHER ? trimmedFieldOther : selectedField
 
         // Zoho rejects the record (409) when the calling code is missing, so
         // don't let a blank selection through.
@@ -257,8 +273,8 @@ const JobAccessPage = () => {
                 SingleLine2: trimmedCountry,
                 Dropdown1: visaValue,
                 Dropdown: timeline,
-                Dropdown3: careerPath,
-                Dropdown2: selectedField,
+                Dropdown3: careerValue,
+                Dropdown2: fieldValue,
             })
         } catch {
             setFormError("We couldn't complete your registration. Please check your details and try again.")
@@ -277,16 +293,20 @@ const JobAccessPage = () => {
         setVisaStatusOther('')
         setTimeline('')
         setCareerPath('')
+        setCareerPathOther('')
         setSelectedField('')
+        setSelectedFieldOther('')
         setFormError('')
     }, [
         careerPath,
+        careerPathOther,
         country,
         email,
         firstName,
         lastName,
         phone,
         selectedField,
+        selectedFieldOther,
         timeline,
         visaStatus,
         visaStatusOther,
@@ -462,7 +482,7 @@ const JobAccessPage = () => {
                                     </select>
                                     <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white" />
                                 </div>
-                                {visaStatus === VISA_OTHER ? (
+                                {visaStatus === OTHER ? (
                                     <input
                                         value={visaStatusOther}
                                         onChange={(e) => setVisaStatusOther(e.target.value)}
@@ -512,6 +532,14 @@ const JobAccessPage = () => {
                                     </select>
                                     <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white" />
                                 </div>
+                                {careerPath === OTHER ? (
+                                    <input
+                                        value={careerPathOther}
+                                        onChange={(e) => setCareerPathOther(e.target.value)}
+                                        className="mt-2 h-11 w-full rounded-lg border border-[#1E4A5A] bg-[#0F4652] px-4 text-sm text-[#EAF1F7] placeholder:text-[#4A6A7A] outline-none focus:border-[#2C9AB3]"
+                                        placeholder="Please specify your career path"
+                                    />
+                                ) : null}
                             </div>
 
                             <div className="space-y-1.5">
@@ -531,6 +559,14 @@ const JobAccessPage = () => {
                                     </select>
                                     <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white" />
                                 </div>
+                                {selectedField === OTHER ? (
+                                    <input
+                                        value={selectedFieldOther}
+                                        onChange={(e) => setSelectedFieldOther(e.target.value)}
+                                        className="mt-2 h-11 w-full rounded-lg border border-[#1E4A5A] bg-[#0F4652] px-4 text-sm text-[#EAF1F7] placeholder:text-[#4A6A7A] outline-none focus:border-[#2C9AB3]"
+                                        placeholder="Please specify where you heard about us"
+                                    />
+                                ) : null}
                             </div>
                             {formError ? (
                                 <p className="text-sm text-[#FCA5A5]">{formError}</p>
