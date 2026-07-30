@@ -1,30 +1,32 @@
-const PHASES = [
-  {
-    title: "Phase 1",
-    description:
-      "HomeVibe Properties, a distinguished presence in the residential real estate sector, boasts an extensive portfolio of apartment complexes and single-family rental properties across multiple cities. Renowned for their commitment to providing exceptional housing solutions, HomeVibe Properties has consistently delivered quality living experiences, fostering vibrant communities. In a rapidly evolving real estate landscape, the company's adaptability, meticulous attention to detail, and unwavering pursuit of excellence have established it as a leader in the industry.",
-  },
-  {
-    title: "Phase 2",
-    description:
-      "HomeVibe Properties, a distinguished presence in the residential real estate sector, boasts an extensive portfolio of apartment complexes and single-family rental properties across multiple cities. Renowned for their commitment to providing exceptional housing solutions, HomeVibe Properties has consistently delivered quality living experiences, fostering vibrant communities. In a rapidly evolving real estate landscape, the company's adaptability, meticulous attention to detail, and unwavering pursuit of excellence have established it as a leader in the industry.",
-  },
-  {
-    title: "Phase 3",
-    description:
-      "HomeVibe Properties, a distinguished presence in the residential real estate sector, boasts an extensive portfolio of apartment complexes and single-family rental properties across multiple cities. Renowned for their commitment to providing exceptional housing solutions, HomeVibe Properties has consistently delivered quality living experiences, fostering vibrant communities. In a rapidly evolving real estate landscape, the company's adaptability, meticulous attention to detail, and unwavering pursuit of excellence have established it as a leader in the industry.",
-  },
-];
+import type { InternProject } from "@/features/interns-project/internship-project.types";
+import { RichTextContent } from "../project-content";
 
-export default function Workflow() {
+type WorkflowProps = {
+  project: InternProject;
+};
+
+export default function Workflow({ project }: WorkflowProps) {
   return (
     <section className="space-y-5 pt-1">
-      {PHASES.map((phase) => (
-        <article key={phase.title} className="space-y-2">
-          <h3 className="text-3xl font-semibold text-[#173740]">{phase.title}</h3>
-          <p className="text-xl leading-relaxed text-[#173740]">{phase.description}</p>
+      <article className="space-y-2">
+        <h3 className="text-3xl font-semibold text-[#173740]">Project phases</h3>
+        <RichTextContent
+          value={project.projectPhases}
+          className="text-xl [&_p]:text-xl"
+        />
+      </article>
+
+      {project.expectedDeliverables ? (
+        <article className="space-y-2">
+          <h3 className="text-3xl font-semibold text-[#173740]">
+            Expected deliverables
+          </h3>
+          <RichTextContent
+            value={project.expectedDeliverables}
+            className="text-xl [&_p]:text-xl"
+          />
         </article>
-      ))}
+      ) : null}
     </section>
   );
 }

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Check, ChevronDown, ChevronRight, Loader } from "lucide-react";
+import { Check, Loader } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LockKeyHoleIcon, TrangleIcon } from "@/components/_core/dashboard/svg";
+import { CustmDropdownIcon } from "@/components/_core/dashboard/internship-program/svg";
 import OnboardingSession from "@/components/_core/dashboard/internship-program/internship-details/career-stage/onboarding";
 import PreDiagnostic from "@/components/_core/dashboard/internship-program/internship-details/career-stage/pre-diagnostic";
 import UniformityStage from "@/components/_core/dashboard/internship-program/internship-details/career-stage/uniformitive-stage";
@@ -320,23 +321,32 @@ function CareerStageCard({
         />
 
         {isLocked ? (
-          <ChevronDown className="size-4 shrink-0 text-[#94A3B8]" aria-hidden />
+          <span
+            className="flex size-4 shrink-0 rotate-90 items-center justify-center text-[#94A3B8]"
+            aria-hidden
+          >
+            <CustmDropdownIcon />
+          </span>
         ) : isExpanded ? (
-          <ChevronDown
+          <span
             className={cn(
-              "size-4 shrink-0",
+              "flex size-4 shrink-0 rotate-90 items-center justify-center",
               isCompleted && !isExpanded ? "text-white/80" : "text-[#64748B]",
             )}
             aria-hidden
-          />
+          >
+            <CustmDropdownIcon />
+          </span>
         ) : (
-          <ChevronRight
+          <span
             className={cn(
-              "size-4 shrink-0",
+              "flex size-4 shrink-0 items-center justify-center",
               isCompleted ? "text-white/80" : "text-[#64748B]",
             )}
             aria-hidden
-          />
+          >
+            <CustmDropdownIcon />
+          </span>
         )}
       </button>
 
