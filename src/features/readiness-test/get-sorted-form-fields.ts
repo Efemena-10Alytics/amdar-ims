@@ -1,7 +1,7 @@
 import type {
   ReadinessTestFieldType,
-  ReadinessTestForm,
   ReadinessTestFormField,
+  ReadinessTestQuizForm,
 } from "@/features/readiness-test/types";
 
 /** Field types skipped in the readiness/diagnostic quiz flow. */
@@ -10,7 +10,7 @@ export const EXCLUDED_READINESS_TEST_FIELD_TYPES = new Set<ReadinessTestFieldTyp
 ]);
 
 export function getSortedReadinessTestFields(
-  form: ReadinessTestForm | null | undefined,
+  form: ReadinessTestQuizForm | null | undefined,
 ): ReadinessTestFormField[] {
   if (!form?.fields?.length) return [];
   return [...form.fields]

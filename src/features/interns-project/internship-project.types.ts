@@ -1,3 +1,9 @@
+import type {
+  ReadinessTestFieldSettings,
+  ReadinessTestFieldType,
+  ReadinessTestSubmitResultDataRaw,
+} from "@/features/readiness-test/types";
+
 export type InternProjectTool = {
   id: string;
   name: string;
@@ -319,4 +325,72 @@ export type MyInternProjectTodoSubmissionResponse = {
   success: boolean;
   message: string;
   data: MyInternProjectTodoSubmission | null;
+};
+
+/** GET /intern-projects/:id/assessments/me */
+export type ProjectAssessmentType = "pre" | "post";
+
+/** Option as served to the intern taking the test — no `is_correct`, no `points`. */
+export type ProjectAssessmentFieldOption = {
+  id: number;
+  form_field_id: number;
+  label: string;
+  order: number;
+};
+
+export type ProjectAssessmentField = {
+  id: number;
+  form_id: number;
+  form_section_id: number | null;
+  type: ReadinessTestFieldType;
+  label: string;
+  description: string | null;
+  is_required: boolean;
+  order: number;
+  settings: ReadinessTestFieldSettings;
+  options: ProjectAssessmentFieldOption[];
+};
+
+/**
+ * What the intern picked on one question. `is_correct` reports whether their
+ * answer earned the mark — the correct option is never sent.
+ */
+export type ProjectAssessmentAnswer = {
+  field_id: number;
+  option_ids: number[];
+  /** Only set for free-text questions. */
+  value: string | null;
+  is_correct: boolean | null;
+};
+
+export type ProjectAssessmentSubmission = ReadinessTestSubmitResultDataRaw & {
+  answers: ProjectAssessmentAnswer[];
+};
+
+export type ProjectAssessment = {
+  id: number;
+  title: string;
+  description: string | null;
+  /** Minutes, matching how every other form consumer reads this. */
+  duration: number | null;
+  question_count: number;
+  max_score: number;
+  max_attempts: number | null;
+  attempts_used: number;
+  can_attempt: boolean;
+  is_locked: boolean;
+  locked_reason: string | null;
+  fields: ProjectAssessmentField[];
+  my_latest_submission: ProjectAssessmentSubmission | null;
+};
+
+export type ProjectAssessments = {
+  pre: ProjectAssessment | null;
+  post: ProjectAssessment | null;
+};
+
+export type ProjectAssessmentsResponse = {
+  success: boolean;
+  message: string;
+  data: ProjectAssessments | null;
 };

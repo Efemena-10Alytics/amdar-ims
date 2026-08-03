@@ -91,7 +91,7 @@ export default function ProjectDetailsContent() {
     activeTab === "project-details" ? (
       <ProjectViews project={project} />
     ) : activeTab === "assessment" ? (
-      <Assessment />
+      <Assessment project={project} />
     ) : activeTab === "todo" ? (
       <Todo project={project} />
     ) : activeTab === "resources" ? (

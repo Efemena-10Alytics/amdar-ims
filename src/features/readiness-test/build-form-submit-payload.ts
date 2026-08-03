@@ -1,8 +1,8 @@
 import type { ReadinessTestFieldAnswer } from "@/features/readiness-test/field-answers";
 import { getSortedReadinessTestFields } from "@/features/readiness-test/get-sorted-form-fields";
 import type {
-  ReadinessTestForm,
   ReadinessTestFormField,
+  ReadinessTestQuizForm,
   ReadinessTestSubmitAnswer,
   ReadinessTestSubmitAnswerValue,
   ReadinessTestSubmitPayload,
@@ -51,7 +51,7 @@ function buildFieldSubmitValue(
 }
 
 export function buildFormSubmitPayload(
-  form: ReadinessTestForm,
+  form: ReadinessTestQuizForm,
   answers: Record<string, ReadinessTestFieldAnswer>,
   uploadAnswers: Record<number, ReadinessTestSubmitUploadFile[]> = {},
 ): ReadinessTestSubmitPayload {

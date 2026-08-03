@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import { ChevronLeft, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
@@ -14,24 +15,28 @@ import {
 import { getSortedReadinessTestFields } from "@/features/readiness-test/get-sorted-form-fields";
 import { useSubmitReadinessTestForm } from "@/features/readiness-test/use-submit-readiness-test-form";
 import type {
-  ReadinessTestForm,
+  ReadinessTestQuizForm,
   ReadinessTestSubmitResultData,
 } from "@/features/readiness-test/types";
 
 type ReadinessTestDrawerProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  form: ReadinessTestForm | null | undefined;
+  form: ReadinessTestQuizForm | null | undefined;
   durationMinutes?: number;
   title?: string;
   finishLabel?: string;
   isProceeding?: boolean;
   /** Latest submission from API — shown in the drawer when reopening after a prior attempt. */
   savedResult?: ReadinessTestSubmitResultData | null;
+  /** Off for single-sitting quizzes, where a second attempt would be rejected anyway. */
+  allowRetake?: boolean;
+  /** Replaces the readiness-tier result screen for quizzes that need their own copy. */
+  renderResult?: (result: ReadinessTestSubmitResultData) => ReactNode;
   onSubmitted?: (result: ReadinessTestSubmitResultData) => void | Promise<void>;
   onComplete?: (result: ReadinessTestSubmitResultData) => void | Promise<void>;
   submitAnswers?: (
-    form: ReadinessTestForm,
+    form: ReadinessTestQuizForm,
     answers: Record<string, ReadinessTestFieldAnswer>,
   ) => ReadinessTestSubmitResultData | Promise<ReadinessTestSubmitResultData>;
 };
@@ -45,6 +50,8 @@ const ReadinessTestDrawer = ({
   finishLabel = "Finish Quiz",
   isProceeding = false,
   savedResult = null,
+  allowRetake = true,
+  renderResult,
   onSubmitted,
   onComplete,
   submitAnswers,
@@ -209,26 +216,37 @@ const ReadinessTestDrawer = ({
                 <SheetTitle className="text-2xl font-semibold text-[#173740] sm:text-3xl">
                   {title}
                 </SheetTitle>
-                <Button
-                  type="button"
-                  onClick={handleRetake}
-                  disabled={isProceeding}
-                  className="h-10 shrink-0 rounded-lg bg-primary px-5 text-sm font-medium text-white hover:bg-primary/90"
-                >
-                  Retake
-                </Button>
+                {allowRetake ? (
+                  <Button
+                    type="button"
+                    onClick={handleRetake}
+                    disabled={isProceeding}
+                    className="h-10 shrink-0 rounded-lg bg-primary px-5 text-sm font-medium text-white hover:bg-primary/90"
+                  >
+                    Retake
+                  </Button>
+                ) : (
+                  <SheetClose className="inline-flex items-center gap-1.5 text-sm font-medium text-[#F16B6B]">
+                    <X className="size-3.5" />
+                    Close
+                  </SheetClose>
+                )}
               </div>
             </div>
 
             <div className="flex-1 overflow-y-auto px-6 py-5">
-              <ReadinessTestResult
-                embedded
-                totalScore={displayedResult.total_score}
-                percentageScore={displayedResult.percentage_score}
-                title={title}
-                onProceed={handleProceed}
-                isProceeding={isProceeding}
-              />
+              {renderResult ? (
+                renderResult(displayedResult)
+              ) : (
+                <ReadinessTestResult
+                  embedded
+                  totalScore={displayedResult.total_score}
+                  percentageScore={displayedResult.percentage_score}
+                  title={title}
+                  onProceed={handleProceed}
+                  isProceeding={isProceeding}
+                />
+              )}
             </div>
           </div>
         ) : (

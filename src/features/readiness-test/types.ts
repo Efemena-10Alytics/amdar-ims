@@ -22,11 +22,12 @@ export type ReadinessTestFieldOption = {
   id: number;
   form_field_id: number;
   label: string;
-  points: number | null;
-  is_correct: boolean;
+  /** Withheld by endpoints that must not leak the answer key to the taker. */
+  points?: number | null;
+  is_correct?: boolean;
   order: number;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
 };
 
 export type ReadinessTestChoiceFieldSettings = {
@@ -69,8 +70,8 @@ export type ReadinessTestFormField = {
   is_required: boolean;
   order: number;
   settings: ReadinessTestFieldSettings;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
   options: ReadinessTestFieldOption[];
 };
 
@@ -104,6 +105,13 @@ export type ReadinessTestForm = {
   sections: ReadinessTestFormSection[];
   fields: ReadinessTestFormField[];
 };
+
+/**
+ * All the quiz runner actually needs: an id to submit against and the
+ * questions. Lets callers with a trimmed-down payload (project assessments)
+ * drive the same drawer without inventing the rest of a form record.
+ */
+export type ReadinessTestQuizForm = Pick<ReadinessTestForm, "id" | "fields">;
 
 export type ReadinessTestFormApiResponse = {
   success: boolean;
