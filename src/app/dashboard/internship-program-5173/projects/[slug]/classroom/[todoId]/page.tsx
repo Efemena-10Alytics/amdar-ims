@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
@@ -11,13 +11,20 @@ import {
   ChevronRight,
   Circle,
   CircleDot,
+  ExternalLink,
+  FileText,
   Lightbulb,
   LoaderCircle,
   Play,
 } from "lucide-react";
+import ReactPlayer from "react-player";
 import { formatCareerStageLabel, RichTextContent } from "@/components/_core/dashboard/internship-program/project-details/project-content";
 import SubmitTodoDrawer from "@/components/_core/dashboard/internship-program/project-details/classroom/submit-todo-drawer";
-import type { InternProjectTodo } from "@/features/interns-project/internship-project.types";
+import type {
+  InternProjectTodo,
+  InternProjectTodoContentType,
+  InternProjectTodoType,
+} from "@/features/interns-project/internship-project.types";
 import { useGetMyTodoSubmission } from "@/features/interns-project/use-get-my-todo-submission";
 import { useGetProjectBySlug } from "@/features/interns-project/use-get-project-by-slug";
 import { useGetTodoById } from "@/features/interns-project/use-get-todo-by-id";
@@ -30,6 +37,108 @@ function capitalizeDay(day?: string | null) {
   const value = day?.trim();
   if (!value) return "Untitled";
   return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+}
+
+function getContentTypeLabel(contentType: InternProjectTodoContentType) {
+  if (contentType === "video") return "Video";
+  if (contentType === "document") return "Document";
+  return "Text";
+}
+
+function TodoTypeMedia({ type }: { type: InternProjectTodoType }) {
+  if (type.contentType === "video" && type.videoUrl) {
+    return (
+      <div className="relative aspect-video min-h-72 overflow-hidden rounded-xl bg-[#142A2F]">
+        <ReactPlayer
+          src={type.videoUrl}
+          controls
+          width="100%"
+          height="100%"
+          style={{ position: "absolute", inset: 0 }}
+        />
+      </div>
+    );
+  }
+
+  if (type.contentType === "document" && type.docUrl) {
+    return (
+      <a
+        href={type.docUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="flex items-center gap-3 rounded-xl border border-[#DCE6E9] bg-white px-4 py-3 transition hover:border-[#9DB8C0]"
+      >
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#E8F0F3] text-[#156374]">
+          <FileText className="size-5" aria-hidden />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-semibold text-[#173740]">
+            {type.docName?.trim() || "Open document"}
+          </p>
+          <p className="mt-0.5 text-xs text-[#64748B]">View or download</p>
+        </div>
+        <ExternalLink className="size-4 shrink-0 text-[#94A3B8]" aria-hidden />
+      </a>
+    );
+  }
+
+  if (type.contentType === "video") {
+    return (
+      <div className="group relative aspect-video min-h-72 overflow-hidden rounded-xl bg-[#142A2F]">
+        <Image
+          src="/images/pngs/about/about-img-video.png"
+          alt=""
+          fill
+          className="object-cover brightness-75"
+        />
+        <div className="absolute inset-0 bg-black/10" />
+        <span className="absolute bottom-5 left-5 inline-flex items-center gap-3 text-sm font-medium text-white/80">
+          <span className="flex size-9 items-center justify-center rounded-full bg-[#22869A]/70">
+            <Play className="ml-0.5 size-4 fill-white" />
+          </span>
+          No video available
+        </span>
+      </div>
+    );
+  }
+
+  if (type.contentType === "document") {
+    return (
+      <div className="flex items-center gap-3 rounded-xl border border-dashed border-[#DCE6E9] bg-white px-4 py-3">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#E8F0F3] text-[#94A3B8]">
+          <FileText className="size-5" aria-hidden />
+        </span>
+        <p className="text-sm text-[#94A3B8]">No document available</p>
+      </div>
+    );
+  }
+
+  return null;
+}
+
+function TodoTypeSection({ type }: { type: InternProjectTodoType }) {
+  const description = type.description?.trim();
+
+  return (
+    <section className="rounded-xl border border-[#DCE6E9] bg-[#F8FAFB] p-4 ml-2">
+      <h2 className="mb-3 text-sm font-semibold text-[#173740]">
+        {getContentTypeLabel(type.contentType)}
+      </h2>
+
+      {description ? (
+        <RichTextContent
+          value={description}
+          className="mb-4 max-w-3xl text-sm text-[#6F8196]"
+        />
+      ) : null}
+
+      <TodoTypeMedia type={type} />
+    </section>
+  );
+}
+
+function getSortedTodoTypes(todo?: InternProjectTodo | null) {
+  return [...(todo?.types ?? [])].sort((a, b) => a.sortOrder - b.sortOrder);
 }
 
 function TaskIcon({ status }: { status: TaskStatus }) {
@@ -98,10 +207,12 @@ function LessonPanel({
   todo,
   careerStage,
   projectId,
+  activeTypeId,
 }: {
   todo: InternProjectTodo;
   careerStage?: string | null;
   projectId: number;
+  activeTypeId: number | null;
 }) {
   const [isOverviewOpen, setIsOverviewOpen] = useState(true);
   const [isSubmitOpen, setIsSubmitOpen] = useState(false);
@@ -110,12 +221,11 @@ function LessonPanel({
     todo.id,
   );
   const hasSubmittedSolution = Boolean(mySubmission?.id);
-  const sortedTypes = [...(todo.types ?? [])].sort(
-    (a, b) => a.sortOrder - b.sortOrder,
-  );
-  const videoType = sortedTypes.find(
-    (type) => type.contentType === "video" && type.videoUrl,
-  );
+  const sortedTypes = getSortedTodoTypes(todo);
+  const activeType =
+    sortedTypes.find((type) => type.id === activeTypeId) ??
+    sortedTypes[0] ??
+    null;
   const submissionType =
     sortedTypes.find((type) => type.submissionRequired) ?? sortedTypes[0];
   const solutionFormats = submissionType?.solutionFormat ?? null;
@@ -172,42 +282,7 @@ function LessonPanel({
         ) : null}
       </section>
 
-      <section className="rounded-xl border border-[#DCE6E9] bg-[#F8FAFB] p-4">
-        <h2 className="mb-3 text-sm font-semibold text-[#173740]">
-          Watch video
-        </h2>
-
-        <div className="group relative aspect-video min-h-72 overflow-hidden rounded-xl bg-[#142A2F]">
-          <Image
-            src="/images/pngs/about/about-img-video.png"
-            alt={todo.title}
-            fill
-            priority
-            className="object-cover brightness-75"
-          />
-          <div className="absolute inset-0 bg-black/10" />
-          {videoType?.videoUrl ? (
-            <a
-              href={videoType.videoUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="absolute bottom-5 left-5 inline-flex cursor-pointer items-center gap-3 text-sm font-medium text-white"
-            >
-              <span className="flex size-9 items-center justify-center rounded-full bg-[#22869A] ring-4 ring-[#22869A]/35 transition-transform group-hover:scale-105">
-                <Play className="ml-0.5 size-4 fill-white" />
-              </span>
-              Play to watch
-            </a>
-          ) : (
-            <span className="absolute bottom-5 left-5 inline-flex items-center gap-3 text-sm font-medium text-white/80">
-              <span className="flex size-9 items-center justify-center rounded-full bg-[#22869A]/70">
-                <Play className="ml-0.5 size-4 fill-white" />
-              </span>
-              No video available
-            </span>
-          )}
-        </div>
-      </section>
+      {activeType ? <TodoTypeSection type={activeType} /> : null}
 
       <SubmitTodoDrawer
         open={isSubmitOpen}
@@ -226,10 +301,12 @@ function ProjectTodoPanel({
   slug,
   todos,
   activeTodoId,
+  activeTypeId,
 }: {
   slug: string;
   todos: InternProjectTodo[];
   activeTodoId: string;
+  activeTypeId: number | null;
 }) {
   const weekOptions = useMemo(() => {
     const weeks = Array.from(new Set(todos.map((todo) => todo.week))).sort(
@@ -350,25 +427,55 @@ function ProjectTodoPanel({
                   </button>
 
                   {isOpen ? (
-                    <div className="space-y-2 bg-[#F0F5F6] px-3 py-2.5">
+                    <div className="space-y-3 bg-[#F0F5F6] px-3 py-2.5">
                       {items.map((item) => {
-                        const isActive = String(item.id) === activeTodoId;
+                        const isTodoActive = String(item.id) === activeTodoId;
+                        const itemTypes = getSortedTodoTypes(item);
+                        const classroomHref = `/dashboard/internship-program-5173/projects/${encodeURIComponent(slug)}/classroom/${item.id}`;
+
                         return (
-                          <Link
-                            key={item.id}
-                            href={`/dashboard/internship-program-5173/projects/${encodeURIComponent(slug)}/classroom/${item.id}`}
-                            className="flex items-start gap-2 text-[11px] leading-4 text-[#667B8C]"
-                          >
-                            <TaskIcon status={isActive ? "active" : "todo"} />
-                            <span
-                              className={cn(
-                                isActive &&
-                                  "text-[#397886] underline underline-offset-2",
-                              )}
+                          <div key={item.id} className="space-y-1.5">
+                            <Link
+                              href={classroomHref}
+                              className="flex items-start gap-2 text-[11px] leading-4 text-[#667B8C]"
                             >
-                              {item.title}
-                            </span>
-                          </Link>
+                              <TaskIcon
+                                status={isTodoActive ? "active" : "todo"}
+                              />
+                              <span
+                                className={cn(
+                                  isTodoActive &&
+                                    "text-[#397886] underline underline-offset-2",
+                                )}
+                              >
+                                {item.title}
+                              </span>
+                            </Link>
+
+                            {itemTypes.length ? (
+                              <div className="ml-5 space-y-1">
+                                {itemTypes.map((type, index) => {
+                                  const isActionActive =
+                                    isTodoActive && type.id === activeTypeId;
+
+                                  return (
+                                    <Link
+                                      key={type.id}
+                                      href={`${classroomHref}?type=${type.id}`}
+                                      className={cn(
+                                        "block text-[11px] leading-4 transition",
+                                        isActionActive
+                                          ? "font-medium text-[#397886] underline underline-offset-2"
+                                          : "text-[#7A8B97] hover:text-[#397886]",
+                                      )}
+                                    >
+                                      Action {index + 1}
+                                    </Link>
+                                  );
+                                })}
+                              </div>
+                            ) : null}
+                          </div>
                         );
                       })}
                     </div>
@@ -392,15 +499,41 @@ export default function ClassroomPage() {
     slug?: string | string[];
     todoId?: string | string[];
   }>();
+  const searchParams = useSearchParams();
   const slugParam = params?.slug;
   const todoIdParam = params?.todoId;
   const slug = Array.isArray(slugParam) ? slugParam[0] : slugParam;
   const todoId = Array.isArray(todoIdParam) ? todoIdParam[0] : todoIdParam;
+  const typeParam = searchParams.get("type");
 
   const projectQuery = useGetProjectBySlug(slug);
   const project = projectQuery.data;
   const todosQuery = useGetTodosByProjectId(project?.id);
   const todoQuery = useGetTodoById(project?.id, todoId);
+  const [activeTypeId, setActiveTypeId] = useState<number | null>(null);
+
+  const sortedActiveTypes = useMemo(
+    () => getSortedTodoTypes(todoQuery.data),
+    [todoQuery.data],
+  );
+
+  useEffect(() => {
+    if (!sortedActiveTypes.length) {
+      setActiveTypeId(null);
+      return;
+    }
+
+    const typeFromUrl = typeParam ? Number(typeParam) : NaN;
+    if (
+      Number.isFinite(typeFromUrl) &&
+      sortedActiveTypes.some((type) => type.id === typeFromUrl)
+    ) {
+      setActiveTypeId(typeFromUrl);
+      return;
+    }
+
+    setActiveTypeId(sortedActiveTypes[0]?.id ?? null);
+  }, [sortedActiveTypes, typeParam]);
 
   const backHref = slug
     ? `/dashboard/internship-program-5173/projects/${encodeURIComponent(slug)}`
@@ -450,11 +583,17 @@ export default function ClassroomPage() {
           todo={todoQuery.data}
           careerStage={project.careerStage}
           projectId={project.id}
+          activeTypeId={activeTypeId}
         />
         <ProjectTodoPanel
           slug={slug}
-          todos={todosQuery.data ?? []}
+          todos={(todosQuery.data ?? []).map((todo) =>
+            todo.id === todoQuery.data.id
+              ? { ...todo, types: todoQuery.data.types }
+              : todo,
+          )}
           activeTodoId={todoId}
+          activeTypeId={activeTypeId}
         />
       </div>
     </main>
