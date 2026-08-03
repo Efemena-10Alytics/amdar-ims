@@ -371,7 +371,7 @@ export type ProjectAssessment = {
   id: number;
   title: string;
   description: string | null;
-  /** Minutes, matching how every other form consumer reads this. */
+  /** Seconds — the specialist form builder stores it that way. Convert before display. */
   duration: number | null;
   question_count: number;
   max_score: number;

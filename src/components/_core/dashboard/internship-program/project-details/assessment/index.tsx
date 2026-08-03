@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Building2, CalendarDays, Lock, User } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { formatDurationLabel } from "../project-content";
+import { RichTextContent, formatDurationLabel } from "../project-content";
 import ReadinessTestDrawer from "@/components/_core/readiness-test/readiness-test-drawer";
 import AssessmentResult from "./assessment-result";
 import {
@@ -22,9 +22,18 @@ import type { ReadinessTestQuizForm } from "@/features/readiness-test/types";
 const ASSESSMENT_TABS = [
   { id: "pre", label: "Pre-assessment" },
   { id: "post", label: "Post-assessment" },
-] as const satisfies ReadonlyArray<{ id: ProjectAssessmentType; label: string }>;
+] as const satisfies ReadonlyArray<{
+  id: ProjectAssessmentType;
+  label: string;
+}>;
 
 const DEFAULT_DURATION_MINUTES = 10;
+
+/** The builder stores assessment `duration` in seconds; everything here counts in minutes. */
+function toDurationMinutes(durationSeconds: number | null | undefined) {
+  if (durationSeconds == null) return DEFAULT_DURATION_MINUTES;
+  return Math.round(durationSeconds / 60);
+}
 
 function AssessmentState({ message }: { message: string }) {
   return (
@@ -61,10 +70,11 @@ const Assessment = ({ project }: { project: InternProject }) => {
     ? normalizeReadinessSubmitResultData(assessment.my_latest_submission)
     : null;
   const hasQuestions = (assessment?.question_count ?? 0) > 0;
-  const canOpen = hasQuestions && (savedResult != null || assessment?.can_attempt === true);
+  const canOpen =
+    hasQuestions && (savedResult != null || assessment?.can_attempt === true);
 
   const durationLabel = formatDurationLabel(project.duration);
-  const durationMinutes = assessment?.duration ?? DEFAULT_DURATION_MINUTES;
+  const durationMinutes = toDurationMinutes(assessment?.duration);
   const activeTabLabel =
     ASSESSMENT_TABS.find((tab) => tab.id === activeTab)?.label ?? "Assessment";
 
@@ -128,7 +138,11 @@ const Assessment = ({ project }: { project: InternProject }) => {
                 key={tab.id}
                 type="button"
                 disabled={isDisabled}
-                title={isDisabled ? postAssessment?.locked_reason ?? undefined : undefined}
+                title={
+                  isDisabled
+                    ? (postAssessment?.locked_reason ?? undefined)
+                    : undefined
+                }
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
                   "relative flex items-center gap-1.5 pb-2 text-sm font-medium transition-colors",
@@ -168,9 +182,10 @@ const Assessment = ({ project }: { project: InternProject }) => {
                   {assessment.title}
                 </p>
                 {assessment.description ? (
-                  <p className="mt-1 max-w-3xl text-xs leading-relaxed text-[#3F5E68] sm:text-sm">
-                    {assessment.description}
-                  </p>
+                  <RichTextContent
+                    value={assessment.description}
+                    className="mt-1 max-w-3xl text-xs text-[#3F5E68] sm:text-sm"
+                  />
                 ) : null}
               </div>
 
