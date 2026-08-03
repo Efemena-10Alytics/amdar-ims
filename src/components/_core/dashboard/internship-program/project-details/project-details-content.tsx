@@ -95,7 +95,10 @@ export default function ProjectDetailsContent() {
     ) : activeTab === "todo" ? (
       <Todo project={project} />
     ) : activeTab === "resources" ? (
-      <ResourcesDetails />
+      <ResourcesDetails
+        programId={project.program_id}
+        cohortId={project.cohort_id}
+      />
     ) : activeTab === "leader-board" ? (
       <LeaderBoard />
     ) : null;
