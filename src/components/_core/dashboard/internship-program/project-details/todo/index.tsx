@@ -7,18 +7,14 @@ import {
   CalendarDays,
   EllipsisVertical,
   Eye,
-  FileText,
   ListChecks,
   Search,
   SlidersHorizontal,
-  Type,
   User,
-  Video,
 } from "lucide-react";
 import type {
   InternProject,
   InternProjectTodo,
-  InternProjectTodoContentType,
 } from "@/features/interns-project/internship-project.types";
 import { useGetTodosByProjectId } from "@/features/interns-project/use-get-todos-by-project-id";
 import { formatDurationLabel } from "../project-content";
@@ -28,7 +24,6 @@ const DAYS = ["All", "Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"] as const;
 
 type DayFilter = (typeof DAYS)[number];
 type TodoCategory = "Task" | "Activity";
-type TodoTypeLabel = "Text" | "Document" | "Video";
 
 type TodoRow = {
   id: number;
@@ -37,7 +32,7 @@ type TodoRow = {
   weekLabel: string;
   day: Exclude<DayFilter, "All">;
   dayLabel: string;
-  type: TodoTypeLabel;
+  typeCount: number;
   category: TodoCategory;
 };
 
@@ -69,21 +64,16 @@ const DAY_LABELS: Record<Exclude<DayFilter, "All">, string> = {
   Sat: "Saturday",
 };
 
-function mapContentType(contentType?: InternProjectTodoContentType | null): TodoTypeLabel {
-  if (contentType === "document") return "Document";
-  if (contentType === "video") return "Video";
-  return "Text";
-}
-
 function mapDayOfWeek(dayOfWeek: string): Exclude<DayFilter, "All"> {
   const key = dayOfWeek.trim().toLowerCase();
   return DAY_SHORT_BY_LABEL[key] ?? "Mon";
 }
 
 function mapTodoToRow(todo: InternProjectTodo): TodoRow {
-  const primaryType = [...(todo.types ?? [])].sort(
+  const sortedTypes = [...(todo.types ?? [])].sort(
     (a, b) => a.sortOrder - b.sortOrder,
-  )[0];
+  );
+  const primaryType = sortedTypes[0];
 
   return {
     id: todo.id,
@@ -92,7 +82,7 @@ function mapTodoToRow(todo: InternProjectTodo): TodoRow {
     weekLabel: `Week ${todo.week}`,
     day: mapDayOfWeek(todo.dayOfWeek),
     dayLabel: DAY_LABELS[mapDayOfWeek(todo.dayOfWeek)],
-    type: mapContentType(primaryType?.contentType),
+    typeCount: sortedTypes.length,
     category: primaryType?.submissionRequired ? "Task" : "Activity",
   };
 }
@@ -168,15 +158,13 @@ function SummaryCard({
   );
 }
 
-function TypeLabel({ type }: { type: TodoTypeLabel }) {
-  const Icon = type === "Document" ? FileText : type === "Video" ? Video : Type;
-
+function TypeCountLabel({ count }: { count: number }) {
   return (
     <span className="inline-flex items-center gap-1.5">
       <span className="flex size-5 items-center justify-center rounded-full bg-[#EEF2F6] text-[#78909C]">
-        <Icon className="size-3" aria-hidden />
+        <ListChecks className="size-3" aria-hidden />
       </span>
-      {type}
+      {count} {count === 1 ? "Action" : "Actions"}
     </span>
   );
 }
@@ -392,9 +380,9 @@ const Todo = ({ project }: TodoProps) => {
               <tr className="text-xs font-semibold text-[#64748B]">
                 <th className="px-3 py-3">TODO TITLE</th>
                 <th className="px-3 py-3">DAY</th>
-                <th className="px-3 py-3">TYPE</th>
+                <th className="px-3 py-3">Activity Type</th>
                 <th className="px-3 py-3">CATEGORY</th>
-                <th className="px-3 py-3 text-center">ACTIONS</th>
+                <th className="px-3 py-3 text-center">More</th>
               </tr>
             </thead>
             <tbody>
@@ -407,7 +395,7 @@ const Todo = ({ project }: TodoProps) => {
                     <td className="px-3 py-4 font-medium">{item.title}</td>
                     <td className="px-3 py-4">{item.dayLabel}</td>
                     <td className="px-3 py-4">
-                      <TypeLabel type={item.type} />
+                      <TypeCountLabel count={item.typeCount} />
                     </td>
                     <td className="px-3 py-4">{item.category}</td>
                     <td className="relative px-3 py-4 text-center">
