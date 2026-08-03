@@ -131,6 +131,38 @@ export type InternProjectResponse = {
 /** GET /intern-projects/slug/:slug */
 export type InternProjectBySlugResponse = InternProjectResponse;
 
+/** Nested project summary on GET /intern-projects/current */
+export type CurrentInternProjectSummary = {
+  id: number;
+  title: string;
+  slug: string;
+  industry: string;
+  duration: string;
+  careerStage: InternProjectCareerStage | string;
+  status: InternProjectStatus | string;
+  isCurrent: boolean;
+  coverPreview: string | null;
+  logoPreview: string | null;
+  contributor: string;
+};
+
+/** GET /intern-projects/current */
+export type CurrentInternProject = {
+  currentWeek: number;
+  stageProgress: number;
+  activitiesDone: number;
+  activitiesTotal: number;
+  stagesCompleted: number;
+  stagesTotal: number;
+  project: CurrentInternProjectSummary;
+};
+
+export type CurrentInternProjectResponse = {
+  success: boolean;
+  message: string;
+  data: CurrentInternProject | null;
+};
+
 export type InternProjectTodoContentType = "text" | "document" | "video";
 
 export type InternProjectTodoSolutionFormat = "text" | "url" | "file";
