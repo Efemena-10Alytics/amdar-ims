@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
   Check,
@@ -43,6 +43,63 @@ function getContentTypeLabel(contentType: InternProjectTodoContentType) {
   if (contentType === "video") return "Video";
   if (contentType === "document") return "Document";
   return "Text";
+}
+
+function ExpandableRichText({
+  value,
+  className,
+}: {
+  value?: string | null;
+  className?: string;
+}) {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [canExpand, setCanExpand] = useState(false);
+
+  useEffect(() => {
+    setIsExpanded(false);
+  }, [value]);
+
+  useEffect(() => {
+    const element = contentRef.current;
+    if (!element) return;
+
+    const measure = () => {
+      if (isExpanded) return;
+      setCanExpand(element.scrollHeight > element.clientHeight + 1);
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [isExpanded, value]);
+
+  if (!value?.trim()) return null;
+
+  return (
+    <div className={cn("max-w-3xl", className)}>
+      <div
+        ref={contentRef}
+        className={cn(!isExpanded && "line-clamp-4 overflow-hidden")}
+      >
+        <RichTextContent
+          value={value}
+          className="text-sm text-[#6F8196]"
+        />
+      </div>
+
+      {canExpand || isExpanded ? (
+        <button
+          type="button"
+          onClick={() => setIsExpanded((current) => !current)}
+          className="mt-2 cursor-pointer text-sm font-medium text-[#156374] underline underline-offset-2"
+        >
+          {isExpanded ? "Show less" : "Show more"}
+        </button>
+      ) : null}
+    </div>
+  );
 }
 
 function TodoTypeMedia({ type }: { type: InternProjectTodoType }) {
@@ -126,10 +183,7 @@ function TodoTypeSection({ type }: { type: InternProjectTodoType }) {
       </h2>
 
       {description ? (
-        <RichTextContent
-          value={description}
-          className="mb-4 max-w-3xl text-sm text-[#6F8196]"
-        />
+        <ExpandableRichText value={description} className="mb-4" />
       ) : null}
 
       <TodoTypeMedia type={type} />
@@ -252,10 +306,7 @@ function LessonPanel({
 
         {isOverviewOpen ? (
           <div className="px-4 py-3">
-            <RichTextContent
-              value={todo.description}
-              className="max-w-3xl text-sm text-[#6F8196]"
-            />
+            <ExpandableRichText value={todo.description} />
 
             <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
               <div className="min-w-48 flex-1">
