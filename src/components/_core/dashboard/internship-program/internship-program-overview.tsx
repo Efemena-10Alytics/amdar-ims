@@ -3,16 +3,15 @@
 import { Timer, Volume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PencilIcon } from "../svg";
+import { formatCareerStageLabel } from "@/components/_core/dashboard/internship-program/project-details/project-content";
+import { useGetCurrentProject } from "@/features/interns-project/use-get-current-project";
+import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
 
-type InternshipProgramOverviewProps = {
-  stageLabel?: string;
-  currentWeek?: number;
-  totalWeeks?: number;
-  stageProgress?: number;
-  activitiesDone?: number;
-  stagesCompleted?: number;
-  totalStages?: number;
-};
+function pickId(value: unknown): number | string | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.trim() !== "") return value;
+  return null;
+}
 
 function FlagIcon() {
   return (
@@ -77,15 +76,30 @@ function StatCard({ label, value, icon, variant = "muted" }: StatCardProps) {
   );
 }
 
-const InternshipProgramOverview = ({
-  stageLabel = "Uniformity stage",
-  currentWeek = 1,
-  totalWeeks = 16,
-  stageProgress = 0,
-  activitiesDone = 0,
-  stagesCompleted = 0,
-  totalStages = 6,
-}: InternshipProgramOverviewProps) => {
+const InternshipProgramOverview = () => {
+  const enrollmentQuery = useGetUserEnrollment();
+  const cohortId =
+    pickId(enrollmentQuery.data?.cohort_id) ??
+    pickId(enrollmentQuery.data?.cohort?.id);
+  const programId =
+    pickId(enrollmentQuery.data?.program_id) ??
+    pickId(enrollmentQuery.data?.program?.id);
+
+  const currentProjectQuery = useGetCurrentProject(cohortId, programId);
+  const current = currentProjectQuery.data;
+
+  const stageLabel = formatCareerStageLabel(
+    current?.project.careerStage ?? "uniformity",
+  );
+  const currentWeek = current?.currentWeek ?? 0;
+  const totalWeeks = 16;
+  const stageProgress = current?.stageProgress ?? 0;
+  const activitiesDone = current?.activitiesDone ?? 0;
+  const activitiesTotal = current?.activitiesTotal ?? 0;
+  const stagesCompleted = current?.stagesCompleted ?? 0;
+  const totalStages = current?.stagesTotal ?? 0;
+  const isLoading = enrollmentQuery.isLoading || currentProjectQuery.isLoading;
+
   return (
     <section className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -98,15 +112,15 @@ const InternshipProgramOverview = ({
         </button>
 
         <div className="inline-flex items-stretch overflow-hidden rounded-full bg-[#CFF6DA] text-sm font-semibold text-[#1F7A4A]">
-          <span className="inline-flex items-center gap-2 py-2 pl-1.5 pr-3">
+          <span className="inline-flex items-center gap-2 py-2 pr-3 pl-1.5">
             <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[#238A50] text-white">
               <FlagIcon />
             </span>
-            {stageLabel}
+            {isLoading ? "Loading..." : stageLabel}
           </span>
           <span className="inline-flex items-center gap-1.5 border-l border-[#B8E6C6] px-3 py-2">
             <span className="size-1.5 shrink-0 rounded-full bg-[#238A50]" aria-hidden />
-            Week {currentWeek} of {totalWeeks}
+            {isLoading ? "—" : `Week ${currentWeek} of ${totalWeeks}`}
           </span>
         </div>
       </div>
@@ -114,23 +128,31 @@ const InternshipProgramOverview = ({
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           label="Current week"
-          value={`Week ${currentWeek}`}
+          value={isLoading ? "—" : `Week ${currentWeek}`}
           variant="primary"
           icon={<Timer className="size-4" strokeWidth={2.25} aria-hidden />}
         />
         <StatCard
           label="Stage progress"
-          value={`${stageProgress}%`}
-          icon={<Timer className="size-4 text-amdari-yellow" strokeWidth={2.25} aria-hidden />}
+          value={isLoading ? "—" : `${stageProgress}%`}
+          icon={
+            <Timer
+              className="size-4 text-amdari-yellow"
+              strokeWidth={2.25}
+              aria-hidden
+            />
+          }
         />
         <StatCard
           label="Activities done"
-          value={String(activitiesDone)}
+          value={isLoading ? "—" : `${activitiesDone}/${activitiesTotal}`}
           icon={<PencilIcon />}
         />
         <StatCard
           label="Stages completed"
-          value={`${stagesCompleted}/${totalStages}`}
+          value={
+            isLoading ? "—" : `${stagesCompleted}/${totalStages}`
+          }
           icon={<PencilIcon />}
         />
       </div>
