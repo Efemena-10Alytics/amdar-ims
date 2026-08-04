@@ -23,11 +23,21 @@ const Slider = () => {
 
   const slidesItem = [
     "Business Analytics Internship",
-    "Cybersecurity Internship",
+    // "Cybersecurity Internship",
+    "Data science Internship",
     "Project Management Internship",
-    "DevOps Internship",
-    "Data Engineer Internship",
+    "Data Analytics Internship",
+    // "DevOps Internship",
+    "⁠⁠GRC Internship",
+    "⁠SOC Analysis Internship",
+    // "Data Engineer Internship",
   ];
+  //   Data science 
+  // •⁠  ⁠⁠Data Analytics 
+  // •⁠  ⁠⁠Business Analysis 
+  // •⁠  ⁠⁠Project Management 
+  // •⁠  ⁠⁠SOC Analysis 
+  // •⁠  ⁠⁠GRC
 
   const [api, setApi] = React.useState<CarouselApi>();
   const plugin = React.useRef(
