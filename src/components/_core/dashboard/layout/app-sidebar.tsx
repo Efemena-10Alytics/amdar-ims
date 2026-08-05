@@ -28,7 +28,7 @@ import { NavMain } from "./nav-main";
 
 const navMain = [
   { title: "Dashboard", url: "/dashboard", icon: DashboardFilledIcon },
-  { title: "Internship program", url: "/dashboard/internship", icon: InternshipProgramIcon },
+  { title: "Internship program", url: "/dashboard/internship-program", icon: InternshipProgramIcon },
   { title: "Project vault", url: "/dashboard-projects/dashboard-project-paths/filter", icon: ProjectVaultIcon },
   // { title: "Interview prep", url: "/dashboard/portfolio", icon: InterviewPrepIcon },
   { title: "Job board", url: "/job-board", icon: InterviewPrepIcon },
