@@ -126,7 +126,7 @@ const CAREER_STAGE_CARDS: CareerStageCardData[] = [
 function getOnboardingProgress(
   steps: OnboardingStepsCompletedState | undefined,
 ): number {
-  if (!steps || ONBOARDING_STEP_KEYS.length === 0) return 0;
+  if (!steps) return 0;
 
   const completedCount = ONBOARDING_STEP_KEYS.filter((step) =>
     isOnboardingEnrollmentStepComplete(steps, step),
@@ -138,7 +138,7 @@ function getOnboardingProgress(
 function getPreDiagnosticProgress(
   steps: PreDiagnosticStepsCompletedState | undefined,
 ): number {
-  if (!steps || PRE_DIAGNOSTIC_STEP_KEYS.length === 0) return 0;
+  if (!steps) return 0;
 
   const completedCount = PRE_DIAGNOSTIC_STEP_KEYS.filter((step) =>
     isPreDiagnosticEnrollmentStepComplete(steps, step),
