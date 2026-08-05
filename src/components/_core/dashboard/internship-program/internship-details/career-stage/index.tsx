@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, Loader } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LockKeyHoleIcon, TrangleIcon } from "@/components/_core/dashboard/svg";
@@ -13,6 +13,24 @@ import TransitionalStage from "@/components/_core/dashboard/internship-program/i
 import EmergingStage from "@/components/_core/dashboard/internship-program/internship-details/career-stage/emerging-stage";
 import CollaborativeStage from "@/components/_core/dashboard/internship-program/internship-details/career-stage/collaborative-stage";
 import ProfessionalStage from "@/components/_core/dashboard/internship-program/internship-details/career-stage/professional-stage";
+import { isOnboardingEnrollmentStepComplete } from "@/features/internship/use-update-completed-onboarding-step";
+import {
+  isPreDiagnosticEnrollmentStepComplete,
+  PRE_DIAGNOSTIC_STEP_KEYS,
+} from "@/features/internship/use-update-completed-pre-diagnostic";
+import {
+  isOnboardingNotFoundError,
+  useGetOnboarding,
+} from "@/features/onboarding/use-get-onboarding";
+import {
+  isPreDiagnosticNotFoundError,
+  useGetPreDiagnostic,
+} from "@/features/pre-diagnostic/use-get-pre-diagnostic";
+import { ONBOARDING_STEP_KEYS } from "@/features/onboarding/types";
+import type {
+  OnboardingStepsCompletedState,
+  PreDiagnosticStepsCompletedState,
+} from "@/types/user/enrollment";
 
 type CareerStageStatus = "completed" | "active" | "upcoming" | "locked";
 
@@ -30,9 +48,14 @@ type CareerStageCardData = {
   status: CareerStageStatus;
 };
 
+type LiveStageState = {
+  status: CareerStageStatus;
+  progress: number;
+};
+
 const CAREER_STAGE_NAV: CareerStageNavItem[] = [
-  { id: "onboarding", label: "On-boarding", status: "completed" },
-  { id: "pre-entry-diagnostic", label: "Pre-entry diagnostic", status: "completed" },
+  { id: "onboarding", label: "On-boarding", status: "locked" },
+  { id: "pre-entry-diagnostic", label: "Pre-entry diagnostic", status: "locked" },
   { id: "uniformity-stage", label: "Uniformity stage", status: "active" },
   { id: "formative-stage", label: "Formative stage", status: "upcoming" },
   { id: "transitional-stage", label: "Transitional stage", status: "locked" },
@@ -46,15 +69,15 @@ const CAREER_STAGE_CARDS: CareerStageCardData[] = [
     id: "onboarding",
     title: "On-boarding",
     subtitle: "Getting ready",
-    progress: 100,
-    status: "completed",
+    progress: 0,
+    status: "locked",
   },
   {
     id: "pre-entry-diagnostic",
     title: "Pre-entry diagnostic",
     subtitle: "Getting ready",
-    progress: 100,
-    status: "completed",
+    progress: 0,
+    status: "locked",
   },
   {
     id: "uniformity-stage",
@@ -99,6 +122,52 @@ const CAREER_STAGE_CARDS: CareerStageCardData[] = [
     status: "locked",
   },
 ];
+
+function getOnboardingProgress(
+  steps: OnboardingStepsCompletedState | undefined,
+): number {
+  if (!steps || ONBOARDING_STEP_KEYS.length === 0) return 0;
+
+  const completedCount = ONBOARDING_STEP_KEYS.filter((step) =>
+    isOnboardingEnrollmentStepComplete(steps, step),
+  ).length;
+
+  return Math.round((completedCount / ONBOARDING_STEP_KEYS.length) * 100);
+}
+
+function getPreDiagnosticProgress(
+  steps: PreDiagnosticStepsCompletedState | undefined,
+): number {
+  if (!steps || PRE_DIAGNOSTIC_STEP_KEYS.length === 0) return 0;
+
+  const completedCount = PRE_DIAGNOSTIC_STEP_KEYS.filter((step) =>
+    isPreDiagnosticEnrollmentStepComplete(steps, step),
+  ).length;
+
+  return Math.round((completedCount / PRE_DIAGNOSTIC_STEP_KEYS.length) * 100);
+}
+
+function resolveLiveStageState({
+  hasResource,
+  isResolving,
+  notFound,
+  progress,
+}: {
+  hasResource: boolean;
+  isResolving: boolean;
+  notFound: boolean;
+  progress: number;
+}): LiveStageState {
+  if (isResolving || notFound || !hasResource) {
+    return { status: "locked", progress: 0 };
+  }
+
+  if (progress >= 100) {
+    return { status: "completed", progress: 100 };
+  }
+
+  return { status: "active", progress };
+}
 
 function CareerStageProgressRing({
   progress,
@@ -372,19 +441,164 @@ function CareerStageCard({
 }
 
 const CareerStage = () => {
+  const {
+    data: onboarding,
+    isLoading: isOnboardingQueryLoading,
+    isPending: isOnboardingPending,
+    isError: isOnboardingError,
+    error: onboardingError,
+    enrollment: onboardingEnrollment,
+    cohortId: onboardingCohortId,
+    programId: onboardingProgramId,
+    isEnrollmentLoading: isOnboardingEnrollmentLoading,
+  } = useGetOnboarding();
+
+  const {
+    data: preDiagnostic,
+    isLoading: isPreDiagnosticQueryLoading,
+    isPending: isPreDiagnosticPending,
+    isError: isPreDiagnosticError,
+    error: preDiagnosticError,
+    enrollment: preDiagnosticEnrollment,
+    cohortId: preDiagnosticCohortId,
+    programId: preDiagnosticProgramId,
+    isEnrollmentLoading: isPreDiagnosticEnrollmentLoading,
+  } = useGetPreDiagnostic();
+
+  const isOnboardingLoading = isOnboardingPending || isOnboardingQueryLoading;
+  const isResolvingOnboarding =
+    isOnboardingEnrollmentLoading ||
+    (onboardingCohortId != null &&
+      onboardingProgramId != null &&
+      isOnboardingLoading);
+  const onboardingNotFound =
+    onboardingCohortId != null &&
+    onboardingProgramId != null &&
+    !isOnboardingLoading &&
+    !isOnboardingEnrollmentLoading &&
+    isOnboardingError &&
+    isOnboardingNotFoundError(onboardingError);
+
+  const isPreDiagnosticLoading =
+    isPreDiagnosticPending || isPreDiagnosticQueryLoading;
+  const isResolvingPreDiagnostic =
+    isPreDiagnosticEnrollmentLoading ||
+    (preDiagnosticCohortId != null &&
+      preDiagnosticProgramId != null &&
+      isPreDiagnosticLoading);
+  const preDiagnosticNotFound =
+    preDiagnosticCohortId != null &&
+    preDiagnosticProgramId != null &&
+    !isPreDiagnosticLoading &&
+    !isPreDiagnosticEnrollmentLoading &&
+    isPreDiagnosticError &&
+    isPreDiagnosticNotFoundError(preDiagnosticError);
+
+  const onboardingStage = useMemo(
+    () =>
+      resolveLiveStageState({
+        hasResource: !!onboarding,
+        isResolving: isResolvingOnboarding,
+        notFound: onboardingNotFound,
+        progress: getOnboardingProgress(
+          onboardingEnrollment?.isOnboardingStepsCompleted,
+        ),
+      }),
+    [
+      isResolvingOnboarding,
+      onboarding,
+      onboardingEnrollment?.isOnboardingStepsCompleted,
+      onboardingNotFound,
+    ],
+  );
+
+  const preDiagnosticStage = useMemo(
+    () =>
+      resolveLiveStageState({
+        hasResource: !!preDiagnostic,
+        isResolving: isResolvingPreDiagnostic,
+        notFound: preDiagnosticNotFound,
+        progress: getPreDiagnosticProgress(
+          preDiagnosticEnrollment?.isPreDiagnosticStepsCompleted,
+        ),
+      }),
+    [
+      isResolvingPreDiagnostic,
+      preDiagnostic,
+      preDiagnosticEnrollment?.isPreDiagnosticStepsCompleted,
+      preDiagnosticNotFound,
+    ],
+  );
+
+  const stageNav = useMemo(
+    () =>
+      CAREER_STAGE_NAV.map((item) => {
+        if (item.id === "onboarding") {
+          return { ...item, status: onboardingStage.status };
+        }
+        if (item.id === "pre-entry-diagnostic") {
+          return { ...item, status: preDiagnosticStage.status };
+        }
+        return item;
+      }),
+    [onboardingStage.status, preDiagnosticStage.status],
+  );
+
+  const stageCards = useMemo(
+    () =>
+      CAREER_STAGE_CARDS.map((card) => {
+        if (card.id === "onboarding") {
+          return {
+            ...card,
+            status: onboardingStage.status,
+            progress: onboardingStage.progress,
+          };
+        }
+        if (card.id === "pre-entry-diagnostic") {
+          return {
+            ...card,
+            status: preDiagnosticStage.status,
+            progress: preDiagnosticStage.progress,
+          };
+        }
+        return card;
+      }),
+    [
+      onboardingStage.progress,
+      onboardingStage.status,
+      preDiagnosticStage.progress,
+      preDiagnosticStage.status,
+    ],
+  );
+
   const [activeStageId, setActiveStageId] = useState("uniformity-stage");
   const [expandedStageId, setExpandedStageId] = useState("uniformity-stage");
 
+  useEffect(() => {
+    if (
+      (onboardingStage.status === "locked" &&
+        expandedStageId === "onboarding") ||
+      (preDiagnosticStage.status === "locked" &&
+        expandedStageId === "pre-entry-diagnostic")
+    ) {
+      setExpandedStageId("");
+    }
+  }, [
+    expandedStageId,
+    onboardingStage.status,
+    preDiagnosticStage.status,
+  ]);
+
   const handleSelectStage = (stageId: string) => {
     setActiveStageId(stageId);
-    const card = CAREER_STAGE_CARDS.find((item) => item.id === stageId);
+    const card = stageCards.find((item) => item.id === stageId);
     if (card && card.status !== "locked") {
       setExpandedStageId(stageId);
     }
   };
 
   const handleToggleCard = (stageId: string) => {
-    const card = CAREER_STAGE_CARDS.find((item) => item.id === stageId);
+    const card = stageCards.find((item) => item.id === stageId);
     if (!card || card.status === "locked") return;
 
     setActiveStageId(stageId);
@@ -393,10 +607,10 @@ const CareerStage = () => {
 
   return (
     <section className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,16rem)_1fr] lg:gap-4">
-      <CareerStageSidebar items={CAREER_STAGE_NAV} onSelect={handleSelectStage} />
+      <CareerStageSidebar items={stageNav} onSelect={handleSelectStage} />
 
       <div className="space-y-3">
-        {CAREER_STAGE_CARDS.map((card) => (
+        {stageCards.map((card) => (
           <CareerStageCard
             key={card.id}
             card={card}

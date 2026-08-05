@@ -38,6 +38,19 @@ export function getPreDiagnosticErrorMessage(error: unknown): string {
   return "Unable to load pre-diagnostic.";
 }
 
+export function isPreDiagnosticNotFoundError(error: unknown): boolean {
+  if (axios.isAxiosError(error) && error.response?.status === 404) {
+    return true;
+  }
+
+  const message = getPreDiagnosticErrorMessage(error).toLowerCase();
+  return (
+    message.includes("not found") ||
+    message.includes("no pre-diagnostic") ||
+    message.includes("no pre diagnostic")
+  );
+}
+
 function toPreDiagnosticApiError(error: unknown): PreDiagnosticApiError {
   if (error instanceof PreDiagnosticApiError) return error;
   const apiMessage = axios.isAxiosError(error)
