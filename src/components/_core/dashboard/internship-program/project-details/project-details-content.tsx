@@ -2,8 +2,13 @@
 
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { useParams } from "next/navigation";
-import { useState } from "react";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
+import { useEffect } from "react";
 import type { ReactNode } from "react";
 import {
   InternProjectStatus,
@@ -26,6 +31,12 @@ const PROJECT_TABS = [
 ] as const;
 
 type ProjectTabId = (typeof PROJECT_TABS)[number]["id"];
+
+const DEFAULT_TAB: ProjectTabId = "project-details";
+
+function isProjectTabId(value: string | null): value is ProjectTabId {
+  return PROJECT_TABS.some((tab) => tab.id === value);
+}
 
 function ProjectDetailsState({
   message,
@@ -62,9 +73,27 @@ export default function ProjectDetailsContent() {
   const slugParam = params?.slug;
   const slug = Array.isArray(slugParam) ? slugParam[0] : slugParam;
 
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const queryTab = searchParams.get("tab");
+  const activeTab = isProjectTabId(queryTab) ? queryTab : DEFAULT_TAB;
+
   const { data: project, isLoading, isError, refetch } = useGetProjectBySlug(slug);
-  const [activeTab, setActiveTab] =
-    useState<ProjectTabId>("project-details");
+
+  useEffect(() => {
+    if (isProjectTabId(queryTab)) return;
+
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.set("tab", DEFAULT_TAB);
+    router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
+  }, [pathname, queryTab, router, searchParams]);
+
+  const handleTabChange = (tabId: ProjectTabId) => {
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.set("tab", tabId);
+    router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
+  };
 
   if (isLoading) {
     return (
@@ -108,7 +137,7 @@ export default function ProjectDetailsContent() {
       <div className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Link
-            href="/dashboard/internship-program-5173"
+            href="/dashboard/internship-program"
             className="inline-flex items-center gap-2 text-sm font-medium text-[#64748B] transition-colors hover:text-[#092A31]"
           >
             <ArrowLeft className="size-4" />
@@ -140,14 +169,19 @@ export default function ProjectDetailsContent() {
       </div>
 
       <section className="space-y-5">
-        <div className="inline-flex w-fit flex-wrap items-center gap-2 rounded-full bg-[#E4EBEF] px-1 py-2">
+        <div
+          className="inline-flex w-fit flex-wrap items-center gap-2 rounded-full bg-[#E4EBEF] px-1 py-2"
+          role="tablist"
+          aria-label="Project sections"
+        >
           {PROJECT_TABS.map((tab) => {
             const active = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => setActiveTab(tab.id)}
+                role="tab"
+                onClick={() => handleTabChange(tab.id)}
                 aria-selected={active}
                 className={[
                   "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
