@@ -482,7 +482,7 @@ function ProjectTodoPanel({
                       {items.map((item) => {
                         const isTodoActive = String(item.id) === activeTodoId;
                         const itemTypes = getSortedTodoTypes(item);
-                        const classroomHref = `/dashboard/internship-program-5173/projects/${encodeURIComponent(slug)}/classroom/${item.id}`;
+                        const classroomHref = `/dashboard/internship-program/projects/${encodeURIComponent(slug)}/classroom/${item.id}`;
 
                         return (
                           <div key={item.id} className="space-y-1.5">
@@ -587,8 +587,8 @@ export default function ClassroomPage() {
   }, [sortedActiveTypes, typeParam]);
 
   const backHref = slug
-    ? `/dashboard/internship-program-5173/projects/${encodeURIComponent(slug)}`
-    : "/dashboard/internship-program-5173";
+    ? `/dashboard/internship-program/projects/${encodeURIComponent(slug)}`
+    : "/dashboard/internship-program";
 
   if (projectQuery.isLoading || todosQuery.isLoading || todoQuery.isLoading) {
     return (

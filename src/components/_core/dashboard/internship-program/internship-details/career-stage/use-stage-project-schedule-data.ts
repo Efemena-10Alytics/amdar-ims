@@ -92,7 +92,7 @@ function mapTodosToWeekSchedules(
           label: todo.title,
           status: "todo" as TaskStatus,
           href: slug
-            ? `/dashboard/internship-program-5173/projects/${encodeURIComponent(slug)}/classroom/${todo.id}`
+            ? `/dashboard/internship-program/projects/${encodeURIComponent(slug)}/classroom/${todo.id}`
             : undefined,
         }));
 
@@ -126,7 +126,7 @@ function buildWeekRange(weeks: WeekSchedule[]): string {
 function buildProjectHref(project: InternProject): string | undefined {
   const slug = project.slug?.trim();
   if (!slug) return undefined;
-  return `/dashboard/internship-program-5173/projects/${encodeURIComponent(slug)}`;
+  return `/dashboard/internship-program/projects/${encodeURIComponent(slug)}`;
 }
 
 export function useStageProjectScheduleData(

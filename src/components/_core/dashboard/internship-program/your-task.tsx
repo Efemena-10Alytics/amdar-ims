@@ -48,7 +48,7 @@ const YourTask = ({
       : `${rawDuration} duration`
     : "—";
   const projectHref = project?.slug
-    ? `/dashboard/internship-program-5173/projects/${encodeURIComponent(project.slug)}`
+    ? `/dashboard/internship-program/projects/${encodeURIComponent(project.slug)}`
     : null;
   const logoSrc = project?.logoPreview || project?.coverPreview || null;
   const initial = (project?.title?.trim().charAt(0) || "P").toUpperCase();

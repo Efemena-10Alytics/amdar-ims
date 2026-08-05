@@ -18,6 +18,12 @@ import type {
 } from "@/features/interns-project/internship-project.types";
 import { useGetTodosByProjectId } from "@/features/interns-project/use-get-todos-by-project-id";
 import { formatDurationLabel } from "../project-content";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
 const DAYS = ["All", "Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"] as const;
@@ -191,7 +197,6 @@ const Todo = ({ project }: TodoProps) => {
   const [categoryFilter, setCategoryFilter] =
     useState<"All" | TodoCategory>("All");
   const [showFilters, setShowFilters] = useState(false);
-  const [openActionId, setOpenActionId] = useState<number | null>(null);
 
   useEffect(() => {
     if (!weekOptions.length) {
@@ -398,32 +403,33 @@ const Todo = ({ project }: TodoProps) => {
                       <TypeCountLabel count={item.typeCount} />
                     </td>
                     <td className="px-3 py-4">{item.category}</td>
-                    <td className="relative px-3 py-4 text-center">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setOpenActionId((current) =>
-                            current === item.id ? null : item.id,
-                          )
-                        }
-                        aria-label={`Actions for ${item.title}`}
-                        aria-expanded={openActionId === item.id}
-                        className="inline-flex size-7 cursor-pointer items-center justify-center rounded-full bg-[#E8F0F3] text-[#156374] hover:bg-[#D9E8EC]"
-                      >
-                        <EllipsisVertical className="size-4" aria-hidden />
-                      </button>
-
-                      {openActionId === item.id && project.slug ? (
-                        <div className="absolute top-12 right-3 z-20 w-44 rounded-xl border border-[#E2E8F0] bg-white p-1.5 text-left shadow-lg">
-                          <Link
-                            href={`/dashboard/internship-program-5173/projects/${encodeURIComponent(project.slug)}/classroom/${item.id}`}
-                            onClick={() => setOpenActionId(null)}
-                            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-[#173740] transition-colors hover:bg-[#E8F0F3] hover:text-[#156374]"
+                    <td className="px-3 py-4 text-center">
+                      {project.slug ? (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button
+                              type="button"
+                              aria-label={`Actions for ${item.title}`}
+                              className="inline-flex size-7 cursor-pointer items-center justify-center rounded-full bg-[#E8F0F3] text-[#156374] hover:bg-[#D9E8EC]"
+                            >
+                              <EllipsisVertical className="size-4" aria-hidden />
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent
+                            align="end"
+                            className="w-full max-w-64 rounded-xl border-[#E2E8F0] p-1.5"
                           >
-                            <Eye className="size-4" aria-hidden />
-                            View in classroom
-                          </Link>
-                        </div>
+                            <DropdownMenuItem asChild>
+                              <Link
+                                href={`/dashboard/internship-program/projects/${encodeURIComponent(project.slug)}/classroom/${item.id}`}
+                                className="cursor-pointer font-medium text-[#173740] focus:bg-[#E8F0F3] focus:text-[#156374]"
+                              >
+                                <Eye className="size-4" aria-hidden />
+                                View in classroom
+                              </Link>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       ) : null}
                     </td>
                   </tr>
