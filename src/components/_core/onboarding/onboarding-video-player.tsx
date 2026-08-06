@@ -1,13 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Pause, Play } from "lucide-react";
+import { Pause, Play, RotateCcw, RotateCw } from "lucide-react";
 import ReactPlayer from "react-player";
 import { VideoFullscreenButton } from "@/components/_core/shared/video-fullscreen-button";
 import { useVideoFullscreen } from "@/hooks/use-video-fullscreen";
 import { cn } from "@/lib/utils";
 
 const PLAYBACK_RATES = [0.75, 1, 1.25, 1.5, 1.75, 2] as const;
+const SEEK_SECONDS = 10;
 
 function formatPlaybackRate(rate: number) {
   return rate === 1 ? "1x" : `${rate}x`;
@@ -84,6 +85,27 @@ const OnboardingVideoPlayer = ({
     setVideoPlaying((prev) => !prev);
   };
 
+  const seekBy = (deltaSeconds: number) => {
+    const player = playerRef.current;
+    if (!player) return;
+
+    const duration = Number.isFinite(player.duration)
+      ? player.duration
+      : durationSeconds;
+    const current = Number.isFinite(player.currentTime)
+      ? player.currentTime
+      : playedSeconds;
+    const maxTime = Number.isFinite(duration) && duration > 0 ? duration : current;
+    const nextTime = Math.min(Math.max(current + deltaSeconds, 0), maxTime);
+
+    player.currentTime = nextTime;
+    setPlayedSeconds(nextTime);
+
+    if (hasVideoEnded && nextTime < maxTime) {
+      setHasVideoEnded(false);
+    }
+  };
+
   return (
     <div
       ref={containerRef}
@@ -99,6 +121,14 @@ const OnboardingVideoPlayer = ({
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
           togglePlayback();
+        }
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          seekBy(-SEEK_SECONDS);
+        }
+        if (event.key === "ArrowRight") {
+          event.preventDefault();
+          seekBy(SEEK_SECONDS);
         }
       }}
       aria-label={videoPlaying ? "Pause video" : "Play video"}
@@ -136,23 +166,54 @@ const OnboardingVideoPlayer = ({
         />
       </div>
 
-      <button
-        type="button"
-        onClick={(event) => {
-          event.stopPropagation();
-          togglePlayback();
-        }}
-        className="absolute bottom-4 left-4 z-10 flex items-center gap-2 rounded-full px-3 py-1.5 text-base font-medium text-white backdrop-blur-sm transition hover:bg-black/40"
+      <div
+        className="absolute bottom-4 left-4 z-10 flex items-center gap-2"
+        onClick={(event) => event.stopPropagation()}
+        onKeyDown={(event) => event.stopPropagation()}
       >
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E7C8D]">
-          {videoPlaying ? (
-            <Pause className="h-4 w-4 fill-current" />
-          ) : (
-            <Play className="ml-0.5 h-4 w-4 fill-current" />
-          )}
-        </span>
-        {videoPlaying ? "Pause video" : "Play to watch"}
-      </button>
+        <button
+          type="button"
+          onClick={() => seekBy(-SEEK_SECONDS)}
+          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-sm transition hover:bg-black/60"
+          aria-label={`Rewind ${SEEK_SECONDS} seconds`}
+        >
+          <span className="relative flex items-center justify-center">
+            <RotateCcw className="h-6 w-6" />
+            <span className="absolute text-[8px] font-bold leading-none">
+              {SEEK_SECONDS}
+            </span>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={togglePlayback}
+          className="flex cursor-pointer items-center gap-2 rounded-full px-3 py-1.5 text-base font-medium text-white backdrop-blur-sm transition hover:bg-black/40"
+        >
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E7C8D]">
+            {videoPlaying ? (
+              <Pause className="h-4 w-4 fill-current" />
+            ) : (
+              <Play className="ml-0.5 h-4 w-4 fill-current" />
+            )}
+          </span>
+          {videoPlaying ? "Pause video" : "Play to watch"}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => seekBy(SEEK_SECONDS)}
+          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-sm transition hover:bg-black/60"
+          aria-label={`Fast forward ${SEEK_SECONDS} seconds`}
+        >
+          <span className="relative flex items-center justify-center">
+            <RotateCw className="h-6 w-6" />
+            <span className="absolute text-[8px] font-bold leading-none">
+              {SEEK_SECONDS}
+            </span>
+          </span>
+        </button>
+      </div>
 
       <div
         className="absolute right-4 bottom-4 z-10 flex items-center gap-2 rounded-lg bg-black/45 px-2 py-1"
