@@ -32,8 +32,7 @@ const EmployabilityExperts = () => {
 
         <div className="mt-4 rounded-xl bg-[#E8F4F8] p-4">
           <p className="text-sm leading-relaxed text-[#475467]">
-            Book a session with our employability expert to help eliminate your
-            job search issues.
+            Book a session with our employability expert to help eliminate your job search issues, review your CV & optimize your CV
           </p>
 
           <div className="mt-3 flex flex-wrap items-center gap-3">
