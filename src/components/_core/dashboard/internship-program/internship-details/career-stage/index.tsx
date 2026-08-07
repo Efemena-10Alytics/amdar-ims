@@ -152,7 +152,9 @@ function resolveResourceStageState({
     return { status: "completed", progress: 100 };
   }
 
-  return { status: "active", progress };
+  // Onboarding / pre-entry stay locked (not expandable) until every step is done.
+  // Progress % still reflects enrollment completion so far.
+  return { status: "locked", progress };
 }
 
 function resolveCareerStageState(
