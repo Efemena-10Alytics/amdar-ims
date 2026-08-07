@@ -68,7 +68,6 @@ const UserDetails = () => {
         enrollment?.program?.intern_title?.trim() ||
         enrollment?.program?.internship_title?.trim() ||
         "Product design";
-    const skillLevel = enrollment?.program?.level?.trim() || "Professional";
     const locationLabel = "United Kingdom";
     const affiliationLabel = "Uniformity stage";
     return (
@@ -85,12 +84,7 @@ const UserDetails = () => {
                         {cohortLabel}
                     </DetailItem>
                     <DetailItem icon={<PencilFilledIcon />}>
-                        <span className="flex flex-wrap items-center gap-2">
-                            <span>{programTitle}</span>
-                            <span className="rounded-full bg-[#E2E8F0] px-2 py-0.5 text-xs font-medium text-[#092A31]">
-                                {skillLevel}
-                            </span>
-                        </span>
+                        {programTitle}
                     </DetailItem>
                     <DetailItem icon={<MapPin className="size-4" />}>
                         {locationLabel}
