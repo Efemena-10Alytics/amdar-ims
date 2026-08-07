@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
-import { Link2, X } from "lucide-react";
+import { Copy, Link2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -23,12 +23,22 @@ const LETTER_REASONS = [
   { value: "visa", label: "VISA" },
 ] as const;
 
-type ReferenceLetterDrawerProps = {
+const REFERENCE_DETAIL_ITEMS = [
+  { label: "Referee", value: "Efemena Ikpro" },
+  { label: "Email", value: "efemana@amdari.io" },
+  { label: "Phone number", value: "+44 7414613215" },
+  {
+    label: "Address",
+    value: "Amdari Limited UK 128, City Road, London, EC1V 2NX, UNITED KINGDOM",
+  },
+] as const;
+
+type ReferenceDetailsDrawerProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
-type ReferenceLetterFormState = {
+type ReferenceDetailsFormState = {
   reason: string;
   jobRole: string;
   companyName: string;
@@ -36,7 +46,7 @@ type ReferenceLetterFormState = {
   additionalInfo: string;
 };
 
-const INITIAL_FORM_STATE: ReferenceLetterFormState = {
+const INITIAL_FORM_STATE: ReferenceDetailsFormState = {
   reason: "",
   jobRole: "",
   companyName: "",
@@ -47,21 +57,71 @@ const INITIAL_FORM_STATE: ReferenceLetterFormState = {
 const fieldClassName =
   "rounded-xl border-[#DCE5E9] bg-[#F6F8FA] text-sm text-[#092A31] placeholder:text-[#94A3B8] shadow-none";
 
-const ReferenceLetterDrawer = ({
+function ReferenceDetailsBlock() {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    const text = REFERENCE_DETAIL_ITEMS.map(
+      (item) => `${item.label}: ${item.value}`,
+    ).join("\n");
+
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  return (
+    <div className="mt-6">
+      <p className="text-base font-semibold text-[#475467]">Reference details</p>
+
+      <div className="relative mt-3 rounded-xl border border-[#D6C8B4] bg-[#F7F1E8] p-4">
+        <button
+          type="button"
+          onClick={() => {
+            void handleCopy();
+          }}
+          aria-label={copied ? "Copied" : "Copy reference details"}
+          className="absolute top-3 right-3 flex size-8 cursor-pointer items-center justify-center rounded-md text-[#1A6B8A] transition hover:bg-[#EFE7DB]"
+        >
+          <Copy className="size-4" aria-hidden />
+        </button>
+
+        <div className="grid grid-cols-1 gap-4 pr-14 sm:grid-cols-2">
+          {REFERENCE_DETAIL_ITEMS.map((item) => (
+            <div key={item.label} className="min-w-0">
+              <p className="text-xs font-medium text-[#94A3B8]">{item.label}</p>
+              <p className="mt-1 text-sm leading-relaxed text-[#334155]">
+                {item.value}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const ReferenceDetailsDrawer = ({
   open,
   onOpenChange,
-}: ReferenceLetterDrawerProps) => {
-  const [form, setForm] = useState<ReferenceLetterFormState>(INITIAL_FORM_STATE);
+}: ReferenceDetailsDrawerProps) => {
+  const [form, setForm] = useState<ReferenceDetailsFormState>(INITIAL_FORM_STATE);
+  const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
     if (!open) {
       setForm(INITIAL_FORM_STATE);
+      setShowDetails(false);
     }
   }, [open]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onOpenChange(false);
+    setShowDetails(true);
   };
 
   const canSubmit =
@@ -83,12 +143,14 @@ const ReferenceLetterDrawer = ({
               Close
             </SheetClose>
             <SheetTitle className="mt-1 text-xl font-semibold text-[#173740] sm:text-2xl">
-              Reference letter
+              Reference details
             </SheetTitle>
           </div>
 
           <div className="flex-1 overflow-y-auto px-6 py-5">
             <UserDetails />
+
+            {showDetails ? <ReferenceDetailsBlock /> : null}
 
             <p className="mt-6 text-sm font-medium text-[#64748B]">
               Fill in this section
@@ -130,13 +192,13 @@ const ReferenceLetterDrawer = ({
 
               <div>
                 <label
-                  htmlFor="reference-letter-job-role"
+                  htmlFor="reference-details-job-role"
                   className="mb-1.5 block text-sm font-medium text-[#092A31]"
                 >
                   Job role
                 </label>
                 <Input
-                  id="reference-letter-job-role"
+                  id="reference-details-job-role"
                   value={form.jobRole}
                   onChange={(event) =>
                     setForm((current) => ({
@@ -152,13 +214,13 @@ const ReferenceLetterDrawer = ({
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label
-                    htmlFor="reference-letter-company-name"
+                    htmlFor="reference-details-company-name"
                     className="mb-1.5 block text-sm font-medium text-[#092A31]"
                   >
                     Company name
                   </label>
                   <Input
-                    id="reference-letter-company-name"
+                    id="reference-details-company-name"
                     value={form.companyName}
                     onChange={(event) =>
                       setForm((current) => ({
@@ -173,14 +235,14 @@ const ReferenceLetterDrawer = ({
 
                 <div>
                   <label
-                    htmlFor="reference-letter-company-website"
+                    htmlFor="reference-details-company-website"
                     className="mb-1.5 block text-sm font-medium text-[#092A31]"
                   >
                     Company website
                   </label>
                   <div className="relative">
                     <Input
-                      id="reference-letter-company-website"
+                      id="reference-details-company-website"
                       value={form.companyWebsite}
                       onChange={(event) =>
                         setForm((current) => ({
@@ -201,13 +263,13 @@ const ReferenceLetterDrawer = ({
 
               <div>
                 <label
-                  htmlFor="reference-letter-additional-info"
+                  htmlFor="reference-details-additional-info"
                   className="mb-1.5 block text-sm font-medium text-[#092A31]"
                 >
                   Additional info
                 </label>
                 <textarea
-                  id="reference-letter-additional-info"
+                  id="reference-details-additional-info"
                   value={form.additionalInfo}
                   onChange={(event) =>
                     setForm((current) => ({
@@ -232,7 +294,7 @@ const ReferenceLetterDrawer = ({
               disabled={!canSubmit}
               className="h-12 w-full rounded-full bg-[#134E5E] text-base font-semibold text-white hover:bg-[#0E6174] disabled:bg-[#9DB8C0]"
             >
-              Request letter
+              View details
             </Button>
           </div>
         </form>
@@ -241,4 +303,4 @@ const ReferenceLetterDrawer = ({
   );
 };
 
-export default ReferenceLetterDrawer;
+export default ReferenceDetailsDrawer;

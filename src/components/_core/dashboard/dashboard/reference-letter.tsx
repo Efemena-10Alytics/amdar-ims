@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { CalendarCheck, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import ReferenceLetterDrawer from "@/components/_core/dashboard/internship-program/internship-details/career-center/drawers/reference-letter";
+import ReferenceDetailsDrawer from "@/components/_core/dashboard/internship-program/internship-details/career-center/drawers/reference-details";
 
 const REFERENCE_FLAGS = [
   { src: "/images/svgs/country/UK.svg", alt: "United Kingdom" },
@@ -15,7 +15,8 @@ const REFERENCE_FLAGS = [
 ];
 
 const ReferenceLetter = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isRequestDrawerOpen, setIsRequestDrawerOpen] = useState(false);
+  const [isDetailsDrawerOpen, setIsDetailsDrawerOpen] = useState(false);
 
   return (
     <>
@@ -76,17 +77,18 @@ const ReferenceLetter = () => {
             ))}
           </div>
 
-          <Link
-            href="#"
-            className="text-sm font-semibold text-[#1A6B8A] underline underline-offset-2 hover:text-[#0E6174]"
+          <button
+            type="button"
+            onClick={() => setIsDetailsDrawerOpen(true)}
+            className="cursor-pointer text-sm font-semibold text-[#1A6B8A] underline underline-offset-2 hover:text-[#0E6174]"
           >
             Request reference details
-          </Link>
+          </button>
         </div>
 
         <Button
           type="button"
-          onClick={() => setIsDrawerOpen(true)}
+          onClick={() => setIsRequestDrawerOpen(true)}
           className="mt-5 h-11 w-full rounded-full bg-[#134E5E] text-sm font-semibold text-white hover:bg-[#0E6174]"
         >
           Request letter
@@ -94,8 +96,12 @@ const ReferenceLetter = () => {
       </section>
 
       <ReferenceLetterDrawer
-        open={isDrawerOpen}
-        onOpenChange={setIsDrawerOpen}
+        open={isRequestDrawerOpen}
+        onOpenChange={setIsRequestDrawerOpen}
+      />
+      <ReferenceDetailsDrawer
+        open={isDetailsDrawerOpen}
+        onOpenChange={setIsDetailsDrawerOpen}
       />
     </>
   );
