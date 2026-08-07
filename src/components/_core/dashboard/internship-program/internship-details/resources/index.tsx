@@ -8,16 +8,15 @@ import type {
   ResourceCategory,
 } from "@/features/interns-project/resources/resources.types";
 import { useGetResources } from "@/features/interns-project/resources/use-get-resources";
-import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
 import { cn } from "@/lib/utils";
 
 const RESOURCE_CATEGORIES = [
   { label: "Onboarding", value: "onboarding" },
   { label: "Session Recording", value: "session-recording" },
   { label: "Mentorship", value: "mentorship" },
-  { label: "Drop-in session", value: "drop-in-session" },
+  { label: "Drop-In Session", value: "drop-in-session" },
   { label: "Project hub", value: "project-hub" },
-  { label: "employability session", value: "employability-session" },
+  { label: "Employability Session", value: "employability-session" },
   { label: "FAQs", value: "faqs" },
   { label: "Others", value: "others" },
 ] as const;
@@ -32,8 +31,7 @@ type ResourceFilterValue = (typeof RESOURCE_FILTERS)[number]["value"];
 type ResourceCategoryValue = (typeof RESOURCE_CATEGORIES)[number]["value"];
 
 type ResourcesProps = {
-  programId?: number | string | null;
-  cohortId?: number | string | null;
+  projectId?: number | string | null;
 };
 
 function pickId(value: unknown): number | string | null {
@@ -70,32 +68,23 @@ function ResourceTypeIcon({ format }: { format: "link" | "material" }) {
   return <FileText className="size-4" aria-hidden />;
 }
 
-const Resources = ({ programId, cohortId }: ResourcesProps) => {
-  const enrollmentQuery = useGetUserEnrollment();
-  const resolvedProgramId =
-    pickId(programId) ??
-    pickId(enrollmentQuery.data?.program_id) ??
-    pickId(enrollmentQuery.data?.program?.id);
-  const resolvedCohortId =
-    pickId(cohortId) ??
-    pickId(enrollmentQuery.data?.cohort_id) ??
-    pickId(enrollmentQuery.data?.cohort?.id);
+const Resources = ({ projectId }: ResourcesProps) => {
+  const resolvedProjectId = pickId(projectId);
 
   const [activeCategory, setActiveCategory] =
-    useState<ResourceCategoryValue>("session-recording");
+    useState<ResourceCategoryValue>("onboarding");
   const [activeFilter, setActiveFilter] = useState<ResourceFilterValue>("all");
 
   const resourcesQuery = useGetResources(
     {
-      program_id: resolvedProgramId ?? undefined,
-      cohort_id: resolvedCohortId ?? undefined,
+      project_id: resolvedProjectId ?? undefined,
       category: activeCategory as ResourceCategory | string,
       format: activeFilter === "all" ? undefined : activeFilter,
       per_page: 50,
       page: 1,
     },
     {
-      enabled: Boolean(resolvedProgramId && resolvedCohortId),
+      enabled: Boolean(resolvedProjectId),
     },
   );
 
@@ -107,14 +96,9 @@ const Resources = ({ programId, cohortId }: ResourcesProps) => {
     });
   }, [resourcesQuery.data?.resources]);
 
-  const isLoading =
-    enrollmentQuery.isLoading ||
-    (Boolean(resolvedProgramId && resolvedCohortId) &&
-      resourcesQuery.isLoading);
+  const isLoading = Boolean(resolvedProjectId) && resourcesQuery.isLoading;
 
-  const isError =
-    enrollmentQuery.isError ||
-    (Boolean(resolvedProgramId && resolvedCohortId) && resourcesQuery.isError);
+  const isError = Boolean(resolvedProjectId) && resourcesQuery.isError;
 
   const handleOpenResource = (resource: Resource) => {
     const href = getResourceHref(resource);
@@ -193,9 +177,9 @@ const Resources = ({ programId, cohortId }: ResourcesProps) => {
                 Retry
               </button>
             </div>
-          ) : !resolvedProgramId || !resolvedCohortId ? (
+          ) : !resolvedProjectId ? (
             <p className="px-1 py-6 text-sm text-[#94A3B8]">
-              Program enrollment is required to view resources.
+              A project is required to view resources.
             </p>
           ) : resources.length ? (
             <div className="space-y-2.5">

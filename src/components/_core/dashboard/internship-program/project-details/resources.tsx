@@ -3,13 +3,9 @@
 import Resources from "../internship-details/resources";
 
 type ResourcesDetailsProps = {
-  programId?: number | string | null;
-  cohortId?: number | string | null;
+  projectId?: number | string | null;
 };
 
-export default function ResourcesDetails({
-  programId,
-  cohortId,
-}: ResourcesDetailsProps) {
-  return <Resources programId={programId} cohortId={cohortId} />;
+export default function ResourcesDetails({ projectId }: ResourcesDetailsProps) {
+  return <Resources projectId={projectId} />;
 }

@@ -5,27 +5,26 @@ import type {
   GetResourcesQuery,
   GetResourcesResponse,
   ResourcesData,
-} from "@/features/interns-project/resources/resources.types";
+} from "@/features/resources/resources.types";
 import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
 
 /**
- * GET /api/v3/intern-projects/{projectId}/resources?search=&category=&format=&per_page=&page=
+ * GET /api/v3/resources?program_id=&cohort_id=&search=&category=&format=&per_page=&page=
  */
 export async function fetchResources(
   query: GetResourcesQuery,
 ): Promise<ResourcesData> {
-  const res = await axiosInstance.get<GetResourcesResponse>(
-    `v3/intern-projects/${query.project_id}/resources`,
-    {
-      params: {
-        search: query.search,
-        category: query.category,
-        format: query.format,
-        per_page: query.per_page,
-        page: query.page,
-      },
+  const res = await axiosInstance.get<GetResourcesResponse>("v3/resources", {
+    params: {
+      program_id: query.program_id,
+      cohort_id: query.cohort_id,
+      search: query.search,
+      category: query.category,
+      format: query.format,
+      per_page: query.per_page,
+      page: query.page,
     },
-  );
+  });
 
   const { success, message, data } = res.data;
 
@@ -47,9 +46,9 @@ export async function fetchResources(
 export const resourcesListQueryKey = (query: GetResourcesQuery) =>
   [
     "v3",
-    "intern-projects",
-    String(query.project_id),
     "resources",
+    String(query.program_id),
+    String(query.cohort_id),
     query.search ?? "",
     query.category ?? "all",
     query.format ?? "all",
@@ -65,15 +64,20 @@ export function useGetResources(
   query?: Partial<GetResourcesQuery> | null,
   options?: UseGetResourcesOptions,
 ) {
-  const projectId =
-    query?.project_id != null && String(query.project_id).trim() !== ""
-      ? query.project_id
+  const programId =
+    query?.program_id != null && String(query.program_id).trim() !== ""
+      ? query.program_id
+      : null;
+  const cohortId =
+    query?.cohort_id != null && String(query.cohort_id).trim() !== ""
+      ? query.cohort_id
       : null;
 
   const resolvedQuery: GetResourcesQuery | null =
-    projectId != null
+    programId != null && cohortId != null
       ? {
-          project_id: projectId,
+          program_id: programId,
+          cohort_id: cohortId,
           search: query?.search,
           category: query?.category,
           format: query?.format,
@@ -88,7 +92,7 @@ export function useGetResources(
   return useQuery({
     queryKey: resolvedQuery
       ? resourcesListQueryKey(resolvedQuery)
-      : ["v3", "intern-projects", "resources", "disabled"],
+      : ["v3", "resources", "disabled"],
     queryFn: () => fetchResources(resolvedQuery!),
     enabled: canFetch,
   });

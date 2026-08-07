@@ -109,7 +109,7 @@ export type ResourcesData = {
   resources: Resource[];
 };
 
-/** GET /api/v3/intern-projects/{projectId}/resources */
+/** GET /api/v3/resources */
 export type GetResourcesResponse = {
   success: boolean;
   message: string;
@@ -117,7 +117,8 @@ export type GetResourcesResponse = {
 };
 
 export type GetResourcesQuery = {
-  project_id: number | string;
+  program_id: number | string;
+  cohort_id: number | string;
   search?: string;
   category?: ResourceCategory | string;
   format?: ResourceFormat | string;
