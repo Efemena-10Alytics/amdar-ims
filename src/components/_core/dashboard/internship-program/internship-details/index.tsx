@@ -8,7 +8,6 @@ import InternshipInfo from "@/components/_core/dashboard/internship-program/inte
 import CareerStage from "@/components/_core/dashboard/internship-program/internship-details/career-stage";
 import CareerCenter from "@/components/_core/dashboard/internship-program/internship-details/career-center";
 import Resources from "@/components/_core/dashboard/internship-program/internship-details/resources";
-import type { InternshipInfoData } from "@/components/_core/dashboard/internship-program/internship-details/internship-info";
 import Performance from "@/components/_core/dashboard/internship-program/internship-details/performance";
 
 const TABS = [
@@ -28,7 +27,6 @@ function isInternshipProgramTabId(
 }
 
 type InternshipDetailsProps = {
-  internshipInfo?: InternshipInfoData;
   defaultTab?: InternshipProgramTabId;
   onWhoIsOnlineClick?: () => void;
 };
@@ -49,7 +47,6 @@ function WhoIsOnlineButton({ onClick }: { onClick?: () => void }) {
 }
 
 const InternshipDetails = ({
-  internshipInfo,
   defaultTab = "internship-info",
   onWhoIsOnlineClick,
 }: InternshipDetailsProps) => {
@@ -76,7 +73,7 @@ const InternshipDetails = ({
   const renderTabContent = () => {
     switch (activeTab) {
       case "internship-info":
-        return <InternshipInfo info={internshipInfo} />;
+        return <InternshipInfo />;
       case "career-stage":
         return <CareerStage />;
       case "performance":
@@ -86,7 +83,7 @@ const InternshipDetails = ({
       case "resources":
         return <Resources />;
       default:
-        return <InternshipInfo info={internshipInfo} />;
+        return <InternshipInfo />;
     }
   };
 
