@@ -12,6 +12,14 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 
+function isNavItemActive(pathname: string, url: string) {
+  if (url === "/dashboard") {
+    return pathname === "/dashboard";
+  }
+
+  return pathname === url || pathname.startsWith(`${url}/`);
+}
+
 export function NavMain({
   items,
 }: {
@@ -29,10 +37,7 @@ export function NavMain({
         <SidebarMenu>
           {items.map((item) => {
             const Icon = item.icon;
-            const isPortfolioItem = item.url === "/dashboard/portfolio";
-            const isActive = isPortfolioItem
-              ? pathname.startsWith("/dashboard/portfolio")
-              : pathname === item.url;
+            const isActive = isNavItemActive(pathname, item.url);
             return (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton
