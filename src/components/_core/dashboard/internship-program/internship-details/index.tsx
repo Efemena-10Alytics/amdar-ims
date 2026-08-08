@@ -13,7 +13,7 @@ import Performance from "@/components/_core/dashboard/internship-program/interns
 const TABS = [
   { id: "internship-info", label: "Internship info" },
   { id: "career-stage", label: "Career Stage" },
-  { id: "performance", label: "Performance" },
+  // { id: "performance", label: "Performance" },
   { id: "career-center", label: "Career center" },
   { id: "resources", label: "Resources" },
 ] as const;
@@ -76,8 +76,8 @@ const InternshipDetails = ({
         return <InternshipInfo />;
       case "career-stage":
         return <CareerStage />;
-      case "performance":
-        return <Performance />;
+      // case "performance":
+      //   return <Performance />;
       case "career-center":
         return <CareerCenter />;
       case "resources":
@@ -120,7 +120,7 @@ const InternshipDetails = ({
           </div>
         </div>
 
-        <WhoIsOnlineButton onClick={onWhoIsOnlineClick} />
+        {/* <WhoIsOnlineButton onClick={onWhoIsOnlineClick} /> */}
       </div>
 
       <div role="tabpanel">{renderTabContent()}</div>
