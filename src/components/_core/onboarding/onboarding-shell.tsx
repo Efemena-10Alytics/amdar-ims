@@ -71,7 +71,7 @@ function OnboardingShellContent({
     isSkipRedirectingRef.current = true;
     try {
       await skipEntrySetup();
-      window.location.assign("/dashboard");
+      window.location.assign("/dashboard/internship");
     } catch {
       isSkipRedirectingRef.current = false;
     }

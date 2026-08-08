@@ -81,7 +81,7 @@ async function encryptTokenForRedirect(token: string): Promise<string | null> {
 
 function getFallbackRedirectUrl(): URL {
   const base = externalRedirect.replace(/\/+$/, "");
-  return new URL(`${base}/dashboard`);
+  return new URL(`${base}/dashboard/internship`);
 }
 
 function isSafePathname(pathname: string): boolean {
