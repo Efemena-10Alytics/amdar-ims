@@ -41,7 +41,7 @@ const login = async (
     if (res.status === 200 && res.data?.data) {
       useAuthStore.getState().setUser(res.data.data);
       if (typeof window !== "undefined" && !skipRedirect) {
-        window.location.replace(redirectURL ?? "/internship");
+        window.location.replace(redirectURL ?? "/dashboard/internship");
       }
       return res.data.data;
     }

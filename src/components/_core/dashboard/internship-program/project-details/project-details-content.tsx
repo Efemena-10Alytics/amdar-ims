@@ -18,7 +18,7 @@ import { useGetProjectBySlug } from "@/features/interns-project/use-get-project-
 import { formatCareerStageLabel } from "./project-content";
 import ProjectViews from "./project-view";
 import Assessment from "./assessment";
-import LeaderBoard from "./leader-board";
+// import LeaderBoard from "./leader-board";
 import ResourcesDetails from "./resources";
 import Todo from "./todo";
 
@@ -27,7 +27,7 @@ const PROJECT_TABS = [
   { id: "assessment", label: "Assessment" },
   { id: "todo", label: "Todo" },
   { id: "resources", label: "Resources" },
-  { id: "leader-board", label: "Leader board" },
+  // { id: "leader-board", label: "Leader board" },
 ] as const;
 
 type ProjectTabId = (typeof PROJECT_TABS)[number]["id"];
@@ -125,9 +125,11 @@ export default function ProjectDetailsContent() {
       <Todo project={project} />
     ) : activeTab === "resources" ? (
       <ResourcesDetails projectId={project.id} />
-    ) : activeTab === "leader-board" ? (
-      <LeaderBoard />
     ) : null;
+  // Leader board temporarily disabled
+  // : activeTab === "leader-board" ? (
+  //   <LeaderBoard />
+  // ) : null;
 
   return (
     <div className="space-y-6 px-4 py-6 lg:px-6">

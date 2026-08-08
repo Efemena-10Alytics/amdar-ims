@@ -103,13 +103,14 @@ const InternshipProgramOverview = () => {
   return (
     <section className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <button
+        <div></div>
+        {/* <button
           type="button"
           className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#D7EEF4] px-4 py-2.5 text-sm font-semibold text-[#156374] transition hover:bg-[#C8E6EE]"
         >
           <Volume2 className="size-4 shrink-0" strokeWidth={2.25} aria-hidden />
           Announcement
-        </button>
+        </button> */}
 
         <div className="inline-flex items-stretch overflow-hidden rounded-full bg-[#CFF6DA] text-sm font-semibold text-[#1F7A4A]">
           <span className="inline-flex items-center gap-2 py-2 pr-3 pl-1.5">
