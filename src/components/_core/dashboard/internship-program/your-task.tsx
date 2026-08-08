@@ -50,26 +50,20 @@ const YourTask = ({
   const projectHref = project?.slug
     ? `/dashboard/internship-program/projects/${encodeURIComponent(project.slug)}`
     : null;
-  const logoSrc = project?.logoPreview || project?.coverPreview || null;
-  const initial = (project?.title?.trim().charAt(0) || "P").toUpperCase();
+  const logoSrc =
+    project?.logoPreview || "/favicon.svg";
 
   return (
     <section className="rounded-2xl border border-[#F3D5A3] bg-[#F9E7C7] px-5 py-4 sm:px-6">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           <div className="flex items-start gap-3">
-            {logoSrc ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={logoSrc}
-                alt=""
-                className="mt-1 size-5 shrink-0 rounded-full object-cover"
-              />
-            ) : (
-              <span className="mt-1 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-white text-[11px] font-bold text-[#4285F4]">
-                {initial}
-              </span>
-            )}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={logoSrc}
+              alt=""
+              className="mt-1 size-5 shrink-0 rounded-full object-cover"
+            />
             <h3 className="max-w-200 text-[22px] leading-9 font-semibold text-[#233A43] lg:text-[32px]">
               {isLoading ? "Loading project..." : project?.title}
             </h3>
