@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ExternalLink, FileText } from "lucide-react";
 import {
   isOnboardingEnrollmentStepComplete,
   useUpdateCompletedOnboardingStep,
@@ -28,6 +29,8 @@ const RulesEtiquettes = () => {
 
   const rules = onboarding.rule_and_etiquette;
   const docLink = rules.docLink;
+  const documentHref = docLink?.url?.trim() || undefined;
+  const documentLabel = docLink?.name?.trim() || "Amdari Terms & Policies";
 
   const requirementsMet = confirmRules && confirmTerms;
   const canContinue = canContinueJourneyStep(
@@ -59,7 +62,9 @@ const RulesEtiquettes = () => {
           previousStep="cohort-lead"
           onClick={() => goToStep("cohort-lead")}
         />
-        <h1 className="text-2xl font-semibold text-[#173740]">Your Program Etiquettes &amp; Rules</h1>
+        <h1 className="text-2xl font-semibold text-[#173740]">
+          Your Program Etiquettes &amp; Rules
+        </h1>
       </div>
 
       <article className="mt-5 rounded-2xl border border-[#DCE5E9] bg-[#F6F8FA] p-4 shadow-[0_8px_18px_rgba(18,57,67,0.06)] sm:p-5">
@@ -73,6 +78,28 @@ const RulesEtiquettes = () => {
             dangerouslySetInnerHTML={{ __html: rules.instructions }}
           />
         </div>
+
+        {documentHref ? (
+          <div className="mt-4 rounded-2xl border border-[#DCE5E9] bg-[#F3F6F8] p-4">
+            <div className="flex items-center gap-2.5">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#D7EEF4] text-[#156374]">
+                <FileText className="size-4" strokeWidth={2} aria-hidden />
+              </span>
+              <p className="text-base font-semibold text-[#173740]">Document</p>
+            </div>
+
+            <a
+              href={documentHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex items-center gap-2 rounded-xl bg-[#E8EEF1] px-3.5 py-2.5 text-sm font-medium text-[#156374] transition hover:bg-[#DEE7EB]"
+            >
+              <FileText className="size-4 shrink-0" strokeWidth={2} aria-hidden />
+              <span>Open document</span>
+              <ExternalLink className="size-3.5 shrink-0" strokeWidth={2} aria-hidden />
+            </a>
+          </div>
+        ) : null}
 
         <label className="mt-4 inline-flex items-center gap-2">
           <input
@@ -95,14 +122,18 @@ const RulesEtiquettes = () => {
           />
           <span className="text-sm text-[#8C9DAC]">
             I have read the{" "}
-            <a
-              href={docLink.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#2D6A78] underline"
-            >
-              {docLink.name || "Amdari Terms & Policies"}
-            </a>{" "}
+            {documentHref ? (
+              <a
+                href={documentHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#2D6A78] underline"
+              >
+                {documentLabel}
+              </a>
+            ) : (
+              documentLabel
+            )}{" "}
             attached above and I agree.
           </span>
         </label>
@@ -116,7 +147,7 @@ const RulesEtiquettes = () => {
         type="button"
         disabled={!canContinue}
         onClick={handleContinue}
-        className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] cursor-pointer transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
+        className="ml-auto mt-6 block h-12 w-full max-w-80 cursor-pointer rounded-full bg-primary text-base font-medium text-[#D7EEF4] transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0] disabled:text-[#E4EDF0]"
       >
         {isUpdating ? "Saving..." : "Continue"}
       </button>
@@ -125,4 +156,3 @@ const RulesEtiquettes = () => {
 };
 
 export default RulesEtiquettes;
-
