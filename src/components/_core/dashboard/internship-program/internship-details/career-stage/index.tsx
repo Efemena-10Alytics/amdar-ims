@@ -18,6 +18,7 @@ import type {
   EnrollmentProgressSection,
 } from "@/features/interns-project/use-get-internship-progress";
 import { useGetInternshipProgress } from "@/features/interns-project/use-get-internship-progress";
+import { isTenAlyticsEnrollment } from "@/features/internship/is-10alytics-cohort";
 import {
   isOnboardingNotFoundError,
   useGetOnboarding,
@@ -126,6 +127,25 @@ const CAREER_STAGE_CARDS: CareerStageCardData[] = [
     status: "locked",
   },
 ];
+
+/**
+ * 10Alytics cohorts join at the emerging stage, so onboarding, the pre-entry
+ * diagnostic and the first three career stages are hidden for them and the
+ * remaining stages are re-labelled to start from week 1.
+ */
+const TEN_ALYTICS_STAGE_IDS = [
+  "emerging-stage",
+  "collaborative-stage",
+  "professional-stage",
+] as const;
+
+const TEN_ALYTICS_STAGE_ID_SET = new Set<string>(TEN_ALYTICS_STAGE_IDS);
+
+const TEN_ALYTICS_STAGE_SUBTITLES: Record<string, string> = {
+  "emerging-stage": "Week 1-2",
+  "collaborative-stage": "Week 3-4",
+  "professional-stage": "Week 5-6",
+};
 
 function clampPercent(value: number | undefined): number {
   if (typeof value !== "number" || Number.isNaN(value)) return 0;
@@ -481,7 +501,10 @@ const CareerStage = () => {
     isLoading: isProgressLoading,
     isPending: isProgressPending,
     isEnrollmentLoading: isProgressEnrollmentLoading,
+    enrollment,
   } = useGetInternshipProgress();
+
+  const isTenAlytics = isTenAlyticsEnrollment(enrollment);
 
   const isOnboardingLoading = isOnboardingPending || isOnboardingQueryLoading;
   const isResolvingOnboarding =
@@ -551,11 +574,21 @@ const CareerStage = () => {
 
   const careerStageStates = useMemo(() => {
     const states = new Map<string, LiveStageState>();
-    const stages = enrollmentProgress?.careerStages ?? [];
+    const allStages = enrollmentProgress?.careerStages ?? [];
 
     if (isResolvingProgress) {
       return states;
     }
+
+    // Hidden stages must not gate the visible ones, otherwise the first stage
+    // a 10Alytics intern can see would stay locked behind stages they skip.
+    const stages = isTenAlytics
+      ? allStages.filter((stage) =>
+          TEN_ALYTICS_STAGE_ID_SET.has(
+            CAREER_STAGE_ID_BY_API_STAGE[stage.stage] ?? "",
+          ),
+        )
+      : allStages;
 
     stages.forEach((stage, index) => {
       const cardId = CAREER_STAGE_ID_BY_API_STAGE[stage.stage];
@@ -568,11 +601,13 @@ const CareerStage = () => {
     });
 
     return states;
-  }, [enrollmentProgress?.careerStages, isResolvingProgress]);
+  }, [enrollmentProgress?.careerStages, isResolvingProgress, isTenAlytics]);
 
   const stageNav = useMemo(
     () =>
-      CAREER_STAGE_NAV.map((item) => {
+      CAREER_STAGE_NAV.filter(
+        (item) => !isTenAlytics || TEN_ALYTICS_STAGE_ID_SET.has(item.id),
+      ).map((item) => {
         if (item.id === "onboarding") {
           return { ...item, status: onboardingStage.status };
         }
@@ -583,34 +618,49 @@ const CareerStage = () => {
         const live = careerStageStates.get(item.id);
         return live ? { ...item, status: live.status } : item;
       }),
-    [careerStageStates, onboardingStage.status, preDiagnosticStage.status],
+    [
+      careerStageStates,
+      isTenAlytics,
+      onboardingStage.status,
+      preDiagnosticStage.status,
+    ],
   );
 
   const stageCards = useMemo(
     () =>
-      CAREER_STAGE_CARDS.map((card) => {
-        if (card.id === "onboarding") {
+      CAREER_STAGE_CARDS.filter(
+        (card) => !isTenAlytics || TEN_ALYTICS_STAGE_ID_SET.has(card.id),
+      ).map((card) => {
+        const base = isTenAlytics
+          ? {
+              ...card,
+              subtitle: TEN_ALYTICS_STAGE_SUBTITLES[card.id] ?? card.subtitle,
+            }
+          : card;
+
+        if (base.id === "onboarding") {
           return {
-            ...card,
+            ...base,
             status: onboardingStage.status,
             progress: onboardingStage.progress,
           };
         }
-        if (card.id === "pre-entry-diagnostic") {
+        if (base.id === "pre-entry-diagnostic") {
           return {
-            ...card,
+            ...base,
             status: preDiagnosticStage.status,
             progress: preDiagnosticStage.progress,
           };
         }
 
-        const live = careerStageStates.get(card.id);
+        const live = careerStageStates.get(base.id);
         return live
-          ? { ...card, status: live.status, progress: live.progress }
-          : card;
+          ? { ...base, status: live.status, progress: live.progress }
+          : base;
       }),
     [
       careerStageStates,
+      isTenAlytics,
       onboardingStage.progress,
       onboardingStage.status,
       preDiagnosticStage.progress,
