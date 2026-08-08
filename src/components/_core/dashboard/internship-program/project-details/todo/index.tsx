@@ -100,18 +100,12 @@ function ProjectSummary({ project }: { project: InternProject }) {
     <>
       <div className="rounded-xl bg-[#F7F9FA] px-5 py-4 sm:px-7">
         <div className="flex items-start gap-3">
-          {project.logoPreview ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={project.logoPreview}
-              alt={project.companyName || project.title}
-              className="mt-0.5 size-5 shrink-0 rounded-full object-cover"
-            />
-          ) : (
-            <span className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-white text-xs font-bold text-[#4285F4]">
-              {(project.companyName || project.title).charAt(0).toUpperCase()}
-            </span>
-          )}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={project.logoPreview || "/favicon.svg"}
+            alt={project.companyName || project.title}
+            className="mt-0.5 size-5 shrink-0 rounded-full object-cover"
+          />
           <h2 className="max-w-3xl text-xl leading-tight font-semibold text-[#34445E] sm:text-2xl">
             {project.title}
           </h2>

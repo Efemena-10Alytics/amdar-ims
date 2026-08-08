@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleCheck, User } from "lucide-react";
+import { User } from "lucide-react";
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import type { InternProject } from "@/features/interns-project/internship-project.types";
@@ -86,12 +86,15 @@ const ProjectViews = ({ project }: ProjectViewsProps) => {
             priority
           />
         )}
-        <div className="absolute inset-0 bg-linear-to-r from-[#092A31]/75 via-[#092A31]/45 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-r from-[#092A31]/50 via-[#092A31]/45 to-transparent" />
 
         <div className="absolute inset-x-4 bottom-5 sm:inset-x-6">
-          <span className="mb-3 inline-flex size-7 items-center justify-center rounded-full bg-[#CFF6DA]">
-            <CircleCheck className="size-4 text-[#238A50]" />
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={project.logoPreview || "/favicon.svg"}
+            alt={project.companyName || project.title}
+            className="mb-3 size-7 rounded-full object-cover"
+          />
           <h2 className="max-w-3xl text-2xl leading-tight font-semibold text-white sm:text-4xl">
             {project.title}
           </h2>
