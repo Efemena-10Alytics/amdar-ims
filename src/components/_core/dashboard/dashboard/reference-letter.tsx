@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { CalendarCheck, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import { cn } from "@/lib/utils";
 import ReferenceLetterDrawer from "@/components/_core/dashboard/internship-program/internship-details/career-center/drawers/reference-letter";
 import ReferenceDetailsDrawer from "@/components/_core/dashboard/internship-program/internship-details/career-center/drawers/reference-details";
@@ -17,6 +18,7 @@ const REFERENCE_FLAGS = [
 const ReferenceLetter = () => {
   const [isRequestDrawerOpen, setIsRequestDrawerOpen] = useState(false);
   const [isDetailsDrawerOpen, setIsDetailsDrawerOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   return (
     <>
@@ -88,7 +90,10 @@ const ReferenceLetter = () => {
 
         <Button
           type="button"
-          onClick={() => setIsRequestDrawerOpen(true)}
+          onClick={() => {
+            setSuccessMessage("");
+            setIsRequestDrawerOpen(true);
+          }}
           className="mt-5 h-11 w-full rounded-full bg-[#134E5E] text-sm font-semibold text-white hover:bg-[#0E6174]"
         >
           Request letter
@@ -98,11 +103,19 @@ const ReferenceLetter = () => {
       <ReferenceLetterDrawer
         open={isRequestDrawerOpen}
         onOpenChange={setIsRequestDrawerOpen}
+        onRequested={setSuccessMessage}
       />
       <ReferenceDetailsDrawer
         open={isDetailsDrawerOpen}
         onOpenChange={setIsDetailsDrawerOpen}
       />
+
+      {successMessage ? (
+        <InfoToastBanner
+          message={successMessage}
+          onDismiss={() => setSuccessMessage("")}
+        />
+      ) : null}
     </>
   );
 };

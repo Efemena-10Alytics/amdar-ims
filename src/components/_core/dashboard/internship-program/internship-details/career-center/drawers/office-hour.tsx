@@ -12,7 +12,13 @@ import {
   useBookOfficeHour,
   type BookOfficeHourPayload,
 } from "@/features/internship/use-book-office-hour";
-import { useAuthStore, type AuthUser } from "@/store/auth-store";
+import {
+  resolveUserEmail,
+  resolveUserFullName,
+  resolveUserPhone,
+  unwrapUser,
+} from "@/lib/user-profile";
+import { useAuthStore } from "@/store/auth-store";
 import UserDetails from "./user-details";
 
 type OfficeHourDrawerProps = {
@@ -30,36 +36,6 @@ const INITIAL_FORM_STATE: OfficeHourFormState = {
 };
 
 const BOOKED_MESSAGE = "Office hour booked successfully.";
-
-type UnknownRecord = Record<string, unknown>;
-
-/** Supports both flat and nested (`{ user: {...} }`) auth user shapes. */
-function unwrapUser(user: AuthUser | null | undefined): UnknownRecord | null {
-  if (!user || typeof user !== "object") return null;
-  const record = user as UnknownRecord;
-  const nested = record.user;
-  if (nested && typeof nested === "object") return nested as UnknownRecord;
-  return record;
-}
-
-function readString(source: UnknownRecord | null, ...keys: string[]): string {
-  if (!source) return "";
-  for (const key of keys) {
-    const value = source[key];
-    if (typeof value === "string" && value.trim()) return value.trim();
-    if (typeof value === "number") return String(value);
-  }
-  return "";
-}
-
-function resolveFullName(source: UnknownRecord | null): string {
-  const direct = readString(source, "fullName", "full_name");
-  if (direct) return direct;
-
-  const first = readString(source, "firstName", "first_name", "name");
-  const last = readString(source, "lastName", "last_name");
-  return [first, last].filter(Boolean).join(" ").trim();
-}
 
 const OfficeHourDrawer = ({
   open,
@@ -85,9 +61,9 @@ const OfficeHourDrawer = ({
   // Payload is built from the API objects, never from the display strings in
   // UserDetails — those fall back to placeholder copy before data loads.
   const userRecord = unwrapUser(userInfo ?? authUser);
-  const fullName = resolveFullName(userRecord);
-  const email = readString(userRecord, "email", "emailAddress", "email_address");
-  const phone = readString(userRecord, "phoneNumber", "phone_number", "phone");
+  const fullName = resolveUserFullName(userRecord);
+  const email = resolveUserEmail(userRecord);
+  const phone = resolveUserPhone(userRecord);
 
   const cohortId = enrollment?.cohort?.id ?? enrollment?.cohort_id ?? null;
   const programId = enrollment?.program?.id ?? enrollment?.program_id ?? null;

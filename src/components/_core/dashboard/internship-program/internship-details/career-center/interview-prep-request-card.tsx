@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { CalendarCheck, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import { cn } from "@/lib/utils";
 import InterviewPrepDrawer from "@/components/_core/dashboard/internship-program/internship-details/career-center/drawers/interview-prep";
 
@@ -14,6 +15,7 @@ const PREP_FLAGS = [
 
 const InterviewPrepRequestCard = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   return (
     <>
@@ -76,14 +78,28 @@ const InterviewPrepRequestCard = () => {
         <Button
           type="button"
           variant="outline"
-          onClick={() => setIsDrawerOpen(true)}
+          onClick={() => {
+            setSuccessMessage("");
+            setIsDrawerOpen(true);
+          }}
           className="mt-5 h-11 w-full rounded-full border-[#134E5E] bg-transparent text-sm font-semibold text-[#134E5E] hover:bg-[#E8F4F8] hover:text-[#0E6174]"
         >
           Book session
         </Button>
       </section>
 
-      <InterviewPrepDrawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen} />
+      <InterviewPrepDrawer
+        open={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
+        onBooked={setSuccessMessage}
+      />
+
+      {successMessage ? (
+        <InfoToastBanner
+          message={successMessage}
+          onDismiss={() => setSuccessMessage("")}
+        />
+      ) : null}
     </>
   );
 };
