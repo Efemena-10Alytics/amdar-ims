@@ -274,6 +274,11 @@ export type InternProjectTodoSubmissionItem =
     }
   | {
       type: "file";
+      file: File;
+      sortOrder: number;
+    }
+  | {
+      type: "file";
       contentUrl: string;
       sortOrder: number;
     };

@@ -6,6 +6,10 @@ import type {
   MyInternProjectTodoSubmission,
   MyInternProjectTodoSubmissionResponse,
 } from "./internship-project.types";
+import {
+  buildTodoSubmissionFormData,
+  submissionItemsHaveFile,
+} from "./build-todo-submission-form-data";
 import { MY_INTERN_PROJECT_TODO_SUBMISSION_QUERY_KEY } from "./use-get-my-todo-submission";
 import { INTERN_PROJECT_TODO_QUERY_KEY } from "./use-get-todo-by-id";
 import { INTERN_PROJECT_TODOS_QUERY_KEY } from "./use-get-todos-by-project-id";
@@ -34,15 +38,27 @@ export async function editMyInternProjectTodoSubmission({
   todoId,
   payload,
 }: EditMyInternProjectTodoSubmissionParams): Promise<MyInternProjectTodoSubmission> {
-  const { data } = await axiosInstance.put<MyInternProjectTodoSubmissionResponse>(
-    `v3/intern-projects/${projectId}/todos/${todoId}/submissions`,
-    payload,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    },
-  );
+  const hasFile = submissionItemsHaveFile(payload.items);
+  const body = hasFile
+    ? buildTodoSubmissionFormData(payload.items)
+    : payload;
+
+  const { data } =
+    await axiosInstance.put<MyInternProjectTodoSubmissionResponse>(
+      `v3/intern-projects/${projectId}/todos/${todoId}/submissions`,
+      body,
+      hasFile
+        ? {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        : {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+    );
 
   if (data.success === false || !data.data) {
     throw new Error(
