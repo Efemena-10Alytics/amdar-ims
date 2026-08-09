@@ -22,7 +22,9 @@ import { useAuthStore } from "@/store/auth-store";
 import { cn } from "@/lib/utils";
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
-const ACCEPTED_TYPES = ["image/jpeg", "image/png"];
+const ACCEPTED_TYPES = ["image/jpeg", "image/png", "application/pdf"];
+const ACCEPTED_ACCEPT_ATTR = "image/jpeg,image/png,application/pdf";
+const FILE_TYPE_HINT = "PDF, JPEG, or PNG (max 5MB)";
 
 const SOLUTION_OPTIONS = [
   { id: "file" as const, label: "File", icon: CloudUpload },
@@ -313,7 +315,7 @@ export default function SubmitTodoDrawer({
     if (!file) return;
 
     if (!ACCEPTED_TYPES.includes(file.type)) {
-      setErrorMessage("Please upload a JPEG or PNG file.");
+      setErrorMessage("Please upload a PDF, JPEG, or PNG file.");
       return;
     }
 
@@ -329,7 +331,9 @@ export default function SubmitTodoDrawer({
     setExistingFileName(null);
     setPreviewUrl((current) => {
       if (current) URL.revokeObjectURL(current);
-      return URL.createObjectURL(file);
+      return file.type.startsWith("image/")
+        ? URL.createObjectURL(file)
+        : null;
     });
   };
 
@@ -359,16 +363,19 @@ export default function SubmitTodoDrawer({
     }
 
     if (availableFormats.includes("file") && selectedFile) {
-      setErrorMessage(
-        "File upload submission is not supported yet. Please use text or URL.",
-      );
-      return null;
+      items.push({
+        type: "file",
+        file: selectedFile,
+        sortOrder: sortOrder++,
+      });
     }
 
     if (!items.length) {
-      if (activeFormat === "file" && (existingFileUrl || selectedFile)) {
+      if (activeFormat === "file") {
         setErrorMessage(
-          "File upload submission is not supported yet. Please use text or URL.",
+          existingFileUrl
+            ? "Choose a new file to replace your current submission."
+            : "Please upload a file.",
         );
       } else if (activeFormat === "text") {
         setErrorMessage("Please enter your solution text.");
@@ -414,6 +421,9 @@ export default function SubmitTodoDrawer({
   };
 
   const filePreviewSrc = previewUrl || existingFileUrl;
+  const isImagePreview =
+    Boolean(previewUrl) ||
+    Boolean(existingFileUrl && /\.(jpe?g|png)(\?|$)/i.test(existingFileUrl));
   const fileLabel =
     selectedFile?.name || existingFileName || "Click to upload file";
   const mutationErrorMessage = submitErrorMessage || editErrorMessage;
@@ -498,7 +508,7 @@ export default function SubmitTodoDrawer({
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept="image/jpeg,image/png"
+                    accept={ACCEPTED_ACCEPT_ATTR}
                     className="hidden"
                     onChange={(event) =>
                       handleFileChange(event.target.files?.[0] ?? null)
@@ -514,7 +524,7 @@ export default function SubmitTodoDrawer({
                         "border-solid border-[#156374] bg-[#E8F0F3]",
                     )}
                   >
-                    {filePreviewSrc ? (
+                    {filePreviewSrc && isImagePreview ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={filePreviewSrc}
@@ -530,7 +540,7 @@ export default function SubmitTodoDrawer({
                       {fileLabel}
                     </p>
                     <p className="mt-1 text-xs text-[#94A3B8]">
-                      Jpeg, png (max 5mb)
+                      {FILE_TYPE_HINT}
                     </p>
                   </button>
 
