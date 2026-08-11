@@ -45,7 +45,7 @@ const OfficeHour = () => {
                 Mon - Fri
               </span>
               <span className="rounded-full bg-[#D4EBF1] px-3 py-1 text-sm font-medium text-[#0B2B33]">
-                10am - 11pm WAT
+                2pm - 11pm WAT
               </span>
             </div>
           </div>
