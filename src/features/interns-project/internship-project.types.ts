@@ -90,6 +90,7 @@ export type InternProject = {
   expectedDeliverables?: string | null;
   skills?: string[] | null;
   status?: InternProjectStatus | null;
+  isCurrent?: boolean;
   created_at: string;
   updated_at: string;
 };

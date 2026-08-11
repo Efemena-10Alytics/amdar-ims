@@ -4,7 +4,7 @@ import StageProjectSchedule, {
   type StageProjectScheduleTone,
 } from "@/components/_core/dashboard/internship-program/internship-details/career-stage/stage-project-schedule";
 import { useStageProjectScheduleData } from "@/components/_core/dashboard/internship-program/internship-details/career-stage/use-stage-project-schedule-data";
-import { InternProjectCareerStage } from "@/features/interns-project/internship-project.types";
+import type { InternProject } from "@/features/interns-project/internship-project.types";
 
 function StageStateMessage({
   message,
@@ -29,17 +29,19 @@ function StageStateMessage({
   );
 }
 
-type CareerStageScheduleProps = {
-  careerStage: InternProjectCareerStage;
-  description: string;
-  tone: StageProjectScheduleTone;
-};
-
-export default function CareerStageSchedule({
-  careerStage,
+function SingleProjectSchedule({
   description,
   tone,
-}: CareerStageScheduleProps) {
+  project,
+  showDescription,
+  defaultOpen,
+}: {
+  description: string;
+  tone: StageProjectScheduleTone;
+  project: InternProject;
+  showDescription: boolean;
+  defaultOpen: boolean;
+}) {
   const {
     projectTitle,
     weekRange,
@@ -49,7 +51,7 @@ export default function CareerStageSchedule({
     isError,
     isEmpty,
     refetch,
-  } = useStageProjectScheduleData(careerStage);
+  } = useStageProjectScheduleData(project);
 
   if (isLoading) {
     return <StageStateMessage message="Loading project schedule..." />;
@@ -58,7 +60,7 @@ export default function CareerStageSchedule({
   if (isError) {
     return (
       <StageStateMessage
-        message="Something went wrong while loading this stage."
+        message="Something went wrong while loading this project schedule."
         onRetry={() => {
           void refetch();
         }}
@@ -68,18 +70,80 @@ export default function CareerStageSchedule({
 
   if (isEmpty || !projectTitle || !weeks.length) {
     return (
-      <StageStateMessage message="No published project is available for this stage yet." />
+      <StageStateMessage message="No schedule is available for this project yet." />
     );
   }
 
   return (
     <StageProjectSchedule
-      description={description}
+      description={showDescription ? description : undefined}
       projectTitle={projectTitle}
       weekRange={weekRange}
       weeks={weeks}
       tone={tone}
       projectHref={projectHref}
+      defaultOpen={defaultOpen}
     />
+  );
+}
+
+type CareerStageScheduleProps = {
+  description: string;
+  tone: StageProjectScheduleTone;
+  projects: InternProject[];
+  isProjectsLoading?: boolean;
+  isProjectsError?: boolean;
+  onRetryProjects?: () => void;
+};
+
+export default function CareerStageSchedule({
+  description,
+  tone,
+  projects,
+  isProjectsLoading = false,
+  isProjectsError = false,
+  onRetryProjects,
+}: CareerStageScheduleProps) {
+  if (isProjectsLoading) {
+    return <StageStateMessage message="Loading project schedule..." />;
+  }
+
+  if (isProjectsError) {
+    return (
+      <StageStateMessage
+        message="Something went wrong while loading this stage."
+        onRetry={onRetryProjects}
+      />
+    );
+  }
+
+  if (!projects.length) {
+    return (
+      <StageStateMessage message="No published project is available for this stage yet." />
+    );
+  }
+
+  const sortedProjects = [...projects].sort((a, b) => {
+    const aCurrent = a.isCurrent ? 1 : 0;
+    const bCurrent = b.isCurrent ? 1 : 0;
+    return bCurrent - aCurrent;
+  });
+  const hasCurrentProject = sortedProjects.some((project) => project.isCurrent);
+
+  return (
+    <div className="space-y-3">
+      {sortedProjects.map((project, index) => (
+        <SingleProjectSchedule
+          key={project.id}
+          description={description}
+          tone={tone}
+          project={project}
+          showDescription={index === 0}
+          defaultOpen={
+            hasCurrentProject ? Boolean(project.isCurrent) : index === 0
+          }
+        />
+      ))}
+    </div>
   );
 }
