@@ -3,6 +3,7 @@
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ReadinessTestDrawer from "@/components/_core/readiness-test/readiness-test-drawer";
+import { DiagnosticEntryActions } from "@/components/_core/readiness-test/diagnostic-entry-actions";
 import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import { getReadinessTestGuidelines } from "@/features/readiness-test/get-readiness-test-guidelines";
 import { getSortedReadinessTestFields } from "@/features/readiness-test/get-sorted-form-fields";
@@ -164,24 +165,16 @@ const ReadinessTest = () => {
         />
       ) : null}
 
-      <button
-        type="button"
-        disabled={
-          isStepCompleted
-            ? false
-            : questionCount === 0 || isUpdating || isLoadingLatest
-        }
-        onClick={() => setIsDrawerOpen(true)}
-        className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] cursor-pointer transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0]"
-      >
-        {isUpdating
-          ? "Saving..."
-          : isLoadingLatest
-            ? "Loading..."
-            : canViewResults
-              ? "View results"
-              : "Start Quiz"}
-      </button>
+      <DiagnosticEntryActions
+        canViewResults={canViewResults}
+        isLoading={isLoadingLatest}
+        isProceeding={isUpdating}
+        startDisabled={questionCount === 0}
+        startLabel="Start Quiz"
+        onSeeResult={() => setIsDrawerOpen(true)}
+        onProceed={handleProceed}
+        onStart={() => setIsDrawerOpen(true)}
+      />
 
       <ReadinessTestDrawer
         open={isDrawerOpen}
