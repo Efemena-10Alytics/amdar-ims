@@ -11,13 +11,22 @@ import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
 export type GetMyInternProjectTodoSubmissionParams = {
   projectId: number | string;
   todoId: number | string;
+  typeId: number | string;
 };
 
 export const MY_INTERN_PROJECT_TODO_SUBMISSION_QUERY_KEY = (
   projectId: number | string,
   todoId: number | string,
+  typeId: number | string,
 ) =>
-  ["v3", "intern-projects", "todo-submission-me", projectId, todoId] as const;
+  [
+    "v3",
+    "intern-projects",
+    "todo-submission-me",
+    projectId,
+    todoId,
+    typeId,
+  ] as const;
 
 function asRecord(value: unknown): Record<string, unknown> | null {
   return value && typeof value === "object"
@@ -157,11 +166,12 @@ function normalizeMySubmission(
 export async function getMyInternProjectTodoSubmission({
   projectId,
   todoId,
+  typeId,
 }: GetMyInternProjectTodoSubmissionParams): Promise<MyInternProjectTodoSubmission | null> {
   try {
     const { data } =
       await axiosInstance.get<MyInternProjectTodoSubmissionResponse>(
-        `v3/intern-projects/${projectId}/todos/${todoId}/submissions/me`,
+        `v3/intern-projects/${projectId}/todos/${todoId}/types/${typeId}/submissions/me`,
       );
 
     if (data.success === false) {
@@ -182,20 +192,23 @@ export async function getMyInternProjectTodoSubmission({
 export function useGetMyTodoSubmission(
   projectId?: number | string | null,
   todoId?: number | string | null,
+  typeId?: number | string | null,
   options?: { enabled?: boolean },
 ) {
-  const hasValidParams = Boolean(projectId && todoId);
+  const hasValidParams = Boolean(projectId && todoId && typeId);
   const enabled = options?.enabled !== false;
 
   return useQuery({
     queryKey: MY_INTERN_PROJECT_TODO_SUBMISSION_QUERY_KEY(
       projectId ?? "",
       todoId ?? "",
+      typeId ?? "",
     ),
     queryFn: () =>
       getMyInternProjectTodoSubmission({
         projectId: projectId as number | string,
         todoId: todoId as number | string,
+        typeId: typeId as number | string,
       }),
     enabled: !!apiBaseURL && hasValidParams && enabled,
   });

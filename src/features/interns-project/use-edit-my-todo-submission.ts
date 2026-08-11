@@ -18,6 +18,7 @@ import { axiosInstance } from "@/lib/axios-instance";
 export type EditMyInternProjectTodoSubmissionParams = {
   projectId: number | string;
   todoId: number | string;
+  typeId: number | string;
   payload: EditInternProjectTodoSubmissionPayload;
 };
 
@@ -36,6 +37,7 @@ function getErrorMessage(error: unknown): string {
 export async function editMyInternProjectTodoSubmission({
   projectId,
   todoId,
+  typeId,
   payload,
 }: EditMyInternProjectTodoSubmissionParams): Promise<MyInternProjectTodoSubmission> {
   const hasFile = submissionItemsHaveFile(payload.items);
@@ -45,7 +47,7 @@ export async function editMyInternProjectTodoSubmission({
 
   const { data } =
     await axiosInstance.put<MyInternProjectTodoSubmissionResponse>(
-      `v3/intern-projects/${projectId}/todos/${todoId}/submissions`,
+      `v3/intern-projects/${projectId}/todos/${todoId}/types/${typeId}/submissions`,
       body,
       hasFile
         ? {
@@ -78,6 +80,7 @@ export function useEditMyTodoSubmission() {
     async ({
       projectId,
       todoId,
+      typeId,
       payload,
     }: EditMyInternProjectTodoSubmissionParams) => {
       setIsSubmitting(true);
@@ -87,6 +90,7 @@ export function useEditMyTodoSubmission() {
         const response = await editMyInternProjectTodoSubmission({
           projectId,
           todoId,
+          typeId,
           payload,
         });
 
@@ -95,6 +99,7 @@ export function useEditMyTodoSubmission() {
             queryKey: MY_INTERN_PROJECT_TODO_SUBMISSION_QUERY_KEY(
               projectId,
               todoId,
+              typeId,
             ),
           }),
           queryClient.invalidateQueries({

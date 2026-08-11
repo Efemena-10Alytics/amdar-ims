@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { Lightbulb } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ReadinessTestDrawer from "@/components/_core/readiness-test/readiness-test-drawer";
+import { DiagnosticEntryActions } from "@/components/_core/readiness-test/diagnostic-entry-actions";
 import { usePreDiagnosticData } from "@/components/_core/pre-diagnostic-test/pre-diagnostic-context";
 import { usePreDiagnosticNavigation } from "@/components/_core/pre-diagnostic-test/use-pre-diagnostic-navigation";
 import { getReadinessTestGuidelines } from "@/features/readiness-test/get-readiness-test-guidelines";
@@ -117,24 +118,17 @@ const TechnologyDiagnostic = () => {
         <p className="mt-4 text-sm text-destructive">{errorMessage}</p>
       ) : null}
 
-      <button
-        type="button"
-        disabled={
-          isStepCompleted
-            ? false
-            : questionCount === 0 || isUpdating || isLoadingLatest
-        }
-        onClick={() => setIsDrawerOpen(true)}
-        className="ml-auto mt-6 block h-12 w-full max-w-80 rounded-full bg-primary text-base font-medium text-[#D7EEF4] cursor-pointer transition hover:bg-[#5b98aa] disabled:cursor-not-allowed disabled:bg-[#9DB8C0]"
-      >
-        {isUpdating
-          ? "Saving..."
-          : isLoadingLatest
-            ? "Loading..."
-            : canViewResults
-              ? "View results"
-              : "Start diagnostic"}
-      </button>
+      <DiagnosticEntryActions
+        canViewResults={canViewResults}
+        isLoading={isLoadingLatest}
+        isProceeding={isUpdating}
+        startDisabled={questionCount === 0}
+        onSeeResult={() => setIsDrawerOpen(true)}
+        onProceed={() => {
+          void handleProceed();
+        }}
+        onStart={() => setIsDrawerOpen(true)}
+      />
 
       <ReadinessTestDrawer
         open={isDrawerOpen}
