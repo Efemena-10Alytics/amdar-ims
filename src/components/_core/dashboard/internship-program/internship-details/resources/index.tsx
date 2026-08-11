@@ -3,11 +3,12 @@
 import { useMemo, useState } from "react";
 import { ExternalLink, FileText, Link2 } from "lucide-react";
 import { TrangleIcon } from "../../../svg";
+import { useEnrollmentCohortProgramIds } from "@/components/_core/dashboard/internship-program/internship-details/career-stage/use-stage-project-schedule-data";
 import type {
   Resource,
   ResourceCategory,
-} from "@/features/interns-project/resources/resources.types";
-import { useGetResources } from "@/features/interns-project/resources/use-get-resources";
+} from "@/features/resources/resources.types";
+import { useGetResources } from "@/features/resources/use-get-resources";
 import { cn } from "@/lib/utils";
 
 const RESOURCE_CATEGORIES = [
@@ -29,16 +30,6 @@ const RESOURCE_FILTERS = [
 
 type ResourceFilterValue = (typeof RESOURCE_FILTERS)[number]["value"];
 type ResourceCategoryValue = (typeof RESOURCE_CATEGORIES)[number]["value"];
-
-type ResourcesProps = {
-  projectId?: number | string | null;
-};
-
-function pickId(value: unknown): number | string | null {
-  if (typeof value === "number" && Number.isFinite(value)) return value;
-  if (typeof value === "string" && value.trim() !== "") return value;
-  return null;
-}
 
 function normalizeResourceFormat(format?: string | null): "link" | "material" {
   const value = format?.trim().toLowerCase();
@@ -68,23 +59,27 @@ function ResourceTypeIcon({ format }: { format: "link" | "material" }) {
   return <FileText className="size-4" aria-hidden />;
 }
 
-const Resources = ({ projectId }: ResourcesProps) => {
-  const resolvedProjectId = pickId(projectId);
+const Resources = () => {
+  const { cohortId, programId, isLoading: isEnrollmentLoading } =
+    useEnrollmentCohortProgramIds();
 
   const [activeCategory, setActiveCategory] =
     useState<ResourceCategoryValue>("onboarding");
   const [activeFilter, setActiveFilter] = useState<ResourceFilterValue>("all");
 
+  const canFetch = programId != null && cohortId != null;
+
   const resourcesQuery = useGetResources(
     {
-      project_id: resolvedProjectId ?? undefined,
+      program_id: programId ?? undefined,
+      cohort_id: cohortId ?? undefined,
       category: activeCategory as ResourceCategory | string,
       format: activeFilter === "all" ? undefined : activeFilter,
       per_page: 50,
       page: 1,
     },
     {
-      enabled: Boolean(resolvedProjectId),
+      enabled: canFetch,
     },
   );
 
@@ -96,9 +91,10 @@ const Resources = ({ projectId }: ResourcesProps) => {
     });
   }, [resourcesQuery.data?.resources]);
 
-  const isLoading = Boolean(resolvedProjectId) && resourcesQuery.isLoading;
+  const isLoading =
+    isEnrollmentLoading || (canFetch && resourcesQuery.isLoading);
 
-  const isError = Boolean(resolvedProjectId) && resourcesQuery.isError;
+  const isError = canFetch && resourcesQuery.isError;
 
   const handleOpenResource = (resource: Resource) => {
     const href = getResourceHref(resource);
@@ -177,9 +173,9 @@ const Resources = ({ projectId }: ResourcesProps) => {
                 Retry
               </button>
             </div>
-          ) : !resolvedProjectId ? (
+          ) : !canFetch ? (
             <p className="px-1 py-6 text-sm text-[#94A3B8]">
-              A project is required to view resources.
+              Enrollment details are required to view resources.
             </p>
           ) : resources.length ? (
             <div className="space-y-2.5">
