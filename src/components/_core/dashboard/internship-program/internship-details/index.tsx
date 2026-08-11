@@ -11,8 +11,8 @@ import Resources from "@/components/_core/dashboard/internship-program/internshi
 import Performance from "@/components/_core/dashboard/internship-program/internship-details/performance";
 
 const TABS = [
-  { id: "internship-info", label: "Internship info" },
   { id: "career-stage", label: "Career Stage" },
+  { id: "internship-info", label: "Internship info" },
   // { id: "performance", label: "Performance" },
   { id: "career-center", label: "Career center" },
   { id: "resources", label: "Resources" },
@@ -47,7 +47,7 @@ function WhoIsOnlineButton({ onClick }: { onClick?: () => void }) {
 }
 
 const InternshipDetails = ({
-  defaultTab = "internship-info",
+  defaultTab = "career-stage",
   onWhoIsOnlineClick,
 }: InternshipDetailsProps) => {
   const router = useRouter();
@@ -83,7 +83,7 @@ const InternshipDetails = ({
       case "resources":
         return <Resources />;
       default:
-        return <InternshipInfo />;
+        return <CareerStage />;
     }
   };
 

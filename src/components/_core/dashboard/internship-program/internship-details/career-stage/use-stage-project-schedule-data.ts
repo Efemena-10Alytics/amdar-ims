@@ -8,12 +8,7 @@ import type {
   WeekSchedule,
 } from "@/components/_core/dashboard/internship-program/internship-details/career-stage/stage-project-schedule";
 import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
-import {
-  InternProjectCareerStage,
-  type InternProject,
-  type InternProjectTodo,
-} from "@/features/interns-project/internship-project.types";
-import { useGetProjectByStage } from "@/features/interns-project/use-get-project-by-stage";
+import type { InternProject, InternProjectTodo } from "@/features/interns-project/internship-project.types";
 import { useGetTodosByProjectId } from "@/features/interns-project/use-get-todos-by-project-id";
 
 const DAY_ORDER = [
@@ -32,12 +27,36 @@ function pickId(value: unknown): number | string | null {
   return null;
 }
 
+export function useEnrollmentCohortProgramIds() {
+  const enrollmentQuery = useGetUserEnrollment();
+  const cohortId =
+    pickId(enrollmentQuery.data?.cohort_id) ??
+    pickId(enrollmentQuery.data?.cohort?.id);
+  const programId =
+    pickId(enrollmentQuery.data?.program_id) ??
+    pickId(enrollmentQuery.data?.program?.id);
+
+  return {
+    cohortId,
+    programId,
+    isLoading: enrollmentQuery.isLoading,
+    isError: enrollmentQuery.isError,
+    refetch: enrollmentQuery.refetch,
+  };
+}
+
+function capitalizeDayLabel(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return trimmed;
+  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+}
+
 function normalizeDayLabel(dayOfWeek: string): string {
   const trimmed = dayOfWeek.trim();
   const match = DAY_ORDER.find(
     (day) => day.toLowerCase() === trimmed.toLowerCase(),
   );
-  return match ?? trimmed;
+  return match ?? capitalizeDayLabel(trimmed);
 }
 
 function deriveDayStatus(tasks: { status: TaskStatus }[]): DayStatus {
@@ -129,26 +148,8 @@ function buildProjectHref(project: InternProject): string | undefined {
   return `/dashboard/internship-program/projects/${encodeURIComponent(slug)}`;
 }
 
-export function useStageProjectScheduleData(
-  careerStage: InternProjectCareerStage,
-) {
-  const enrollmentQuery = useGetUserEnrollment();
-  const cohortId =
-    pickId(enrollmentQuery.data?.cohort_id) ??
-    pickId(enrollmentQuery.data?.cohort?.id) ??
-    48;
-  const programId =
-    pickId(enrollmentQuery.data?.program_id) ??
-    pickId(enrollmentQuery.data?.program?.id) ??
-    25;
-
-  const projectsQuery = useGetProjectByStage({
-    cohortId,
-    programId,
-    careerStage,
-  });
-
-  const project = projectsQuery.data?.[0] ?? null;
+/** Builds week/day schedule UI data from a published stage project + its todos. */
+export function useStageProjectScheduleData(project: InternProject | null) {
   const todosQuery = useGetTodosByProjectId(project?.id);
 
   const weeks = useMemo(
@@ -156,13 +157,8 @@ export function useStageProjectScheduleData(
     [project?.slug, todosQuery.data],
   );
 
-  const isLoading =
-    enrollmentQuery.isLoading ||
-    projectsQuery.isLoading ||
-    (Boolean(project?.id) && todosQuery.isLoading);
-
-  const isError =
-    enrollmentQuery.isError || projectsQuery.isError || todosQuery.isError;
+  const isLoading = Boolean(project?.id) && todosQuery.isLoading;
+  const isError = todosQuery.isError;
 
   return {
     project,
@@ -174,11 +170,7 @@ export function useStageProjectScheduleData(
     isError,
     isEmpty: !isLoading && !isError && (!project || weeks.length === 0),
     refetch: async () => {
-      await Promise.all([
-        enrollmentQuery.refetch(),
-        projectsQuery.refetch(),
-        todosQuery.refetch(),
-      ]);
+      await todosQuery.refetch();
     },
   };
 }
