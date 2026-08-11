@@ -13,11 +13,9 @@ import { cn } from "@/lib/utils";
 
 const RESOURCE_CATEGORIES = [
   { label: "Onboarding", value: "onboarding" },
-  { label: "Session Recording", value: "session-recording" },
-  { label: "Mentorship", value: "mentorship" },
+  { label: "Mentorship Session", value: "mentorship" },
   { label: "Drop-In Session", value: "drop-in-session" },
-  { label: "Project hub", value: "project-hub" },
-  { label: "Employability Session", value: "employability-session" },
+  { label: "Employability Hub", value: "employability-session" },
   { label: "FAQs", value: "faqs" },
   { label: "Others", value: "others" },
 ] as const;
