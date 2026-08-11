@@ -8,12 +8,14 @@ import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
 export type GetInternProjectTodoSubmissionCommentsParams = {
   projectId: number | string;
   todoId: number | string;
+  typeId: number | string;
   submissionId: number | string;
 };
 
 export const INTERN_PROJECT_TODO_SUBMISSION_COMMENTS_QUERY_KEY = (
   projectId: number | string,
   todoId: number | string,
+  typeId: number | string,
   submissionId: number | string,
 ) =>
   [
@@ -22,6 +24,7 @@ export const INTERN_PROJECT_TODO_SUBMISSION_COMMENTS_QUERY_KEY = (
     "todo-submission-comments",
     projectId,
     todoId,
+    typeId,
     submissionId,
   ] as const;
 
@@ -50,13 +53,14 @@ function extractComments(
 export async function getInternProjectTodoSubmissionComments({
   projectId,
   todoId,
+  typeId,
   submissionId,
 }: GetInternProjectTodoSubmissionCommentsParams): Promise<
   InternProjectTodoSubmissionComment[]
 > {
   const { data } =
     await axiosInstance.get<InternProjectTodoSubmissionCommentsResponse>(
-      `v3/intern-projects/${projectId}/todos/${todoId}/submissions/${submissionId}/comments`,
+      `v3/intern-projects/${projectId}/todos/${todoId}/types/${typeId}/submissions/${submissionId}/comments`,
     );
 
   if (data.success === false) {
@@ -71,22 +75,25 @@ export async function getInternProjectTodoSubmissionComments({
 export function useGetTodoSubmissionComments(
   projectId?: number | string | null,
   todoId?: number | string | null,
+  typeId?: number | string | null,
   submissionId?: number | string | null,
   options?: { enabled?: boolean },
 ) {
-  const hasValidParams = Boolean(projectId && todoId && submissionId);
+  const hasValidParams = Boolean(projectId && todoId && typeId && submissionId);
   const enabled = options?.enabled !== false;
 
   return useQuery({
     queryKey: INTERN_PROJECT_TODO_SUBMISSION_COMMENTS_QUERY_KEY(
       projectId ?? "",
       todoId ?? "",
+      typeId ?? "",
       submissionId ?? "",
     ),
     queryFn: () =>
       getInternProjectTodoSubmissionComments({
         projectId: projectId as number | string,
         todoId: todoId as number | string,
+        typeId: typeId as number | string,
         submissionId: submissionId as number | string,
       }),
     enabled: !!apiBaseURL && hasValidParams && enabled,

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, Suspense } from "react";
 import {
   ArrowLeft,
   Check,
@@ -270,20 +270,26 @@ function LessonPanel({
 }) {
   const [isOverviewOpen, setIsOverviewOpen] = useState(true);
   const [isSubmitOpen, setIsSubmitOpen] = useState(false);
-  const { data: mySubmission = null } = useGetMyTodoSubmission(
-    projectId,
-    todo.id,
-  );
-  const hasSubmittedSolution = Boolean(mySubmission?.id);
   const sortedTypes = getSortedTodoTypes(todo);
   const activeType =
     sortedTypes.find((type) => type.id === activeTypeId) ??
     sortedTypes[0] ??
     null;
-  const submissionType =
-    sortedTypes.find((type) => type.submissionRequired) ?? sortedTypes[0];
-  const solutionFormats = submissionType?.solutionFormat ?? null;
+  const canSubmitActiveType = Boolean(activeType?.submissionRequired);
+  const solutionFormats = activeType?.solutionFormat ?? null;
   const submissionId = resolveTodoSubmissionId(todo);
+  const { data: mySubmission = null } = useGetMyTodoSubmission(
+    projectId,
+    todo.id,
+    activeType?.id,
+  );
+  const hasSubmittedSolution = Boolean(mySubmission?.id);
+
+  useEffect(() => {
+    if (!canSubmitActiveType) {
+      setIsSubmitOpen(false);
+    }
+  }, [canSubmitActiveType, activeType?.id]);
 
   return (
     <div className="space-y-2">
@@ -318,16 +324,18 @@ function LessonPanel({
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsSubmitOpen(true)}
-                className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-lg bg-[#FFE49A] px-4 text-sm font-medium text-[#7C5A16] hover:bg-[#FFDC7A]"
-              >
-                <Lightbulb className="size-4 fill-current" />
-                {hasSubmittedSolution
-                  ? "View Solution"
-                  : "Submit your solution"}
-              </button>
+              {canSubmitActiveType ? (
+                <button
+                  type="button"
+                  onClick={() => setIsSubmitOpen(true)}
+                  className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-lg bg-[#FFE49A] px-4 text-sm font-medium text-[#7C5A16] hover:bg-[#FFDC7A]"
+                >
+                  <Lightbulb className="size-4 fill-current" />
+                  {hasSubmittedSolution
+                    ? "View Solution"
+                    : "Submit your solution"}
+                </button>
+              ) : null}
             </div>
           </div>
         ) : null}
@@ -335,15 +343,18 @@ function LessonPanel({
 
       {activeType ? <TodoTypeSection type={activeType} /> : null}
 
-      <SubmitTodoDrawer
-        open={isSubmitOpen}
-        onOpenChange={setIsSubmitOpen}
-        careerStage={careerStage}
-        solutionFormats={solutionFormats}
-        projectId={projectId}
-        todoId={todo.id}
-        submissionId={submissionId}
-      />
+      {canSubmitActiveType ? (
+        <SubmitTodoDrawer
+          open={isSubmitOpen}
+          onOpenChange={setIsSubmitOpen}
+          careerStage={careerStage}
+          solutionFormats={solutionFormats}
+          projectId={projectId}
+          todoId={todo.id}
+          typeId={activeType?.id}
+          submissionId={submissionId}
+        />
+      ) : null}
     </div>
   );
 }
@@ -546,6 +557,20 @@ function ProjectTodoPanel({
 }
 
 export default function ClassroomPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="px-4 py-10 text-center text-sm text-[#64748B] lg:px-6">
+          Loading classroom...
+        </main>
+      }
+    >
+      <ClassroomPageContent />
+    </Suspense>
+  );
+}
+
+function ClassroomPageContent() {
   const params = useParams<{
     slug?: string | string[];
     todoId?: string | string[];

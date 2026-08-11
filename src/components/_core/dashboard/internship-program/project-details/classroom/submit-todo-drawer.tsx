@@ -45,6 +45,7 @@ type SubmitTodoDrawerProps = {
   userName?: string | null;
   projectId?: number | string | null;
   todoId?: number | string | null;
+  typeId?: number | string | null;
   submissionId?: number | string | null;
   solutionFormats?:
     | InternProjectTodoSolutionFormat[]
@@ -136,6 +137,7 @@ export default function SubmitTodoDrawer({
   userName,
   projectId = null,
   todoId = null,
+  typeId = null,
   submissionId = null,
   solutionFormats = null,
 }: SubmitTodoDrawerProps) {
@@ -161,7 +163,7 @@ export default function SubmitTodoDrawer({
   const {
     data: mySubmission = null,
     isLoading: isMySubmissionLoading,
-  } = useGetMyTodoSubmission(projectId, todoId);
+  } = useGetMyTodoSubmission(projectId, todoId, typeId);
 
   const resolvedSubmissionId = mySubmission?.id ?? submissionId;
   const hasExistingSubmission = Boolean(mySubmission?.id);
@@ -171,9 +173,15 @@ export default function SubmitTodoDrawer({
     isLoading: isCommentsLoading,
     isError: isCommentsError,
     refetch: refetchComments,
-  } = useGetTodoSubmissionComments(projectId, todoId, resolvedSubmissionId, {
-    enabled: open && !mySubmission?.feedback?.length,
-  });
+  } = useGetTodoSubmissionComments(
+    projectId,
+    todoId,
+    typeId,
+    resolvedSubmissionId,
+    {
+      enabled: open && !mySubmission?.feedback?.length,
+    },
+  );
 
   const {
     submitTodo,
@@ -192,7 +200,7 @@ export default function SubmitTodoDrawer({
   );
   const showFormatTabs = visibleOptions.length > 1;
   const isSaving = isSubmitting || isEditing;
-  const canSubmit = Boolean(projectId && todoId) && !isSaving;
+  const canSubmit = Boolean(projectId && todoId && typeId) && !isSaving;
   const feedbackItems = mySubmission?.feedback?.length
     ? mySubmission.feedback
     : comments;
@@ -391,8 +399,8 @@ export default function SubmitTodoDrawer({
   };
 
   const handleSubmit = async () => {
-    if (!projectId || !todoId) {
-      setErrorMessage("Missing project or todo details.");
+    if (!projectId || !todoId || !typeId) {
+      setErrorMessage("Missing project, todo, or type details.");
       return;
     }
 
@@ -404,12 +412,14 @@ export default function SubmitTodoDrawer({
         await editTodoSubmission({
           projectId,
           todoId,
+          typeId,
           payload: { items },
         });
       } else {
         await submitTodo({
           projectId,
           todoId,
+          typeId,
           payload: { items },
         });
       }

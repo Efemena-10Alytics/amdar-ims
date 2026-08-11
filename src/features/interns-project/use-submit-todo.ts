@@ -17,6 +17,7 @@ import { axiosInstance } from "@/lib/axios-instance";
 export type SubmitInternProjectTodoParams = {
   projectId: number | string;
   todoId: number | string;
+  typeId: number | string;
   payload: SubmitInternProjectTodoPayload;
 };
 
@@ -35,6 +36,7 @@ function getErrorMessage(error: unknown): string {
 export async function submitInternProjectTodo({
   projectId,
   todoId,
+  typeId,
   payload,
 }: SubmitInternProjectTodoParams): Promise<SubmitInternProjectTodoResponse> {
   const hasFile = submissionItemsHaveFile(payload.items);
@@ -43,7 +45,7 @@ export async function submitInternProjectTodo({
     : payload;
 
   const { data } = await axiosInstance.post<SubmitInternProjectTodoResponse>(
-    `v3/intern-projects/${projectId}/todos/${todoId}/submissions`,
+    `v3/intern-projects/${projectId}/todos/${todoId}/types/${typeId}/submissions`,
     body,
     hasFile
       ? {
@@ -71,7 +73,12 @@ export function useSubmitTodo() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const submitTodo = useCallback(
-    async ({ projectId, todoId, payload }: SubmitInternProjectTodoParams) => {
+    async ({
+      projectId,
+      todoId,
+      typeId,
+      payload,
+    }: SubmitInternProjectTodoParams) => {
       setIsSubmitting(true);
       setErrorMessage("");
 
@@ -79,6 +86,7 @@ export function useSubmitTodo() {
         const response = await submitInternProjectTodo({
           projectId,
           todoId,
+          typeId,
           payload,
         });
 
@@ -93,6 +101,7 @@ export function useSubmitTodo() {
             queryKey: MY_INTERN_PROJECT_TODO_SUBMISSION_QUERY_KEY(
               projectId,
               todoId,
+              typeId,
             ),
           }),
         ]);
