@@ -16,6 +16,9 @@ export type RequestReferenceLetterPayload = {
   program_id?: number;
   cohort_id?: number;
   additional_info?: string;
+  job_role?: string;
+  company_name?: string;
+  company_website?: string;
 };
 
 export type RequestReferenceLetterResponse = {

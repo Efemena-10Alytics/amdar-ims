@@ -5,6 +5,10 @@ export const PROMO_URGENCY_QUERY_KEY = ["payment", "promo-urgency"] as const;
 
 export type PromoUrgencyData = {
   end_date?: string;
+  /** Rolling deadline as an absolute ISO-8601 timestamp, never more than 12h out. */
+  end_at?: string;
+  /** Whole seconds until `end_at` at the moment the response was generated. */
+  seconds_remaining?: number;
   slots_left?: number;
   registered?: number;
   registered_interval_hours?: number;

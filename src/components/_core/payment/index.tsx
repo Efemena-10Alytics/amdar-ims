@@ -7,6 +7,7 @@ import Checkout from "./checkout";
 import PaymentDetails from "./payment-details";
 import CompleteProfile from "./complete-profile";
 import Coupon from "./coupon";
+import OffersCard from "./offers-card";
 import type { InternshipProgram } from "@/types/internship-program";
 import type { CheckoutData } from "@/features/payment/use-get-checkout-data";
 import { usePayNow } from "@/features/payment/use-pay-now";
@@ -234,7 +235,8 @@ const PaymentMain = ({
         )}
       </div>
       {activeStep === "checkout" && (
-        <div className="lg:sticky lg:top-48 lg:self-start shrink-0">
+        <div className="lg:sticky lg:top-48 lg:self-start shrink-0 space-y-6 lg:w-60 xl:w-80">
+          <OffersCard />
           <Coupon
             discount={
               checkoutData?.promo_code_data?.discount_percentage as string

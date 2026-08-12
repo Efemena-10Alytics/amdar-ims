@@ -8,7 +8,6 @@ import type { InternshipProgram } from "@/types/internship-program";
 import { getYoutubeThumbnail } from "../../../shared/youtube-video";
 import { VideoPlayerModal } from "../../../shared/video-player-modal";
 import { useGetNextCohort } from "@/features/internship/use-get-next-cohort";
-import IWDPayment from "../../../shared/iwd-banner/iwd-payment";
 
 interface RightProps {
   program?: InternshipProgram;
@@ -79,12 +78,6 @@ const Right = ({ program }: RightProps) => {
   return (
     <div className="space-y-6">
       {/* Video Player Section */}
-      {/* <div className="hidden lg:block">
-        <IWDPayment
-          claimHref={`/payment/${program?.id}`}
-          offersHref="/internship"
-        />
-      </div> */}
       <div
         role="button"
         tabIndex={0}

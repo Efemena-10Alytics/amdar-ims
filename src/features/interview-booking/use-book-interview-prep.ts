@@ -16,6 +16,9 @@ export type BookInterviewPrepInput = {
   cohort_id?: number;
   job_link?: string;
   details?: string;
+  job_role?: string;
+  company_name?: string;
+  company_location?: string;
   interview_stage?: string;
   job_description?: string;
   /** YYYY-MM-DD */

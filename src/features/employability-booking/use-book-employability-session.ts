@@ -15,6 +15,11 @@ export type BookEmployabilitySessionPayload = {
   phone_number: string;
   issue: string;
   purpose_of_use: string;
+  job_role?: string;
+  company_name?: string;
+  company_location?: string;
+  /** pdf/doc/docx only, enforced server-side. */
+  cv?: File | null;
 };
 
 export type BookEmployabilitySessionResponse = {
@@ -57,12 +62,37 @@ function getErrorMessage(error: unknown): string {
   return FALLBACK_MESSAGE;
 }
 
+function buildFormData(payload: BookEmployabilitySessionPayload): FormData {
+  const formData = new FormData();
+
+  const { cv, ...fields } = payload;
+
+  for (const [key, value] of Object.entries(fields)) {
+    if (value == null) continue;
+    const asString = typeof value === "number" ? String(value) : value.trim();
+    if (!asString) continue;
+    formData.append(key, asString);
+  }
+
+  if (cv) {
+    formData.append("cv", cv);
+  }
+
+  return formData;
+}
+
 export async function bookEmployabilitySession(
   payload: BookEmployabilitySessionPayload,
 ): Promise<BookEmployabilitySessionResponse> {
+  // axios strips this header for FormData so the browser sets the boundary.
   const { data } = await axiosInstance.post<BookEmployabilitySessionResponse>(
     "employability-expert-bookings",
-    payload,
+    buildFormData(payload),
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    },
   );
 
   if (data?.success === false) {

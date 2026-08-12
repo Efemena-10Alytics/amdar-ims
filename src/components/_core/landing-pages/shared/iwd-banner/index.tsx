@@ -1,231 +1,133 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
+import { useSyncExternalStore } from "react";
+import Image from "next/image";
 import { X } from "lucide-react";
-import {
-  INTERNSHIP_ORIGINAL_PRICE_LABEL,
-  INTERNSHIP_DISCOUNTED_PRICE_LABEL,
-} from "@/constants/internship-pricing";
 import { useGetPromoUrgency } from "@/features/payment/use-get-promo-time";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
-import {
-  getDefaultCountdownEnd,
-  parseEndDate,
-  useCountdown,
-} from "./use-countdown";
-import { OfferDialog } from "./offer";
+import { usePromoCountdown } from "./use-countdown";
+import UrgencyPills from "./urgency-pills";
 
 const IWD_BANNER_STORAGE_KEY = "amdari-iwd-banner-dismissed";
 
-/** Fallback when promo-urgency API is not yet loaded or returns no data. */
-const DUMMY_PROMO_URGENCY = {
-  slots_left: 21,
-  registered: 5,
-  registered_interval_hours: 1,
-  viewing: 40,
-} as const;
+/** Shown until promo-urgency resolves, so the slot count never flashes empty. */
+const FALLBACK_SLOTS_LEFT = 6;
 
-function toPoundLabel(label: string): string {
-  return label.replace(/^GBP\s+/i, "£");
+const pad = (value: number) => String(value).padStart(2, "0");
+
+/*
+ * Dismissal is read through useSyncExternalStore rather than an effect, so the
+ * server render and the first client render agree (banner visible) and a
+ * previously dismissed banner disappears on hydration without a cascading render.
+ */
+const dismissListeners = new Set<() => void>();
+
+function subscribeDismissed(onChange: () => void) {
+  dismissListeners.add(onChange);
+  return () => {
+    dismissListeners.delete(onChange);
+  };
+}
+
+function getDismissedSnapshot(): boolean {
+  try {
+    return sessionStorage.getItem(IWD_BANNER_STORAGE_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function dismissBanner() {
+  try {
+    sessionStorage.setItem(IWD_BANNER_STORAGE_KEY, "true");
+  } catch {
+    // ignore (private mode / storage disabled)
+  }
+  dismissListeners.forEach((listener) => listener());
 }
 
 export type IWDBannerProps = {
-  /** Number of users registered in the last 2 hours (default 24). */
-  registeredCount?: number;
-  /** Number of users currently viewing (default 87). */
-  viewingNow?: number;
-  /** Number of slots left (default 6). */
-  slotsLeft?: number;
-  /** Link for "See offers here" (default /internship or #). */
-  offersHref?: string;
+  className?: string;
 };
 
-export const IWDMiddleComp = ({
-  slotsLeft,
-  originalLabel,
-  discountedLabel,
-}: {
-  slotsLeft: number;
-  originalLabel: string;
-  discountedLabel: string;
-}) => (
-  <div className="flex-1 rounded-xl  text-white text-center">
-    <div className="w-fit flex mx-auto gap-4 rounded-xl items-center justify-between bg-[#0C3640] px-4 py-1.5">
-      <div className="flex-1">
-        <div className="w-fit">
-          <p className="text-sm font-semibold text-white md:whitespace-nowrap">
+/**
+ * Full-width urgency strip above the internship program details: countdown,
+ * rotating social proof, and remaining slots.
+ */
+export default function IWDBanner({ className }: IWDBannerProps) {
+  const dismissed = useSyncExternalStore(
+    subscribeDismissed,
+    getDismissedSnapshot,
+    () => false,
+  );
+  const { data: promoUrgency } = useGetPromoUrgency();
+  const { hrs, mins, secs } = usePromoCountdown();
+
+  const slotsLeft =
+    typeof promoUrgency?.slots_left === "number"
+      ? promoUrgency.slots_left
+      : FALLBACK_SLOTS_LEFT;
+
+  if (dismissed) return null;
+
+  return (
+    <div
+      className={cn("relative overflow-hidden bg-[#F5F0E6]", className)}
+      style={{
+        backgroundImage: 'url("/sales-banner-noise.png")',
+        backgroundSize: "200px auto",
+      }}
+    >
+      <div className="app-width flex flex-col gap-4 py-4 sm:py-5 lg:flex-row lg:items-center lg:justify-between">
+        {/* Countdown + rotating social proof */}
+        <div className="flex min-w-0 flex-col gap-3">
+          <div className="flex items-start gap-3">
+            <Image
+              src="/iwd/iwd-time-icon.svg"
+              width={32}
+              height={32}
+              alt=""
+              className="animate-vibrate shrink-0"
+            />
+            <div className="min-w-0">
+              <p className="text-base font-extrabold text-primary sm:text-lg">
+                OFFER ENDING SOON!
+              </p>
+              <p className="mt-0.5 text-sm text-[#334155]">
+                Registration ending soon!{" "}
+                <span className="font-mono font-semibold tabular-nums animate-countdown-pulse-color">
+                  {pad(hrs)} : {pad(mins)} : {pad(secs)}
+                </span>
+              </p>
+            </div>
+          </div>
+          <div className="flex">
+            <UrgencyPills className="pl-11" />
+            <UrgencyPills className="pl-2" />
+          </div>
+        </div>
+
+        {/* Remaining slots */}
+        <div className="flex shrink-0 items-center gap-4 rounded-xl bg-[#0F4652] px-5 py-4 text-white">
+          <p className="text-xs font-semibold text-white/90">
             Slot Getting Sold Out
           </p>
           <div
-            className="mt-2 rounded-lg px-4 py-2 font-bold text-[#0F4652] animate-countdown-pulse-color bg-[#FFE082] text-sm sm:text-base"
+            className="rounded-lg bg-[#FFE082] px-4 py-2 text-base font-bold text-[#0F4652]"
             aria-live="polite"
           >
             {slotsLeft} Slots Left!
           </div>
         </div>
       </div>
-      <Image
-        src={"/iwd/iwd-center-image.svg"}
-        height={72}
-        width={20}
-        alt="center image"
-      />
-      <div className="flex-1 mt-3 space-y-0.5 py-3 rounded-xl text-sm font-semibold text-center">
-        <div className="w-fit ml-auto space-y-1 rounded-xl bg-[#FFFFFF12] px-6 py-3">
-          <h3 className="text-[#93B7BF]">40% off</h3>
-          <div className="flex justify-center items-center">
-            <p className="text-zinc-400 text-sm line-through">
-              {originalLabel}
-            </p>
-            <p className="text-red-400 font-bold text-lg">{discountedLabel}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-export default function IWDBanner({ offersHref = "#"}: IWDBannerProps) {
-  const [dismissed, setDismissed] = useState(false);
-  const [offerOpen, setOfferOpen] = useState(false);
-  const { data: promoUrgency } = useGetPromoUrgency();
-
-  const countdownEnd = useCallback(() => {
-    if (promoUrgency?.end_date) {
-      const parsed = parseEndDate(promoUrgency.end_date);
-      if (parsed && parsed.getTime() > Date.now()) return parsed;
-    }
-    return getDefaultCountdownEnd();
-  }, [promoUrgency?.end_date]);
-  const { hrs, mins, secs, ended } = useCountdown(countdownEnd);
-
-  const slotsLeftDisplay =
-    typeof promoUrgency?.slots_left === "number"
-      ? promoUrgency.slots_left
-      : DUMMY_PROMO_URGENCY.slots_left;
-  const registeredDisplay =
-    typeof promoUrgency?.registered === "number"
-      ? promoUrgency.registered
-      : DUMMY_PROMO_URGENCY.registered;
-  const registeredIntervalDisplay =
-    typeof promoUrgency?.registered_interval_hours === "number"
-      ? promoUrgency.registered_interval_hours
-      : DUMMY_PROMO_URGENCY.registered_interval_hours;
-  const viewingDisplay =
-    typeof promoUrgency?.viewing === "number"
-      ? promoUrgency.viewing
-      : DUMMY_PROMO_URGENCY.viewing;
-
-  useEffect(() => {
-    try {
-      if (sessionStorage.getItem(IWD_BANNER_STORAGE_KEY) === "true") {
-        setDismissed(true);
-      }
-    } catch {
-      // ignore
-    }
-  }, []);
-
-  const handleDismiss = () => {
-    setDismissed(true);
-    try {
-      sessionStorage.setItem(IWD_BANNER_STORAGE_KEY, "true");
-    } catch {
-      // ignore
-    }
-  };
-
-  if (dismissed) return null;
-
-  const originalLabel = toPoundLabel(INTERNSHIP_ORIGINAL_PRICE_LABEL);
-  const discountedLabel = toPoundLabel(INTERNSHIP_DISCOUNTED_PRICE_LABEL);
-
-  return (
-    <div
-      className={cn("relative overflow-hidden mx-auto", "bg-[#F5F0E6]")}
-      style={{
-        backgroundImage: 'url("/sales-banner-noise.png")',
-        backgroundSize: "200px auto",
-      }}
-    >
-      <OfferDialog
-        open={offerOpen}
-        onOpenChange={setOfferOpen}
-        secureSpotHref={"#"}
-        imageSrc="/images/offers-hands.jpg"
-      />
-      <div className="app-width flex flex-col lg:flex-row items-center gap-4 sm:gap-6 py-4 sm:py-5">
-        {/* Left: limited slot + countdown + activity */}
-        <div className="flex flex-1 flex-col  gap-3 min-w-0">
-          <div className="flex items-start gap-3">
-            <Image
-              src={"/iwd/iwd-time-icon.svg"}
-              width={32}
-              height={32}
-              alt="time"
-              className="animate-vibrate"
-            />
-            <div className="min-w-0">
-              <p className="text-base sm:text-lg font-extrabold text-primary">
-                LIMITED SLOT AVAILABLE
-              </p>
-              <p className="text-sm text-[#334155] mt-0.5">
-                Offer ending soon!{" "}
-                {ended ? (
-                  "Ended"
-                ) : (
-                  <span className="font-mono font-semibold tabular-nums text-[#334155] animate-countdown-pulse-color">
-                    {/* {String(days).padStart(2, "0")} :{" "} */}
-                    {String(hrs).padStart(2, "0")} :{" "}
-                    {String(mins).padStart(2, "0")} :{" "}
-                    {String(secs).padStart(2, "0")}
-                  </span>
-                )}
-              </p>
-            </div>
-          </div>
-          <div className="flex text-[#334155]">
-            <div className="rounded-full bg-[#E8CC76] px-3 py-2.5 space-y-1 text-xs">
-              <p>🔥 {registeredDisplay} Registered in past 1 hour</p>
-            </div>
-            <div className="rounded-full bg-[#E8CC76] px-3 py-2.5 space-y-1 text-xs">
-              <p>👀 {viewingDisplay} viewing now</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Middle: slot sold out + price */}
-        <IWDMiddleComp
-          discountedLabel={discountedLabel}
-          originalLabel={originalLabel}
-          slotsLeft={slotsLeftDisplay}
-        />
-
-        {/* Right: CTA */}
-        <div className="flex-1 flex items-center justify-center sm:justify-end">
-          <div
-            onClick={() => setOfferOpen(true)}
-            // href={offersHref}
-            className={cn(
-              "cursor-pointer inline-flex items-center justify-center rounded-full px-6 py-3.5",
-              "font-semibold text-white text-center",
-              "bg-[#6B5E37] hover:bg-[#4E342E] transition-colors",
-            )}
-          >
-            See offers here
-          </div>
-        </div>
-      </div>
 
       <button
         type="button"
-        onClick={handleDismiss}
-        className="absolute right-2 top-2 sm:right-3 sm:top-3 flex items-center justify-center w-8 h-8 rounded-full text-zinc-500 hover:bg-black/10 hover:text-zinc-800 transition-colors"
+        onClick={dismissBanner}
+        className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full text-zinc-500 transition-colors hover:bg-black/10 hover:text-zinc-800 sm:right-3 sm:top-3"
         aria-label="Dismiss banner"
       >
-        <X className="w-4 h-4" />
+        <X className="h-4 w-4" />
       </button>
     </div>
   );

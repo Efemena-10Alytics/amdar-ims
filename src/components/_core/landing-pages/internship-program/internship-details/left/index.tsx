@@ -15,10 +15,6 @@ import ProgramStructure from "./program-structure";
 import Faq from "./faq";
 import Link from "next/link";
 import type { InternshipProgram } from "@/types/internship-program";
-import {
-  INTERNSHIP_ORIGINAL_PRICE_LABEL,
-  INTERNSHIP_DISCOUNTED_PRICE_LABEL,
-} from "@/constants/internship-pricing";
 import IWDPayment from "../../../shared/iwd-banner/iwd-payment";
 
 const TOOLS_ICON_BASE = "https://api.amdari.io/tools/";
@@ -52,9 +48,6 @@ const Left = ({ program }: LeftProps) => {
 
   return (
     <div className="pb-12">
-      {/* <div className="lg:hidden mb-4">
-        <IWDPayment claimHref="/internship" offersHref="/internship" />
-      </div> */}
       {/* Header Section */}
       <div className="mb-8">
         <h1 className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] mb-4">
@@ -123,36 +116,10 @@ const Left = ({ program }: LeftProps) => {
       </div>
 
       {/* Pricing and Apply Bar */}
-      <div
-        className="rounded-lg p-4 mb-8 flex items-center justify-between gap-4 animate-pricing-gradient overflow-hidden"
-        style={{
-          backgroundImage:
-            "linear-gradient(90deg, #C8DDE3 0%, #C8DDE3 30%, rgba(255, 224, 130, 0.15) 38%, rgba(255, 224, 130, 0.4) 50%, rgba(255, 224, 130, 0.15) 62%, #C8DDE3 70%, #C8DDE3 100%)",
-          backgroundSize: "300% 100%",
-        }}
-      >
-        <div className="flex flex-col gap-2">
-          <div className="text-[#64748B] line-through text-lg">
-            {INTERNSHIP_ORIGINAL_PRICE_LABEL}
-          </div>
-          <div className="text-2xl lg:text-3xl font-semibold text-[#092A31]">
-            {INTERNSHIP_DISCOUNTED_PRICE_LABEL}
-          </div>
-        </div>
-        <Link href={`/payment/${program?.slug}${uniqueSuffix}`}>
-          <Button
-            className={cn(
-              "bg-primary text-white hover:bg-[#0f4d5a] rounded-full px-6 py-6 text-base font-medium",
-              "inline-flex items-center gap-2",
-            )}
-          >
-            Apply now
-            <div className="flex h-5 w-5 rounded-full justify-center items-center bg-amdari-yellow">
-              <ArrowRight className="w-3 h-3" color="#156374" />
-            </div>
-          </Button>
-        </Link>
-      </div>
+      <IWDPayment
+        applyHref={`/payment/${program?.slug}${uniqueSuffix}`}
+        className="mb-8"
+      />
 
       {/* Navigation Tabs */}
       <div className="flex overflow-x-auto gap-4 mb-8 border-b border-gray-200 pb-4">

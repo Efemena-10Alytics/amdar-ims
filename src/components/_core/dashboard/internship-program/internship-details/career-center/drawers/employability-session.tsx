@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { Loader2, X } from "lucide-react";
+import { useId, useRef, useState, type FormEvent } from "react";
+import { Loader2, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,6 +13,11 @@ import {
 } from "@/components/ui/select";
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import {
+  CV_ACCEPT_ATTRIBUTE,
+  CV_HINT_TEXT,
+  getCvValidationError,
+} from "@/lib/cv-file";
 import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
 import { useGetUserInfo } from "@/features/auth/use-get-user-info";
 import {
@@ -28,6 +33,13 @@ import {
 } from "@/lib/user-profile";
 import { useAuthStore } from "@/store/auth-store";
 import UserDetails from "./user-details";
+
+const COMPANY_LOCATIONS = [
+  "United Kingdom",
+  "United States",
+  "Canada",
+  "Nigeria",
+] as const;
 
 /** Same labels the legacy dashboard writes, so admin search keeps matching. */
 const ISSUE_OPTIONS = [
@@ -52,15 +64,23 @@ type EmployabilitySessionDrawerProps = {
 };
 
 type EmployabilitySessionFormState = {
+  roleTitle: string;
+  companyName: string;
+  companyLocation: string;
   issue: string;
   purposeOfUse: string;
   phoneNumber: string;
+  cvFile: File | null;
 };
 
 const INITIAL_FORM_STATE: EmployabilitySessionFormState = {
+  roleTitle: "",
+  companyName: "",
+  companyLocation: "",
   issue: "",
   purposeOfUse: "",
   phoneNumber: "",
+  cvFile: null,
 };
 
 const fieldClassName =
@@ -83,9 +103,14 @@ const EmployabilitySessionDrawer = ({
   onOpenChange,
   onBooked,
 }: EmployabilitySessionDrawerProps) => {
+  const cvInputId = useId();
+  const cvInputRef = useRef<HTMLInputElement>(null);
+
   const [form, setForm] = useState<EmployabilitySessionFormState>(
     INITIAL_FORM_STATE,
   );
+  const [cvError, setCvError] = useState("");
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const { data: enrollment } = useGetUserEnrollment();
   const authUser = useAuthStore((state) => state.user);
@@ -97,9 +122,25 @@ const EmployabilitySessionDrawer = ({
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
       setForm(INITIAL_FORM_STATE);
+      setCvError("");
+      setIsDragOver(false);
       clearError();
+      if (cvInputRef.current) cvInputRef.current.value = "";
     }
     onOpenChange(nextOpen);
+  };
+
+  const handleCvSelect = (file: File | null) => {
+    if (!file) return;
+
+    const validationError = getCvValidationError(file);
+    if (validationError) {
+      setCvError(validationError);
+      return;
+    }
+
+    setCvError("");
+    setForm((current) => ({ ...current, cvFile: file }));
   };
 
   // Read from the API objects, never from the display strings in UserDetails —
@@ -125,7 +166,12 @@ const EmployabilitySessionDrawer = ({
     email &&
     phoneNumber &&
     form.issue &&
-    form.purposeOfUse.trim()
+    form.purposeOfUse.trim() &&
+    form.roleTitle.trim() &&
+    form.companyName.trim() &&
+    form.companyLocation &&
+    form.cvFile &&
+    !cvError
       ? {
           ...(userId != null ? { user_id: userId } : {}),
           program_id: programId,
@@ -135,6 +181,10 @@ const EmployabilitySessionDrawer = ({
           phone_number: phoneNumber,
           issue: form.issue,
           purpose_of_use: form.purposeOfUse.trim(),
+          job_role: form.roleTitle.trim(),
+          company_name: form.companyName.trim(),
+          company_location: form.companyLocation,
+          cv: form.cvFile,
         }
       : null;
 
@@ -210,6 +260,79 @@ const EmployabilitySessionDrawer = ({
               ) : null}
 
               <div>
+                <label
+                  htmlFor="employability-role-title"
+                  className="mb-1.5 block text-sm font-medium text-[#092A31]"
+                >
+                  Role title
+                </label>
+                <Input
+                  id="employability-role-title"
+                  value={form.roleTitle}
+                  onChange={(event) =>
+                    setForm((current) => ({
+                      ...current,
+                      roleTitle: event.target.value,
+                    }))
+                  }
+                  placeholder="Enter role title"
+                  className={fieldClassName}
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="employability-company-name"
+                  className="mb-1.5 block text-sm font-medium text-[#092A31]"
+                >
+                  Company name
+                </label>
+                <Input
+                  id="employability-company-name"
+                  value={form.companyName}
+                  onChange={(event) =>
+                    setForm((current) => ({
+                      ...current,
+                      companyName: event.target.value,
+                    }))
+                  }
+                  placeholder="Enter company name"
+                  className={fieldClassName}
+                />
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-[#092A31]">
+                  Company location (Country)
+                </label>
+                <Select
+                  value={form.companyLocation}
+                  onValueChange={(value) =>
+                    setForm((current) => ({
+                      ...current,
+                      companyLocation: value,
+                    }))
+                  }
+                >
+                  <SelectTrigger
+                    className={cn(
+                      fieldClassName,
+                      "w-full data-placeholder:text-[#94A3B8]",
+                    )}
+                  >
+                    <SelectValue placeholder="Select your location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {COMPANY_LOCATIONS.map((location) => (
+                      <SelectItem key={location} value={location}>
+                        {location}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
                 <label className="mb-1.5 block text-sm font-medium text-[#092A31]">
                   What do you need help with?
                 </label>
@@ -259,14 +382,6 @@ const EmployabilitySessionDrawer = ({
                 />
               </div>
 
-              {/*
-                CV upload — commented out because
-                POST /employability-expert-bookings accepts no file: it takes
-                JSON, has no `cv` validation rule, and the controller never
-                reads $request->file(). To restore it you also need to re-add
-                the `Upload` icon import, the `useId`/`useRef` hooks, and the
-                cvFile / cvError / isDragOver state with handleCvSelect.
-
               <div>
                 <label
                   htmlFor={cvInputId}
@@ -278,7 +393,7 @@ const EmployabilitySessionDrawer = ({
                   ref={cvInputRef}
                   id={cvInputId}
                   type="file"
-                  accept="application/pdf,image/jpeg,image/png,image/jpg,.pdf"
+                  accept={CV_ACCEPT_ATTRIBUTE}
                   className="sr-only"
                   onChange={(event) =>
                     handleCvSelect(event.target.files?.[0] ?? null)
@@ -314,15 +429,12 @@ const EmployabilitySessionDrawer = ({
                   <p className="text-sm font-semibold text-[#1A6B8A]">
                     {form.cvFile ? form.cvFile.name : "Click to upload CV"}
                   </p>
-                  <p className="text-xs text-[#64748B]">
-                    PDF, jpeg, png (max 5mb)
-                  </p>
+                  <p className="text-xs text-[#64748B]">{CV_HINT_TEXT}</p>
                 </div>
                 {cvError ? (
                   <p className="mt-1.5 text-xs text-red-600">{cvError}</p>
                 ) : null}
               </div>
-              */}
             </div>
 
             {errorMessage ? (

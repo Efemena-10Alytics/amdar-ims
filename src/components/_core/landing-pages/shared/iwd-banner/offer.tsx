@@ -5,17 +5,7 @@ import Link from "next/link";
 import { Check, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-
-const OFFERS = [
-  "CV Review and Revamp",
-  "LinkedIn optimization",
-  "Navigating the Job Market",
-  "Interview prep session",
-  "Mentorship and Career coaching",
-  "UK/ US/ CAD Reference letter",
-  "On the job support",
-  "Lifetime Career Support",
-];
+import { INTERNSHIP_OFFERS } from "@/constants/internship-offers";
 
 export type OfferDialogProps = {
   open: boolean;
@@ -70,7 +60,7 @@ export function OfferDialog({
           </DialogTitle>
 
           <ul className="space-y-3 flex-1">
-            {OFFERS.map((item) => (
+            {INTERNSHIP_OFFERS.map((item) => (
               <li
                 key={item}
                 className="flex items-center gap-3 text-sm md:text-base"

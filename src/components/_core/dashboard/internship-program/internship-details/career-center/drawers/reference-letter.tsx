@@ -65,27 +65,6 @@ const REQUESTED_MESSAGE = "Reference letter request submitted.";
 const fieldClassName =
   "rounded-xl border-[#DCE5E9] bg-[#F6F8FA] text-sm text-[#092A31] placeholder:text-[#94A3B8] shadow-none";
 
-/**
- * `storeLetter` has no columns for job role, company or website, so they are
- * folded into `additional_info` — otherwise the server drops them silently.
- */
-function composeAdditionalInfo(form: ReferenceLetterFormState): string {
-  const lines = [
-    ["Job role", form.jobRole],
-    ["Company name", form.companyName],
-    ["Company website", form.companyWebsite],
-  ]
-    .filter(([, value]) => value.trim())
-    .map(([label, value]) => `${label}: ${value.trim()}`);
-
-  const notes = form.additionalInfo.trim();
-  if (notes) {
-    lines.push("", notes);
-  }
-
-  return lines.join("\n");
-}
-
 const ReferenceLetterDrawer = ({
   open,
   onOpenChange,
@@ -142,7 +121,10 @@ const ReferenceLetterDrawer = ({
           program: programTitle,
           cohort_id: cohortId,
           program_id: programId,
-          additional_info: composeAdditionalInfo(form),
+          additional_info: form.additionalInfo.trim(),
+          job_role: form.jobRole.trim(),
+          company_name: form.companyName.trim(),
+          company_website: form.companyWebsite.trim(),
         }
       : null;
 

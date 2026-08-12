@@ -24,6 +24,9 @@ import {
 } from "@/features/payment/use-checkout-storage";
 import { FillCalendaSvg } from "../landing-pages/internship-program/svg";
 import { FirstPaymentModal } from "./first-payment-modal";
+import { usePromoCountdown } from "../landing-pages/shared/iwd-banner/use-countdown";
+
+const padCountdown = (value: number) => String(value).padStart(2, "0");
 
 interface PaymentPlanOption {
   id: PaymentPlanId;
@@ -281,6 +284,7 @@ const Checkout = ({
   isUnique = false,
   onProceed,
 }: CheckoutProps) => {
+  const { hrs, mins, secs } = usePromoCountdown();
   const firstCurrency = checkoutData?.pricings?.[0]?.currency ?? "USD";
   const {
     selectedCohort,
@@ -420,7 +424,13 @@ const Checkout = ({
               <span className="text-[#092A31] font-semibold text-base">
                 30% discount
               </span>
-              <span>Ending soon</span>
+              <span>
+                Ends in:{" "}
+                <span className="font-mono font-semibold tabular-nums text-red-600">
+                  {padCountdown(hrs)} : {padCountdown(mins)} :{" "}
+                  {padCountdown(secs)}
+                </span>
+              </span>
             </div>
             <div className="flex flex-col items-baseline gap-2">
               <span className="text-sm text-[#9ca3af] line-through">

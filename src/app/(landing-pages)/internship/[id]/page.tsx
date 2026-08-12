@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { cache } from "react";
+import IWDBanner from "@/components/_core/landing-pages/shared/iwd-banner";
 import Left from "@/components/_core/landing-pages/internship-program/internship-details/left";
 import Right from "@/components/_core/landing-pages/internship-program/internship-details/right";
 import Project from "@/components/_core/landing-pages/internship-program/project";
@@ -73,7 +74,8 @@ export default async function InternshipProgramDetails({
   }
 
   return (
-    <div className="bg-white mt-10">
+    <div className="bg-white">
+      <IWDBanner className="mb-10" />
       <h1 className="sr-only">{program.title}</h1>
       <p className="sr-only">{getSeoDescription(program.description ?? program.overview)}</p>
       <div className="app-width">

@@ -13,6 +13,11 @@ import {
 } from "@/components/ui/select";
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import {
+  CV_ACCEPT_ATTRIBUTE,
+  CV_HINT_TEXT,
+  getCvValidationError,
+} from "@/lib/cv-file";
 import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
 import { useGetUserInfo } from "@/features/auth/use-get-user-info";
 import {
@@ -48,16 +53,6 @@ const INTERVIEW_STAGES = [
   { value: "hr", label: "HR Interview" },
 ] as const;
 
-const MAX_CV_SIZE_BYTES = 5 * 1024 * 1024;
-
-const ACCEPTED_CV_EXTENSIONS = [".pdf", ".doc", ".docx"] as const;
-
-const ACCEPTED_CV_MIME_TYPES = [
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-] as const;
-
 const BOOKED_MESSAGE = "Interview prep session booked.";
 
 type InterviewPrepDrawerProps = {
@@ -89,20 +84,6 @@ const INITIAL_FORM_STATE: InterviewPrepFormState = {
 const fieldClassName =
   "h-11 rounded-xl border-[#DCE5E9] bg-white px-3 text-sm text-[#092A31] placeholder:text-[#94A3B8]";
 
-/** The API accepts pdf/doc/docx only — reject anything else before upload. */
-function isAcceptedCv(file: File): boolean {
-  const name = file.name.toLowerCase();
-  const hasExtension = ACCEPTED_CV_EXTENSIONS.some((extension) =>
-    name.endsWith(extension),
-  );
-  // Some browsers report an empty type for .doc — fall back to the extension.
-  const hasMimeType =
-    !file.type ||
-    (ACCEPTED_CV_MIME_TYPES as readonly string[]).includes(file.type);
-
-  return hasExtension && hasMimeType;
-}
-
 function todayYmd(): string {
   const now = new Date();
   const month = String(now.getMonth() + 1).padStart(2, "0");
@@ -119,20 +100,6 @@ function isValidUrl(value: string): boolean {
   }
 }
 
-/**
- * `store` has no columns for role, company or location, so they are folded
- * into `details` — otherwise the server drops them silently.
- */
-function composeDetails(form: InterviewPrepFormState): string {
-  return [
-    ["Role title", form.roleTitle],
-    ["Company name", form.companyName],
-    ["Company location", form.companyLocation],
-  ]
-    .filter(([, value]) => value.trim())
-    .map(([label, value]) => `${label}: ${value.trim()}`)
-    .join("\n");
-}
 
 const InterviewPrepDrawer = ({
   open,
@@ -168,13 +135,9 @@ const InterviewPrepDrawer = ({
   const handleCvSelect = (file: File | null) => {
     if (!file) return;
 
-    if (!isAcceptedCv(file)) {
-      setCvError("Please upload a PDF, DOC or DOCX file.");
-      return;
-    }
-
-    if (file.size > MAX_CV_SIZE_BYTES) {
-      setCvError("File must be 5 MB or smaller.");
+    const validationError = getCvValidationError(file);
+    if (validationError) {
+      setCvError(validationError);
       return;
     }
 
@@ -226,7 +189,9 @@ const InterviewPrepDrawer = ({
           cohort_id: cohortId,
           program_id: programId,
           job_link: jobLink,
-          details: composeDetails(form),
+          job_role: form.roleTitle.trim(),
+          company_name: form.companyName.trim(),
+          company_location: form.companyLocation,
           interview_stage: form.interviewStage,
           interview_date: form.interviewDate,
           cv: form.cvFile,
@@ -449,7 +414,7 @@ const InterviewPrepDrawer = ({
                   ref={cvInputRef}
                   id={cvInputId}
                   type="file"
-                  accept=".pdf,.doc,.docx"
+                  accept={CV_ACCEPT_ATTRIBUTE}
                   className="sr-only"
                   onChange={(event) =>
                     handleCvSelect(event.target.files?.[0] ?? null)
@@ -485,9 +450,7 @@ const InterviewPrepDrawer = ({
                   <p className="text-sm font-semibold text-[#1A6B8A]">
                     {form.cvFile ? form.cvFile.name : "Click to upload CV"}
                   </p>
-                  <p className="text-xs text-[#64748B]">
-                    PDF, DOC, DOCX (max 5mb)
-                  </p>
+                  <p className="text-xs text-[#64748B]">{CV_HINT_TEXT}</p>
                 </div>
                 {cvError ? (
                   <p className="mt-1.5 text-xs text-red-600">{cvError}</p>
