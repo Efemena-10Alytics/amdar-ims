@@ -124,7 +124,7 @@ export default function ProjectDetailsContent() {
     ) : activeTab === "todo" ? (
       <Todo project={project} />
     ) : activeTab === "resources" ? (
-      <ResourcesDetails projectId={project.id} />
+      <ResourcesDetails />
     ) : null;
   // Leader board temporarily disabled
   // : activeTab === "leader-board" ? (
@@ -161,7 +161,14 @@ export default function ProjectDetailsContent() {
 
         <div className="flex items-center gap-2">
           <h1 className="text-2xl font-semibold text-[#092A31]">Project view</h1>
-          <span className="mt-1 inline-flex items-center rounded-full bg-[#E4F8E8] px-2.5 py-1 text-xs font-semibold text-[#1F7A4A]">
+          <span
+            className={[
+              "mt-1 inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold",
+              project.status === InternProjectStatus.Deactivated
+                ? "bg-[#FEE2E2] text-[#B91C1C]"
+                : "bg-[#E4F8E8] text-[#1F7A4A]",
+            ].join(" ")}
+          >
             {getStatusLabel(project)}
           </span>
         </div>

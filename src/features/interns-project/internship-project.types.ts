@@ -90,6 +90,7 @@ export type InternProject = {
   expectedDeliverables?: string | null;
   skills?: string[] | null;
   status?: InternProjectStatus | null;
+  isCurrent?: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -260,7 +261,7 @@ export type InternProjectTodoResponse = {
 /** PUT /intern-projects/:id/todos/:todoId */
 export type UpdateInternProjectTodoResponse = InternProjectTodoResponse;
 
-/** POST /intern-projects/:id/todos/:todoId/submissions */
+/** POST /intern-projects/:id/todos/:todoId/types/:typeId/submissions */
 export type InternProjectTodoSubmissionItem =
   | {
       type: "text";
@@ -287,7 +288,7 @@ export type SubmitInternProjectTodoPayload = {
   items: InternProjectTodoSubmissionItem[];
 };
 
-/** PUT /intern-projects/:id/todos/:todoId/submissions */
+/** PUT /intern-projects/:id/todos/:todoId/types/:typeId/submissions */
 export type EditInternProjectTodoSubmissionPayload = SubmitInternProjectTodoPayload;
 
 export type InternProjectTodoSubmission = {
@@ -306,7 +307,7 @@ export type SubmitInternProjectTodoResponse = {
   data: InternProjectTodoSubmission | null;
 };
 
-/** GET /intern-projects/:project/todos/:todo/submissions/:submission/comments */
+/** GET /intern-projects/:project/todos/:todo/types/:typeId/submissions/:submission/comments */
 export type InternProjectTodoSubmissionComment = {
   id: number;
   submissionId: number;
@@ -327,7 +328,7 @@ export type InternProjectTodoSubmissionCommentsResponse = {
   comments?: InternProjectTodoSubmissionComment[];
 };
 
-/** GET /intern-projects/:project/todos/:todo/submissions/me */
+/** GET /intern-projects/:project/todos/:todo/types/:typeId/submissions/me */
 export type InternProjectTodoSubmissionSolutionItem = {
   id: number;
   type: InternProjectTodoSolutionFormat;

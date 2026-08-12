@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import {
+import type {
+  InternProject,
   InternProjectCareerStage,
-  type InternProject,
-  type InternProjectsResponse,
+  InternProjectsResponse,
 } from "./internship-project.types";
 import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
 
@@ -42,11 +42,10 @@ export async function getInternProjectsPublishedByStage({
   return data.data ?? [];
 }
 
-export function useGetProjectByStage({
-  cohortId = 48,
-  programId = 25,
-  careerStage = InternProjectCareerStage.Uniformity,
-}: Partial<GetInternProjectsPublishedParams> = {}) {
+export function useGetProjectByStage(
+  params: Partial<GetInternProjectsPublishedParams> = {},
+) {
+  const { cohortId, programId, careerStage } = params;
   const hasValidParams = Boolean(cohortId && programId && careerStage);
 
   return useQuery({
@@ -59,7 +58,7 @@ export function useGetProjectByStage({
       getInternProjectsPublishedByStage({
         cohortId: cohortId as number | string,
         programId: programId as number | string,
-        careerStage,
+        careerStage: careerStage as InternProjectCareerStage,
       }),
     enabled: !!apiBaseURL && hasValidParams,
   });

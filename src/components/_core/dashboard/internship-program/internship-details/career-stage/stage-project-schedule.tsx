@@ -32,12 +32,13 @@ export type WeekSchedule = {
 export type StageProjectScheduleTone = "active" | "upcoming" | "locked";
 
 type StageProjectScheduleProps = {
-  description: string;
+  description?: string;
   projectTitle: string;
   weekRange: string;
   weeks: WeekSchedule[];
   tone?: StageProjectScheduleTone;
   projectHref?: string;
+  defaultOpen?: boolean;
 };
 
 const TONE_STYLES: Record<
@@ -199,9 +200,10 @@ export default function StageProjectSchedule({
   weeks,
   tone = "active",
   projectHref,
+  defaultOpen = true,
 }: StageProjectScheduleProps) {
   const [activeWeekId, setActiveWeekId] = useState(weeks[0]?.id ?? "");
-  const [isProjectOpen, setIsProjectOpen] = useState(true);
+  const [isProjectOpen, setIsProjectOpen] = useState(defaultOpen);
   const styles = TONE_STYLES[tone];
   const activeWeek = weeks.find((week) => week.id === activeWeekId) ?? weeks[0];
 
@@ -221,11 +223,14 @@ export default function StageProjectSchedule({
 
   return (
     <div className={cn("border-t px-3 pb-4 pt-3 sm:px-4", styles.sectionBorder)}>
-      <p className="text-sm leading-relaxed text-[#64748B]">{description}</p>
+      {description?.trim() ? (
+        <p className="text-sm leading-relaxed text-[#64748B]">{description}</p>
+      ) : null}
 
       <div
         className={cn(
           "mt-4 overflow-hidden rounded-xl border",
+          !description?.trim() && "mt-0",
           styles.cardBorder,
           styles.cardBg,
         )}
