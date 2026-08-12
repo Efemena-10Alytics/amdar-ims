@@ -2,9 +2,9 @@
 
 import React from 'react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { MapPin, Video, Timer, MessageCircle, Building2, Users, Lock, ChevronDown } from 'lucide-react'
 import { useCountries } from '@/features/portfolio/use-countries'
-import SuccessDialog from '../real-uk-experience/content/success-dialog'
 import { ClockFillSvg, GoogleMeetSvg } from '../real-uk-experience/content/svg'
 
 const ZOHO_FORM_URL =
@@ -164,11 +164,11 @@ const gainItems = [
 ]
 
 const JobAccessPage = () => {
+    const router = useRouter()
     const { data: countries = [], isLoading: countriesLoading } = useCountries()
     const [selectedPhoneCountryCode, setSelectedPhoneCountryCode] = React.useState('')
     const [selectedField, setSelectedField] = React.useState('')
     const [selectedFieldOther, setSelectedFieldOther] = React.useState('')
-    const [isSuccessOpen, setIsSuccessOpen] = React.useState(false)
     const [firstName, setFirstName] = React.useState('')
     const [lastName, setLastName] = React.useState('')
     const [email, setEmail] = React.useState('')
@@ -283,7 +283,6 @@ const JobAccessPage = () => {
             setIsSubmitting(false)
         }
 
-        setIsSuccessOpen(true)
         setFirstName('')
         setLastName('')
         setEmail('')
@@ -297,6 +296,7 @@ const JobAccessPage = () => {
         setSelectedField('')
         setSelectedFieldOther('')
         setFormError('')
+        router.push('/job-access/thank-you')
     }, [
         careerPath,
         careerPathOther,
@@ -305,6 +305,7 @@ const JobAccessPage = () => {
         firstName,
         lastName,
         phone,
+        router,
         selectedField,
         selectedFieldOther,
         timeline,
@@ -619,8 +620,6 @@ const JobAccessPage = () => {
                     })}
                 </div>
             </section>
-
-            <SuccessDialog isOpen={isSuccessOpen} onClose={() => setIsSuccessOpen(false)} source="JobAccess" />
         </div>
     )
 }
