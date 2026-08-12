@@ -58,7 +58,7 @@ export default function IWDPayment({ applyHref, className }: IWDPaymentProps) {
               className="animate-vibrate shrink-0"
             />
             <div className="min-w-0">
-              <p className="text-sm font-bold text-primary">
+              <p className="font-display text-sm font-bold text-primary">
                 OFFER ENDING SOON!
               </p>
               <p className="mt-0.5 text-xs text-[#334155]">

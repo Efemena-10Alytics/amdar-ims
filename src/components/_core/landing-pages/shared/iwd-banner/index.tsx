@@ -1,12 +1,16 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Image from "next/image";
 import { X } from "lucide-react";
 import { useGetPromoUrgency } from "@/features/payment/use-get-promo-time";
+import { useRotatingIndex } from "@/hooks/use-rotating-index";
 import { cn } from "@/lib/utils";
 import { usePromoCountdown } from "./use-countdown";
-import UrgencyPills from "./urgency-pills";
+import UrgencyPills, {
+  URGENCY_PILL_COUNT,
+  URGENCY_PILL_INTERVAL_MS,
+} from "./urgency-pills";
 
 const IWD_BANNER_STORAGE_KEY = "amdari-iwd-banner-dismissed";
 
@@ -62,6 +66,11 @@ export default function IWDBanner({ className }: IWDBannerProps) {
   );
   const { data: promoUrgency } = useGetPromoUrgency();
   const { hrs, mins, secs } = usePromoCountdown();
+  const [pillsPaused, setPillsPaused] = useState(false);
+  const pillIndex = useRotatingIndex(URGENCY_PILL_COUNT, {
+    intervalMs: URGENCY_PILL_INTERVAL_MS,
+    paused: pillsPaused,
+  });
 
   const slotsLeft =
     typeof promoUrgency?.slots_left === "number"
@@ -90,7 +99,7 @@ export default function IWDBanner({ className }: IWDBannerProps) {
               className="animate-vibrate shrink-0"
             />
             <div className="min-w-0">
-              <p className="text-base font-extrabold text-primary sm:text-lg">
+              <p className="font-display text-base font-extrabold text-primary sm:text-lg">
                 OFFER ENDING SOON!
               </p>
               <p className="mt-0.5 text-sm text-[#334155]">
@@ -101,9 +110,21 @@ export default function IWDBanner({ className }: IWDBannerProps) {
               </p>
             </div>
           </div>
-          <div className="flex">
-            <UrgencyPills className="pl-11" />
-            <UrgencyPills className="pl-2" />
+          {/*
+           * Both pills read from one timer, the second a step ahead, so they
+           * advance together and never show the same item.
+           */}
+          <div
+            className="flex flex-wrap"
+            onMouseEnter={() => setPillsPaused(true)}
+            onMouseLeave={() => setPillsPaused(false)}
+          >
+            <UrgencyPills index={pillIndex} className="pl-11" />
+            <UrgencyPills
+              index={pillIndex + 1}
+              announceList={false}
+              className="pl-2"
+            />
           </div>
         </div>
 

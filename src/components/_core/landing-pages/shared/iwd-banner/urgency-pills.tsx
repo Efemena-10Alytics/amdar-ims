@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useGetPromoUrgency } from "@/features/payment/use-get-promo-time";
+import { useRotatingIndex } from "@/hooks/use-rotating-index";
 import { cn } from "@/lib/utils";
 
 /** Milliseconds each pill stays on screen before the next one takes over. */
-const ROTATE_INTERVAL_MS = 3000;
+export const URGENCY_PILL_INTERVAL_MS = 3000;
 
 /**
  * Shown until the promo-urgency call resolves, so the pill never renders an
@@ -26,7 +27,21 @@ const STATIC_PILLS: { value?: string; label: string }[] = [
   { value: "3", label: "Months Free Access to CVMatchly" },
 ];
 
+/** 3 live urgency numbers + the static perks. */
+export const URGENCY_PILL_COUNT = 3 + STATIC_PILLS.length;
+
 export type UrgencyPillsProps = {
+  /**
+   * Which pill to show. Pass this to drive several instances from one timer so
+   * they can never land on the same pill; omit it and the component rotates
+   * itself.
+   */
+  index?: number;
+  /**
+   * Whether to render the screen-reader list of every pill. Turn it off on all
+   * but one instance so the list is not announced twice.
+   */
+  announceList?: boolean;
   /** Extra classes for the pill itself (background/text colour per surface). */
   pillClassName?: string;
   className?: string;
@@ -40,11 +55,12 @@ export type UrgencyPillsProps = {
  * apart rather than flipping in lockstep.
  */
 export default function UrgencyPills({
+  index: controlledIndex,
+  announceList = true,
   pillClassName,
   className,
 }: UrgencyPillsProps) {
   const { data } = useGetPromoUrgency();
-  const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
 
   const registered =
@@ -77,16 +93,14 @@ export default function UrgencyPills({
     [registered, intervalHours, slotsLeft, viewing],
   );
 
-  useEffect(() => {
-    if (paused) return;
-    const id = setInterval(
-      () => setIndex((current) => (current + 1) % pills.length),
-      ROTATE_INTERVAL_MS,
-    );
-    return () => clearInterval(id);
-  }, [paused, pills.length]);
-
-  const active = pills[index % pills.length];
+  // When an index is passed in, the parent owns both the timer and pausing.
+  const isControlled = controlledIndex !== undefined;
+  const selfIndex = useRotatingIndex(pills.length, {
+    intervalMs: URGENCY_PILL_INTERVAL_MS,
+    paused: paused || isControlled,
+  });
+  const index = (isControlled ? controlledIndex : selfIndex) % pills.length;
+  const active = pills[index];
 
   return (
     <div
@@ -95,11 +109,13 @@ export default function UrgencyPills({
       onMouseLeave={() => setPaused(false)}
     >
       {/* Announced once instead of re-reading on every rotation. */}
-      <p className="sr-only">
-        {pills
-          .map((pill) => [pill.value, pill.label].filter(Boolean).join(" "))
-          .join(". ")}
-      </p>
+      {announceList ? (
+        <p className="sr-only">
+          {pills
+            .map((pill) => [pill.value, pill.label].filter(Boolean).join(" "))
+            .join(". ")}
+        </p>
+      ) : null}
 
       <span
         key={index}

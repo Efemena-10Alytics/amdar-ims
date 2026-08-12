@@ -24,6 +24,7 @@ import {
 } from "@/features/payment/use-checkout-storage";
 import { FillCalendaSvg } from "../landing-pages/internship-program/svg";
 import { FirstPaymentModal } from "./first-payment-modal";
+import GuaranteeBanner from "./guarantee-banner";
 import { usePromoCountdown } from "../landing-pages/shared/iwd-banner/use-countdown";
 
 const padCountdown = (value: number) => String(value).padStart(2, "0");
@@ -412,39 +413,44 @@ const Checkout = ({
           Please review your course details and choose a payment plan that works
           for you to proceed.
         </p>
-        <div className="mt-4 rounded-xl bg-[#E8EFF1] p-5">
-          <h3 className="font-clash-display font-semibold text-[#092A31]">
-            {program?.title}
-          </h3>
-          <p className="mt-2 text-sm leading-relaxed text-[#4a5568]">
-            {program?.description}
-          </p>
-          <div className="mt-4 flex flex-wrap items-end justify-between gap-2">
-            <div className="flex flex-col gap-x-4 gap-y-1 text-sm text-[#6b7280]">
-              <span className="text-[#092A31] font-semibold text-base">
-                30% discount
-              </span>
-              <span>
-                Ends in:{" "}
-                <span className="font-mono font-semibold tabular-nums text-red-600">
-                  {padCountdown(hrs)} : {padCountdown(mins)} :{" "}
-                  {padCountdown(secs)}
+        <div className="mt-4 rounded-xl bg-[#E8EFF1] pt-5 overflow-hidden">
+          <div className="px-5">
+            <h3 className="font-clash-display font-semibold text-[#092A31]">
+              {program?.title}
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-[#4a5568]">
+              {program?.description}
+            </p>
+            <div className="mt-4 flex flex-wrap items-end justify-between gap-2">
+              <div className="flex flex-col gap-x-4 gap-y-1 text-sm text-[#6b7280]">
+                <span className="text-[#092A31] font-semibold text-base">
+                  30% discount
                 </span>
-              </span>
-            </div>
-            <div className="flex flex-col items-baseline gap-2">
-              <span className="text-sm text-[#9ca3af] line-through">
-                {selectedPricing
-                  ? `${selectedPricing.currency} ${selectedPricing.original_amount}`
-                  : "—"}
-              </span>
-              <span className="font-clash-display text-xl font-bold text-primary">
-                {selectedPricing
-                  ? `${selectedPricing.currency} ${selectedPricing.amount}`
-                  : "—"}
-              </span>
+                <span>
+                  Ends in:{" "}
+                  <span className="font-mono font-semibold tabular-nums text-red-600">
+                    {padCountdown(hrs)} : {padCountdown(mins)} :{" "}
+                    {padCountdown(secs)}
+                  </span>
+                </span>
+              </div>
+              <div className="flex flex-col items-baseline gap-2">
+                <span className="text-sm text-[#9ca3af] line-through">
+                  {selectedPricing
+                    ? `${selectedPricing.currency} ${selectedPricing.original_amount}`
+                    : "—"}
+                </span>
+                <span className="font-clash-display text-xl font-bold text-primary">
+                  {selectedPricing
+                    ? `${selectedPricing.currency} ${selectedPricing.amount}`
+                    : "—"}
+                </span>
+              </div>
             </div>
           </div>
+
+          {/* Interview guarantee */}
+          <GuaranteeBanner />
         </div>
       </section>
 

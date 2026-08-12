@@ -22,7 +22,7 @@ export default function OffersStrip({ className }: OffersStripProps) {
   return (
     <div className={cn("w-full bg-amdari-yellow", className)}>
       <div className="app-width flex items-center gap-4 py-2.5">
-        <div className="shrink-0 rounded-l-2xl bg-[#1D444D] px-2 py-2 text-xs font-semibold font-clash-display! text-[#FFE082] sm:text-sm">
+        <div className="shrink-0 rounded-l-2xl bg-[#1D444D] px-2 py-2 text-xs font-semibold font-display text-[#FFE082] sm:text-sm">
           Offers you get!
         </div>
 

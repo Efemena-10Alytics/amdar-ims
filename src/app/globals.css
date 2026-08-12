@@ -260,6 +260,18 @@ html {
     @apply font-clash-display!;
   }
 
+  /*
+   * The universal `font-family: Sora !important` above lives in this layer, and
+   * important declarations resolve earlier-layer-first — so it outranks the
+   * `font-clash-display!` utility, which Tailwind emits into @layer utilities.
+   * Declaring the class here puts it in the same layer, where its class
+   * specificity beats `*`. Use this on non-heading elements; h1-h6 already
+   * pick up Clash Display from the rule above.
+   */
+  .font-display {
+    @apply font-clash-display!;
+  }
+
   .app-width {
     @apply max-w-400 w-full mx-auto px-4 sm:px-6 xl:px-16;
   }
