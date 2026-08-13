@@ -561,6 +561,7 @@ const Checkout = ({
           {paymentPlans.map((plan) => {
             const isSelected = selectedPlan === plan.id;
             const isWeeklyPlan =
+              plan.id === "5-installments" ||
               plan.id === "8-installments" ||
               plan.id === "9-installments" ||
               plan.id === "10-installments";
