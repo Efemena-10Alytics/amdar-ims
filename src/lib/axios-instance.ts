@@ -27,19 +27,16 @@ function handle401() {
   }
 }
 
+/**
+ * Browser and server both call the API directly — CORS is handled by the API.
+ * Do not reintroduce a same-origin rewrite: it made every user's request reach
+ * the API from this app's egress IP, which tripped the host's per-IP bot and
+ * rate limits and collapsed the API's own per-IP throttles into one bucket.
+ *
+ * Stays empty when unconfigured; callers gate their queries on `!!apiBaseURL`.
+ */
 export const apiBaseURL =
   process.env.NEXT_PUBLIC_REACT_APP_API_URL ?? "";
-
-const BROWSER_API_PROXY = "/api/proxy";
-
-/** Browser requests go through Next.js rewrite to avoid CORS on api.amdari.io. */
-function resolveApiBaseURL(): string {
-  if (typeof window !== "undefined" && apiBaseURL) {
-    return BROWSER_API_PROXY;
-  }
-
-  return apiBaseURL;
-}
 
 /** Persisted shape: { state: { user: { user: {...}, token: "..." } }, version: 0 } */
 type PersistedAuth = {
@@ -67,7 +64,7 @@ function getAccessToken(): string | null {
 }
 
 export const axiosInstance = axios.create({
-  baseURL: resolveApiBaseURL(),
+  baseURL: apiBaseURL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -76,7 +73,6 @@ export const axiosInstance = axios.create({
 // Request interceptor: attach Bearer token from persisted user
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    config.baseURL = resolveApiBaseURL();
     const token = getAccessToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
