@@ -484,6 +484,7 @@ const PortfolioSessionPage = () => {
             >
               <TestimonialVideoThumb
                 label={testi.name}
+                videoId={testi.videoId}
                 onPlay={() => setActiveVideo(testi.videoId)}
               />
               <div className="px-4 py-3.5">

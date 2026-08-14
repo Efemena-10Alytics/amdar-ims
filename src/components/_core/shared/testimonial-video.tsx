@@ -1,8 +1,21 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+import Image from "next/image";
 import { Play, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+/**
+ * These clips are vertical (9:16), so prefer YouTube's original-aspect-ratio
+ * thumbnail — `maxresdefault` is a 16:9 frame with the portrait video
+ * pillarboxed inside it. `oar2` isn't documented and 404s on some videos, so
+ * fall back through the guaranteed sizes.
+ */
+const thumbCandidates = (videoId: string) => [
+  `https://img.youtube.com/vi/${videoId}/oar2.jpg`,
+  `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+  `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+];
 
 /** Shared across the ads landing pages so the same clips stay in sync everywhere. */
 export const TESTIMONIALS = [
@@ -24,14 +37,20 @@ export const TESTIMONIALS = [
 type TestimonialVideoThumbProps = {
   onPlay: () => void;
   label: string;
+  videoId?: string;
   className?: string;
 };
 
 export function TestimonialVideoThumb({
   onPlay,
   label,
+  videoId,
   className,
 }: TestimonialVideoThumbProps) {
+  const sources = videoId ? thumbCandidates(videoId) : [];
+  const [sourceIndex, setSourceIndex] = useState(0);
+  const src = sources[sourceIndex];
+
   return (
     <button
       type="button"
@@ -42,7 +61,23 @@ export function TestimonialVideoThumb({
         className,
       )}
     >
-      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#FFE082] transition-transform duration-200 group-hover:scale-110">
+      {src ? (
+        <Image
+          src={src}
+          alt=""
+          fill
+          sizes="(max-width: 1024px) 50vw, 33vw"
+          // Falls through oar2 → maxresdefault → hqdefault; if all fail the
+          // gradient behind stays visible.
+          onError={() => setSourceIndex((i) => i + 1)}
+          className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+        />
+      ) : null}
+
+      {/* Keeps the play button and the caption below legible over any frame. */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#061A20]/80 via-[#061A20]/20 to-[#061A20]/30" />
+
+      <div className="relative flex h-11 w-11 items-center justify-center rounded-full bg-[#FFE082] shadow-[0_4px_16px_rgba(0,0,0,0.35)] transition-transform duration-200 group-hover:scale-110">
         <Play className="ml-0.5 h-[15px] w-[15px] fill-[#0C2730] text-[#0C2730]" />
       </div>
     </button>
