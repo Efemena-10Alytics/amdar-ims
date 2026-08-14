@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from "react";
 import { ChevronDown } from "lucide-react";
 import { useGetUserInternshipPrograms } from "@/features/internship/use-get-user-internship-programs";
-import { useGetUserInfo } from "@/features/auth/use-get-user-info";
+import { useIsInternshipSpecialist } from "@/features/auth/staff-roles";
 import { useEnrollmentSelectionStore } from "@/store/enrollment-selection-store";
 import {
   getEnrollmentSelection,
@@ -87,9 +87,7 @@ function SwitcherDropdown({
 
 export function EnrollmentSwitcher() {
   const { data, isLoading } = useGetUserInternshipPrograms();
-  const { data: userInfo } = useGetUserInfo();
-  const isStaff =
-    ((userInfo as Record<string, unknown> | undefined)?.staff ?? null) !== null;
+  const { isInternshipSpecialist } = useIsInternshipSpecialist();
   const enrollmentId = useEnrollmentSelectionStore((s) => s.enrollmentId);
   const programId = useEnrollmentSelectionStore((s) => s.programId);
   const cohortId = useEnrollmentSelectionStore((s) => s.cohortId);
@@ -146,7 +144,10 @@ export function EnrollmentSwitcher() {
     );
   }, [enrollments, selectedCohortId]);
 
+  // These effects still run when the switcher renders nothing, so they have to
+  // stay out of the way of `useSyncEnrollmentSelection` for non-specialists.
   useEffect(() => {
+    if (!isInternshipSpecialist) return;
     if (enrollments.length === 0) return;
 
     if (selectedEnrollment) {
@@ -167,12 +168,14 @@ export function EnrollmentSwitcher() {
     cohortId,
     enrollmentId,
     enrollments,
+    isInternshipSpecialist,
     programId,
     selectedEnrollment,
     setSelection,
   ]);
 
   useEffect(() => {
+    if (!isInternshipSpecialist) return;
     if (selectedCohortId == null || programOptions.length === 0) return;
     if (programOptions.some((option) => option.id === programId)) return;
 
@@ -195,13 +198,14 @@ export function EnrollmentSwitcher() {
   }, [
     enrollmentId,
     enrollments,
+    isInternshipSpecialist,
     programId,
     programOptions,
     selectedCohortId,
     setSelection,
   ]);
 
-  if (isLoading || cohortOptions.length === 0) {
+  if (!isInternshipSpecialist || isLoading || cohortOptions.length === 0) {
     return null;
   }
 
@@ -237,39 +241,37 @@ export function EnrollmentSwitcher() {
           setSelection(getEnrollmentSelection(enrollment));
         }}
       />
-      {isStaff ? (
-        <SwitcherDropdown
-          label="Program"
-          ariaLabel="Switch program"
-          value={selectedProgramId}
-          options={programOptions.map((option) => ({
-            id: String(option.id),
-            label: option.title,
-          }))}
-          onValueChange={(value) => {
-            const nextProgramId = Number(value);
-            if (!Number.isFinite(nextProgramId) || selectedCohortId == null) return;
+      <SwitcherDropdown
+        label="Program"
+        ariaLabel="Switch program"
+        value={selectedProgramId}
+        options={programOptions.map((option) => ({
+          id: String(option.id),
+          label: option.title,
+        }))}
+        onValueChange={(value) => {
+          const nextProgramId = Number(value);
+          if (!Number.isFinite(nextProgramId) || selectedCohortId == null) return;
 
-            const enrollment =
-              enrollments.find(
-                (item) =>
-                  pickCohortId(item) === selectedCohortId &&
-                  pickProgramId(item) === nextProgramId,
-              ) ?? null;
+          const enrollment =
+            enrollments.find(
+              (item) =>
+                pickCohortId(item) === selectedCohortId &&
+                pickProgramId(item) === nextProgramId,
+            ) ?? null;
 
-            if (enrollment) {
-              setSelection(getEnrollmentSelection(enrollment));
-              return;
-            }
+          if (enrollment) {
+            setSelection(getEnrollmentSelection(enrollment));
+            return;
+          }
 
-            setSelection({
-              enrollmentId,
-              programId: nextProgramId,
-              cohortId: selectedCohortId,
-            });
-          }}
-        />
-      ) : null}
+          setSelection({
+            enrollmentId,
+            programId: nextProgramId,
+            cohortId: selectedCohortId,
+          });
+        }}
+      />
     </div>
   );
 }

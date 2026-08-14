@@ -8,7 +8,7 @@ import Aside from "@/components/_core/onboarding/aside";
 import { JourneyLayoutHeader } from "@/components/_core/onboarding/journey-layout-header";
 import { OnboardingSettingUp } from "@/components/_core/onboarding/onboarding-setting-up";
 import { OnboardingProvider } from "@/components/_core/onboarding/onboarding-context";
-import { useGetUserInfo } from "@/features/auth/use-get-user-info";
+import { useIsStaff } from "@/features/auth/staff-roles";
 import {
   isOnboardingNotFoundError,
   useGetOnboarding,
@@ -23,12 +23,11 @@ function OnboardingShellContent({
 }) {
   const router = useRouter();
   const { isAuthReady } = useRequireUserId();
-  const { data: userInfo } = useGetUserInfo();
+  const { isStaff } = useIsStaff();
   const { skipEntrySetup, isSkipping, errorMessage: skipErrorMessage } =
     useSkipEntrySetup();
   const isSkipRedirectingRef = useRef(false);
-  const showSkipFab = ((userInfo as Record<string, unknown> | undefined)?.staff ??
-    null) !== null;
+  const showSkipFab = isStaff;
 
   const {
     data,

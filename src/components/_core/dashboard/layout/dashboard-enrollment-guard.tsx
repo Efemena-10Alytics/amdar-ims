@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
+import { useSyncEnrollmentSelection } from "@/features/internship/use-sync-enrollment-selection";
 import { resolveEnrollmentJourneyRedirect } from "@/features/internship/resolve-enrollment-journey";
 
 function DashboardEnrollmentGuard({
@@ -14,6 +15,8 @@ function DashboardEnrollmentGuard({
   const pathname = usePathname();
   const { data: enrollment, isPending, isError, isAuthReady } =
     useGetUserEnrollment();
+
+  useSyncEnrollmentSelection(enrollment);
 
   // Portfolio owns its own missing/incomplete redirects (→ create-portfolio).
   // Don't let the enrollment journey guard steal those navigations to pre-diagnostic.

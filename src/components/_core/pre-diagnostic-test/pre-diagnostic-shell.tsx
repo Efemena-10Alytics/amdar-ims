@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Aside from "@/components/_core/pre-diagnostic-test/aside";
 import { JourneyLayoutHeader } from "@/components/_core/onboarding/journey-layout-header";
 import { PreDiagnosticProvider } from "@/components/_core/pre-diagnostic-test/pre-diagnostic-context";
-import { useGetUserInfo } from "@/features/auth/use-get-user-info";
+import { useIsStaff } from "@/features/auth/staff-roles";
 import { isEnrollmentWhatsappVerified, buildWhatsappRequiredOnboardingHref } from "@/features/internship/resolve-enrollment-journey";
 import { useSkipEntrySetup } from "@/features/internship/use-skip-entry-setup";
 import { useGetPreDiagnostic } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
@@ -19,12 +19,11 @@ function PreDiagnosticShellContent({
 }) {
   const router = useRouter();
   const { isAuthReady } = useRequireUserId();
-  const { data: userInfo } = useGetUserInfo();
+  const { isStaff } = useIsStaff();
   const { skipEntrySetup, isSkipping, errorMessage: skipErrorMessage } =
     useSkipEntrySetup();
   const isSkipRedirectingRef = useRef(false);
-  const showSkipFab = ((userInfo as Record<string, unknown> | undefined)?.staff ??
-    null) !== null;
+  const showSkipFab = isStaff;
 
   const {
     data,

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useIsInternshipSpecialist } from "@/features/auth/staff-roles";
 import { useRequireUserId } from "@/hooks/use-require-user-id";
 import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
 import { useEnrollmentSelectionStore } from "@/store/enrollment-selection-store";
@@ -39,9 +40,13 @@ export async function getUserEnrollment(
 
 export function useGetUserEnrollment() {
   const { userId, isAuthReady } = useRequireUserId();
+  const { isInternshipSpecialist } = useIsInternshipSpecialist();
   const programId = useEnrollmentSelectionStore((s) => s.programId);
   const cohortId = useEnrollmentSelectionStore((s) => s.cohortId);
-  const hasSelection = programId != null && cohortId != null;
+  // Only internship specialists can switch enrollment. Everyone else calls the
+  // endpoint without params so the API resolves their most recent assignment.
+  const hasSelection =
+    isInternshipSpecialist && programId != null && cohortId != null;
   const [isSelectionReady, setIsSelectionReady] = useState(false);
 
   useEffect(() => {
