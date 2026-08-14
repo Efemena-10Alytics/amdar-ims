@@ -170,9 +170,7 @@ const Navbar = () => {
             "relative z-121 w-full mt-0 border-b border-t-0 shadow-sm",
             "transition-[background-color,backdrop-filter,border-b-color,box-shadow,color] duration-300 ease-out",
             showWhiteNav
-              ? cn(
-                  "border-gray-200 bg-white text-primary backdrop-blur-xs",
-                )
+              ? cn("border-gray-200 bg-white text-primary backdrop-blur-xs")
               : cn(
                   "border-transparent bg-transparent text-white backdrop-blur-xs",
                 ),
@@ -196,7 +194,7 @@ const Navbar = () => {
                 href="/home"
                 className={cn(
                   "flex shrink-0 items-center gap-2 p-2 rounded",
-                    shouldUseScrolledNavStyles ? "bg-transparent" : "",
+                  shouldUseScrolledNavStyles ? "bg-transparent" : "",
                 )}
               >
                 <Image
@@ -242,7 +240,7 @@ const Navbar = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Link
-                          href="https://www.amdari.io/dashboard"
+                          href="https://www.amdari.io/dashboard/internship"
                           className={cn(
                             "flex size-11 items-center justify-center overflow-hidden rounded-full transition-colors xl:size-12",
                             shouldUseScrolledNavStyles
