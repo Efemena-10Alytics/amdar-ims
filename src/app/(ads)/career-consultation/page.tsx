@@ -3,15 +3,12 @@
 import React from "react";
 import Image from "next/image";
 import { useCreateAdsData } from "@/features/ads/use-create-ads-data";
+import {
+  TESTIMONIALS,
+  TestimonialVideoModal,
+  TestimonialVideoThumb,
+} from "@/components/_core/shared/testimonial-video";
 import "./animations.css";
-
-// TODO: replace with real YouTube video IDs
-const TESTIMONIALS = [
-  { id: "testi1", videoId: "VIDEO_ID", name: "Add name", role: "Now [Role] at [Company]" },
-  { id: "testi2", videoId: "VIDEO_ID", name: "Add name", role: "Now [Role] at [Company]" },
-  { id: "testi3", videoId: "VIDEO_ID", name: "Add name", role: "Now [Role] at [Company]" },
-  { id: "testi4", videoId: "VIDEO_ID", name: "Add name", role: "Now [Role] at [Company]" },
-];
 
 const CAREER_TRACKS = [
   "Data Analytics",
@@ -39,35 +36,6 @@ const HERO_POINTS = [
 const inputCls =
   "w-full rounded-lg border border-[#156374]/50 bg-[#0F4652] px-3.5 py-[11px] text-[13.5px] text-[#F2F7F7] outline-none transition-colors placeholder:text-[#4A6A7A] focus:border-[#2B7F95] appearance-none";
 
-function VideoPlayer({ videoId }: { videoId: string }) {
-  const [loaded, setLoaded] = React.useState(false);
-
-  return loaded ? (
-    <iframe
-      className="block aspect-[9/12] w-full border-0"
-      src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowFullScreen
-      title="Amdari consultation testimonial"
-    />
-  ) : (
-    <button
-      type="button"
-      onClick={() => setLoaded(true)}
-      className="group relative flex aspect-[9/12] w-full cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-[#156374]/60 to-[#061A20]"
-    >
-      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#FFE082] transition-transform duration-200 group-hover:scale-110">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="#0C2730" className="ml-0.5">
-          <path d="M8 5v14l11-7z" />
-        </svg>
-      </div>
-      <span className="absolute bottom-3 left-3 text-[11px] font-semibold tracking-[0.04em] text-[#C7D5D6]/60">
-        Add clip
-      </span>
-    </button>
-  );
-}
-
 const CareerConsultationPage = () => {
   const { createNaRole, isSubmitting, errorMessage } = useCreateAdsData();
 
@@ -79,6 +47,9 @@ const CareerConsultationPage = () => {
   const [visaStatus, setVisaStatus] = React.useState("");
   const [formError, setFormError] = React.useState("");
   const [submitted, setSubmitted] = React.useState(false);
+  const [activeVideo, setActiveVideo] = React.useState<string | null>(null);
+
+  const closeVideo = React.useCallback(() => setActiveVideo(null), []);
 
   const handleSubmit = React.useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
@@ -318,13 +289,16 @@ const CareerConsultationPage = () => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 gap-[18px] lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-[18px] lg:grid-cols-3">
           {TESTIMONIALS.map((testi) => (
             <div
               key={testi.id}
               className="overflow-hidden rounded-[14px] border border-[#156374]/25 bg-[#0C3640]"
             >
-              <VideoPlayer videoId={testi.videoId} />
+              <TestimonialVideoThumb
+                label={testi.name}
+                onPlay={() => setActiveVideo(testi.videoId)}
+              />
               <div className="px-4 py-3.5">
                 <div className="text-sm font-bold text-white">{testi.name}</div>
                 <div className="mt-0.5 text-xs font-semibold text-[#FFE082]">
@@ -365,6 +339,14 @@ const CareerConsultationPage = () => {
           © 2026 Amdari. 1:1 career consultations with UK hiring experts.
         </p>
       </footer>
+
+      {activeVideo ? (
+        <TestimonialVideoModal
+          videoId={activeVideo}
+          onClose={closeVideo}
+          title="Amdari consultation testimonial"
+        />
+      ) : null}
     </div>
   );
 };
