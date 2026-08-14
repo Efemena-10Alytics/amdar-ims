@@ -2,7 +2,9 @@
 
 import React from "react";
 import Image from "next/image";
-import { useCreateAdsData } from "@/features/ads/use-create-ads-data";
+import { useRouter } from "next/navigation";
+import { useCountries } from "@/features/portfolio/use-countries";
+import { submitToZoho, ZOHO_RETURN_PATH } from "@/lib/submit-to-zoho";
 import {
   TESTIMONIALS,
   TestimonialVideoModal,
@@ -10,21 +12,45 @@ import {
 } from "@/components/_core/shared/testimonial-video";
 import "./animations.css";
 
+const ZOHO_FORM_URL =
+  "https://forms.zohopublic.com/amdariinc1/form/UKJobLab/formperma/J4q0d7thz45xkdXkNbvCYEHbZi7mwl-XyB8_xOsXaP8/htmlRecords/submit";
+
+// This Zoho form is shared with /remote-internship, so tag the source to keep
+// the two pages' leads distinguishable in Zoho.
+const ZOHO_REFERRER = "career-consultation";
+
+const OTHER = "Others";
+
 const CAREER_TRACKS = [
+  "Business Analysis",
   "Data Analytics",
   "Data Science",
-  "Business Analysis",
+  "Cyber security",
   "Project Management",
-  "Cybersecurity",
-  "Others",
+  "GRC",
+  OTHER,
 ];
 
 const VISA_STATUSES = [
-  "Student visa",
-  "Graduate (PSW) visa",
-  "Dependent visa",
+  "Short-Term Study Visa",
+  "Student Visa",
+  "Dependent Visa",
   "Skilled worker visa",
-  "Others",
+  OTHER,
+];
+
+const TIMELINE_OPTIONS = [
+  "within a month",
+  "1-3 months",
+  "Just exploring for now",
+];
+
+const HEARD_ABOUT_US_OPTIONS = [
+  "Facebook/Instagram ads",
+  "TikTok Ads",
+  "Google",
+  "Family and Friends",
+  "Faloh",
 ];
 
 const HERO_POINTS = [
@@ -37,19 +63,38 @@ const inputCls =
   "w-full rounded-lg border border-[#156374]/50 bg-[#0F4652] px-3.5 py-[11px] text-[13.5px] text-[#F2F7F7] outline-none transition-colors placeholder:text-[#4A6A7A] focus:border-[#2B7F95] appearance-none";
 
 const CareerConsultationPage = () => {
-  const { createNaRole, isSubmitting, errorMessage } = useCreateAdsData();
+  const router = useRouter();
+  const { data: countries = [], isLoading: countriesLoading } = useCountries();
 
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [email, setEmail] = React.useState("");
+  const [phoneCountryCode, setPhoneCountryCode] = React.useState("");
   const [phone, setPhone] = React.useState("");
+  const [country, setCountry] = React.useState("");
   const [track, setTrack] = React.useState("");
+  const [trackOther, setTrackOther] = React.useState("");
   const [visaStatus, setVisaStatus] = React.useState("");
+  const [visaStatusOther, setVisaStatusOther] = React.useState("");
+  const [timeline, setTimeline] = React.useState("");
+  const [heardAboutUs, setHeardAboutUs] = React.useState("");
   const [formError, setFormError] = React.useState("");
-  const [submitted, setSubmitted] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [activeVideo, setActiveVideo] = React.useState<string | null>(null);
 
   const closeVideo = React.useCallback(() => setActiveVideo(null), []);
+
+  React.useEffect(() => {
+    if (!countries.length) return;
+    const defaultCountry =
+      countries.find((c) => c.name === "United Kingdom") ?? countries[0];
+    setPhoneCountryCode((prev) => prev || defaultCountry.code);
+  }, [countries]);
+
+  const selectedPhoneCountry = React.useMemo(
+    () => countries.find((c) => c.code === phoneCountryCode),
+    [countries, phoneCountryCode]
+  );
 
   const handleSubmit = React.useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
@@ -60,33 +105,109 @@ const CareerConsultationPage = () => {
       const trimLast = lastName.trim();
       const trimEmail = email.trim();
       const trimPhone = phone.trim();
+      const trimCountry = country.trim();
 
-      if (!trimFirst || !trimLast || !trimEmail || !trimPhone || !track || !visaStatus) {
+      if (
+        !trimFirst ||
+        !trimLast ||
+        !trimEmail ||
+        !trimPhone ||
+        !trimCountry ||
+        !track ||
+        !visaStatus ||
+        !timeline ||
+        !heardAboutUs
+      ) {
         setFormError("Please fill in all fields to book your consultation.");
         return;
       }
 
-      const res = await createNaRole({
-        source: "CareerConsultation",
-        firstName: trimFirst,
-        lastName: trimLast,
-        email: trimEmail,
-        phone: trimPhone,
-        location: "UK",
-        visaType: `${track} — ${visaStatus}`,
-      });
+      // "Others" reveals a free-text box; send what the user typed, not the
+      // literal "Others" placeholder.
+      const trimTrackOther = trackOther.trim();
+      const trimVisaOther = visaStatusOther.trim();
+      if (track === OTHER && !trimTrackOther) {
+        setFormError("Please enter your career track.");
+        return;
+      }
+      if (visaStatus === OTHER && !trimVisaOther) {
+        setFormError("Please enter your visa status.");
+        return;
+      }
+      const trackValue = track === OTHER ? trimTrackOther : track;
+      const visaValue = visaStatus === OTHER ? trimVisaOther : visaStatus;
 
-      if (!res) return;
+      // Zoho rejects the record (409) when the calling code is missing, so
+      // don't let a blank selection through.
+      const callingCode = selectedPhoneCountry?.callingCode ?? "";
+      if (!callingCode) {
+        setFormError("Please select your phone country code.");
+        return;
+      }
 
-      setSubmitted(true);
+      // Zoho also rejects (409) when the number repeats the calling code, which
+      // happens whenever someone types their full international number.
+      let nationalNumber = trimPhone.replace(/[\s()-]/g, "");
+      if (nationalNumber.startsWith("+")) {
+        nationalNumber = nationalNumber.startsWith(callingCode)
+          ? nationalNumber.slice(callingCode.length)
+          : nationalNumber.replace(/^\+\d{1,4}/, "");
+      }
+
+      setIsSubmitting(true);
+      try {
+        await submitToZoho(ZOHO_FORM_URL, {
+          zf_referrer_name: ZOHO_REFERRER,
+          zf_redirect_url: `${window.location.origin}${ZOHO_RETURN_PATH}`,
+          zc_gad: "",
+          SingleLine1: trimFirst,
+          SingleLine: trimLast,
+          Email: trimEmail,
+          PhoneNumber_countrycodeval: callingCode,
+          PhoneNumber_countrycode: nationalNumber,
+          SingleLine2: trimCountry,
+          Dropdown3: timeline,
+          Dropdown1: visaValue,
+          Dropdown2: trackValue,
+          Dropdown: heardAboutUs,
+        });
+      } catch {
+        setFormError(
+          "We couldn't complete your registration. Please check your details and try again."
+        );
+        return;
+      } finally {
+        setIsSubmitting(false);
+      }
+
       setFirstName("");
       setLastName("");
       setEmail("");
       setPhone("");
+      setCountry("");
       setTrack("");
+      setTrackOther("");
       setVisaStatus("");
+      setVisaStatusOther("");
+      setTimeline("");
+      setHeardAboutUs("");
+      router.push("/career-consultation/thank-you");
     },
-    [createNaRole, email, firstName, lastName, phone, track, visaStatus]
+    [
+      country,
+      email,
+      firstName,
+      heardAboutUs,
+      lastName,
+      phone,
+      router,
+      selectedPhoneCountry?.callingCode,
+      timeline,
+      track,
+      trackOther,
+      visaStatus,
+      visaStatusOther,
+    ]
   );
 
   return (
@@ -149,21 +270,7 @@ const CareerConsultationPage = () => {
             Under a minute to reserve your slot.
           </p>
 
-          {submitted ? (
-            <div className="py-5 text-center">
-              <div className="mx-auto mb-3.5 flex h-14 w-14 items-center justify-center rounded-full border border-[#22c55e]/30 bg-[#22c55e]/10 text-2xl">
-                ✅
-              </div>
-              <h3 className="mb-1.5 text-[17px] font-extrabold text-white">
-                You&apos;re booked!
-              </h3>
-              <p className="text-[13px] leading-[1.6] text-[#C7D5D6]">
-                Check your inbox — we&apos;ll be in touch shortly to confirm
-                your consultation slot.
-              </p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-3">
+          <form onSubmit={handleSubmit} className="space-y-3">
               <div className="grid grid-cols-2 gap-2.5">
                 <label className="flex flex-col gap-[5px]">
                   <span className="text-xs font-semibold text-[#2B7F95]">
@@ -191,44 +298,134 @@ const CareerConsultationPage = () => {
                 </label>
               </div>
 
-              <label className="flex flex-col gap-[5px]">
-                <span className="text-xs font-semibold text-[#2B7F95]">
-                  Email
-                </span>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className={inputCls}
-                />
-              </label>
+              <div className="grid grid-cols-2 gap-2.5">
+                <label className="flex flex-col gap-[5px]">
+                  <span className="text-xs font-semibold text-[#2B7F95]">
+                    Email
+                  </span>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className={inputCls}
+                  />
+                </label>
+                <label className="flex flex-col gap-[5px]">
+                  <span className="text-xs font-semibold text-[#2B7F95]">
+                    Country
+                  </span>
+                  <input
+                    type="text"
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                    required
+                    placeholder="Country of residence"
+                    className={inputCls}
+                  />
+                </label>
+              </div>
 
-              <label className="flex flex-col gap-[5px]">
+              <div className="flex flex-col gap-[5px]">
                 <span className="text-xs font-semibold text-[#2B7F95]">
                   Phone number
                 </span>
+                <div className="grid grid-cols-[110px_1fr] gap-2">
+                  <select
+                    value={phoneCountryCode}
+                    onChange={(e) => setPhoneCountryCode(e.target.value)}
+                    className={`${inputCls} [&>option]:bg-[#0C3640]`}
+                  >
+                    <option value="">
+                      {countriesLoading ? "…" : "Code"}
+                    </option>
+                    {countries.map((phoneCountry) => (
+                      <option key={phoneCountry.code} value={phoneCountry.code}>
+                        {phoneCountry.callingCode} ({phoneCountry.code})
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    required
+                    className={inputCls}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                <label className="flex flex-col gap-[5px]">
+                  <span className="text-xs font-semibold text-[#2B7F95]">
+                    Career track
+                  </span>
+                  <select
+                    value={track}
+                    onChange={(e) => setTrack(e.target.value)}
+                    required
+                    className={`${inputCls} [&>option]:bg-[#0C3640]`}
+                  >
+                    <option value="">Select</option>
+                    {CAREER_TRACKS.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col gap-[5px]">
+                  <span className="text-xs font-semibold text-[#2B7F95]">
+                    Visa status
+                  </span>
+                  <select
+                    value={visaStatus}
+                    onChange={(e) => setVisaStatus(e.target.value)}
+                    required
+                    className={`${inputCls} [&>option]:bg-[#0C3640]`}
+                  >
+                    <option value="">Select</option>
+                    {VISA_STATUSES.map((v) => (
+                      <option key={v} value={v}>
+                        {v}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+
+              {track === OTHER ? (
                 <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  required
+                  type="text"
+                  value={trackOther}
+                  onChange={(e) => setTrackOther(e.target.value)}
+                  placeholder="Please specify your career track"
                   className={inputCls}
                 />
-              </label>
+              ) : null}
+
+              {visaStatus === OTHER ? (
+                <input
+                  type="text"
+                  value={visaStatusOther}
+                  onChange={(e) => setVisaStatusOther(e.target.value)}
+                  placeholder="Please specify your visa status"
+                  className={inputCls}
+                />
+              ) : null}
 
               <label className="flex flex-col gap-[5px]">
                 <span className="text-xs font-semibold text-[#2B7F95]">
-                  Career track
+                  How soon do you need to land a job in the UK?
                 </span>
                 <select
-                  value={track}
-                  onChange={(e) => setTrack(e.target.value)}
+                  value={timeline}
+                  onChange={(e) => setTimeline(e.target.value)}
                   required
                   className={`${inputCls} [&>option]:bg-[#0C3640]`}
                 >
                   <option value="">Select</option>
-                  {CAREER_TRACKS.map((t) => (
+                  {TIMELINE_OPTIONS.map((t) => (
                     <option key={t} value={t}>
                       {t}
                     </option>
@@ -238,18 +435,18 @@ const CareerConsultationPage = () => {
 
               <label className="flex flex-col gap-[5px]">
                 <span className="text-xs font-semibold text-[#2B7F95]">
-                  Visa status
+                  How did you hear about us?
                 </span>
                 <select
-                  value={visaStatus}
-                  onChange={(e) => setVisaStatus(e.target.value)}
+                  value={heardAboutUs}
+                  onChange={(e) => setHeardAboutUs(e.target.value)}
                   required
                   className={`${inputCls} [&>option]:bg-[#0C3640]`}
                 >
                   <option value="">Select</option>
-                  {VISA_STATUSES.map((v) => (
-                    <option key={v} value={v}>
-                      {v}
+                  {HEARD_ABOUT_US_OPTIONS.map((h) => (
+                    <option key={h} value={h}>
+                      {h}
                     </option>
                   ))}
                 </select>
@@ -257,9 +454,6 @@ const CareerConsultationPage = () => {
 
               {formError ? (
                 <p className="text-[12px] text-[#fca5a5]">{formError}</p>
-              ) : null}
-              {errorMessage ? (
-                <p className="text-[12px] text-[#fca5a5]">{errorMessage}</p>
               ) : null}
 
               <button
@@ -272,8 +466,7 @@ const CareerConsultationPage = () => {
               <p className="mt-3 text-center text-[11.5px] text-[#C7D5D6]">
                 Free · No credit card · Limited slots
               </p>
-            </form>
-          )}
+          </form>
         </div>
       </div>
 
