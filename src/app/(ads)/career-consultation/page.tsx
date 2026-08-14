@@ -30,12 +30,6 @@ const VISA_STATUSES = [
   "Others",
 ];
 
-const STATS = [
-  { n: "1:1", t: "Private time with a real expert" },
-  { n: "4 Months", t: "Your roadmap to a landed role" },
-  { n: "Free", t: "No cost to book your seat" },
-];
-
 const HERO_POINTS = [
   "Get a personal roadmap for your track and visa status",
   "Learn how to gain real UK work experience, fast",
@@ -133,7 +127,7 @@ const CareerConsultationPage = () => {
           href="#book"
           className="rounded-full bg-[#FFE082] px-5 py-2.5 text-sm font-bold text-[#0C2730] transition-[background-color,transform] hover:scale-[1.02] hover:bg-[#FFD54F]"
         >
-          Book Free Session
+          Register Now
         </a>
       </nav>
 
@@ -150,27 +144,6 @@ const CareerConsultationPage = () => {
             Talk to a UK Hiring Expert. Leave With a Plan to Get Hired in{" "}
             <em className="not-italic text-[#FFE082]">4 Months</em>.
           </h1>
-
-          <p className="mb-7 max-w-[480px] text-[17px] leading-[1.6] text-[#C7D5D6]">
-            A private session with people who actually hire in the UK market —
-            exactly how to navigate it, gain real work experience, and land a
-            role.
-          </p>
-
-          {/* Stat strip */}
-          <div className="mb-7 flex flex-wrap gap-2.5">
-            {STATS.map((stat) => (
-              <div
-                key={stat.n}
-                className="min-w-[140px] flex-1 rounded-[10px] border border-[#156374]/25 bg-[#0C3640] p-3.5"
-              >
-                <div className="text-xl font-bold text-[#FFE082]">{stat.n}</div>
-                <div className="mt-[3px] text-[11.5px] leading-[1.3] text-[#C7D5D6]">
-                  {stat.t}
-                </div>
-              </div>
-            ))}
-          </div>
 
           {/* Hero points */}
           <ul className="flex flex-col gap-[11px]">
@@ -199,7 +172,7 @@ const CareerConsultationPage = () => {
           className="w-full rounded-[18px] border border-[#156374]/45 bg-[#0C3640] p-7 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.6)] lg:sticky lg:top-24"
         >
           <h2 className="mb-1.5 text-[21px] font-bold text-white">
-            Book Your Free Consultation
+            Register for Webinar
           </h2>
           <p className="mb-5 text-[13.5px] text-[#C7D5D6]">
             Under a minute to reserve your slot.
@@ -323,7 +296,7 @@ const CareerConsultationPage = () => {
                 disabled={isSubmitting}
                 className="mt-1.5 w-full rounded-[10px] bg-[#FFE082] py-[15px] text-[15px] font-bold text-[#0C2730] transition-[background-color,transform] hover:scale-[1.01] hover:bg-[#FFD54F] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isSubmitting ? "Booking…" : "Book My Free Consultation"}
+                {isSubmitting ? "Registering…" : "Register Now"}
               </button>
               <p className="mt-3 text-center text-[11.5px] text-[#C7D5D6]">
                 Free · No credit card · Limited slots
@@ -380,7 +353,7 @@ const CareerConsultationPage = () => {
             href="#book"
             className="whitespace-nowrap rounded-[10px] bg-[#FFE082] px-7 py-4 text-[15px] font-bold text-[#0C2730] transition-[background-color,transform] hover:scale-[1.02] hover:bg-[#FFD54F]"
           >
-            Book Your Free Consultation
+            Register Now
           </a>
         </div>
       </div>
