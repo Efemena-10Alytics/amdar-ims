@@ -17,6 +17,8 @@ import { useGetUserInfo, getAvatarUrlFromUser } from "@/features/auth/use-get-us
 import { UserAvatar } from "../../landing-pages/internship-program/svg";
 import { ConfirmLogout } from "../../landing-pages/shared/navbar/confirm-logout";
 import { useAuthStore } from "@/store/auth-store";
+import { useEnrollmentSelectionStore } from "@/store/enrollment-selection-store";
+import { EnrollmentSwitcher } from "./enrollment-switcher";
 
 const pathToTitle: Record<string, string> = {
   "/dashboard": "Dashboard",
@@ -38,19 +40,26 @@ export function SiteHeader() {
   const title = getHeaderTitle(pathname);
   const { data: userInfo } = useGetUserInfo();
   const logout = useAuthStore((s) => s.logout);
+  const clearEnrollmentSelection = useEnrollmentSelectionStore(
+    (s) => s.clearSelection,
+  );
   const avatarUrl = getAvatarUrlFromUser(userInfo ?? null);
 
-
   return (
-    <header className="flex h-22 shrink-0 items-center gap-4 rounded-b-2xl bg-white px-4 lg:px-6 shadow-sm">
-      <SidebarTrigger
-        className="mr-auto lg:hidden"
-        aria-label="Toggle sidebar"
-      />
-      <h1 className="text-lg font-semibold text-zinc-900 lg:text-xl">
-        {title}
-      </h1>
-      <div className="ml-auto flex items-center gap-2">
+    <header className="grid h-22 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 rounded-b-2xl bg-white px-4 shadow-sm lg:px-6">
+      <div className="flex min-w-0 items-center gap-3">
+        <SidebarTrigger
+          className="lg:hidden"
+          aria-label="Toggle sidebar"
+        />
+        <h1 className="truncate text-lg font-semibold text-zinc-900 lg:text-xl">
+          {title}
+        </h1>
+      </div>
+      <div className="flex justify-center">
+        <EnrollmentSwitcher />
+      </div>
+      <div className="flex min-w-0 items-center justify-end gap-2">
         <button
           type="button"
           aria-label="Notifications"
@@ -111,6 +120,7 @@ export function SiteHeader() {
         onOpenChange={setConfirmLogoutOpen}
         reloadOnConfirm={false}
         onConfirm={() => {
+          clearEnrollmentSelection();
           logout();
           window.location.replace("/home");
         }}
