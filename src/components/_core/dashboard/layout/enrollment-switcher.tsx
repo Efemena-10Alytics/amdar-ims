@@ -3,6 +3,7 @@
 import { useEffect, useMemo } from "react";
 import { ChevronDown } from "lucide-react";
 import { useGetUserInternshipPrograms } from "@/features/internship/use-get-user-internship-programs";
+import { useGetUserInfo } from "@/features/auth/use-get-user-info";
 import { useEnrollmentSelectionStore } from "@/store/enrollment-selection-store";
 import {
   getEnrollmentSelection,
@@ -86,6 +87,9 @@ function SwitcherDropdown({
 
 export function EnrollmentSwitcher() {
   const { data, isLoading } = useGetUserInternshipPrograms();
+  const { data: userInfo } = useGetUserInfo();
+  const isStaff =
+    ((userInfo as Record<string, unknown> | undefined)?.staff ?? null) !== null;
   const enrollmentId = useEnrollmentSelectionStore((s) => s.enrollmentId);
   const programId = useEnrollmentSelectionStore((s) => s.programId);
   const cohortId = useEnrollmentSelectionStore((s) => s.cohortId);
@@ -233,37 +237,39 @@ export function EnrollmentSwitcher() {
           setSelection(getEnrollmentSelection(enrollment));
         }}
       />
-      <SwitcherDropdown
-        label="Program"
-        ariaLabel="Switch program"
-        value={selectedProgramId}
-        options={programOptions.map((option) => ({
-          id: String(option.id),
-          label: option.title,
-        }))}
-        onValueChange={(value) => {
-          const nextProgramId = Number(value);
-          if (!Number.isFinite(nextProgramId) || selectedCohortId == null) return;
+      {isStaff ? (
+        <SwitcherDropdown
+          label="Program"
+          ariaLabel="Switch program"
+          value={selectedProgramId}
+          options={programOptions.map((option) => ({
+            id: String(option.id),
+            label: option.title,
+          }))}
+          onValueChange={(value) => {
+            const nextProgramId = Number(value);
+            if (!Number.isFinite(nextProgramId) || selectedCohortId == null) return;
 
-          const enrollment =
-            enrollments.find(
-              (item) =>
-                pickCohortId(item) === selectedCohortId &&
-                pickProgramId(item) === nextProgramId,
-            ) ?? null;
+            const enrollment =
+              enrollments.find(
+                (item) =>
+                  pickCohortId(item) === selectedCohortId &&
+                  pickProgramId(item) === nextProgramId,
+              ) ?? null;
 
-          if (enrollment) {
-            setSelection(getEnrollmentSelection(enrollment));
-            return;
-          }
+            if (enrollment) {
+              setSelection(getEnrollmentSelection(enrollment));
+              return;
+            }
 
-          setSelection({
-            enrollmentId,
-            programId: nextProgramId,
-            cohortId: selectedCohortId,
-          });
-        }}
-      />
+            setSelection({
+              enrollmentId,
+              programId: nextProgramId,
+              cohortId: selectedCohortId,
+            });
+          }}
+        />
+      ) : null}
     </div>
   );
 }
