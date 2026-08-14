@@ -42,17 +42,21 @@ export function useGetUserEnrollment() {
   const programId = useEnrollmentSelectionStore((s) => s.programId);
   const cohortId = useEnrollmentSelectionStore((s) => s.cohortId);
   const hasSelection = programId != null && cohortId != null;
-  const [isSelectionReady, setIsSelectionReady] = useState(() =>
-    useEnrollmentSelectionStore.persist.hasHydrated(),
-  );
+  const [isSelectionReady, setIsSelectionReady] = useState(false);
 
   useEffect(() => {
-    if (useEnrollmentSelectionStore.persist.hasHydrated()) {
+    const persistApi = useEnrollmentSelectionStore.persist;
+    if (!persistApi?.hasHydrated) {
       setIsSelectionReady(true);
       return;
     }
 
-    return useEnrollmentSelectionStore.persist.onFinishHydration(() => {
+    if (persistApi.hasHydrated()) {
+      setIsSelectionReady(true);
+      return;
+    }
+
+    return persistApi.onFinishHydration(() => {
       setIsSelectionReady(true);
     });
   }, []);
