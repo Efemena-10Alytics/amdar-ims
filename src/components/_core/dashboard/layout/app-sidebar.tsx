@@ -39,6 +39,7 @@ const navMain = [
   { title: "Billings", url: "/billing", icon: BillingIcon },
 ];
 
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
