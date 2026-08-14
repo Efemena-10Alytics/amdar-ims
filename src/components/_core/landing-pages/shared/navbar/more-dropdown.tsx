@@ -36,7 +36,7 @@ const DEFAULT_GRID_ITEMS: MoreGridItem[] = [
   {
     title: "Job board",
     description: "Check out some jobs you can apply to here",
-    href: "/talent-loop",
+    href: "/job-board",
   },
   {
     title: "Chat with us",
