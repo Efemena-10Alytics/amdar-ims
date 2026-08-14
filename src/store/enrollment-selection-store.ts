@@ -36,3 +36,14 @@ export const useEnrollmentSelectionStore = create<EnrollmentSelectionState>()(
     },
   ),
 );
+
+export function useSelectedEnrollmentIds() {
+  const cohortId = useEnrollmentSelectionStore((s) => s.cohortId);
+  const programId = useEnrollmentSelectionStore((s) => s.programId);
+
+  return {
+    cohortId,
+    programId,
+    hasSelection: cohortId != null && programId != null,
+  };
+}

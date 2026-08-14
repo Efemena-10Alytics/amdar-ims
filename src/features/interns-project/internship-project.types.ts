@@ -156,12 +156,13 @@ export type CurrentInternProjectSummary = {
 /** GET /intern-projects/current */
 export type CurrentInternProject = {
   currentWeek: number;
+  duration: number;
   stageProgress: number;
   activitiesDone: number;
   activitiesTotal: number;
   stagesCompleted: number;
   stagesTotal: number;
-  project: CurrentInternProjectSummary;
+  project: CurrentInternProjectSummary | null;
 };
 
 export type CurrentInternProjectResponse = {

@@ -1,3 +1,5 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
 import type {
   InternProject,
@@ -5,6 +7,7 @@ import type {
   InternProjectsResponse,
 } from "./internship-project.types";
 import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
+import { useSelectedEnrollmentIds } from "@/store/enrollment-selection-store";
 
 export type GetInternProjectsPublishedParams = {
   cohortId: number | string;
@@ -45,7 +48,10 @@ export async function getInternProjectsPublishedByStage({
 export function useGetProjectByStage(
   params: Partial<GetInternProjectsPublishedParams> = {},
 ) {
-  const { cohortId, programId, careerStage } = params;
+  const selected = useSelectedEnrollmentIds();
+  const cohortId = params.cohortId ?? selected.cohortId;
+  const programId = params.programId ?? selected.programId;
+  const careerStage = params.careerStage;
   const hasValidParams = Boolean(cohortId && programId && careerStage);
 
   return useQuery({
