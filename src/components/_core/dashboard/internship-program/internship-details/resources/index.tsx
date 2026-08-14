@@ -16,6 +16,7 @@ const RESOURCE_CATEGORIES = [
   { label: "Mentorship Session", value: "mentorship" },
   { label: "Drop-In Session", value: "drop-in-session" },
   { label: "Employability Hub", value: "employability-session" },
+  { label: "Meeting Link", value: "meeting-link" },
   { label: "FAQs", value: "faqs" },
   { label: "Others", value: "others" },
 ] as const;
@@ -57,9 +58,21 @@ function ResourceTypeIcon({ format }: { format: "link" | "material" }) {
   return <FileText className="size-4" aria-hidden />;
 }
 
-const Resources = () => {
+const Resources = ({
+  excludeCategories = [],
+}: {
+  excludeCategories?: readonly ResourceCategoryValue[];
+} = {}) => {
   const { cohortId, programId, isLoading: isEnrollmentLoading } =
     useEnrollmentCohortProgramIds();
+
+  const categories = useMemo(
+    () =>
+      RESOURCE_CATEGORIES.filter(
+        (category) => !excludeCategories.includes(category.value),
+      ),
+    [excludeCategories],
+  );
 
   const [activeCategory, setActiveCategory] =
     useState<ResourceCategoryValue>("onboarding");
@@ -107,7 +120,7 @@ const Resources = () => {
           <h2 className="text-base font-semibold text-[#092A31]">Resources</h2>
 
           <ul className="mt-3 space-y-1">
-            {RESOURCE_CATEGORIES.map((category) => {
+            {categories.map((category) => {
               const isActive = activeCategory === category.value;
 
               return (

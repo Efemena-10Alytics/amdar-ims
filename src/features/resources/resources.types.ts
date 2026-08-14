@@ -5,6 +5,7 @@ export type ResourceCategory =
   | "drop-in-session"
   | "project-hub"
   | "employability-session"
+  | "meeting-link"
   | "faqs"
   | "others";
 
