@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
 import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
-import type { UserEnrollment } from "@/types/user/enrollment";
+import { useSelectedEnrollmentIds } from "@/store/enrollment-selection-store";
 
 export type EnrollmentProgressSection = {
   percent: number;
@@ -86,20 +86,6 @@ function toEnrollmentProgressApiError(
   return new EnrollmentProgressApiError("Unable to load enrollment progress.");
 }
 
-function pickId(value: unknown): string | number | null {
-  if (value === null || value === undefined || value === "") return null;
-  if (typeof value === "string" || typeof value === "number") return value;
-  return null;
-}
-
-function getEnrollmentIds(enrollment?: UserEnrollment | null) {
-  if (!enrollment) return { cohortId: null, programId: null };
-  return {
-    cohortId: pickId(enrollment.cohort_id) ?? pickId(enrollment.cohort?.id),
-    programId: pickId(enrollment.program_id) ?? pickId(enrollment.program?.id),
-  };
-}
-
 function hasValidId(
   id: string | number | undefined | null,
 ): id is string | number {
@@ -135,7 +121,7 @@ export async function getEnrollmentProgress({
 
 export function useGetInternshipProgress() {
   const enrollmentQuery = useGetUserEnrollment();
-  const { cohortId, programId } = getEnrollmentIds(enrollmentQuery.data);
+  const { cohortId, programId } = useSelectedEnrollmentIds();
 
   const progressQuery = useQuery({
     queryKey: ENROLLMENT_PROGRESS_QUERY_KEY(cohortId ?? "", programId ?? ""),
@@ -144,12 +130,7 @@ export function useGetInternshipProgress() {
         cohortId: cohortId as string | number,
         programId: programId as string | number,
       }),
-    enabled:
-      !!apiBaseURL &&
-      enrollmentQuery.isAuthReady &&
-      enrollmentQuery.isSuccess &&
-      hasValidId(cohortId) &&
-      hasValidId(programId),
+    enabled: !!apiBaseURL && hasValidId(cohortId) && hasValidId(programId),
   });
 
   return {

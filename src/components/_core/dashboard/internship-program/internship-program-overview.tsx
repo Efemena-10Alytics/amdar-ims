@@ -5,13 +5,6 @@ import { cn } from "@/lib/utils";
 import { PencilIcon } from "../svg";
 import { formatCareerStageLabel } from "@/components/_core/dashboard/internship-program/project-details/project-content";
 import { useGetCurrentProject } from "@/features/interns-project/use-get-current-project";
-import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
-
-function pickId(value: unknown): number | string | null {
-  if (typeof value === "number" && Number.isFinite(value)) return value;
-  if (typeof value === "string" && value.trim() !== "") return value;
-  return null;
-}
 
 function FlagIcon() {
   return (
@@ -77,28 +70,20 @@ function StatCard({ label, value, icon, variant = "muted" }: StatCardProps) {
 }
 
 const InternshipProgramOverview = () => {
-  const enrollmentQuery = useGetUserEnrollment();
-  const cohortId =
-    pickId(enrollmentQuery.data?.cohort_id) ??
-    pickId(enrollmentQuery.data?.cohort?.id);
-  const programId =
-    pickId(enrollmentQuery.data?.program_id) ??
-    pickId(enrollmentQuery.data?.program?.id);
-
-  const currentProjectQuery = useGetCurrentProject(cohortId, programId);
+  const currentProjectQuery = useGetCurrentProject();
   const current = currentProjectQuery.data;
 
-  const stageLabel = formatCareerStageLabel(
-    current?.project.careerStage ?? "uniformity",
-  );
+  const stageLabel = current?.project
+    ? formatCareerStageLabel(current.project.careerStage)
+    : "No current project";
   const currentWeek = current?.currentWeek ?? 0;
-  const totalWeeks = 16;
+  const totalWeeks = current?.duration ?? 0;
   const stageProgress = current?.stageProgress ?? 0;
   const activitiesDone = current?.activitiesDone ?? 0;
   const activitiesTotal = current?.activitiesTotal ?? 0;
   const stagesCompleted = current?.stagesCompleted ?? 0;
   const totalStages = current?.stagesTotal ?? 0;
-  const isLoading = enrollmentQuery.isLoading || currentProjectQuery.isLoading;
+  const isLoading = currentProjectQuery.isLoading;
 
   return (
     <section className="space-y-4">

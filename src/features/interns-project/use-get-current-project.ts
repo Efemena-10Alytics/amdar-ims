@@ -1,9 +1,12 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
 import type {
   CurrentInternProject,
   CurrentInternProjectResponse,
 } from "./internship-project.types";
 import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
+import { useSelectedEnrollmentIds } from "@/store/enrollment-selection-store";
 
 export type GetCurrentInternProjectParams = {
   cohortId: number | string;
@@ -43,18 +46,21 @@ export function useGetCurrentProject(
   programId?: number | string | null,
   options?: { enabled?: boolean },
 ) {
-  const hasValidParams = Boolean(cohortId && programId);
+  const selected = useSelectedEnrollmentIds();
+  const resolvedCohortId = cohortId ?? selected.cohortId;
+  const resolvedProgramId = programId ?? selected.programId;
+  const hasValidParams = Boolean(resolvedCohortId && resolvedProgramId);
   const enabled = options?.enabled !== false;
 
   return useQuery({
     queryKey: CURRENT_INTERN_PROJECT_QUERY_KEY(
-      cohortId ?? "",
-      programId ?? "",
+      resolvedCohortId ?? "",
+      resolvedProgramId ?? "",
     ),
     queryFn: () =>
       getCurrentInternProject({
-        cohortId: cohortId as number | string,
-        programId: programId as number | string,
+        cohortId: resolvedCohortId as number | string,
+        programId: resolvedProgramId as number | string,
       }),
     enabled: !!apiBaseURL && hasValidParams && enabled,
   });

@@ -8,13 +8,6 @@ import {
   formatDurationLabel,
 } from "@/components/_core/dashboard/internship-program/project-details/project-content";
 import { useGetCurrentProject } from "@/features/interns-project/use-get-current-project";
-import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
-
-function pickId(value: unknown): number | string | null {
-  if (typeof value === "number" && Number.isFinite(value)) return value;
-  if (typeof value === "string" && value.trim() !== "") return value;
-  return null;
-}
 
 type YourTaskProps = {
   imageSrc?: string;
@@ -23,18 +16,10 @@ type YourTaskProps = {
 const YourTask = ({
   imageSrc = "/images/svgs/illustration/Smug 2.svg",
 }: YourTaskProps) => {
-  const enrollmentQuery = useGetUserEnrollment();
-  const cohortId =
-    pickId(enrollmentQuery.data?.cohort_id) ??
-    pickId(enrollmentQuery.data?.cohort?.id);
-  const programId =
-    pickId(enrollmentQuery.data?.program_id) ??
-    pickId(enrollmentQuery.data?.program?.id);
-
-  const currentProjectQuery = useGetCurrentProject(cohortId, programId);
+  const currentProjectQuery = useGetCurrentProject();
   const current = currentProjectQuery.data;
   const project = current?.project;
-  const isLoading = enrollmentQuery.isLoading || currentProjectQuery.isLoading;
+  const isLoading = currentProjectQuery.isLoading;
 
   if (!isLoading && !project) {
     return null;
