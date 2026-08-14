@@ -7,9 +7,9 @@ import type {
   TaskStatus,
   WeekSchedule,
 } from "@/components/_core/dashboard/internship-program/internship-details/career-stage/stage-project-schedule";
-import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
 import type { InternProject, InternProjectTodo } from "@/features/interns-project/internship-project.types";
 import { useGetTodosByProjectId } from "@/features/interns-project/use-get-todos-by-project-id";
+import { useSelectedEnrollmentIds } from "@/store/enrollment-selection-store";
 
 const DAY_ORDER = [
   "Sunday",
@@ -21,27 +21,15 @@ const DAY_ORDER = [
   "Saturday",
 ] as const;
 
-function pickId(value: unknown): number | string | null {
-  if (typeof value === "number" && Number.isFinite(value)) return value;
-  if (typeof value === "string" && value.trim() !== "") return value;
-  return null;
-}
-
 export function useEnrollmentCohortProgramIds() {
-  const enrollmentQuery = useGetUserEnrollment();
-  const cohortId =
-    pickId(enrollmentQuery.data?.cohort_id) ??
-    pickId(enrollmentQuery.data?.cohort?.id);
-  const programId =
-    pickId(enrollmentQuery.data?.program_id) ??
-    pickId(enrollmentQuery.data?.program?.id);
+  const { cohortId, programId, hasSelection } = useSelectedEnrollmentIds();
 
   return {
     cohortId,
     programId,
-    isLoading: enrollmentQuery.isLoading,
-    isError: enrollmentQuery.isError,
-    refetch: enrollmentQuery.refetch,
+    isLoading: !hasSelection,
+    isError: false,
+    refetch: async () => undefined,
   };
 }
 
