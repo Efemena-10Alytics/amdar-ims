@@ -59,12 +59,10 @@ function SwitcherDropdown({
         <button
           type="button"
           aria-label={ariaLabel}
-          className="flex min-w-0 max-w-[14rem] items-center gap-2 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-2 text-left hover:bg-[#EEF2F6]"
+          className="flex min-w-0 max-w-56 items-center gap-2 rounded-lg bg-[#E8EFF1] px-3 py-2 text-left hover:bg-[#EEF2F6]"
         >
           <span className="min-w-0 flex-1">
-            <span className="block text-[11px] font-medium uppercase tracking-wide text-[#64748B]">
-              {label}
-            </span>
+          
             <span className="block truncate text-sm font-semibold text-[#092A31]">
               {options.find((option) => option.id === value)?.label ?? `Select ${label.toLowerCase()}`}
             </span>
