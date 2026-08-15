@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
+
+const WHATSAPP_LINK = "https://chat.whatsapp.com/EM3wjWuucD1AD9HphClDKS";
 
 export default function ThankYouPage() {
   return (
@@ -20,22 +21,24 @@ export default function ThankYouPage() {
             ✅
           </div>
 
-          <h1 className="mb-3 text-2xl font-black tracking-[-0.02em] text-white">
-            You&apos;re booked!
-          </h1>
+          {/* Visually removed by design; kept so the page still has a heading
+              for screen readers. */}
+          <h1 className="sr-only">You&apos;re booked</h1>
 
           <p className="mb-8 text-[15px] leading-[1.65] text-[#C7D5D6]">
-            Check your inbox — we&apos;ll be in touch shortly to confirm your
-            consultation slot and share what to prepare so you get the most out
-            of the session.
+            Check your email for more details about this session. We will also
+            be calling to remind you of the session. Don&apos;t forget to join
+            community.
           </p>
 
-          <Link
-            href="/career-consultation"
-            className="text-[13px] text-[#2B7F95] underline-offset-2 hover:underline"
+          <a
+            href={WHATSAPP_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#FFE082] py-3.5 text-sm font-bold uppercase tracking-[0.02em] text-[#0C2730] transition-[background-color,transform] hover:scale-[1.01] hover:bg-[#FFD54F]"
           >
-            Back to consultation page
-          </Link>
+            Join WhatsApp Community
+          </a>
         </div>
       </div>
     </div>

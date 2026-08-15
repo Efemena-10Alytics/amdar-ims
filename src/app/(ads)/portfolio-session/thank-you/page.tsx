@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-const WHATSAPP_LINK = "https://chat.whatsapp.com/GpaLJx0joAN9hFkCjXdzxy";
+const WHATSAPP_LINK = "https://chat.whatsapp.com/GYZWve6nUGcGqn5lB60yhC";
 
 export default function ThankYouPage() {
   return (
@@ -23,13 +23,13 @@ export default function ThankYouPage() {
           </div>
 
           <h1 className="mb-3 text-2xl font-black tracking-[-0.02em] text-white">
-            You&apos;re in!
+            You&apos;re booked!
           </h1>
 
           <p className="mb-8 text-[15px] leading-[1.65] text-[#C7D5D6]">
-            Check your inbox — we&apos;ll be in touch shortly to confirm your
-            internship week and share everything you need to get started on
-            day one. Don&apos;t forget to join the community.
+            Check your email for more details about this session. We will also
+            be calling to remind you of the session. Don&apos;t forget to join
+            the community.
           </p>
 
           <a
@@ -42,10 +42,10 @@ export default function ThankYouPage() {
           </a>
 
           <Link
-            href="/one-week-internship"
+            href="/portfolio-session"
             className="text-[13px] text-[#2B7F95] underline-offset-2 hover:underline"
           >
-            Back to internship page
+            Back to session page
           </Link>
         </div>
       </div>

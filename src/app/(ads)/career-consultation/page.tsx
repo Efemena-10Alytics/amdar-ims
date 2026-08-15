@@ -51,6 +51,7 @@ const HEARD_ABOUT_US_OPTIONS = [
   "Google",
   "Family and Friends",
   "Faloh",
+  OTHER,
 ];
 
 const HERO_POINTS = [
@@ -78,6 +79,7 @@ const CareerConsultationPage = () => {
   const [visaStatusOther, setVisaStatusOther] = React.useState("");
   const [timeline, setTimeline] = React.useState("");
   const [heardAboutUs, setHeardAboutUs] = React.useState("");
+  const [heardAboutUsOther, setHeardAboutUsOther] = React.useState("");
   const [formError, setFormError] = React.useState("");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [activeVideo, setActiveVideo] = React.useState<string | null>(null);
@@ -126,6 +128,7 @@ const CareerConsultationPage = () => {
       // literal "Others" placeholder.
       const trimTrackOther = trackOther.trim();
       const trimVisaOther = visaStatusOther.trim();
+      const trimHeardOther = heardAboutUsOther.trim();
       if (track === OTHER && !trimTrackOther) {
         setFormError("Please enter your career track.");
         return;
@@ -134,8 +137,13 @@ const CareerConsultationPage = () => {
         setFormError("Please enter your visa status.");
         return;
       }
+      if (heardAboutUs === OTHER && !trimHeardOther) {
+        setFormError("Please tell us where you heard about us.");
+        return;
+      }
       const trackValue = track === OTHER ? trimTrackOther : track;
       const visaValue = visaStatus === OTHER ? trimVisaOther : visaStatus;
+      const heardValue = heardAboutUs === OTHER ? trimHeardOther : heardAboutUs;
 
       // Zoho rejects the record (409) when the calling code is missing, so
       // don't let a blank selection through.
@@ -169,7 +177,7 @@ const CareerConsultationPage = () => {
           Dropdown3: timeline,
           Dropdown1: visaValue,
           Dropdown2: trackValue,
-          Dropdown: heardAboutUs,
+          Dropdown: heardValue,
         });
       } catch {
         setFormError(
@@ -191,6 +199,7 @@ const CareerConsultationPage = () => {
       setVisaStatusOther("");
       setTimeline("");
       setHeardAboutUs("");
+      setHeardAboutUsOther("");
       router.push("/career-consultation/thank-you");
     },
     [
@@ -198,6 +207,7 @@ const CareerConsultationPage = () => {
       email,
       firstName,
       heardAboutUs,
+      heardAboutUsOther,
       lastName,
       phone,
       router,
@@ -451,6 +461,16 @@ const CareerConsultationPage = () => {
                   ))}
                 </select>
               </label>
+
+              {heardAboutUs === OTHER ? (
+                <input
+                  type="text"
+                  value={heardAboutUsOther}
+                  onChange={(e) => setHeardAboutUsOther(e.target.value)}
+                  placeholder="Please specify where you heard about us"
+                  className={inputCls}
+                />
+              ) : null}
 
               {formError ? (
                 <p className="text-[12px] text-[#fca5a5]">{formError}</p>
