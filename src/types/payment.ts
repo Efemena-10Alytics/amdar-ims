@@ -1,3 +1,16 @@
+/** Payment plan the user can select at checkout. */
+export type PaymentPlanId =
+  | "full"
+  | "2-installments"
+  | "3-installments"
+  | "4-installments"
+  | "5-installments"
+  | "6-installments"
+  | "7-installments"
+  | "8-installments"
+  | "9-installments"
+  | "10-installments";
+
 /** Program summary returned in checkout preview */
 export interface CheckoutProgram {
   id: number;
@@ -24,13 +37,18 @@ export interface CheckoutPricing {
   amount: number;
   original_amount: number;
   discounted_amount: number;
-  two_installments_amount: number;
-  original_two_installments_amount: number;
-  discounted_two_installments_amount: number;
-  three_installments_amount: number;
-  original_three_installments_amount: number;
-  discounted_three_installments_amount: number;
+  /** Optional: the backend omits an installment option entirely when its amount is null. */
+  two_installments_amount?: number;
+  original_two_installments_amount?: number;
+  discounted_two_installments_amount?: number;
+  three_installments_amount?: number;
+  original_three_installments_amount?: number;
+  discounted_three_installments_amount?: number;
   display_three_installment_breakdown?: number[];
+  four_installments_amount?: number;
+  original_four_installments_amount?: number;
+  discounted_four_installments_amount?: number;
+  display_four_installment_breakdown?: number[];
   five_installments_amount?: number;
   original_five_installments_amount?: number;
   discounted_five_installments_amount?: number;
@@ -39,6 +57,10 @@ export interface CheckoutPricing {
   original_six_installments_amount?: number;
   discounted_six_installments_amount?: number;
   display_six_installment_breakdown?: number[];
+  seven_installments_amount?: number;
+  original_seven_installments_amount?: number;
+  discounted_seven_installments_amount?: number;
+  display_seven_installment_breakdown?: number[];
   eight_installments_amount?: number;
   original_eight_installments_amount?: number;
   discounted_eight_installments_amount?: number;
@@ -98,7 +120,7 @@ export interface SplitFirstPayment {
 /** Collected checkout selections to pass to Payment / PaymentDetails */
 export type CheckoutSelections = {
   cohort: CheckoutCohort;
-  planId: "full" | "2-installments" | "3-installments" | "5-installments" | "6-installments" | "8-installments" | "9-installments" | "10-installments";
+  planId: PaymentPlanId;
   currency: string;
   pricing: CheckoutPricing;
   planLabel: string;

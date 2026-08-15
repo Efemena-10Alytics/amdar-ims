@@ -100,6 +100,10 @@ export function usePayNow({
         originalTotalAmount = Number(pricing.original_two_installments_amount);
         installments = 2;
         originalNextPaymentAmount = Number(pricing.two_installments_amount) / 2;
+      } else if (planId === "4-installments") {
+        originalTotalAmount = Number(pricing.original_four_installments_amount ?? pricing.four_installments_amount);
+        installments = 4;
+        originalNextPaymentAmount = Number(pricing.four_installments_amount) / 4;
       } else if (planId === "5-installments") {
         originalTotalAmount = Number(pricing.original_five_installments_amount ?? pricing.five_installments_amount);
         installments = 5;
@@ -108,6 +112,10 @@ export function usePayNow({
         originalTotalAmount = Number(pricing.original_six_installments_amount ?? pricing.six_installments_amount);
         installments = 6;
         originalNextPaymentAmount = Number(pricing.six_installments_amount) / 6;
+      } else if (planId === "7-installments") {
+        originalTotalAmount = Number(pricing.original_seven_installments_amount ?? pricing.seven_installments_amount);
+        installments = 7;
+        originalNextPaymentAmount = Number(pricing.seven_installments_amount) / 7;
       } else if (planId === "8-installments") {
         originalTotalAmount = Number(pricing.original_eight_installments_amount ?? pricing.eight_installments_amount);
         installments = 8;
@@ -133,7 +141,7 @@ export function usePayNow({
       const formattedNextPaymentAmount =
         Math.round(originalNextPaymentAmount * 100) / 100;
 
-      const isBiweekly = planId === "5-installments" || planId === "6-installments";
+      const isBiweekly = planId === "5-installments" || planId === "6-installments" || planId === "7-installments";
       const isWeekly = planId === "8-installments" || planId === "9-installments" || planId === "10-installments";
 
       // Next payment date for API

@@ -56,7 +56,12 @@ function getNextPaymentDateYmd(
 
 function getIntervalDays(planId: string | undefined): number {
   if (planId === "8-installments" || planId === "9-installments" || planId === "10-installments") return 7;
-  if (planId === "5-installments" || planId === "6-installments") return 14;
+  if (
+    planId === "5-installments" ||
+    planId === "6-installments" ||
+    planId === "7-installments"
+  )
+    return 14;
   return 30;
 }
 
@@ -305,6 +310,18 @@ const PaymentDetails = ({
         ],
       };
     }
+    if (planId === "4-installments") {
+      const orig = pricing.original_four_installments_amount ?? pricing.four_installments_amount;
+      if (orig == null) return { originalPlanTotal: undefined, originalAmounts: [] };
+      const base = Math.round(orig / 4);
+      const amountStr = (n: number) => `${currency} ${n}`;
+      return {
+        originalPlanTotal: `${currency} ${orig}`,
+        originalAmounts: Array.from({ length: 4 }, (_, i) =>
+          amountStr(i === 3 ? orig - base * 3 : base),
+        ),
+      };
+    }
     if (planId === "5-installments") {
       const orig = pricing.original_five_installments_amount ?? pricing.five_installments_amount;
       if (orig == null) return { originalPlanTotal: undefined, originalAmounts: [] };
@@ -326,6 +343,18 @@ const PaymentDetails = ({
         originalPlanTotal: `${currency} ${orig}`,
         originalAmounts: Array.from({ length: 6 }, (_, i) =>
           amountStr(i === 5 ? orig - base * 5 : base),
+        ),
+      };
+    }
+    if (planId === "7-installments") {
+      const orig = pricing.original_seven_installments_amount ?? pricing.seven_installments_amount;
+      if (orig == null) return { originalPlanTotal: undefined, originalAmounts: [] };
+      const base = Math.round(orig / 7);
+      const amountStr = (n: number) => `${currency} ${n}`;
+      return {
+        originalPlanTotal: `${currency} ${orig}`,
+        originalAmounts: Array.from({ length: 7 }, (_, i) =>
+          amountStr(i === 6 ? orig - base * 6 : base),
         ),
       };
     }

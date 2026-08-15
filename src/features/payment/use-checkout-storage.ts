@@ -1,10 +1,24 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { CheckoutSelections } from "@/types/payment";
+import type { CheckoutSelections, PaymentPlanId } from "@/types/payment";
 
 const CHECKOUT_FORM_STORAGE_KEY = "payment_checkout_form";
 const CHECKOUT_SELECTIONS_STORAGE_KEY = "payment_checkout_selections";
 
-export type PaymentPlanId = "full" | "2-installments" | "3-installments" | "5-installments" | "6-installments" | "8-installments" | "9-installments" | "10-installments";
+export type { PaymentPlanId };
+
+/** Every valid PaymentPlanId, for validating values restored from sessionStorage. */
+const PAYMENT_PLAN_IDS: readonly string[] = [
+  "full",
+  "2-installments",
+  "3-installments",
+  "4-installments",
+  "5-installments",
+  "6-installments",
+  "7-installments",
+  "8-installments",
+  "9-installments",
+  "10-installments",
+];
 
 export type StoredCheckoutForm = {
   selectedCohort: number | null;
@@ -126,9 +140,7 @@ export function useCheckoutFormStorage(
         (parsed.selectedCohort == null ||
           cohortIds.includes(parsed.selectedCohort)) &&
         (parsed.selectedPlan == null ||
-          ["full", "2-installments", "3-installments", "5-installments", "6-installments", "8-installments", "9-installments", "10-installments"].includes(
-            parsed.selectedPlan,
-          )) &&
+          PAYMENT_PLAN_IDS.includes(parsed.selectedPlan)) &&
         (parsed.currency ? currencies.includes(parsed.currency) : true)
       ) {
         if (parsed.selectedCohort != null)
