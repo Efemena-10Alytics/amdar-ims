@@ -77,20 +77,29 @@ function getWeeklyPaymentDate(periodsFromNow: number): string {
   });
 }
 
+/** Per-installment amounts: the API's display breakdown when it covers every
+ * installment, otherwise an even split with the remainder on the last payment. */
+function getInstallmentAmounts(
+  total: number,
+  count: number,
+  displayBreakdown?: number[],
+): number[] {
+  if (displayBreakdown && displayBreakdown.length >= count) {
+    return displayBreakdown;
+  }
+  const base = Math.round(total / count);
+  return Array.from({ length: count }, (_, i) =>
+    i === count - 1 ? total - base * (count - 1) : base,
+  );
+}
+
 function buildBiweeklyBreakdown(
   currency: string,
   total: number,
   count: number,
   displayBreakdown?: number[],
 ): { label: string; amount: string; dueDate?: string }[] {
-  const amounts =
-    displayBreakdown && displayBreakdown.length >= count
-      ? displayBreakdown
-      : Array.from({ length: count }, (_, i) => {
-          const base = Math.round(total / count);
-          return i === count - 1 ? total - base * (count - 1) : base;
-        });
-  return amounts.map((amt, i) => ({
+  return getInstallmentAmounts(total, count, displayBreakdown).map((amt, i) => ({
     label: `${getOrdinal(i)} payment`,
     amount: `${currency} ${amt}`,
     dueDate: i === 0 ? "Due now" : `Due ${getBiweeklyPaymentDate(i)}`,
@@ -103,14 +112,7 @@ function buildWeeklyBreakdown(
   count: number,
   displayBreakdown?: number[],
 ): { label: string; amount: string; dueDate?: string }[] {
-  const amounts =
-    displayBreakdown && displayBreakdown.length >= count
-      ? displayBreakdown
-      : Array.from({ length: count }, (_, i) => {
-          const base = Math.round(total / count);
-          return i === count - 1 ? total - base * (count - 1) : base;
-        });
-  return amounts.map((amt, i) => ({
+  return getInstallmentAmounts(total, count, displayBreakdown).map((amt, i) => ({
     label: `${getOrdinal(i)} payment`,
     amount: `${currency} ${amt}`,
     dueDate: i === 0 ? "Due now" : `Due ${getWeeklyPaymentDate(i)}`,
@@ -123,18 +125,23 @@ function buildMonthlyBreakdown(
   count: number,
   displayBreakdown?: number[],
 ): { label: string; amount: string; dueDate?: string }[] {
-  const amounts =
-    displayBreakdown && displayBreakdown.length >= count
-      ? displayBreakdown
-      : Array.from({ length: count }, (_, i) => {
-          const base = Math.round(total / count);
-          return i === count - 1 ? total - base * (count - 1) : base;
-        });
-  return amounts.map((amt, i) => ({
+  return getInstallmentAmounts(total, count, displayBreakdown).map((amt, i) => ({
     label: `${getOrdinal(i)} payment`,
     amount: `${currency} ${amt}`,
     dueDate: i === 0 ? "Due now" : `Due ${getNextPaymentDate(i)}`,
   }));
+}
+
+/** e.g. "Reserve your seat with GBP 100 today, then 6 bi-weekly payments of GBP 91.67".
+ * Quotes the second installment, so the penny that rounding shaves off the final
+ * payment never surfaces in the summary line. */
+function buildReserveDescription(
+  currency: string,
+  amounts: number[],
+  cadence: "monthly" | "bi-weekly",
+): string {
+  const [first, ...rest] = amounts;
+  return `Reserve your seat with ${currency} ${first} today, then ${rest.length} ${cadence} payments of ${currency} ${rest[0]}`;
 }
 
 /** Derive payment plan options from the selected pricing. Every installment option is
@@ -215,8 +222,16 @@ function getPaymentPlansFromPricing(
   if (four_installments_amount != null) {
     plans.push({
       id: "4-installments",
-      label: "4 Installments",
-      description: "Pay in 4 installments over 4 months",
+      label: "Smart Plan",
+      description: buildReserveDescription(
+        currency,
+        getInstallmentAmounts(
+          four_installments_amount,
+          4,
+          display_four_installment_breakdown,
+        ),
+        "monthly",
+      ),
       total: `${currency} ${four_installments_amount}`,
       breakdown: buildMonthlyBreakdown(
         currency,
@@ -260,8 +275,16 @@ function getPaymentPlansFromPricing(
   if (seven_installments_amount != null) {
     plans.push({
       id: "7-installments",
-      label: "7 Bi-weekly Installments",
-      description: "Pay in 7 installments, every 2 weeks",
+      label: "Flexi-Pay",
+      description: buildReserveDescription(
+        currency,
+        getInstallmentAmounts(
+          seven_installments_amount,
+          7,
+          display_seven_installment_breakdown,
+        ),
+        "bi-weekly",
+      ),
       total: `${currency} ${seven_installments_amount}`,
       breakdown: buildBiweeklyBreakdown(
         currency,
