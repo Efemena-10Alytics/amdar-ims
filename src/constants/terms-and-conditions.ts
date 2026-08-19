@@ -1,0 +1,149 @@
+/**
+ * Canonical Amdari terms & policies copy.
+ *
+ * Rendered in two places — the public /terms-and-conditions page and the
+ * scroll-to-agree dialog gating checkout — so any wording change made here
+ * lands in both. Order matters: sections render top to bottom, and the public
+ * page derives its sidebar nav and scroll-spy from this array.
+ */
+
+export type PolicyPoint =
+  | string
+  | {
+      /** Bold lead-in rendered above the point body. */
+      title?: string;
+      text: string;
+      /** Nested bullets rendered under the point body. */
+      bullets?: string[];
+    };
+
+export type PolicySection = {
+  id: string;
+  title: string;
+  intro?: string;
+  points?: PolicyPoint[];
+  paragraphs?: string[];
+};
+
+export const TERMS_PARAGRAPHS: string[] = [
+  "Hello and welcome to Amdari! We are dedicated to offering you hands-on, project-based internship designed to provide you with real world experience, and we want to make sure you are aware of all the terms and conditions that come with taking part in our program.",
+  "As a participant in our program, please update yourself on the policies and procedures outlined in this document. Please carefully read and comprehend these terms and conditions before starting this program.",
+  "Our goal at Amdari is to provide each participant with exceptional opportunities for real-world experience through projects and internships that build practical skills. However, we acknowledge that unforeseen circumstances may sometimes necessitate a refund or deferment.",
+];
+
+export const POLICY_SECTIONS: PolicySection[] = [
+  {
+    id: "removal-access-restriction",
+    title: "Removal/Access Restriction Policy for Amdari",
+    intro:
+      "Participants in any of Amdari's programs may have their access restricted or be removed under the following circumstances:",
+    points: [
+      "Installment Payment: All installment agreements must be honoured. All participants are required to make installment payments on or before their agreed installment date. If ability to meet the agreed date is impaired, a mail must be sent to finance@amdari.io to agree on a compromise to payments. However, this mail must be received before installment date in order to be considered by the finance team.",
+      "Failure to make Installment Payment: Failure to make payment on or before agreed installment date will result in your profile being flagged for immediate removal. A grace period of two (2) days will be provided from the initial agreed installment date. After which said participants will be removed from all Amdari platforms.",
+      "Attendance: Participants are expected to engage with all assigned projects and meet the deliverables within the program timeline. Repeated unexcused absences or missed deadlines without valid reasons will lead to removal from the program without a refund.",
+      "Conduct: Participants are expected to conduct themselves professionally and respectfully at all times. If an intern engages in disruptive or disrespectful behavior, they may be given a warning. If the behavior continues, they will be removed from the program.",
+    ],
+  },
+  {
+    id: "program-switching",
+    title: "Program Switching Policy for Amdari",
+    intro:
+      "This section of the policy aims to maintain the integrity of the internship experience while also allowing interns the opportunity to make informed decisions about their career paths:",
+    points: [
+      "Interns may request a switch to another program within the same cohort only once during their time at Amdari.",
+      "Interns must fill the Amdari Switching Form at least 10 business days before the start of the program but not beyond 2 weeks into the program.",
+      "Switching programmes may only occur within the same cohort and must take place before two weeks into the programme.",
+      "Amdari reserves the right to deny a request to switch programmes based on factors such as limited availability of spaces or insufficient qualifications of the intern.",
+      "Interns who have switched programmes are not eligible to switch back to their original programme.",
+      "Any subsequent switch requests will lead to a re-enrollment fee at the discretion of Amdari. Please send an email to finance@amdari.org.",
+    ],
+  },
+  {
+    id: "refund-policy",
+    title: "Refund Policy for Amdari",
+    intro:
+      "We have devised the following refund policy to make sure that everything is done fairly and openly for parties involved:",
+    points: [
+      "Cancellations made more than 7 days prior to the start of the program will receive a full refund.",
+      "Cancellations made less than 7 days prior to the start of the program will receive a 75% refund.",
+      "Cancellations made between 0-7 days after the start of the program will receive a 50% refund.",
+      "Cancellations made 7 days after the start of the program, or for no-shows, will not be eligible for a refund.",
+      "Refunds for programs that have already started will be evaluated on a case-by-case basis and will be subject to a cancellation fee of 50% of the remaining fees.",
+      "In the event that Amdari cancels a program, clients will receive a full refund.",
+      "Once the refund request has been received and reviewed, our customer service team will process the refund within 7-10 business days.",
+      "Sessions that have been deferred/rescheduled by the participant will not be eligible for a refund.",
+      "Refunds issued will be less 8% platform charges in cases where the payment was made through a third-party platform.",
+      "Each program coordinator must be informed and requests for refunds must be submitted to Amdari via email at finance@amdari.org.",
+    ],
+  },
+  {
+    id: "deferment-policy",
+    title: "Deferment Policy for Amdari",
+    paragraphs: [
+      "This deferment policy has been created to provide participants with the opportunity to defer their enrollment in a program for a future date.",
+      "Deferment Criteria: The deferment of a program enrollment may be approved under health reasons, personal circumstances such as bereavement/family emergencies, or change in employment that prevents participation.",
+    ],
+    points: [
+      "Request for deferment: Students must fill the Amdari Deferment Form at least 10 business days before the start of the program but not beyond 2 weeks into the program.",
+      "Approval or rejection: Amdari will review the request and communicate a decision within 5 business days.",
+      "Limitation on deferment: Participants cannot defer more than 3 months in advance and may defer enrollment once only.",
+      "Re-enrollment fee: Participants who defer more than once and/or beyond 3 months in advance will be required to pay a re-enrollment fee equal to 25% of the current program full fee.",
+      "Timeline: The re-enrollment fee of 25% is applicable only within 5 months of enrollment. After 5 months, re-enrollment may be treated as a new enrollment.",
+    ],
+  },
+  {
+    id: "growth-internship-enrollment",
+    title: "Growth Internship Enrollment Policy for Amdari",
+    intro:
+      "Amdari Internship Policy has been created to provide participants with the opportunity to participate in our Growth Internship upon completion of Capstone Project:",
+    points: [
+      "All students are entitled to participate free of charge in Amdari Growth Internship with their registered cohort.",
+      "Growth Internships are not liable to deferment.",
+      "Growth Internship occurs only after the cohort has been completed via Capstone Presentation.",
+      "Growth Internship for each registered cohort shall begin not later than 30-days after the cohort capstone presentation date.",
+      "Participants who fail to complete their capstone project and join their registered cohort Growth Internship will be liable to pay Growth Internship Enrollment Fee.",
+      "Growth Internship Enrollment Fee is 10% of the current training program full fee and must be paid before enrollment in the next internship cycle.",
+      "Participants who intend to apply for Growth Internship past their cohort deadline must submit requests via finance@amdari.org.",
+    ],
+  },
+  {
+    id: "consent-success-stories",
+    title: "Consent for Use of Success Stories, Testimonials & Personal Content",
+    intro:
+      "By participating in the Amdari internship/training program, you acknowledge and agree to the following:",
+    points: [
+      {
+        title: "Grant of Rights",
+        text: "You grant Amdari a non-exclusive, worldwide, royalty-free, perpetual license to use, reproduce, edit, publish, and distribute your name, photo, video likeness, voice, testimonial, success story, and related personal details content for marketing, promotional, and social media purposes, including but not limited to Amdari's website, social media platforms (LinkedIn, Instagram, X, TikTok, etc.), newsletters, case studies, and advertising materials.",
+      },
+      {
+        title: "Types of Content Covered",
+        text: "This may include, but is not limited to:",
+        bullets: [
+          "Your Personal details includes only: name, photo, and/or video.",
+          "Details of your internship experience or training journey",
+          "Career outcomes (e.g., securing a job, promotion, or new opportunity after training)",
+          "Direct quotes or written testimonials attributed to you",
+          "Screenshots of messages, feedback, or reviews you've shared with Amdari",
+        ],
+      },
+      {
+        title: "Editorial Use",
+        text: "Amdari may edit, crop, caption, or format your Content for clarity, length, or platform requirements, provided the substance and meaning of your story are not misrepresented.",
+      },
+      {
+        title: "No Compensation",
+        text: "Unless otherwise agreed in writing, you acknowledge that the use of your Content under this agreement is provided without monetary compensation.",
+      },
+    ],
+  },
+  {
+    id: "amdari-references",
+    title: "Amdari References",
+    paragraphs: [
+      "The contract with Amdari participants becomes effective at the start of the cohort. Please note that references will be provided only after participants have completed one month of the program, and not before.",
+      "Note: All Amdari program fees are tax exclusive.",
+      "This policy is subject to change at any time, and participants will be notified of any changes in writing.",
+    ],
+  },
+];

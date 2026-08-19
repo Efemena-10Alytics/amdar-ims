@@ -9,6 +9,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import {
+  POLICY_SECTIONS,
+  TERMS_PARAGRAPHS,
+} from "@/constants/terms-and-conditions";
 
 interface TermsConditionDialogProps {
   open: boolean;
@@ -16,99 +20,6 @@ interface TermsConditionDialogProps {
   onAgree?: () => void;
   onDecline?: () => void;
 }
-
-type PolicySection = {
-  title: string;
-  intro?: string;
-  points?: string[];
-  paragraphs?: string[];
-};
-
-const TERMS_PARAGRAPHS: string[] = [
-  "Hello and welcome to Amdari! We are dedicated to offering you hands-on, project-based internship designed to provide you with real world experience, and we want to make sure you are aware of all the terms and conditions that come with taking part in our program.",
-  "As a participant in our program, please update yourself on the policies and procedures outlined in this document. Please carefully read and comprehend these terms and conditions before starting this program.",
-  "Our goal at Amdari is to provide each participant with exceptional opportunities for real-world experience through projects and internships that build practical skills. However, we acknowledge that unforeseen circumstances may sometimes necessitate a refund or deferment.",
-];
-
-const POLICY_SECTIONS: PolicySection[] = [
-  {
-    title: "Removal/Access Restriction Policy for Amdari",
-    intro:
-      "Participants in any of Amdari's programs may have their access restricted or be removed under the following circumstances:",
-    points: [
-      "Installment Payment: All installment agreements must be honoured. All participants are required to make installment payments on or before their agreed installment date. If ability to meet the agreed date is impaired, a mail must be sent to finance@amdari.io to agree on a compromise to payments. However, this mail must be received before installment date in order to be considered by the finance team.",
-      "Failure to make Installment Payment: Failure to make payment on or before agreed installment date will result in your profile being flagged for immediate removal. A grace period of two (2) days will be provided from the initial agreed installment date. After which said participants will be removed from all Amdari platforms.",
-      "Attendance: Participants are expected to engage with all assigned projects and meet the deliverables within the program timeline. Repeated unexcused absences or missed deadlines without valid reasons will lead to removal from the program without a refund.",
-      "Conduct: Participants are expected to conduct themselves professionally and respectfully at all times. If an intern engages in disruptive or disrespectful behavior, they may be given a warning. If the behavior continues, they will be removed from the program.",
-    ],
-  },
-  {
-    title: "Program Switching Policy for Amdari",
-    intro:
-      "This section of the policy aims to maintain the integrity of the internship experience while also allowing interns the opportunity to make informed decisions about their career paths:",
-    points: [
-      "Interns may request a switch to another program within the same cohort only once during their time at Amdari.",
-      "Interns must fill the Amdari Switching Form at least 10 business days before the start of the program but not beyond 2 weeks into the program.",
-      "Switching programmes may only occur within the same cohort and must take place before two weeks into the programme.",
-      "Amdari reserves the right to deny a request to switch programmes based on factors such as limited availability of spaces or insufficient qualifications of the intern.",
-      "Interns who have switched programmes are not eligible to switch back to their original programme.",
-      "Any subsequent switch requests will lead to a re-enrollment fee at the discretion of Amdari. Please send an email to finance@amdari.org.",
-    ],
-  },
-  {
-    title: "Refund Policy for Amdari",
-    intro:
-      "We have devised the following refund policy to make sure that everything is done fairly and openly for parties involved:",
-    points: [
-      "Cancellations made more than 7 days prior to the start of the program will receive a full refund.",
-      "Cancellations made less than 7 days prior to the start of the program will receive a 75% refund.",
-      "Cancellations made between 0-7 days after the start of the program will receive a 50% refund.",
-      "Cancellations made 7 days after the start of the program, or for no-shows, will not be eligible for a refund.",
-      "Refunds for programs that have already started will be evaluated on a case-by-case basis and will be subject to a cancellation fee of 50% of the remaining fees.",
-      "In the event that Amdari cancels a program, clients will receive a full refund.",
-      "Once the refund request has been received and reviewed, our customer service team will process the refund within 7-10 business days.",
-      "Sessions that have been deferred/rescheduled by the participant will not be eligible for a refund.",
-      "Refunds issued will be less 8% platform charges in cases where the payment was made through a third-party platform.",
-      "Each program coordinator must be informed and requests for refunds must be submitted to Amdari via email at finance@amdari.org.",
-    ],
-  },
-  {
-    title: "Deferment Policy for Amdari",
-    paragraphs: [
-      "This deferment policy has been created to provide participants with the opportunity to defer their enrollment in a program for a future date.",
-      "Deferment Criteria: The deferment of a program enrollment may be approved under health reasons, personal circumstances such as bereavement/family emergencies, or change in employment that prevents participation.",
-    ],
-    points: [
-      "Request for deferment: Students must fill the Amdari Deferment Form at least 10 business days before the start of the program but not beyond 2 weeks into the program.",
-      "Approval or rejection: Amdari will review the request and communicate a decision within 5 business days.",
-      "Limitation on deferment: Participants cannot defer more than 3 months in advance and may defer enrollment once only.",
-      "Re-enrollment fee: Participants who defer more than once and/or beyond 3 months in advance will be required to pay a re-enrollment fee equal to 25% of the current program full fee.",
-      "Timeline: The re-enrollment fee of 25% is applicable only within 5 months of enrollment. After 5 months, re-enrollment may be treated as a new enrollment.",
-    ],
-  },
-  {
-    title: "Growth Internship Enrollment Policy for Amdari",
-    intro:
-      "Amdari Internship Policy has been created to provide participants with the opportunity to participate in our Growth Internship upon completion of Capstone Project:",
-    points: [
-      "All students are entitled to participate free of charge in Amdari Growth Internship with their registered cohort.",
-      "Growth Internships are not liable to deferment.",
-      "Growth Internship occurs only after the cohort has been completed via Capstone Presentation.",
-      "Growth Internship for each registered cohort shall begin not later than 30-days after the cohort capstone presentation date.",
-      "Participants who fail to complete their capstone project and join their registered cohort Growth Internship will be liable to pay Growth Internship Enrollment Fee.",
-      "Growth Internship Enrollment Fee is 10% of the current training program full fee and must be paid before enrollment in the next internship cycle.",
-      "Participants who intend to apply for Growth Internship past their cohort deadline must submit requests via finance@amdari.org.",
-    ],
-  },
-  {
-    title: "Amdari References",
-    paragraphs: [
-      "The contract with Amdari participants becomes effective at the start of the cohort. Please note that references will be provided only after participants have completed one month of the program, and not before.",
-      "Note: All Amdari program fees are tax exclusive.",
-      "This policy is subject to change at any time, and participants will be notified of any changes in writing.",
-    ],
-  },
-];
 
 export function TermsConditionDialog({
   open,
@@ -189,11 +100,31 @@ export function TermsConditionDialog({
 
               {section.points && section.points.length > 0 && (
                 <ol className="list-decimal space-y-3 pl-5">
-                  {section.points.map((point) => (
-                    <li key={point} className="text-base leading-7">
-                      {point}
-                    </li>
-                  ))}
+                  {section.points.map((point) =>
+                    typeof point === "string" ? (
+                      <li key={point} className="text-base leading-7">
+                        {point}
+                      </li>
+                    ) : (
+                      <li key={point.text} className="text-base leading-7">
+                        {point.title && (
+                          <span className="font-semibold text-[#092A31]">
+                            {point.title}
+                          </span>
+                        )}
+                        <p className={point.title ? "mt-1" : undefined}>
+                          {point.text}
+                        </p>
+                        {point.bullets && (
+                          <ul className="mt-2 list-disc space-y-2 pl-5">
+                            {point.bullets.map((bullet) => (
+                              <li key={bullet}>{bullet}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </li>
+                    ),
+                  )}
                 </ol>
               )}
             </section>
