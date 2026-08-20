@@ -76,8 +76,7 @@ export type Resource = {
   mimeType: string | null;
   postedById: number;
   postedByName: string;
-  programId: number;
-  cohortId: number;
+  internProjectId: number;
   createdAt: string;
   updatedAt: string;
 };

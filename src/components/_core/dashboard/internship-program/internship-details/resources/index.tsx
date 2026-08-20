@@ -9,7 +9,15 @@ import type {
   ResourceCategory,
 } from "@/features/resources/resources.types";
 import { useGetResources } from "@/features/resources/use-get-resources";
+import { useGetProjectResources } from "@/features/interns-project/resources/use-get-project-resources";
 import { cn } from "@/lib/utils";
+
+/** Only the fields the list UI actually renders — satisfied by both the general
+ *  (program/cohort-scoped) and project-scoped `Resource` API response shapes. */
+type ResourceListItem = Pick<
+  Resource,
+  "id" | "title" | "format" | "url" | "fileUrl" | "createdAt"
+>;
 
 const RESOURCE_CATEGORIES = [
   { label: "Onboarding", value: "onboarding" },
@@ -38,7 +46,7 @@ function normalizeResourceFormat(format?: string | null): "link" | "material" {
   return "link";
 }
 
-function getResourceHref(resource: Resource) {
+function getResourceHref(resource: ResourceListItem) {
   return resource.url?.trim() || resource.fileUrl?.trim() || null;
 }
 
@@ -60,9 +68,14 @@ function ResourceTypeIcon({ format }: { format: "link" | "material" }) {
 
 const Resources = ({
   excludeCategories = [],
+  projectId = null,
 }: {
   excludeCategories?: readonly ResourceCategoryValue[];
+  /** When set, resources are scoped to this project instead of the globally-selected program/cohort. */
+  projectId?: number | string | null;
 } = {}) => {
+  const isProjectScoped = projectId != null && String(projectId).trim() !== "";
+
   const { cohortId, programId, isLoading: isEnrollmentLoading } =
     useEnrollmentCohortProgramIds();
 
@@ -78,9 +91,9 @@ const Resources = ({
     useState<ResourceCategoryValue>("onboarding");
   const [activeFilter, setActiveFilter] = useState<ResourceFilterValue>("all");
 
-  const canFetch = programId != null && cohortId != null;
+  const canFetchGeneral = !isProjectScoped && programId != null && cohortId != null;
 
-  const resourcesQuery = useGetResources(
+  const generalQuery = useGetResources(
     {
       program_id: programId ?? undefined,
       cohort_id: cohortId ?? undefined,
@@ -90,11 +103,27 @@ const Resources = ({
       page: 1,
     },
     {
-      enabled: canFetch,
+      enabled: canFetchGeneral,
     },
   );
 
-  const resources = useMemo(() => {
+  const projectQuery = useGetProjectResources(
+    {
+      project_id: projectId ?? undefined,
+      category: activeCategory as ResourceCategory | string,
+      format: activeFilter === "all" ? undefined : activeFilter,
+      per_page: 50,
+      page: 1,
+    },
+    {
+      enabled: isProjectScoped,
+    },
+  );
+
+  const resourcesQuery = isProjectScoped ? projectQuery : generalQuery;
+  const canFetch = isProjectScoped ? true : canFetchGeneral;
+
+  const resources = useMemo<ResourceListItem[]>(() => {
     const items = resourcesQuery.data?.resources ?? [];
     return items.filter((item) => {
       const format = item.format?.trim().toLowerCase();
@@ -102,12 +131,13 @@ const Resources = ({
     });
   }, [resourcesQuery.data?.resources]);
 
-  const isLoading =
-    isEnrollmentLoading || (canFetch && resourcesQuery.isLoading);
+  const isLoading = isProjectScoped
+    ? resourcesQuery.isLoading
+    : isEnrollmentLoading || (canFetch && resourcesQuery.isLoading);
 
   const isError = canFetch && resourcesQuery.isError;
 
-  const handleOpenResource = (resource: Resource) => {
+  const handleOpenResource = (resource: ResourceListItem) => {
     const href = getResourceHref(resource);
     if (!href || typeof window === "undefined") return;
     window.open(href, "_blank", "noopener,noreferrer");
@@ -186,7 +216,9 @@ const Resources = ({
             </div>
           ) : !canFetch ? (
             <p className="px-1 py-6 text-sm text-[#94A3B8]">
-              Enrollment details are required to view resources.
+              {isProjectScoped
+                ? "Project details are required to view resources."
+                : "Enrollment details are required to view resources."}
             </p>
           ) : resources.length ? (
             <div className="space-y-2.5">

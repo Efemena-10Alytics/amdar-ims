@@ -124,7 +124,7 @@ export default function ProjectDetailsContent() {
     ) : activeTab === "todo" ? (
       <Todo project={project} />
     ) : activeTab === "resources" ? (
-      <ResourcesDetails />
+      <ResourcesDetails project={project} />
     ) : null;
   // Leader board temporarily disabled
   // : activeTab === "leader-board" ? (

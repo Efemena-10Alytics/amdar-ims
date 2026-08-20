@@ -61,7 +61,7 @@ type UseGetResourcesOptions = {
   enabled?: boolean;
 };
 
-export function useGetResources(
+export function useGetProjectResources(
   query?: Partial<GetResourcesQuery> | null,
   options?: UseGetResourcesOptions,
 ) {
