@@ -12,52 +12,61 @@ import {
 } from "@/components/_core/shared/testimonial-video";
 import "./animations.css";
 
-// TODO: paste the North America Zoho form URL here. Registrations are blocked
-// until it is set — the form tells the user rather than silently POSTing nowhere.
-const ZOHO_FORM_URL: string = "";
+const ZOHO_FORM_URL =
+  "https://forms.zohopublic.com/amdariinc1/form/USCanadaCareerInfoSession/formperma/4sy5NSfTqV1RK-PM6l_lPBTF_zWKc3iI-WsUAOtQ2dk/htmlRecords/submit";
 
 // Tags the lead so NA registrations stay distinguishable from the UK page's.
 const ZOHO_REFERRER = "na-career-consultation";
 
-const OTHER = "Others";
+// Every list below must match the Zoho form's own options exactly — Zoho rejects
+// the record (409) on any value it doesn't recognise. None of these fields offer
+// an "Others" option, so there is no free-text fallback.
 
-const CAREER_TRACKS = [
+/** Zoho: Dropdown2 — "Which career path are you interested in?" */
+const CAREER_PATHS = [
   "Business Analysis",
   "Data Analytics",
   "Data Science",
   "Cyber security",
   "Project Management",
   "GRC",
-  OTHER,
 ];
 
-// TODO: replace with the exact options configured on the NA Zoho form. Zoho
-// rejects the record (409) when a submitted value isn't one of its own options.
-const WORK_AUTHORIZATIONS = [
-  "US Citizen",
-  "Permanent Resident (Green Card)",
-  "Canadian Permanent Resident",
-  "Work Permit",
-  "Student visa (F-1, OPT/CPT)",
-  "H-1B",
-  "TN",
-  "Need sponsorship",
-  OTHER,
+/** Zoho: Dropdown1 — "How soon are you looking to start?" */
+const START_TIMINGS = ["immediately", "within 1-3 months", "Just exploring"];
+
+/** Zoho: Dropdown3 — "What is your primary career goal over the next 12 months?" */
+const CAREER_GOALS = [
+  "Land a fully remote tech job",
+  "Earn CAD $100,000+ annually",
+  "Switch into a better-paying tech role",
+  "Secure my first tech job in Canada/US",
 ];
 
-const TIMELINE_OPTIONS = [
-  "within a month",
-  "1-3 months",
-  "Just exploring for now",
+/** Zoho: Dropdown4 — biggest challenge */
+const CHALLENGES = [
+  "Lack of Canadian/US work experience",
+  "Not getting interviews",
+  "Struggling to pass interviews",
+  "Limited professional network",
+  "My CV/LinkedIn isn't attracting recruiters",
 ];
 
+/** Zoho: Dropdown5 — internship interest */
+const INTERNSHIP_INTEREST = [
+  "Very interested",
+  "Somewhat interested",
+  "Not sure—I need more information",
+  "Not interested",
+];
+
+/** Zoho: Dropdown — "How did you hear about us?" */
 const HEARD_ABOUT_US_OPTIONS = [
   "Facebook/Instagram ads",
   "TikTok Ads",
   "Google",
   "Family and Friends",
   "Faloh",
-  OTHER,
 ];
 
 const HERO_POINTS = [
@@ -69,6 +78,10 @@ const HERO_POINTS = [
 const inputCls =
   "w-full rounded-lg border border-[#156374]/50 bg-[#0F4652] px-3.5 py-[11px] text-[13.5px] text-[#F2F7F7] outline-none transition-colors placeholder:text-[#4A6A7A] focus:border-[#2B7F95] appearance-none";
 
+const selectCls = `${inputCls} [&>option]:bg-[#0C3640]`;
+
+const labelCls = "text-xs font-semibold text-[#2B7F95]";
+
 const NaCareerConsultationPage = () => {
   const router = useRouter();
   const { data: countries = [], isLoading: countriesLoading } = useCountries();
@@ -79,13 +92,12 @@ const NaCareerConsultationPage = () => {
   const [phoneCountryCode, setPhoneCountryCode] = React.useState("");
   const [phone, setPhone] = React.useState("");
   const [country, setCountry] = React.useState("");
-  const [track, setTrack] = React.useState("");
-  const [trackOther, setTrackOther] = React.useState("");
-  const [workAuth, setWorkAuth] = React.useState("");
-  const [workAuthOther, setWorkAuthOther] = React.useState("");
-  const [timeline, setTimeline] = React.useState("");
+  const [careerPath, setCareerPath] = React.useState("");
+  const [startTiming, setStartTiming] = React.useState("");
+  const [careerGoal, setCareerGoal] = React.useState("");
+  const [challenge, setChallenge] = React.useState("");
+  const [internshipInterest, setInternshipInterest] = React.useState("");
   const [heardAboutUs, setHeardAboutUs] = React.useState("");
-  const [heardAboutUsOther, setHeardAboutUsOther] = React.useState("");
   const [formError, setFormError] = React.useState("");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [activeVideo, setActiveVideo] = React.useState<string | null>(null);
@@ -109,13 +121,6 @@ const NaCareerConsultationPage = () => {
       e.preventDefault();
       setFormError("");
 
-      if (!ZOHO_FORM_URL) {
-        setFormError(
-          "Registration isn't live yet. Please check back shortly."
-        );
-        return;
-      }
-
       const trimFirst = firstName.trim();
       const trimLast = lastName.trim();
       const trimEmail = email.trim();
@@ -128,35 +133,16 @@ const NaCareerConsultationPage = () => {
         !trimEmail ||
         !trimPhone ||
         !trimCountry ||
-        !track ||
-        !workAuth ||
-        !timeline ||
+        !careerPath ||
+        !startTiming ||
+        !careerGoal ||
+        !challenge ||
+        !internshipInterest ||
         !heardAboutUs
       ) {
-        setFormError("Please fill in all fields to book your consultation.");
+        setFormError("Please fill in all fields to reserve your slot.");
         return;
       }
-
-      // "Others" reveals a free-text box; send what the user typed, not the
-      // literal "Others" placeholder.
-      const trimTrackOther = trackOther.trim();
-      const trimWorkAuthOther = workAuthOther.trim();
-      const trimHeardOther = heardAboutUsOther.trim();
-      if (track === OTHER && !trimTrackOther) {
-        setFormError("Please enter your career track.");
-        return;
-      }
-      if (workAuth === OTHER && !trimWorkAuthOther) {
-        setFormError("Please enter your work authorization.");
-        return;
-      }
-      if (heardAboutUs === OTHER && !trimHeardOther) {
-        setFormError("Please tell us where you heard about us.");
-        return;
-      }
-      const trackValue = track === OTHER ? trimTrackOther : track;
-      const workAuthValue = workAuth === OTHER ? trimWorkAuthOther : workAuth;
-      const heardValue = heardAboutUs === OTHER ? trimHeardOther : heardAboutUs;
 
       // Zoho rejects the record (409) when the calling code is missing, so
       // don't let a blank selection through.
@@ -187,10 +173,12 @@ const NaCareerConsultationPage = () => {
           PhoneNumber_countrycodeval: callingCode,
           PhoneNumber_countrycode: nationalNumber,
           SingleLine2: trimCountry,
-          Dropdown3: timeline,
-          Dropdown1: workAuthValue,
-          Dropdown2: trackValue,
-          Dropdown: heardValue,
+          Dropdown2: careerPath,
+          Dropdown1: startTiming,
+          Dropdown3: careerGoal,
+          Dropdown4: challenge,
+          Dropdown5: internshipInterest,
+          Dropdown: heardAboutUs,
         });
       } catch {
         setFormError(
@@ -206,30 +194,28 @@ const NaCareerConsultationPage = () => {
       setEmail("");
       setPhone("");
       setCountry("");
-      setTrack("");
-      setTrackOther("");
-      setWorkAuth("");
-      setWorkAuthOther("");
-      setTimeline("");
+      setCareerPath("");
+      setStartTiming("");
+      setCareerGoal("");
+      setChallenge("");
+      setInternshipInterest("");
       setHeardAboutUs("");
-      setHeardAboutUsOther("");
       router.push("/na-career-consultation/thank-you");
     },
     [
+      careerGoal,
+      careerPath,
+      challenge,
       country,
       email,
       firstName,
       heardAboutUs,
-      heardAboutUsOther,
+      internshipInterest,
       lastName,
       phone,
       router,
       selectedPhoneCountry?.callingCode,
-      timeline,
-      track,
-      trackOther,
-      workAuth,
-      workAuthOther,
+      startTiming,
     ]
   );
 
@@ -296,9 +282,7 @@ const NaCareerConsultationPage = () => {
           <form onSubmit={handleSubmit} className="space-y-3">
             <div className="grid grid-cols-2 gap-2.5">
               <label className="flex flex-col gap-[5px]">
-                <span className="text-xs font-semibold text-[#2B7F95]">
-                  First name
-                </span>
+                <span className={labelCls}>First name</span>
                 <input
                   type="text"
                   value={firstName}
@@ -308,9 +292,7 @@ const NaCareerConsultationPage = () => {
                 />
               </label>
               <label className="flex flex-col gap-[5px]">
-                <span className="text-xs font-semibold text-[#2B7F95]">
-                  Last name
-                </span>
+                <span className={labelCls}>Last name</span>
                 <input
                   type="text"
                   value={lastName}
@@ -323,9 +305,7 @@ const NaCareerConsultationPage = () => {
 
             <div className="grid grid-cols-2 gap-2.5">
               <label className="flex flex-col gap-[5px]">
-                <span className="text-xs font-semibold text-[#2B7F95]">
-                  Email
-                </span>
+                <span className={labelCls}>Email</span>
                 <input
                   type="email"
                   value={email}
@@ -335,9 +315,7 @@ const NaCareerConsultationPage = () => {
                 />
               </label>
               <label className="flex flex-col gap-[5px]">
-                <span className="text-xs font-semibold text-[#2B7F95]">
-                  Country
-                </span>
+                <span className={labelCls}>Country</span>
                 <input
                   type="text"
                   value={country}
@@ -350,14 +328,12 @@ const NaCareerConsultationPage = () => {
             </div>
 
             <div className="flex flex-col gap-[5px]">
-              <span className="text-xs font-semibold text-[#2B7F95]">
-                Phone number
-              </span>
+              <span className={labelCls}>Phone number (WhatsApp)</span>
               <div className="grid grid-cols-[110px_1fr] gap-2">
                 <select
                   value={phoneCountryCode}
                   onChange={(e) => setPhoneCountryCode(e.target.value)}
-                  className={`${inputCls} [&>option]:bg-[#0C3640]`}
+                  className={selectCls}
                 >
                   <option value="">{countriesLoading ? "…" : "Code"}</option>
                   {countries.map((phoneCountry) => (
@@ -378,91 +354,105 @@ const NaCareerConsultationPage = () => {
 
             <div className="grid grid-cols-2 gap-2.5">
               <label className="flex flex-col gap-[5px]">
-                <span className="text-xs font-semibold text-[#2B7F95]">
-                  Career track
-                </span>
+                <span className={labelCls}>Career path</span>
                 <select
-                  value={track}
-                  onChange={(e) => setTrack(e.target.value)}
+                  value={careerPath}
+                  onChange={(e) => setCareerPath(e.target.value)}
                   required
-                  className={`${inputCls} [&>option]:bg-[#0C3640]`}
+                  className={selectCls}
                 >
                   <option value="">Select</option>
-                  {CAREER_TRACKS.map((t) => (
-                    <option key={t} value={t}>
-                      {t}
+                  {CAREER_PATHS.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
                     </option>
                   ))}
                 </select>
               </label>
               <label className="flex flex-col gap-[5px]">
-                <span className="text-xs font-semibold text-[#2B7F95]">
-                  Work authorization
-                </span>
+                <span className={labelCls}>How soon are you starting?</span>
                 <select
-                  value={workAuth}
-                  onChange={(e) => setWorkAuth(e.target.value)}
+                  value={startTiming}
+                  onChange={(e) => setStartTiming(e.target.value)}
                   required
-                  className={`${inputCls} [&>option]:bg-[#0C3640]`}
+                  className={selectCls}
                 >
                   <option value="">Select</option>
-                  {WORK_AUTHORIZATIONS.map((w) => (
-                    <option key={w} value={w}>
-                      {w}
+                  {START_TIMINGS.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
                     </option>
                   ))}
                 </select>
               </label>
             </div>
 
-            {track === OTHER ? (
-              <input
-                type="text"
-                value={trackOther}
-                onChange={(e) => setTrackOther(e.target.value)}
-                placeholder="Please specify your career track"
-                className={inputCls}
-              />
-            ) : null}
-
-            {workAuth === OTHER ? (
-              <input
-                type="text"
-                value={workAuthOther}
-                onChange={(e) => setWorkAuthOther(e.target.value)}
-                placeholder="Please specify your work authorization"
-                className={inputCls}
-              />
-            ) : null}
-
             <label className="flex flex-col gap-[5px]">
-              <span className="text-xs font-semibold text-[#2B7F95]">
-                How soon do you need to land a job in US/Canada?
+              <span className={labelCls}>
+                What is your primary career goal over the next 12 months?
               </span>
               <select
-                value={timeline}
-                onChange={(e) => setTimeline(e.target.value)}
+                value={careerGoal}
+                onChange={(e) => setCareerGoal(e.target.value)}
                 required
-                className={`${inputCls} [&>option]:bg-[#0C3640]`}
+                className={selectCls}
               >
                 <option value="">Select</option>
-                {TIMELINE_OPTIONS.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
+                {CAREER_GOALS.map((g) => (
+                  <option key={g} value={g}>
+                    {g}
                   </option>
                 ))}
               </select>
             </label>
 
             <label className="flex flex-col gap-[5px]">
-              <span className="text-xs font-semibold text-[#2B7F95]">
-                How did you hear about us?
+              <span className={labelCls}>
+                What is the biggest challenge preventing you from getting the
+                tech job you want?
               </span>
+              <select
+                value={challenge}
+                onChange={(e) => setChallenge(e.target.value)}
+                required
+                className={selectCls}
+              >
+                <option value="">Select</option>
+                {CHALLENGES.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="flex flex-col gap-[5px]">
+              <span className={labelCls}>
+                If an internship could help you gain Canada/US work experience
+                and strengthen your CV, how interested would you be?
+              </span>
+              <select
+                value={internshipInterest}
+                onChange={(e) => setInternshipInterest(e.target.value)}
+                required
+                className={selectCls}
+              >
+                <option value="">Select</option>
+                {INTERNSHIP_INTEREST.map((i) => (
+                  <option key={i} value={i}>
+                    {i}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="flex flex-col gap-[5px]">
+              <span className={labelCls}>How did you hear about us?</span>
               <select
                 value={heardAboutUs}
                 onChange={(e) => setHeardAboutUs(e.target.value)}
                 required
-                className={`${inputCls} [&>option]:bg-[#0C3640]`}
+                className={selectCls}
               >
                 <option value="">Select</option>
                 {HEARD_ABOUT_US_OPTIONS.map((h) => (
@@ -472,16 +462,6 @@ const NaCareerConsultationPage = () => {
                 ))}
               </select>
             </label>
-
-            {heardAboutUs === OTHER ? (
-              <input
-                type="text"
-                value={heardAboutUsOther}
-                onChange={(e) => setHeardAboutUsOther(e.target.value)}
-                placeholder="Please specify where you heard about us"
-                className={inputCls}
-              />
-            ) : null}
 
             {formError ? (
               <p className="text-[12px] text-[#fca5a5]">{formError}</p>

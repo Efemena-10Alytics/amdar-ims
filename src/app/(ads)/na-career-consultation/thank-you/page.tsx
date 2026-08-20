@@ -3,8 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-// TODO: add the North America WhatsApp community link and surface a
-// "Join WhatsApp Community" button here, matching /career-consultation/thank-you.
+const WHATSAPP_LINK = "https://chat.whatsapp.com/HxmjqM6eHItGbiNWOSQrA3?mode=gi_t";
 
 export default function ThankYouPage() {
   return (
@@ -29,8 +28,18 @@ export default function ThankYouPage() {
 
           <p className="mb-8 text-[15px] leading-[1.65] text-[#C7D5D6]">
             Check your email for more details about this session. We will also
-            be calling to remind you before we go live.
+            be calling to remind you before we go live. Don&apos;t forget to
+            join the community.
           </p>
+
+          <a
+            href={WHATSAPP_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mb-4 flex w-full items-center justify-center gap-2 rounded-lg bg-[#FFE082] py-3.5 text-sm font-bold uppercase tracking-[0.02em] text-[#0C2730] transition-[background-color,transform] hover:scale-[1.01] hover:bg-[#FFD54F]"
+          >
+            Join WhatsApp Community
+          </a>
 
           <Link
             href="/na-career-consultation"
