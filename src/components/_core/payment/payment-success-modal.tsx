@@ -150,7 +150,7 @@ export function PaymentSuccessModal({
                   className="w-full h-10 hover:bg-[#092A31]/90"
                   onClick={() => onOpenChange?.(false)}
                 >
-                  <Link href="https://www.amdari.io/dashboard">
+                  <Link href="https://www.amdari.io/dashboard/internship">
                     Proceed to dashboard
                   </Link>
                 </Button>
