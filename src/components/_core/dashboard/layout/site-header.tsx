@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useGetUserInfo, getAvatarUrlFromUser } from "@/features/auth/use-get-user-info";
+import type { AuthUser } from "@/store/auth-store";
 import { UserAvatar } from "../../landing-pages/internship-program/svg";
 import { ConfirmLogout } from "../../landing-pages/shared/navbar/confirm-logout";
 import { useAuthStore } from "@/store/auth-store";
@@ -34,6 +35,31 @@ function getHeaderTitle(pathname: string): string {
   );
 }
 
+function getUserDisplayName(user: AuthUser | null | undefined): string {
+  if (!user || typeof user !== "object") return "";
+  const record = user as Record<string, unknown>;
+  const nested =
+    record.user && typeof record.user === "object"
+      ? (record.user as Record<string, unknown>)
+      : record;
+  const first =
+    nested.firstName ?? nested.first_name ?? nested.name ?? nested.username;
+  const last = nested.lastName ?? nested.last_name;
+  const firstName = typeof first === "string" ? first.trim() : "";
+  const lastName = typeof last === "string" ? last.trim() : "";
+  return [firstName, lastName].filter(Boolean).join(" ");
+}
+
+function getUserEmail(user: AuthUser | null | undefined): string {
+  if (!user || typeof user !== "object") return "";
+  const record = user as Record<string, unknown>;
+  const nested =
+    record.user && typeof record.user === "object"
+      ? (record.user as Record<string, unknown>)
+      : record;
+  return typeof nested.email === "string" ? nested.email.trim() : "";
+}
+
 export function SiteHeader() {
   const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
   const pathname = usePathname();
@@ -44,6 +70,8 @@ export function SiteHeader() {
     (s) => s.clearSelection,
   );
   const avatarUrl = getAvatarUrlFromUser(userInfo ?? null);
+  const displayName = getUserDisplayName(userInfo);
+  const email = getUserEmail(userInfo);
 
   return (
     <header className="grid h-22 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 rounded-b-2xl bg-white px-4 shadow-sm lg:px-6">
@@ -102,7 +130,18 @@ export function SiteHeader() {
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-60 px-2">
-              <DropdownMenuLabel>Account</DropdownMenuLabel>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col gap-0.5">
+                  <span className="truncate text-sm font-medium text-zinc-900">
+                    {displayName || "Account"}
+                  </span>
+                  {email ? (
+                    <span className="truncate text-xs font-normal text-zinc-500">
+                      {email}
+                    </span>
+                  ) : null}
+                </div>
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 variant="destructive"
