@@ -2,17 +2,17 @@
 
 import { useEffect, useMemo } from "react";
 import { ChevronDown } from "lucide-react";
-import { useGetUserInternshipPrograms } from "@/features/internship/use-get-user-internship-programs";
 import { useIsInternshipSpecialist } from "@/features/auth/staff-roles";
-import { useEnrollmentSelectionStore } from "@/store/enrollment-selection-store";
+import { useEnrollmentOptions } from "@/features/internship/use-enrollment-options";
+import { useSeedSelectionFromUrl } from "@/features/internship/use-seed-selection-from-url";
 import {
-  getEnrollmentSelection,
-  getUserCohortLabel,
-  getUserProgramTitle,
-  pickCohortId,
-  pickProgramId,
-  type UserCohort,
-} from "@/types/internship-program/user-program";
+  cohortOptionsOf,
+  programOptionsFor,
+  resolveSelection,
+  selectionMatchesOption,
+  toSelection,
+} from "@/features/internship/enrollment-options";
+import { useEnrollmentSelectionStore } from "@/store/enrollment-selection-store";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,25 +21,6 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-type ProgramOption = {
-  id: number;
-  title: string;
-};
-
-type CohortOption = {
-  id: number;
-  label: string;
-};
-
-function uniqueById<T extends { id: number }>(items: T[]): T[] {
-  const seen = new Set<number>();
-  return items.filter((item) => {
-    if (seen.has(item.id)) return false;
-    seen.add(item.id);
-    return true;
-  });
-}
 
 function SwitcherDropdown({
   label,
@@ -63,9 +44,9 @@ function SwitcherDropdown({
           className="flex min-w-0 max-w-56 items-center gap-2 rounded-lg bg-[#E8EFF1] px-3 py-2 text-left hover:bg-[#EEF2F6]"
         >
           <span className="min-w-0 flex-1">
-          
             <span className="block truncate text-sm font-semibold text-[#092A31]">
-              {options.find((option) => option.id === value)?.label ?? `Select ${label.toLowerCase()}`}
+              {options.find((option) => option.id === value)?.label ??
+                `Select ${label.toLowerCase()}`}
             </span>
           </span>
           <ChevronDown className="size-4 shrink-0 text-[#64748B]" />
@@ -86,140 +67,83 @@ function SwitcherDropdown({
 }
 
 export function EnrollmentSwitcher() {
-  const { data, isLoading } = useGetUserInternshipPrograms();
   const { isInternshipSpecialist } = useIsInternshipSpecialist();
+  const { options, isLoading } = useEnrollmentOptions();
+
   const enrollmentId = useEnrollmentSelectionStore((s) => s.enrollmentId);
   const programId = useEnrollmentSelectionStore((s) => s.programId);
   const cohortId = useEnrollmentSelectionStore((s) => s.cohortId);
+  const cohortStartDate = useEnrollmentSelectionStore((s) => s.cohortStartDate);
   const setSelection = useEnrollmentSelectionStore((s) => s.setSelection);
 
-  const userCohorts = data?.userCohorts ?? [];
+  // Must run before reconciliation so an inbound ?program=&cohort= wins over a
+  // selection restored from localStorage.
+  useSeedSelectionFromUrl(isInternshipSpecialist);
 
-  const enrollments = useMemo(
-    () =>
-      userCohorts.filter((item): item is UserCohort => {
-        return pickProgramId(item) != null && pickCohortId(item) != null;
-      }),
-    [userCohorts],
+  const resolved = useMemo(
+    () => resolveSelection(options, { programId, cohortId }),
+    [cohortId, options, programId],
   );
 
-  const cohortOptions = useMemo<CohortOption[]>(() => {
-    const seen = new Set<number>();
-
-    return enrollments.flatMap((item) => {
-      const id = pickCohortId(item);
-      if (id == null || seen.has(id)) return [];
-      seen.add(id);
-      return [{ id, label: getUserCohortLabel(item) }];
-    });
-  }, [enrollments]);
-
-  const selectedEnrollment = useMemo(
-    () =>
-      enrollments.find((item) => item.id === enrollmentId) ??
-      enrollments.find(
-        (item) =>
-          pickProgramId(item) === programId && pickCohortId(item) === cohortId,
-      ) ??
-      null,
-    [cohortId, enrollmentId, enrollments, programId],
-  );
-
-  const selectedCohortId = selectedEnrollment
-    ? pickCohortId(selectedEnrollment)
-    : cohortId;
-
-  const programOptions = useMemo<ProgramOption[]>(() => {
-    const source =
-      selectedCohortId == null
-        ? enrollments
-        : enrollments.filter((item) => pickCohortId(item) === selectedCohortId);
-
-    return uniqueById(
-      source.flatMap((item) => {
-        const id = pickProgramId(item);
-        if (id == null) return [];
-        return [{ id, title: getUserProgramTitle(item) }];
-      }),
-    );
-  }, [enrollments, selectedCohortId]);
-
-  // These effects still run when the switcher renders nothing, so they have to
-  // stay out of the way of `useSyncEnrollmentSelection` for non-specialists.
+  /**
+   * Keeps the store pointing at a pair this specialist may actually open.
+   * Converges: once the store matches `resolved`, this writes nothing.
+   *
+   * Non-specialists never reach here — `useSyncEnrollmentSelection` owns their
+   * selection, and these two must not fight over the store.
+   */
   useEffect(() => {
-    if (!isInternshipSpecialist) return;
-    if (enrollments.length === 0) return;
+    if (!isInternshipSpecialist || !resolved) return;
 
-    if (selectedEnrollment) {
-      const next = getEnrollmentSelection(selectedEnrollment);
-      if (
-        next.enrollmentId !== enrollmentId ||
-        next.programId !== programId ||
-        next.cohortId !== cohortId
-      ) {
-        setSelection(next);
-      }
+    if (
+      selectionMatchesOption(resolved, {
+        enrollmentId,
+        programId,
+        cohortId,
+        cohortStartDate,
+      })
+    ) {
       return;
     }
 
-    const first = enrollments[0];
-    setSelection(getEnrollmentSelection(first));
+    setSelection(toSelection(resolved));
   }, [
     cohortId,
+    cohortStartDate,
     enrollmentId,
-    enrollments,
     isInternshipSpecialist,
     programId,
-    selectedEnrollment,
+    resolved,
     setSelection,
   ]);
 
-  useEffect(() => {
-    if (!isInternshipSpecialist) return;
-    if (selectedCohortId == null || programOptions.length === 0) return;
-    if (programOptions.some((option) => option.id === programId)) return;
+  const selectedCohortId = resolved?.cohortId ?? cohortId;
+  const selectedProgramId = resolved?.programId ?? programId;
 
-    const matchingEnrollment = enrollments.find(
-      (item) =>
-        pickCohortId(item) === selectedCohortId &&
-        pickProgramId(item) === programOptions[0].id,
-    );
-
-    if (matchingEnrollment) {
-      setSelection(getEnrollmentSelection(matchingEnrollment));
-      return;
-    }
-
-    setSelection({
-      enrollmentId,
-      programId: programOptions[0].id,
-      cohortId: selectedCohortId,
-    });
-  }, [
-    enrollmentId,
-    enrollments,
-    isInternshipSpecialist,
-    programId,
-    programOptions,
-    selectedCohortId,
-    setSelection,
-  ]);
+  const cohortOptions = useMemo(() => cohortOptionsOf(options), [options]);
+  const programOptions = useMemo(
+    () => programOptionsFor(options, selectedCohortId),
+    [options, selectedCohortId],
+  );
 
   if (!isInternshipSpecialist || isLoading || cohortOptions.length === 0) {
     return null;
   }
 
-  const selectedProgramId =
-    programId != null ? String(programId) : "";
-  const selectedCohortValue =
-    selectedCohortId != null ? String(selectedCohortId) : "";
+  const selectPair = (nextProgramId: number, nextCohortId: number) => {
+    const option = options.find(
+      (item) =>
+        item.programId === nextProgramId && item.cohortId === nextCohortId,
+    );
+    if (option) setSelection(toSelection(option));
+  };
 
   return (
     <div className="flex items-center gap-2">
       <SwitcherDropdown
         label="Cohort"
         ariaLabel="Switch cohort"
-        value={selectedCohortValue}
+        value={selectedCohortId != null ? String(selectedCohortId) : ""}
         options={cohortOptions.map((option) => ({
           id: String(option.id),
           label: option.label,
@@ -228,48 +152,31 @@ export function EnrollmentSwitcher() {
           const nextCohortId = Number(value);
           if (!Number.isFinite(nextCohortId)) return;
 
-          const enrollmentsForCohort = enrollments.filter(
-            (item) => pickCohortId(item) === nextCohortId,
+          // Stay on the same program where that cohort offers it.
+          const forCohort = options.filter(
+            (item) => item.cohortId === nextCohortId,
           );
-          const enrollment =
-            enrollmentsForCohort.find(
-              (item) => pickProgramId(item) === programId,
-            ) ?? enrollmentsForCohort[0];
+          const next =
+            forCohort.find((item) => item.programId === selectedProgramId) ??
+            forCohort[0];
 
-          if (!enrollment) return;
-
-          setSelection(getEnrollmentSelection(enrollment));
+          if (next) setSelection(toSelection(next));
         }}
       />
       <SwitcherDropdown
         label="Program"
         ariaLabel="Switch program"
-        value={selectedProgramId}
+        value={selectedProgramId != null ? String(selectedProgramId) : ""}
         options={programOptions.map((option) => ({
           id: String(option.id),
-          label: option.title,
+          label: option.label,
         }))}
         onValueChange={(value) => {
           const nextProgramId = Number(value);
-          if (!Number.isFinite(nextProgramId) || selectedCohortId == null) return;
-
-          const enrollment =
-            enrollments.find(
-              (item) =>
-                pickCohortId(item) === selectedCohortId &&
-                pickProgramId(item) === nextProgramId,
-            ) ?? null;
-
-          if (enrollment) {
-            setSelection(getEnrollmentSelection(enrollment));
+          if (!Number.isFinite(nextProgramId) || selectedCohortId == null) {
             return;
           }
-
-          setSelection({
-            enrollmentId,
-            programId: nextProgramId,
-            cohortId: selectedCohortId,
-          });
+          selectPair(nextProgramId, selectedCohortId);
         }}
       />
     </div>

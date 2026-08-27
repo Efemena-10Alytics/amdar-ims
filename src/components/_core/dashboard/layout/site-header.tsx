@@ -20,6 +20,7 @@ import { ConfirmLogout } from "../../landing-pages/shared/navbar/confirm-logout"
 import { useAuthStore } from "@/store/auth-store";
 import { useEnrollmentSelectionStore } from "@/store/enrollment-selection-store";
 import { EnrollmentSwitcher } from "./enrollment-switcher";
+import { PlatformSwitchButton } from "./platform-switch-button";
 
 const pathToTitle: Record<string, string> = {
   "/dashboard": "Dashboard",
@@ -84,8 +85,9 @@ export function SiteHeader() {
           {title}
         </h1>
       </div>
-      <div className="flex justify-center">
+      <div className="flex min-w-0 items-center justify-center gap-2">
         <EnrollmentSwitcher />
+        <PlatformSwitchButton />
       </div>
       <div className="flex min-w-0 items-center justify-end gap-2">
         <button

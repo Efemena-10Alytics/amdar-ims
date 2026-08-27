@@ -204,12 +204,19 @@ export function getUserProgramTitle(
   return item.program?.title?.trim() || "Program";
 }
 
-export function getUserCohortLabel(
-  item: Pick<UserCohort, "cohort">,
-): string {
-  const cohort = item.cohort;
+/**
+ * Cohort labels must read identically whether they came from the user's
+ * enrollments or from the specialist assignments endpoint — a specialist
+ * switching sources should not see the same cohort renamed.
+ */
+export function formatCohortLabel(cohort: {
+  name?: string | null;
+  year?: string | number | null;
+  month?: string | null;
+}): string {
   const name = cohort?.name?.trim();
-  const year = cohort?.year?.trim();
+  const year =
+    cohort?.year == null ? "" : String(cohort.year).trim();
   const month = cohort?.month?.trim();
 
   if (name) {
@@ -221,6 +228,12 @@ export function getUserCohortLabel(
 
   const monthYear = [month, year].filter(Boolean).join(" ");
   return monthYear || "Cohort";
+}
+
+export function getUserCohortLabel(
+  item: Pick<UserCohort, "cohort">,
+): string {
+  return formatCohortLabel(item.cohort ?? {});
 }
 
 export function getEnrollmentSelection(item: UserCohort) {

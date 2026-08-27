@@ -142,6 +142,13 @@ export function buildWhatsappRequiredOnboardingHref(): string {
   return `${buildOnboardingStepHref("readiness-test")}&whatsapp=required`;
 }
 
+/** Whether this enrollment is a specialist looking at someone else's cohort. */
+export function isSpecialistPreviewEnrollment(
+  enrollment: Pick<UserEnrollment, "is_specialist_preview"> | null | undefined,
+): boolean {
+  return enrollment?.is_specialist_preview === true;
+}
+
 /** Returns the next journey URL if onboarding or pre-diagnostic work remains. */
 export function resolveEnrollmentJourneyRedirect(
   enrollment: UserEnrollment,
@@ -150,6 +157,11 @@ export function resolveEnrollmentJourneyRedirect(
     practicalWalkthroughCount?: number;
   },
 ): string | null {
+  // A specialist has no onboarding of their own to finish in a cohort they are
+  // servicing. The preview reports every step complete, so this would return
+  // null anyway — but say it outright rather than rely on that.
+  if (isSpecialistPreviewEnrollment(enrollment)) return null;
+
   if (!isEnrollmentJourneyCohortEligible(enrollment)) return null;
 
   const onboardingHref = getFirstPendingOnboardingHref(

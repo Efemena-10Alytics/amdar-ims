@@ -5,6 +5,15 @@ import { cn } from "@/lib/utils";
 import { PencilIcon } from "../svg";
 import { formatCareerStageLabel } from "@/components/_core/dashboard/internship-program/project-details/project-content";
 import { useGetCurrentProject } from "@/features/interns-project/use-get-current-project";
+import { useIsSpecialistPreview } from "@/features/internship/use-is-specialist-preview";
+
+/**
+ * These three cards count one intern's completion. A specialist servicing the
+ * cohort has none, so a zero would read as "nobody has done anything" rather
+ * than "this figure isn't about you".
+ */
+const PERSONAL_STAT_HINT =
+  "Tracks an individual intern's completion. You're viewing this cohort as a specialist, so it doesn't apply to you.";
 
 function FlagIcon() {
   return (
@@ -29,13 +38,22 @@ type StatCardProps = {
   value: string;
   icon: React.ReactNode;
   variant?: "primary" | "muted";
+  /** Explains a non-value (e.g. "—") on hover, rather than leaving it bare. */
+  title?: string;
 };
 
-function StatCard({ label, value, icon, variant = "muted" }: StatCardProps) {
+function StatCard({
+  label,
+  value,
+  icon,
+  variant = "muted",
+  title,
+}: StatCardProps) {
   const isPrimary = variant === "primary";
 
   return (
     <div
+      title={title}
       className={cn(
         "relative min-w-0 flex-1 rounded-xl p-4 sm:p-5",
         isPrimary ? "bg-primary text-white" : "border border-[#E2E8F0] bg-[#F6F8FA]",
@@ -84,6 +102,7 @@ const InternshipProgramOverview = () => {
   const stagesCompleted = current?.stagesCompleted ?? 0;
   const totalStages = current?.stagesTotal ?? 0;
   const isLoading = currentProjectQuery.isLoading;
+  const { isPreview } = useIsSpecialistPreview();
 
   return (
     <section className="space-y-4">
@@ -120,7 +139,8 @@ const InternshipProgramOverview = () => {
         />
         <StatCard
           label="Stage progress"
-          value={isLoading ? "—" : `${stageProgress}%`}
+          value={isLoading ? "—" : isPreview ? "—" : `${stageProgress}%`}
+          title={isPreview ? PERSONAL_STAT_HINT : undefined}
           icon={
             <Timer
               className="size-4 text-amdari-yellow"
@@ -131,14 +151,26 @@ const InternshipProgramOverview = () => {
         />
         <StatCard
           label="Activities done"
-          value={isLoading ? "—" : `${activitiesDone}/${activitiesTotal}`}
+          value={
+            isLoading
+              ? "—"
+              : isPreview
+                ? "—"
+                : `${activitiesDone}/${activitiesTotal}`
+          }
+          title={isPreview ? PERSONAL_STAT_HINT : undefined}
           icon={<PencilIcon />}
         />
         <StatCard
           label="Stages completed"
           value={
-            isLoading ? "—" : `${stagesCompleted}/${totalStages}`
+            isLoading
+              ? "—"
+              : isPreview
+                ? "—"
+                : `${stagesCompleted}/${totalStages}`
           }
+          title={isPreview ? PERSONAL_STAT_HINT : undefined}
           icon={<PencilIcon />}
         />
       </div>
