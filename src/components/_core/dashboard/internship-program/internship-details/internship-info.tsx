@@ -110,6 +110,13 @@ const InternshipInfo = () => {
           </div>
         ) : (
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-x-5 sm:gap-y-4">
+            {data?.isSpecialistPreview ? (
+              <p className="sm:col-span-2 rounded-lg bg-white px-4 py-3 text-sm text-[#64748B]">
+                You&apos;re viewing this cohort as a specialist. The personal
+                fields below belong to an individual intern, so they&apos;re
+                blank here.
+              </p>
+            ) : null}
             <InternshipInfoField
               label="Your Program/Cohort"
               value={data ? formatProgramCohort(data) : undefined}

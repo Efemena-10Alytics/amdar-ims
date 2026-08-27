@@ -184,8 +184,10 @@ const OneWeekInternshipPage = () => {
           Dropdown1: heardValue,
         });
       } catch {
+        // Reaching here means Zoho refused the record, not that the user typed
+        // something wrong — don't send them hunting through valid details.
         setFormError(
-          "We couldn't complete your registration. Please check your details and try again."
+          "Something went wrong on our end — your details look fine. Please try again, or email hello@amdari.io and we'll reserve your spot."
         );
         return;
       } finally {
