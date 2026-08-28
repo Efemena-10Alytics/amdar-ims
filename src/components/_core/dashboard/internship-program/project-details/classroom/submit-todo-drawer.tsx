@@ -18,6 +18,7 @@ import { useEditMyTodoSubmission } from "@/features/interns-project/use-edit-my-
 import { useGetMyTodoSubmission } from "@/features/interns-project/use-get-my-todo-submission";
 import { useGetTodoSubmissionComments } from "@/features/interns-project/use-get-todo-submission-comment";
 import { useSubmitTodo } from "@/features/interns-project/use-submit-todo";
+import { useIsSpecialistPreview } from "@/features/internship/use-is-specialist-preview";
 import { useAuthStore } from "@/store/auth-store";
 import { cn } from "@/lib/utils";
 
@@ -200,7 +201,14 @@ export default function SubmitTodoDrawer({
   );
   const showFormatTabs = visibleOptions.length > 1;
   const isSaving = isSubmitting || isEditing;
-  const canSubmit = Boolean(projectId && todoId && typeId) && !isSaving;
+  // A specialist may open the drawer to see exactly what the intern is asked
+  // for, but must not submit into a cohort they only service. The API refuses
+  // this anyway (ensureUserEnrolled); stopping it here turns a raw 403 into an
+  // explained, disabled control.
+  const { isPreview } = useIsSpecialistPreview();
+
+  const canSubmit =
+    Boolean(projectId && todoId && typeId) && !isSaving && !isPreview;
   const feedbackItems = mySubmission?.feedback?.length
     ? mySubmission.feedback
     : comments;
@@ -676,12 +684,23 @@ export default function SubmitTodoDrawer({
           </div>
 
           <div className="border-t border-[#E2E8F0] bg-[#F7F9FA] px-5 py-4">
+            {isPreview ? (
+              <p className="mb-3 text-center text-sm text-[#64748B]">
+                You&apos;re viewing this cohort as a specialist. This is what
+                the intern is asked to submit — submitting is theirs to do.
+              </p>
+            ) : null}
             <button
               type="button"
               onClick={() => {
                 void handleSubmit();
               }}
               disabled={!canSubmit}
+              title={
+                isPreview
+                  ? "Specialists can't submit work into a cohort they service"
+                  : undefined
+              }
               className="inline-flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-[#0F4652] text-sm font-semibold text-white transition hover:bg-[#0C3B45] disabled:cursor-not-allowed disabled:opacity-70"
             >
               {isSaving

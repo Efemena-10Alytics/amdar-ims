@@ -19,13 +19,18 @@ export async function getUserInternshipPrograms(): Promise<UserProgramsResponse>
   return normalizeUserProgramsResponse(data);
 }
 
-export function useGetUserInternshipPrograms() {
+export function useGetUserInternshipPrograms(options?: { enabled?: boolean }) {
   const { userId, isAuthReady } = useRequireUserId();
 
   const query = useQuery({
     queryKey: USER_INTERNSHIP_PROGRAMS_QUERY_KEY,
     queryFn: getUserInternshipPrograms,
-    enabled: !!apiBaseURL && isAuthReady && userId != null && userId !== "",
+    enabled:
+      options?.enabled !== false &&
+      !!apiBaseURL &&
+      isAuthReady &&
+      userId != null &&
+      userId !== "",
   });
 
   return {

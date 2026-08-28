@@ -31,6 +31,7 @@ export function useSyncEnrollmentSelection(
       enrollmentId: pickId(enrollment.id),
       programId: pickId(enrollment.program_id, enrollment.program?.id),
       cohortId: pickId(enrollment.cohort_id, enrollment.cohort?.id),
+      cohortStartDate: enrollment.cohort?.start_date ?? null,
     };
 
     if (next.programId == null || next.cohortId == null) return;
@@ -39,7 +40,8 @@ export function useSyncEnrollmentSelection(
     if (
       current.enrollmentId === next.enrollmentId &&
       current.programId === next.programId &&
-      current.cohortId === next.cohortId
+      current.cohortId === next.cohortId &&
+      current.cohortStartDate === next.cohortStartDate
     ) {
       return;
     }

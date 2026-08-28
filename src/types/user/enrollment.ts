@@ -96,7 +96,13 @@ export type PreDiagnosticStepsCompletedUpdate = {
 };
 
 export type UserEnrollment = {
+  /** Null on a specialist preview — there is no enrollment row behind it. */
   id: number;
+  /**
+   * Set by the API when a specialist is viewing a cohort they service rather
+   * than one they are enrolled in. Absent on real enrollments.
+   */
+  is_specialist_preview?: boolean;
   user_id: number;
   cohort_id: number;
   internship_course_id: number;

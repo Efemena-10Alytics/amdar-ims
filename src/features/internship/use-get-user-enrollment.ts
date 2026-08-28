@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useIsInternshipSpecialist } from "@/features/auth/staff-roles";
+import { useEnrollmentSelectionReady } from "@/features/internship/use-enrollment-selection-ready";
 import { useRequireUserId } from "@/hooks/use-require-user-id";
 import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
 import { useEnrollmentSelectionStore } from "@/store/enrollment-selection-store";
@@ -47,24 +47,7 @@ export function useGetUserEnrollment() {
   // endpoint without params so the API resolves their most recent assignment.
   const hasSelection =
     isInternshipSpecialist && programId != null && cohortId != null;
-  const [isSelectionReady, setIsSelectionReady] = useState(false);
-
-  useEffect(() => {
-    const persistApi = useEnrollmentSelectionStore.persist;
-    if (!persistApi?.hasHydrated) {
-      setIsSelectionReady(true);
-      return;
-    }
-
-    if (persistApi.hasHydrated()) {
-      setIsSelectionReady(true);
-      return;
-    }
-
-    return persistApi.onFinishHydration(() => {
-      setIsSelectionReady(true);
-    });
-  }, []);
+  const isSelectionReady = useEnrollmentSelectionReady();
 
   const query = useQuery({
     queryKey: [
