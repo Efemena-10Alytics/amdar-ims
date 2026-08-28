@@ -2,6 +2,7 @@ import ReferenceLetter from "@/components/_core/dashboard/dashboard/reference-le
 import InterviewPrepRequestCard from "@/components/_core/dashboard/internship-program/internship-details/career-center/interview-prep-request-card";
 import EmployabilityExperts from "@/components/_core/dashboard/internship-program/internship-details/career-center/employability-experts";
 import OfficeHour from "@/components/_core/dashboard/internship-program/internship-details/career-center/office-hour";
+import CvMatchlyAiCard from "@/components/_core/dashboard/internship-program/internship-details/career-center/cvmatchly-ai-card";
 
 const CareerCenter = () => {
   return (
@@ -10,6 +11,7 @@ const CareerCenter = () => {
       <EmployabilityExperts />
       <InterviewPrepRequestCard />
       <ReferenceLetter />
+      <CvMatchlyAiCard />
     </div>
   );
 };

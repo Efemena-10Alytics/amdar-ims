@@ -209,19 +209,32 @@ export function getUserProgramTitle(
  * enrollments or from the specialist assignments endpoint — a specialist
  * switching sources should not see the same cohort renamed.
  */
+function resolveCohortYear(cohort: {
+  year?: string | number | null;
+  start_date?: string | null;
+}): string {
+  const explicit =
+    cohort.year == null ? "" : String(cohort.year).trim();
+  if (explicit) return explicit;
+
+  const startDate = cohort.start_date?.trim();
+  const match = startDate?.match(/^(\d{4})/);
+  return match?.[1] ?? "";
+}
+
 export function formatCohortLabel(cohort: {
   name?: string | null;
   year?: string | number | null;
   month?: string | null;
+  start_date?: string | null;
 }): string {
   const name = cohort?.name?.trim();
-  const year =
-    cohort?.year == null ? "" : String(cohort.year).trim();
+  const year = resolveCohortYear(cohort);
   const month = cohort?.month?.trim();
 
   if (name) {
     if (year && !name.includes(year)) {
-      return `${name} · ${year}`;
+      return `${name}, ${year}`;
     }
     return name;
   }
