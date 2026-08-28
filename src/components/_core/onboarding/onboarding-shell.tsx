@@ -146,7 +146,11 @@ function OnboardingShellContent({
         <Suspense
           fallback={<div className="hidden lg:flex lg:w-[45%] xl:w-[42%]" />}
         >
-          {asideVariant === "auth" ? <AuthAside /> : <Aside />}
+          {asideVariant === "auth" ? (
+            <AuthAside showJourneyControls={showSettingUpExperience} />
+          ) : (
+            <Aside />
+          )}
         </Suspense>
         <div
           className="relative h-full min-h-0 w-full overflow-y-auto sm:pl-10"

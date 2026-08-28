@@ -14,6 +14,8 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Flag from "../landing-pages/home/hero/flag";
 import ReactPlayer from "react-player";
+import { CohortSwitcher } from "../journey-aside/cohort-switcher";
+import { DeferInternshipButton } from "../journey-aside/defer-internship-button";
 
 const TESTIMONIALS = [
   {
@@ -55,7 +57,7 @@ const TESTIMONIALS = [
 
 const LG_MIN_WIDTH = 1024; // Tailwind lg breakpoint
 
-const Aside = () => {
+const Aside = ({ showJourneyControls = false }: { showJourneyControls?: boolean }) => {
   const [api, setApi] = useState<CarouselApi | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [volume, setVolume] = useState(0.5); // Volume state (0 to 1)
@@ -86,10 +88,28 @@ const Aside = () => {
 
   return (
     <aside className="hidden  rounded-l-xl overflow-y-auto lg:flex lg:w-[45%] xl:w-[42%] flex-col bg-[#0F4652] text-white p-4 xl:p-5">
-      {/* Logo */}
-      <Link href="/" className="text-2xl font-bold tracking-tight">
-        <Image src={"/logo-white.svg"} height={52} width={100} alt="amdari" />
-      </Link>
+      {showJourneyControls ? (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <Link href="/" className="inline-flex shrink-0">
+              <Image
+                src="/logo-white.svg"
+                height={52}
+                width={100}
+                alt="amdari"
+              />
+            </Link>
+            <CohortSwitcher />
+          </div>
+          <div className="flex justify-end">
+            <DeferInternshipButton />
+          </div>
+        </div>
+      ) : (
+        <Link href="/" className="text-2xl font-bold tracking-tight">
+          <Image src={"/logo-white.svg"} height={52} width={100} alt="amdari" />
+        </Link>
+      )}
 
       <div>
         {/* Video thumbnail */}

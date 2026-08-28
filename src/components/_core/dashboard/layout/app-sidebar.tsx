@@ -7,7 +7,6 @@ import Link from "next/link";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -16,13 +15,10 @@ import {
 import {
   BillingIcon,
   BlogIcon,
-  DashboardFilledIcon,
-  HackathonIcon,
   InternshipProgramIcon,
   InterviewPrepIcon,
   LearnIcon,
   PortfolioIcon,
-  ProjectVaultIcon,
 } from "../svg";
 import { NavMain } from "./nav-main";
 
@@ -60,35 +56,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={navMain} />
       </SidebarContent>
-      {/* <SidebarFooter>
-        <div
-          className="mx-2 mb-2 rounded-xl p-3 text-primary-foreground"
-          style={{
-            background:
-              "linear-gradient(290.83deg, #FFE082 -25.01%, #156374 19.22%, #156374 51.69%, #022027 91.44%)",
-          }}
-        >
-          <div className="flex items-center gap-3">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-400/90 text-white">
-              <Leaf className="size-5" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="font-medium">Agada Queen</p>
-              <p className="text-xs opacity-90">Mon - Fri (10am - 11pm)</p>
-            </div>
-          </div>
-          <p className="mt-3 text-xs opacity-90">
-            Book an office hour session with your team Lead
-          </p>
-          <Button
-            asChild
-            size="sm"
-            className="mt-4 w-full bg-amdari-yellow text-zinc-900 hover:bg-amdari-yellow/90"
-          >
-            <Link href="#">Book session</Link>
-          </Button>
-        </div>
-      </SidebarFooter> */}
     </Sidebar>
   );
 }

@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Check, Loader } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -19,7 +17,7 @@ import { getInternsWhatsappGroupUrl } from "@/constants/interns-whatsapp-group";
 import Flag from "../landing-pages/home/hero/flag";
 import { Button } from "@/components/ui/button";
 import { WhatsappSVG } from "./svg";
-import SideNavExpandCollapse from "../side-nav-expand-collapse";
+import { JourneyAsideHeader } from "../journey-aside/header";
 
 const Aside = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -67,36 +65,10 @@ const Aside = () => {
           : "lg:w-[45%] px-4 xl:w-[42%] xl:px-5",
       )}
     >
-      <div
-        className={cn(
-          "flex items-center gap-3",
-          isCollapsed ? "justify-center" : "justify-between",
-        )}
-      >
-        <Link href="/" className="inline-flex w-fit">
-          {isCollapsed ? (
-            <Image
-              src="/favicon-white.svg"
-              height={28}
-              width={36}
-              alt="amdari"
-              className="h-7 w-7 object-contain object-left"
-            />
-          ) : (
-            <Image
-              src="/logo-white.svg"
-              height={28}
-              width={126}
-              alt="amdari"
-              className="object-contain object-left"
-            />
-          )}
-        </Link>
-        <SideNavExpandCollapse
-          isCollapsed={isCollapsed}
-          onToggle={() => setIsCollapsed((value) => !value)}
-        />
-      </div>
+      <JourneyAsideHeader
+        isCollapsed={isCollapsed}
+        onToggleCollapse={() => setIsCollapsed((value) => !value)}
+      />
 
       <div className="mt-9 flex min-h-0 grow flex-col overflow-y-auto">
         <div className={cn(isCollapsed && "sr-only")}>
