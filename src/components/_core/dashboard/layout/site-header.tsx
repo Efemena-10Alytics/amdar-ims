@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Bell, ChevronRight, LogOut } from "lucide-react";
+import { Bell, ChevronRight, LogOut, ArrowLeftRight } from "lucide-react";
 import { usePathname } from "next/navigation";
 import {
   DropdownMenu,
@@ -21,6 +21,7 @@ import { useAuthStore } from "@/store/auth-store";
 import { useEnrollmentSelectionStore } from "@/store/enrollment-selection-store";
 import { EnrollmentSwitcher } from "./enrollment-switcher";
 import { PlatformSwitchButton } from "./platform-switch-button";
+import { DefermentDialog } from "./deferment-dialog";
 
 const pathToTitle: Record<string, string> = {
   "/dashboard": "Dashboard",
@@ -63,6 +64,7 @@ function getUserEmail(user: AuthUser | null | undefined): string {
 
 export function SiteHeader() {
   const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
+  const [defermentOpen, setDefermentOpen] = useState(false);
   const pathname = usePathname();
   const title = getHeaderTitle(pathname);
   const { data: userInfo } = useGetUserInfo();
@@ -145,9 +147,13 @@ export function SiteHeader() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem onSelect={() => setDefermentOpen(true)}>
+                <ArrowLeftRight className="size-4" />
+                Defer internship
+              </DropdownMenuItem>
               <DropdownMenuItem
                 variant="destructive"
-                onClick={() => setConfirmLogoutOpen(true)}
+                onSelect={() => setConfirmLogoutOpen(true)}
               >
                 <LogOut className="size-4" />
                 Logout
@@ -156,6 +162,7 @@ export function SiteHeader() {
           </DropdownMenu>
         </div>
       </div>
+      <DefermentDialog open={defermentOpen} onOpenChange={setDefermentOpen} />
       <ConfirmLogout
         open={confirmLogoutOpen}
         onOpenChange={setConfirmLogoutOpen}
