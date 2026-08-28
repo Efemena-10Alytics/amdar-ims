@@ -1,14 +1,12 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import {
-  submitDefermentRequest,
-  type DefermentFormPayload,
-} from "@/features/deferment/submit-deferment";
+import { submitDefermentRequest } from "@/features/deferment/submit-deferment";
+import type { SubmitDefermentPayload } from "@/types/deferment";
 
 export function useSubmitDeferment() {
   return useMutation({
-    mutationFn: (payload: DefermentFormPayload) =>
+    mutationFn: (payload: SubmitDefermentPayload) =>
       submitDefermentRequest(payload),
   });
 }

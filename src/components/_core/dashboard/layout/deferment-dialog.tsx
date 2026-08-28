@@ -40,6 +40,7 @@ export function DefermentDialog({ open, onOpenChange }: DefermentDialogProps) {
           <DeferInternshipFormContent
             key={formKey}
             idPrefix="dialog-"
+            enabled={open}
             onSuccess={() => handleOpenChange(false)}
           />
         </div>
