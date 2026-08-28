@@ -1,5 +1,7 @@
 "use-client";
 
+import type { NormalizedJob } from "@/features/jobs/types";
+
 const AIcon = () => (
   <svg
     width="56"
@@ -139,18 +141,11 @@ const AIcon = () => (
   </svg>
 );
 
-export interface Job {
-  id: string;
-  company: string;
-  flag: string; // emoji or image path
-  location: string;
-  title: string;
-  type: string; // "Remote · Full-time · $150k - $250k"
-  openFrom: string;
-  openTo: string;
-}
+export type Job = NormalizedJob;
 
 const JobCard = ({ job }: { job: Job }) => {
+  const metaLine = [job.jobType, job.remoteMode, job.salary].filter(Boolean).join(" · ");
+
   return (
     <div className="flex h-[297px] flex-col justify-between rounded-xl bg-[#F8FAFC] p-6">
       <div>
@@ -159,38 +154,47 @@ const JobCard = ({ job }: { job: Job }) => {
           <div>
             <div className="mt-4 flex items-center gap-1.5">
               <span className="font-sora text-sm font-semibold uppercase text-[#0C3640]">
-                {job.company}
+                {job.employer || "Company"}
               </span>
             </div>
-            <div className="mt-1 flex items-center gap-1.5 font-sora text-sm text-[#64748B]">
-              <img
-                src={"/uk-flag.png"}
-                alt="flag"
-                className="h-4 w-4 object-contain"
-              />
-              <span>{job.location}</span>
-            </div>
+            {job.location && (
+              <div className="mt-1 flex items-center gap-1.5 font-sora text-sm text-[#64748B]">
+                <img
+                  src={"/uk-flag.png"}
+                  alt="flag"
+                  className="h-4 w-4 object-contain"
+                />
+                <span>{job.location}</span>
+              </div>
+            )}
           </div>
         </div>
 
         <h3 className="mt-4 font-sora text-xl font-semibold text-[#0C3640]">
           {job.title}
         </h3>
-        <p className="mt-1 font-sora text-sm text-[#64748B]">{job.type}</p>
+        {metaLine && (
+          <p className="mt-1 font-sora text-sm text-[#64748B]">{metaLine}</p>
+        )}
+        {job.sponsorship && job.sponsorship !== "Not specified" && (
+          <p className="mt-1 font-sora text-xs text-[#156374]">
+            Visa sponsorship: {job.sponsorship}
+          </p>
+        )}
       </div>
 
       <div className="flex items-center justify-between border-t border-[#E2E8F0] pt-4">
         <p className="font-sora text-xs text-[#64748B]">
-          Open from {job.openFrom}
-          <br />
-          to {job.openTo}
+          {job.datePosted ? `Posted ${job.datePosted}` : ""}
         </p>
-        <button
-          type="button"
+        <a
+          href={job.applyUrl || "#"}
+          target="_blank"
+          rel="noopener noreferrer"
           className="rounded-xl bg-[#156374] px-5 py-3 font-sora text-sm text-white transition-opacity hover:opacity-90"
         >
           Apply
-        </button>
+        </a>
       </div>
     </div>
   );

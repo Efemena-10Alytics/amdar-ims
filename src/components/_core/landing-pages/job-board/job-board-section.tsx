@@ -1,16 +1,18 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
-import JobCard, { Job } from "./job-card";
-
-const ChevronDownIcon = () => (
-  <svg width="11" height="6" viewBox="0 0 11 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M10.8541 0.85375L5.85414 5.85375C5.80771 5.90024 5.75256 5.93712 5.69186 5.96228C5.63117 5.98744 5.5661 6.00039 5.50039 6.00039C5.43469 6.00039 5.36962 5.98744 5.30892 5.96228C5.24823 5.93712 5.19308 5.90024 5.14664 5.85375L0.146644 0.85375C0.0766381 0.783823 0.0289543 0.694696 0.00962914 0.597654C-0.00969606 0.500611 0.000206247 0.400016 0.0380825 0.308605C0.0759587 0.217193 0.140106 0.139075 0.222403 0.08414C0.3047 0.0292046 0.401446 -7.77138e-05 0.500394 1.549e-07H10.5004C10.5993 -7.77138e-05 10.6961 0.0292046 10.7784 0.08414C10.8607 0.139075 10.9248 0.217193 10.9627 0.308605C11.0006 0.400016 11.0105 0.500611 10.9912 0.597654C10.9718 0.694696 10.9242 0.783823 10.8541 0.85375Z"
-      fill="#092A31"
-    />
-  </svg>
-);
+import React, { useRef, useState } from "react";
+import JobCard from "./job-card";
+import JobCardSkeleton from "./job-card-skeleton";
+import { useJobs } from "@/features/jobs/use-jobs";
+import { useMinDurationLoading } from "@/hooks/use-min-duration-loading";
+import { Reveal } from "../shared/reveal";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const ResetFilterIcon = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -21,61 +23,9 @@ const ResetFilterIcon = () => (
   </svg>
 );
 
-/* ------------------------------------------------------------------ */
-/* Data                                                                 */
-/* ------------------------------------------------------------------ */
-
-interface FilterableJob extends Job {
-  visaSponsorship: "Yes" | "No";
-}
-
-const JOBS: FilterableJob[] = [
-  { id: "1", company: "DELIOTTE", flag: "🇮🇪", location: "England, United Kingdom", title: "Engineering Manager", type: "Remote · Full-time · $150k - $250k", openFrom: "May 25, 2026", openTo: "June 25,2026", visaSponsorship: "Yes" },
-  { id: "2", company: "CANON", flag: "🇧🇪", location: "England, United Kingdom", title: "Digital marketing", type: "Remote · Full-time · $150k - $250k", openFrom: "May 25, 2026", openTo: "June 25,2026", visaSponsorship: "No" },
-  { id: "3", company: "SALESFORCE", flag: "🇸🇪", location: "England, United Kingdom", title: "Product manager", type: "Remote · Full-time · $150k - $250k", openFrom: "May 25, 2026", openTo: "June 25,2026", visaSponsorship: "Yes" },
-  { id: "4", company: "Lendio", flag: "🇩🇪", location: "England, United Kingdom", title: "Engineer", type: "Remote · Full-time · $150k - $250k", openFrom: "May 25, 2026", openTo: "June 25,2026", visaSponsorship: "Yes" },
-  { id: "5", company: "Lexiqvolax", flag: "🇪🇸", location: "England, United Kingdom", title: "Account manager", type: "Remote · Full-time · $150k - $250k", openFrom: "May 25, 2026", openTo: "June 25,2026", visaSponsorship: "No" },
-  { id: "6", company: "APPLE", flag: "🇬🇧", location: "England, United Kingdom", title: "Account Executive", type: "Remote · Full-time · $150k - $250k", openFrom: "May 25, 2026", openTo: "June 25,2026", visaSponsorship: "Yes" },
-  { id: "7", company: "DELL", flag: "🇵🇹", location: "England, United Kingdom", title: "Artist", type: "Remote · Full-time · $150k - $250k", openFrom: "May 25, 2026", openTo: "June 25,2026", visaSponsorship: "No" },
-  { id: "8", company: "Entrata", flag: "🇺🇦", location: "England, United Kingdom", title: "Product owner", type: "Remote · Full-time · $150k - $250k", openFrom: "May 25, 2026", openTo: "June 25,2026", visaSponsorship: "Yes" },
-  { id: "9", company: "ENT.", flag: "🇮🇹", location: "England, United Kingdom", title: "Software engineer", type: "Remote · Full-time · $150k - $250k", openFrom: "May 25, 2026", openTo: "June 25,2026", visaSponsorship: "Yes" },
-];
-
 const FILTER_DEFAULT = "";
-
-/* ------------------------------------------------------------------ */
-/* Dropdown                                                             */
-/* ------------------------------------------------------------------ */
-
-const FilterDropdown = ({
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  options: string[];
-  onChange: (v: string) => void;
-}) => (
-  <div className="relative">
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="h-[34px] appearance-none rounded-lg bg-[#E8EFF1] py-2 pl-3 pr-8 font-sora text-sm text-[#0C3640] outline-none"
-    >
-      <option value={FILTER_DEFAULT}>{label}</option>
-      {options.map((opt) => (
-        <option key={opt} value={opt}>
-          {opt}
-        </option>
-      ))}
-    </select>
-    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
-      <ChevronDownIcon />
-    </span>
-  </div>
-);
+const PAGE_SIZE = 9;
+const MIN_LOADING_MS = 3000;
 
 /* ------------------------------------------------------------------ */
 /* Section                                                              */
@@ -84,32 +34,47 @@ const FilterDropdown = ({
 const JobBoardSection = () => {
   const [location, setLocation] = useState(FILTER_DEFAULT);
   const [jobTitle, setJobTitle] = useState(FILTER_DEFAULT);
-  const [visa, setVisa] = useState(FILTER_DEFAULT);
+  const [sponsorship, setSponsorship] = useState(FILTER_DEFAULT);
+  const [page, setPage] = useState(1);
+  const sectionRef = useRef<HTMLElement>(null);
 
-  const locationOptions = useMemo(() => Array.from(new Set(JOBS.map((j) => j.location))), []);
-  const jobTitleOptions = useMemo(() => Array.from(new Set(JOBS.map((j) => j.title))), []);
-  const visaOptions = ["Yes", "No"];
+  const sponsorshipOptions = ["Yes", "No"];
 
-  const filteredJobs = useMemo(() => {
-    return JOBS.filter((job) => {
-      if (location && job.location !== location) return false;
-      if (jobTitle && job.title !== jobTitle) return false;
-      if (visa && job.visaSponsorship !== visa) return false;
-      return true;
-    });
-  }, [location, jobTitle, visa]);
+  const { data, isLoading, isError } = useJobs({
+    location: location || undefined,
+    q: jobTitle || undefined,
+    sponsorship: sponsorship || undefined,
+    page,
+    pageSize: PAGE_SIZE,
+  });
+
+  const showSkeleton = useMinDurationLoading(isLoading, MIN_LOADING_MS);
+
+  const jobs = data?.jobs ?? [];
+  const totalPages = data?.totalPages ?? 1;
 
   const resetFilters = () => {
     setLocation(FILTER_DEFAULT);
     setJobTitle(FILTER_DEFAULT);
-    setVisa(FILTER_DEFAULT);
+    setSponsorship(FILTER_DEFAULT);
+    setPage(1);
+  };
+
+  const updateFilter = (setter: (v: string) => void) => (value: string) => {
+    setter(value);
+    setPage(1);
+  };
+
+  const goToPage = (next: number) => {
+    setPage(next);
+    sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
-    <section className="bg-white">
+    <section ref={sectionRef} className="bg-white">
       <div className="mx-auto app-width">
         {/* Heading row */}
-        <div className="flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-end">
+        <Reveal className="flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-end">
           <div>
             <h2 className="font-clash-display text-[32px] font-semibold text-[#092A31] lg:text-[48px]">
               Featured Job
@@ -121,10 +86,10 @@ const JobBoardSection = () => {
           <p className="font-sora text-base font-normal text-[#0C3640]">
             Powered by <span className="text-lg font-bold">CVMatchly AI</span>
           </p>
-        </div>
+        </Reveal>
 
         {/* CVMatchly banner */}
-        <div className="mt-8 flex h-auto min-h-[80px] flex-col items-start justify-between gap-4 rounded-lg border border-[#FFDFB6] bg-[#FFF5E9] p-4 sm:flex-row sm:items-center">
+        <Reveal delay={100} className="mt-8 flex h-auto min-h-[80px] flex-col items-start justify-between gap-4 rounded-lg border border-[#FFDFB6] bg-[#FFF5E9] p-4 sm:flex-row sm:items-center">
           <p className="font-sora text-base font-normal text-[#003463]">
             Powered by <span className="text-lg font-bold">CVMatchly AI</span>
           </p>
@@ -134,16 +99,39 @@ const JobBoardSection = () => {
           >
             Learn More
           </button>
-        </div>
+        </Reveal>
 
         {/* Filters row */}
-        <div className="mt-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+        <Reveal delay={150} className="mt-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <h3 className="font-sora text-xl font-semibold leading-none text-[#092A31]">All Jobs</h3>
 
           <div className="flex flex-wrap items-center gap-3">
-            <FilterDropdown label="Location" value={location} options={locationOptions} onChange={setLocation} />
-            <FilterDropdown label="Job Title" value={jobTitle} options={jobTitleOptions} onChange={setJobTitle} />
-            <FilterDropdown label="Visa Sponsorship" value={visa} options={visaOptions} onChange={setVisa} />
+            <input
+              type="text"
+              value={location}
+              onChange={(e) => updateFilter(setLocation)(e.target.value)}
+              placeholder="Location"
+              className="h-[34px] rounded-lg bg-[#E8EFF1] px-3 font-sora text-sm text-[#0C3640] outline-none placeholder:text-[#0C3640]"
+            />
+            <input
+              type="text"
+              value={jobTitle}
+              onChange={(e) => updateFilter(setJobTitle)(e.target.value)}
+              placeholder="Job Title"
+              className="h-[34px] rounded-lg bg-[#E8EFF1] px-3 font-sora text-sm text-[#0C3640] outline-none placeholder:text-[#0C3640]"
+            />
+            <Select value={sponsorship || undefined} onValueChange={updateFilter(setSponsorship)}>
+              <SelectTrigger className="h-[34px] w-auto min-w-[160px] rounded-lg bg-[#E8EFF1] px-3 py-0 font-sora text-sm text-[#0C3640]">
+                <SelectValue placeholder="Visa Sponsorship" />
+              </SelectTrigger>
+              <SelectContent>
+                {sponsorshipOptions.map((opt) => (
+                  <SelectItem key={opt} value={opt}>
+                    {opt}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <button
@@ -154,19 +142,65 @@ const JobBoardSection = () => {
             <ResetFilterIcon />
             Reset filter
           </button>
-        </div>
+        </Reveal>
+
+        {/* Loading skeleton */}
+        {showSkeleton && (
+          <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: PAGE_SIZE }).map((_, index) => (
+              <JobCardSkeleton key={index} />
+            ))}
+          </div>
+        )}
+
+        {/* Error state */}
+        {!showSkeleton && isError && (
+          <p className="mt-8 font-sora text-sm text-red-500">
+            Unable to load jobs right now. Please try again later.
+          </p>
+        )}
 
         {/* Job grid */}
-        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredJobs.map((job) => (
-            <JobCard key={job.id} job={job} />
-          ))}
-        </div>
+        {!showSkeleton && !isError && (
+          <>
+            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {jobs.map((job, index) => (
+                <Reveal key={job.id} delay={(index % PAGE_SIZE) * 60}>
+                  <JobCard job={job} />
+                </Reveal>
+              ))}
+            </div>
 
-        {filteredJobs.length === 0 && (
-          <p className="mt-8 font-sora text-sm text-[#64748B]">
-            No jobs match your filters right now. Try resetting or choosing a different combination.
-          </p>
+            {jobs.length === 0 && (
+              <p className="mt-8 font-sora text-sm text-[#64748B]">
+                No jobs match your filters right now. Try resetting or choosing a different combination.
+              </p>
+            )}
+
+            {jobs.length > 0 && totalPages > 1 && (
+              <div className="mt-8 flex items-center justify-center gap-4">
+                <button
+                  type="button"
+                  disabled={page <= 1}
+                  onClick={() => goToPage(Math.max(1, page - 1))}
+                  className="rounded-lg bg-[#E8EFF1] px-4 py-2 font-sora text-sm text-[#0C3640] disabled:opacity-40"
+                >
+                  Previous
+                </button>
+                <span className="font-sora text-sm text-[#64748B]">
+                  Page {page} of {totalPages}
+                </span>
+                <button
+                  type="button"
+                  disabled={page >= totalPages}
+                  onClick={() => goToPage(Math.min(totalPages, page + 1))}
+                  className="rounded-lg bg-[#E8EFF1] px-4 py-2 font-sora text-sm text-[#0C3640] disabled:opacity-40"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </section>

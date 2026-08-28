@@ -1,5 +1,7 @@
-"use-client"
+"use client";
+
 import Image from "next/image";
+import { Reveal } from "../shared/reveal";
 
 /* ------------------------------------------------------------------ */
 /* Arrow icon (reused button style from hero CTA)                      */
@@ -123,7 +125,7 @@ const CompaniesSection = () => {
     <section className="bg-[#E8EFF1]">
       <div className="mx-auto app-width grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
         {/* Left: copy */}
-        <div>
+        <Reveal as="div">
           <h2 className="font-clash-display text-[32px] font-semibold text-[#092A31] lg:text-[48px]">
             Companies who have hired our interns
           </h2>
@@ -138,14 +140,14 @@ const CompaniesSection = () => {
             Be a business partners
             <ArrowIcon />
           </button>
-        </div>
+        </Reveal>
 
         {/* Right: scrolling logo columns */}
-        <div className="grid grid-cols-3 gap-4">
+        <Reveal as="div" delay={150} y={40} className="grid grid-cols-3 gap-4">
           {COLUMNS.map((col, idx) => (
             <ScrollingColumn key={idx} logos={col.logos} seconds={col.seconds} />
           ))}
-        </div>
+        </Reveal>
       </div>
     </section>
   );
