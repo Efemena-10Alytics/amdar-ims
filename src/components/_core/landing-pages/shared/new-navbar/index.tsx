@@ -87,6 +87,7 @@ const Navbar = () => {
     pathname.startsWith("/blog") ||
     pathname.startsWith("/testimonial") ||
     pathname.startsWith("/hackathon") ||
+    pathname.startsWith("/job-board") ||
     pathname.startsWith("/talent-loop") ||
     pathname.startsWith("/contact");
 

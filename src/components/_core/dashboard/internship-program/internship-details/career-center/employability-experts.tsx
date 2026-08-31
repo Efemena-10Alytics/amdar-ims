@@ -55,24 +55,35 @@ const EmployabilityExperts = () => {
           </div>
         </div>
 
-        <div className="mt-4 flex items-center">
-          {SERVICE_FLAGS.map((flag, index) => (
-            <span
-              key={flag.alt}
-              className={cn(
-                "relative flex size-8 shrink-0 overflow-hidden rounded-full border-2 border-white bg-white shadow-sm",
-                index > 0 && "-ml-2",
-              )}
-            >
-              <Image
-                src={flag.src}
-                alt={flag.alt}
-                width={32}
-                height={32}
-                className="size-full object-cover"
-              />
-            </span>
-          ))}
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center">
+            {SERVICE_FLAGS.map((flag, index) => (
+              <span
+                key={flag.alt}
+                className={cn(
+                  "relative flex size-8 shrink-0 overflow-hidden rounded-full border-2 border-white bg-white shadow-sm",
+                  index > 0 && "-ml-2",
+                )}
+              >
+                <Image
+                  src={flag.src}
+                  alt={flag.alt}
+                  width={32}
+                  height={32}
+                  className="size-full object-cover"
+                />
+              </span>
+            ))}
+          </div>
+
+          <a
+            href="https://www.amdari.io/cv-review"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-semibold text-[#1A6B8A] underline underline-offset-2 hover:text-[#0E6174]"
+          >
+            Optimize your CV
+          </a>
         </div>
 
         <Button
