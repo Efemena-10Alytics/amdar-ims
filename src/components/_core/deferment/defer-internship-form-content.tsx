@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Info } from "lucide-react";
+import { CheckCheck, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -143,6 +143,7 @@ export function DeferInternshipFormContent({
   const [switchProgram, setSwitchProgram] = useState<YesNoValue>("no");
   const [newProgramId, setNewProgramId] = useState("");
   const [reason, setReason] = useState("");
+  const [awareDeferOnce, setAwareDeferOnce] = useState(false);
   const [acknowledged, setAcknowledged] = useState(false);
   const [feeDecision, setFeeDecision] = useState<FeeDecision>(null);
   const [discountReason, setDiscountReason] = useState("");
@@ -200,6 +201,7 @@ export function DeferInternshipFormContent({
     reason.trim().length > 0 &&
     reason.trim().length <= DEFERMENT_REASON_MAX_LENGTH &&
     acknowledged &&
+    (!requiresReenrollmentFee || awareDeferOnce) &&
     currentCohortId != null &&
     currentProgramId != null &&
     resolvedNewProgramId != null &&
@@ -312,27 +314,23 @@ export function DeferInternshipFormContent({
 
   if (isSuccess) {
     return (
-      <div className={cn("space-y-4", className)}>
-        <div className="space-y-2">
-          <h2 className="text-lg font-semibold text-[#173740]">
-            Request submitted
-          </h2>
-          <p className="text-sm leading-relaxed text-[#64748B]">
-            Your deferment request has been submitted. An admin will review it and
-            contact you by email. Your cohort will not change until the request is
-            approved.
-          </p>
+      <div className={cn("flex flex-col items-center text-center", className)}>
+        <div className="flex size-20 items-center justify-center rounded-full bg-[#B8E5C8]">
+          <CheckCheck className="size-10 text-[#156374]" strokeWidth={2.5} />
         </div>
+        <h2 className="mt-5 text-xl font-semibold text-[#173740]">Sent</h2>
+        <p className="mt-2 max-w-md text-sm leading-relaxed text-[#64748B]">
+          Your deferment request has been sent to the finance team, you&apos;ll
+          receive your response via email
+        </p>
         {onSuccess ? (
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={() => onSuccess()}
-              className="inline-flex h-11 cursor-pointer items-center justify-center rounded-full bg-[#156374] px-8 text-sm font-semibold text-white transition hover:bg-[#124F5D]"
-            >
-              Done
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => onSuccess()}
+            className="mt-6 inline-flex h-11 w-full cursor-pointer items-center justify-center rounded-full bg-[#156374] px-8 text-sm font-semibold text-white transition hover:bg-[#124F5D]"
+          >
+            Close
+          </button>
         ) : null}
       </div>
     );
@@ -342,52 +340,52 @@ export function DeferInternshipFormContent({
     return (
       <form
         onSubmit={handleFinalSubmit}
-        className={cn("space-y-5", className)}
+        className={cn("space-y-6", className)}
       >
-        <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] px-4 py-4">
-          <p className="text-sm leading-relaxed text-[#475569]">
-            To confirm your deferment request, type your full name exactly as
-            shown below.
-          </p>
-          <p className="mt-2 text-base font-semibold text-[#173740]">
-            {fullName}
+        <div className="flex flex-col items-center text-center">
+          <div
+            className="size-20 rounded-full bg-[#B8E5C8]"
+            aria-hidden
+          />
+          <h2 className="mt-5 text-xl lg:text-2xl font-semibold text-[#173740]">
+            Are you sure you want to defer?
+          </h2>
+          <p className="mt-2 max-w-md text-sm leading-relaxed text-[#1F5D36]">
+            Enter your full name <span className="bg-[#E8EFF1]">&apos;{fullName}&apos;</span> and click{" "}
+            <span className="font-bold text-[#1F5D36]">PROCEED</span> to
+            validate your request.
           </p>
         </div>
 
-        <div>
-          <label htmlFor={fieldId("confirmName")} className={labelClass}>
-            Confirm full name
-          </label>
-          <input
-            id={fieldId("confirmName")}
-            type="text"
-            value={confirmName}
-            onChange={(event) => setConfirmName(event.target.value)}
-            placeholder="Type your full name"
-            className={inputBase}
-            autoComplete="name"
-            required
-          />
-        </div>
+        <input
+          id={fieldId("confirmName")}
+          type="text"
+          value={confirmName}
+          onChange={(event) => setConfirmName(event.target.value)}
+          placeholder="Enter full name"
+          className={inputBase}
+          autoComplete="name"
+          required
+        />
 
         {submitError ? (
           <p className="text-sm text-destructive">{submitError}</p>
         ) : null}
 
-        <div className="flex flex-wrap justify-end gap-3 pt-1">
+        <div className="flex w-full gap-3 pt-1">
           <button
             type="button"
             onClick={handleBackFromConfirm}
-            className="inline-flex h-11 cursor-pointer items-center justify-center rounded-full border border-[#CBD5E1] bg-white px-6 text-sm font-semibold text-[#475569] transition hover:bg-[#F8FAFC]"
+            className="inline-flex h-11 flex-1 cursor-pointer items-center justify-center rounded-full bg-[#E8F2F4] px-6 text-sm font-semibold text-[#156374] transition hover:bg-[#D9ECEF]"
           >
-            Back
+            Cancel
           </button>
           <button
             type="submit"
             disabled={!canConfirmSubmit || isSubmitting}
-            className="inline-flex h-11 w-fit cursor-pointer items-center justify-center rounded-full bg-[#156374] px-8 text-sm font-semibold text-white transition hover:bg-[#124F5D] disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex h-11 flex-1 cursor-pointer items-center justify-center rounded-full bg-[#156374] px-6 text-sm font-semibold text-white transition hover:bg-[#124F5D] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isSubmitting ? "Submitting..." : "Submit request"}
+            {isSubmitting ? "Submitting..." : "Proceed"}
           </button>
         </div>
       </form>
@@ -540,53 +538,31 @@ export function DeferInternshipFormContent({
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <p className={labelClass}>
-            Do you want to switch to a different program?
-          </p>
-          <div className="flex items-center gap-6">
-            <RadioOption
-              name={fieldId("switchProgram")}
-              value="yes"
-              checked={switchProgram === "yes"}
-              label="Yes"
-              onChange={(value) => {
-                setSwitchProgram(value);
-                setNewProgramId("");
-              }}
-            />
-            <RadioOption
-              name={fieldId("switchProgram")}
-              value="no"
-              checked={switchProgram === "no"}
-              label="No"
-              onChange={(value) => {
-                setSwitchProgram(value);
-                setNewProgramId("");
-              }}
-            />
-          </div>
-        </div>
-        <div>
-          <p className={labelClass}>Are you aware you can only defer once?</p>
-          <div className="flex items-center gap-6">
-            <RadioOption
-              name={fieldId("awareDeferOnce")}
-              value="yes"
-              checked
-              label="Yes"
-              onChange={() => undefined}
-            />
-            <RadioOption
-              name={fieldId("awareDeferOnce")}
-              value="no"
-              checked={false}
-              label="No"
-              disabled
-              onChange={() => undefined}
-            />
-          </div>
+      <div>
+        <p className={labelClass}>
+          Do you want to switch to a different program?
+        </p>
+        <div className="flex items-center gap-6">
+          <RadioOption
+            name={fieldId("switchProgram")}
+            value="yes"
+            checked={switchProgram === "yes"}
+            label="Yes"
+            onChange={(value) => {
+              setSwitchProgram(value);
+              setNewProgramId("");
+            }}
+          />
+          <RadioOption
+            name={fieldId("switchProgram")}
+            value="no"
+            checked={switchProgram === "no"}
+            label="No"
+            onChange={(value) => {
+              setSwitchProgram(value);
+              setNewProgramId("");
+            }}
+          />
         </div>
       </div>
 
@@ -633,53 +609,92 @@ export function DeferInternshipFormContent({
       </div>
 
       {requiresReenrollmentFee ? (
-        <div className="flex items-start gap-3 rounded-xl bg-[#FFF8E1] px-4 py-3 text-sm leading-relaxed text-[#6B5A1F]">
-          <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
-          <p>
-            Deferring more than 2 weeks after internship commencement according
-            to{" "}
+        <>
+          <div className="flex items-start gap-3 rounded-xl bg-[#FFF8EC] px-4 py-3.5">
+            <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border border-[#D4A574] bg-[#FFF4E0]">
+              <Info className="size-3 text-[#8B6914]" aria-hidden />
+            </span>
+            <p className="text-sm leading-relaxed text-[#5C4A1F]">
+              Deferring more than 2 weeks after internship commencement
+              according to{" "}
+              <Link
+                href="/terms-and-conditions#deferment-policy"
+                className="font-semibold text-[#5C4A1F]"
+              >
+                Amdari T&amp;C
+              </Link>{" "}
+              will attract a re-enrollment fee of{" "}
+              <span className="font-semibold">£200</span>.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <label className="flex cursor-pointer items-start gap-3">
+              <Checkbox
+                checked={awareDeferOnce}
+                onCheckedChange={(checked) =>
+                  setAwareDeferOnce(checked === true)
+                }
+                className="mt-0.5"
+              />
+              <span className="text-sm leading-relaxed text-[#64748B]">
+                Are you aware you can only defer once?
+              </span>
+            </label>
+
+            <label className="flex cursor-pointer items-start gap-3">
+              <Checkbox
+                checked={acknowledged}
+                onCheckedChange={(checked) => setAcknowledged(checked === true)}
+                className="mt-0.5"
+              />
+              <span className="text-sm leading-relaxed text-[#64748B]">
+                I acknowledge that my deferment request is subject to review and
+                approved on the{" "}
+                <Link
+                  href="/terms-and-conditions#deferment-policy"
+                  className="font-medium text-[#156374] underline underline-offset-2"
+                >
+                  Amdari Internship Terms and Condition
+                </Link>{" "}
+                under deferment clause.
+              </span>
+            </label>
+          </div>
+        </>
+      ) : (
+        <label className="flex cursor-pointer items-start gap-3">
+          <Checkbox
+            checked={acknowledged}
+            onCheckedChange={(checked) => setAcknowledged(checked === true)}
+            className="mt-0.5"
+          />
+          <span className="text-sm leading-relaxed text-[#475569]">
+            I acknowledge that my deferment request is subject to review and
+            approved on the{" "}
             <Link
               href="/terms-and-conditions#deferment-policy"
-              className="font-semibold underline underline-offset-2"
+              className="font-medium text-[#156374] underline underline-offset-2"
             >
-              Amdari T&C
+              Amdari Internship Terms and Condition
             </Link>{" "}
-            will attract a re-enrollment fee of £200.
-          </p>
-        </div>
-      ) : null}
-
-      <label className="flex cursor-pointer items-start gap-3">
-        <Checkbox
-          checked={acknowledged}
-          onCheckedChange={(checked) => setAcknowledged(checked === true)}
-          className="mt-0.5"
-        />
-        <span className="text-sm leading-relaxed text-[#475569]">
-          I acknowledge that my deferment request is subject to review and
-          approved on the{" "}
-          <Link
-            href="/terms-and-conditions#deferment-policy"
-            className="font-medium text-[#156374] underline underline-offset-2"
-          >
-            Amdari Internship Terms and Condition
-          </Link>{" "}
-          under deferment clause.
-        </span>
-      </label>
+            under deferment clause.
+          </span>
+        </label>
+      )}
 
       {submitError ? (
         <p className="text-sm text-destructive">{submitError}</p>
       ) : null}
 
-      <div className="flex flex-wrap justify-end gap-3 pt-1">
+      <div className="flex w-full gap-3 pt-1">
         {requiresReenrollmentFee ? (
           <>
             <button
               type="button"
               onClick={handleAppealClick}
               disabled={!canContinueFromDetails}
-              className="inline-flex h-11 cursor-pointer items-center justify-center rounded-full border border-[#156374] bg-white px-6 text-sm font-semibold text-[#156374] transition hover:bg-[#F0F9FA] disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex h-11 flex-1 cursor-pointer items-center justify-center rounded-full bg-[#E8F2F4] px-6 text-sm font-semibold text-[#156374] transition hover:bg-[#D9ECEF] disabled:cursor-not-allowed disabled:opacity-60"
             >
               Appeal for discount
             </button>
@@ -687,7 +702,7 @@ export function DeferInternshipFormContent({
               type="button"
               onClick={handleProceedClick}
               disabled={!canContinueFromDetails}
-              className="inline-flex h-11 cursor-pointer items-center justify-center rounded-full bg-[#156374] px-6 text-sm font-semibold text-white transition hover:bg-[#124F5D] disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex h-11 flex-1 cursor-pointer items-center justify-center rounded-full bg-[#156374] px-6 text-sm font-semibold text-white transition hover:bg-[#124F5D] disabled:cursor-not-allowed disabled:opacity-60"
             >
               Proceed without appealing
             </button>
@@ -696,9 +711,9 @@ export function DeferInternshipFormContent({
           <button
             type="submit"
             disabled={!canContinueFromDetails}
-            className="inline-flex h-11 w-fit cursor-pointer items-center justify-center rounded-full bg-[#156374] px-8 text-sm font-semibold text-white transition hover:bg-[#124F5D] disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex h-11 w-full cursor-pointer items-center justify-center rounded-full bg-[#156374] px-8 text-sm font-semibold text-white transition hover:bg-[#124F5D] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Continue to confirmation
+            Proceed
           </button>
         )}
       </div>
