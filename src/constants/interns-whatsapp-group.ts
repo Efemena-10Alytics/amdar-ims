@@ -84,6 +84,18 @@ const INTERNS_WHATSAPP_GROUPS: Partial<
       "https://chat.whatsapp.com/GE0Hg5fyrZK2Kqb0CPISic?s=cl&p=i&ilr=4&amv=0",
     soc: "https://chat.whatsapp.com/GNZYL4LVOVyH9rvTeATasw?s=cl&p=i&ilr=4&amv=0",
   },
+  september: {
+    business_analysis:
+      "https://chat.whatsapp.com/EdxxU6mLGPzIO2HSjcwhMH?mode=gi_t",
+    data_analytics:
+      "https://chat.whatsapp.com/CgkkAfpDfAG4Wq0IMEEx06?mode=gi_t",
+    data_science:
+      "https://chat.whatsapp.com/J8mQ3lorwsmLIOpKzTSIw9?mode=gi_t",
+    grc: "https://chat.whatsapp.com/GCX1uxh54prlxjXIL6WreH?mode=gi_t",
+    project_management:
+      "https://chat.whatsapp.com/Hc5qGi1JWOd4K0xnG0T5c4?mode=gi_t",
+    soc: "https://chat.whatsapp.com/GNNQIgYWG7Ilj2AyEieYA7?mode=gi_t",
+  },
 };
 
 type ProgramRef = {
