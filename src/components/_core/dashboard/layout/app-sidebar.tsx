@@ -27,7 +27,7 @@ const navMain = [
   { title: "Internship program", url: "/dashboard/internship-program", icon: InternshipProgramIcon },
   // { title: "Project vault", url: "/dashboard-projects/dashboard-project-paths/filter", icon: ProjectVaultIcon },
   // { title: "Interview prep", url: "/dashboard/portfolio", icon: InterviewPrepIcon },
-  { title: "Job board", url: "/job-board", icon: InterviewPrepIcon },
+  { title: "Job board", url: "#", icon: InterviewPrepIcon },
   { title: "Portfolio", url: "/dashboard/portfolio", icon: PortfolioIcon },
   // { title: "Hackathons", url: "/live-hackathon", icon: HackathonIcon },
   { title: "Learn", url: "/learn", icon: LearnIcon },

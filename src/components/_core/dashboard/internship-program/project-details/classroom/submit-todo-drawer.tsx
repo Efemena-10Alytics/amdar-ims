@@ -23,9 +23,44 @@ import { useAuthStore } from "@/store/auth-store";
 import { cn } from "@/lib/utils";
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
-const ACCEPTED_TYPES = ["image/jpeg", "image/png", "application/pdf"];
-const ACCEPTED_ACCEPT_ATTR = "image/jpeg,image/png,application/pdf";
-const FILE_TYPE_HINT = "PDF, JPEG, or PNG (max 5MB)";
+const ACCEPTED_EXTENSIONS = [
+  ".pdf",
+  ".jpg",
+  ".jpeg",
+  ".png",
+  ".doc",
+  ".docx",
+  ".xls",
+  ".xlsx",
+  ".csv",
+] as const;
+const ACCEPTED_MIME_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "text/csv",
+  "application/csv",
+];
+const ACCEPTED_ACCEPT_ATTR =
+  ".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx,.csv,image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv,application/csv";
+const FILE_TYPE_HINT = "PDF, JPEG, PNG, Word, Excel, or CSV (max 5MB)";
+
+function isAcceptedSubmissionFile(file: File): boolean {
+  const extension = file.name.includes(".")
+    ? file.name.slice(file.name.lastIndexOf(".")).toLowerCase()
+    : "";
+
+  return (
+    ACCEPTED_MIME_TYPES.includes(file.type) ||
+    ACCEPTED_EXTENSIONS.includes(
+      extension as (typeof ACCEPTED_EXTENSIONS)[number],
+    )
+  );
+}
 
 const SOLUTION_OPTIONS = [
   { id: "file" as const, label: "File", icon: CloudUpload },
@@ -330,8 +365,8 @@ export default function SubmitTodoDrawer({
   const handleFileChange = (file: File | null) => {
     if (!file) return;
 
-    if (!ACCEPTED_TYPES.includes(file.type)) {
-      setErrorMessage("Please upload a PDF, JPEG, or PNG file.");
+    if (!isAcceptedSubmissionFile(file)) {
+      setErrorMessage("Please upload a PDF, JPEG, PNG, Word, Excel, or CSV file.");
       return;
     }
 

@@ -75,7 +75,7 @@ export function DefermentFileUpload({
         ref={inputRef}
         id={id}
         type="file"
-        accept="image/*,.pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv,application/csv"
         className="sr-only"
         onChange={(event) => handleFile(event.target.files?.[0] ?? null)}
       />
@@ -153,7 +153,7 @@ export function DefermentFileUpload({
               Click to upload or drag and drop
             </p>
             <p className="mt-0.5 text-xs text-[#64748B]">
-              Images, PDF, or Word documents
+              Images, PDF, Word, Excel, or CSV documents
             </p>
           </div>
         </div>
