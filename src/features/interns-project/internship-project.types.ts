@@ -366,6 +366,13 @@ export type MyInternProjectTodoSubmissionResponse = {
   data: MyInternProjectTodoSubmission | null;
 };
 
+/** DELETE /intern-projects/:id/todos/:todoId/types/:typeId/submissions/items/:itemId */
+export type DeleteInternProjectTodoSubmissionItemResponse = {
+  success: boolean;
+  message: string;
+  data?: MyInternProjectTodoSubmission | null;
+};
+
 /** GET /intern-projects/:id/assessments/me */
 export type ProjectAssessmentType = "pre" | "post";
 

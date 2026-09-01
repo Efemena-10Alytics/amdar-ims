@@ -14,6 +14,7 @@ import type {
   InternProjectTodoSolutionFormat,
   InternProjectTodoSubmissionItem,
 } from "@/features/interns-project/internship-project.types";
+import { useDeleteSubmittedFile } from "@/features/interns-project/use-delete-submitted-file";
 import { useEditMyTodoSubmission } from "@/features/interns-project/use-edit-my-todo-submission";
 import { useGetMyTodoSubmission } from "@/features/interns-project/use-get-my-todo-submission";
 import { useGetTodoSubmissionComments } from "@/features/interns-project/use-get-todo-submission-comment";
@@ -191,6 +192,9 @@ export default function SubmitTodoDrawer({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [existingFileUrl, setExistingFileUrl] = useState<string | null>(null);
   const [existingFileName, setExistingFileName] = useState<string | null>(null);
+  const [existingFileItemId, setExistingFileItemId] = useState<number | null>(
+    null,
+  );
   const [textSolution, setTextSolution] = useState("");
   const [urlSolution, setUrlSolution] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -229,13 +233,18 @@ export default function SubmitTodoDrawer({
     isSubmitting: isEditing,
     errorMessage: editErrorMessage,
   } = useEditMyTodoSubmission();
+  const {
+    deleteSubmittedFile,
+    isDeleting,
+    errorMessage: deleteErrorMessage,
+  } = useDeleteSubmittedFile();
 
   const displayName = userName?.trim() || getDisplayName(authUser);
   const visibleOptions = SOLUTION_OPTIONS.filter((option) =>
     availableFormats.includes(option.id),
   );
   const showFormatTabs = visibleOptions.length > 1;
-  const isSaving = isSubmitting || isEditing;
+  const isSaving = isSubmitting || isEditing || isDeleting;
   // A specialist may open the drawer to see exactly what the intern is asked
   // for, but must not submit into a cohort they only service. The API refuses
   // this anyway (ensureUserEnrolled); stopping it here turns a raw 403 into an
@@ -283,6 +292,7 @@ export default function SubmitTodoDrawer({
       setUrlSolution("");
       setExistingFileUrl(null);
       setExistingFileName(null);
+      setExistingFileItemId(null);
       return;
     }
 
@@ -320,6 +330,7 @@ export default function SubmitTodoDrawer({
         "file_name",
       ),
     );
+    setExistingFileItemId(fileItem?.id ?? null);
 
     const preferredFormat = mySubmission.solution.find((item) =>
       availableFormats.includes(item.type),
@@ -333,19 +344,24 @@ export default function SubmitTodoDrawer({
     isDirtyRef.current = true;
   };
 
-  const resetSolution = () => {
+  const clearLocalFileState = () => {
     setSelectedFile(null);
+    setExistingFileUrl(null);
+    setExistingFileName(null);
+    setExistingFileItemId(null);
     setPreviewUrl((current) => {
       if (current) URL.revokeObjectURL(current);
       return null;
     });
-    setExistingFileUrl(null);
-    setExistingFileName(null);
-    setTextSolution("");
-    setUrlSolution("");
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+  };
+
+  const resetSolution = () => {
+    clearLocalFileState();
+    setTextSolution("");
+    setUrlSolution("");
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -380,12 +396,40 @@ export default function SubmitTodoDrawer({
     setSelectedFile(file);
     setExistingFileUrl(null);
     setExistingFileName(null);
+    setExistingFileItemId(null);
     setPreviewUrl((current) => {
       if (current) URL.revokeObjectURL(current);
       return file.type.startsWith("image/")
         ? URL.createObjectURL(file)
         : null;
     });
+  };
+
+  const handleRemoveFile = async () => {
+    if (existingFileUrl && existingFileItemId != null) {
+      if (!projectId || !todoId || !typeId) {
+        setErrorMessage("Missing project, todo, or type details.");
+        return;
+      }
+
+      setErrorMessage("");
+
+      try {
+        await deleteSubmittedFile({
+          projectId,
+          todoId,
+          typeId,
+          itemId: existingFileItemId,
+        });
+        markDirty();
+        clearLocalFileState();
+      } catch {
+        // errorMessage is already set by the hook
+      }
+      return;
+    }
+
+    clearLocalFileState();
   };
 
   const buildSubmissionItems = (): InternProjectTodoSubmissionItem[] | null => {
@@ -479,7 +523,8 @@ export default function SubmitTodoDrawer({
     Boolean(existingFileUrl && /\.(jpe?g|png)(\?|$)/i.test(existingFileUrl));
   const fileLabel =
     selectedFile?.name || existingFileName || "Click to upload file";
-  const mutationErrorMessage = submitErrorMessage || editErrorMessage;
+  const mutationErrorMessage =
+    submitErrorMessage || editErrorMessage || deleteErrorMessage;
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
@@ -601,20 +646,12 @@ export default function SubmitTodoDrawer({
                     <button
                       type="button"
                       onClick={() => {
-                        setSelectedFile(null);
-                        setExistingFileUrl(null);
-                        setExistingFileName(null);
-                        setPreviewUrl((current) => {
-                          if (current) URL.revokeObjectURL(current);
-                          return null;
-                        });
-                        if (fileInputRef.current) {
-                          fileInputRef.current.value = "";
-                        }
+                        void handleRemoveFile();
                       }}
-                      className="text-xs font-medium text-[#156374] underline underline-offset-2"
+                      disabled={isDeleting}
+                      className="text-xs font-medium text-[#156374] underline underline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      Remove file
+                      {isDeleting ? "Removing file..." : "Remove file"}
                     </button>
                   ) : null}
                 </>

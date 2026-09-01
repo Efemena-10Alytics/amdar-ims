@@ -44,25 +44,38 @@ export async function editMyInternProjectTodoSubmission({
   const body = hasFile
     ? buildTodoSubmissionFormData(payload.items)
     : payload;
+  const url = `v3/intern-projects/${projectId}/todos/${todoId}/types/${typeId}/submissions`;
+  const config = hasFile
+    ? {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    : {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
 
-  const { data } =
-    await axiosInstance.put<MyInternProjectTodoSubmissionResponse>(
-      `v3/intern-projects/${projectId}/todos/${todoId}/types/${typeId}/submissions`,
-      body,
-      hasFile
-        ? {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        : {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
+  const { data } = hasFile
+    ? await axiosInstance.post<MyInternProjectTodoSubmissionResponse>(
+        url,
+        body,
+        config,
+      )
+    : await axiosInstance.put<MyInternProjectTodoSubmissionResponse>(
+        url,
+        body,
+        config,
+      );
+
+  if (data.success === false) {
+    throw new Error(
+      data.message?.trim() || "Failed to update todo submission.",
     );
+  }
 
-  if (data.success === false || !data.data) {
+  if (!data.data) {
     throw new Error(
       data.message?.trim() || "Failed to update todo submission.",
     );
