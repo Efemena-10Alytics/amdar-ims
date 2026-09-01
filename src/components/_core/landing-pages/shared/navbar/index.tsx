@@ -77,7 +77,7 @@ const Navbr = () => {
     pathname.startsWith("/payment") ||
     pathname.startsWith("/internship");
   const isMoreProgramRoute =
-    pathname.startsWith("/blog") || pathname.startsWith("/testimonial");
+    pathname.startsWith("/blog") || pathname.startsWith("/testimonial") || pathname.startsWith("/job-board");
 
   const showSalesBanner =
     !pathname.startsWith("/internship/") && !pathname.startsWith("/payment");
