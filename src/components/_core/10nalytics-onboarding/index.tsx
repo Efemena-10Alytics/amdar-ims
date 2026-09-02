@@ -2,11 +2,17 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   ProfileDetailsCard,
+  ProfileDetailsErrorCard,
   type TenAnalyticsOnboardingProfile,
 } from "@/components/_core/10nalytics-onboarding/profile-details-card";
+import {
+  useGetTenAnalyticsOnboardingProfile,
+  type TenAnalyticsOnboardingProfileData,
+} from "@/features/10nalytics/use-get-profile";
 import Flag from "../landing-pages/home/hero/flag";
 import { COMPANY_LOGOS } from "@/constants/company-logos";
 
@@ -28,8 +34,6 @@ const FLOATING_AVATARS = [
   },
 ] as const;
 
-
-
 function ProceedArrowIcon() {
   return (
     <span className="flex size-6 items-center justify-center rounded-full bg-[#FFE082]">
@@ -49,35 +53,44 @@ function ProceedArrowIcon() {
   );
 }
 
-type TenAnalyticsOnboardingProps = {
-  email: string;
-  profile?: Partial<TenAnalyticsOnboardingProfile>;
-};
+function formatCohortLabel(
+  cohort: TenAnalyticsOnboardingProfileData["cohort"],
+): string {
+  if (cohort.month && cohort.year) {
+    return `${cohort.month} ${cohort.year}`;
+  }
+  return cohort.name || "—";
+}
 
-function buildProfile(
+function mapProfileToCard(
   email: string,
-  profile?: Partial<TenAnalyticsOnboardingProfile>,
+  data: TenAnalyticsOnboardingProfileData,
 ): TenAnalyticsOnboardingProfile {
   return {
-    tenAnalyticsCohort: profile?.tenAnalyticsCohort ?? "July 2026",
-    tenAnalyticsProgram: profile?.tenAnalyticsProgram ?? "Health Tech",
-    podName: profile?.podName ?? "POD name shows here",
-    firstName: profile?.firstName ?? "Juwonlo",
-    lastName: profile?.lastName ?? "Amber",
-    email: profile?.email ?? email,
-    phoneNumber: profile?.phoneNumber ?? "(+234) 081 1122 333",
-    amdariCohort: profile?.amdariCohort ?? "September 2026",
-    amdariProgram: profile?.amdariProgram ?? "Data science",
-    location: profile?.location ?? "Nigeria",
-    locationFlagSrc: profile?.locationFlagSrc ?? "/images/svgs/country/NG.svg",
+    tenAnalyticsCohort: formatCohortLabel(data.cohort),
+    tenAnalyticsProgram: data.program.title || "—",
+    podName: data.student.pod_name || "—",
+    firstName: data.user.first_name || "—",
+    lastName: data.user.last_name || "—",
+    email: data.user.email || email,
+    phoneNumber: data.user.phone_number || "—",
+    amdariCohort: formatCohortLabel(data.cohort),
+    amdariProgram: data.program.title || "—",
+    location: "—",
   };
 }
 
+type TenAnalyticsOnboardingProps = {
+  email: string;
+};
+
 export default function TenAnalyticsOnboarding({
   email,
-  profile,
 }: TenAnalyticsOnboardingProps) {
-  const resolvedProfile = buildProfile(email, profile);
+  const { data, isLoading, isError } =
+    useGetTenAnalyticsOnboardingProfile(email);
+
+  const resolvedProfile = data ? mapProfileToCard(email, data) : null;
   const proceedHref = `/auth/sign-in?redirect=${encodeURIComponent("/onboarding")}&email=${encodeURIComponent(email)}`;
 
   return (
@@ -198,7 +211,18 @@ export default function TenAnalyticsOnboarding({
               </div>
             ))}
 
-            <ProfileDetailsCard profile={resolvedProfile} />
+            {isLoading ? (
+              <div className="flex min-h-80 items-center justify-center rounded-3xl bg-white shadow-[0_20px_50px_rgba(15,70,82,0.1)]">
+                <Loader2
+                  className="size-8 animate-spin text-[#156374]"
+                  aria-label="Loading profile"
+                />
+              </div>
+            ) : isError ? (
+              <ProfileDetailsErrorCard />
+            ) : resolvedProfile ? (
+              <ProfileDetailsCard profile={resolvedProfile} />
+            ) : null}
           </div>
         </div>
       </div>

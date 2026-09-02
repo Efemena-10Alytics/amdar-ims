@@ -1,5 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { WHATSAPP_URL } from "@/components/_core/landing-pages/shared/whatsapp-widget";
 
 export type TenAnalyticsOnboardingProfile = {
   tenAnalyticsCohort: string;
@@ -19,6 +21,98 @@ type ProfileDetailsCardProps = {
   profile: TenAnalyticsOnboardingProfile;
   className?: string;
 };
+
+type ProfileDetailsErrorCardProps = {
+  className?: string;
+  supportHref?: string;
+};
+
+function BrokenImageIcon() {
+  return (
+    <svg
+      width="28"
+      height="28"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+      className="text-[#A6632D]"
+    >
+      <rect
+        x="3"
+        y="5"
+        width="18"
+        height="14"
+        rx="2"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+      <circle cx="8.5" cy="10" r="1.5" fill="currentColor" />
+      <path
+        d="M3.5 16.5L8 12.5L11 15L14.5 11L20.5 16.5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function ProfileDetailsErrorCard({
+  className,
+  supportHref = WHATSAPP_URL,
+}: ProfileDetailsErrorCardProps) {
+  return (
+    <div
+      className={cn(
+        "rounded-3xl bg-white p-5 shadow-[0_20px_50px_rgba(15,70,82,0.1)] sm:p-6",
+        className,
+      )}
+    >
+      <h2 className="text-lg font-semibold leading-7 text-[#092A31] sm:text-xl">
+        Your Profile Details
+      </h2>
+
+      <div className="mt-4 overflow-hidden rounded-2xl">
+        <div className="flex flex-col items-center justify-center gap-2 bg-[#FFF4EA] px-5 py-8">
+          <BrokenImageIcon />
+          <p className="text-center text-base font-semibold text-[#A6632D]">
+            Oops! Details not found!
+          </p>
+        </div>
+
+        <div className="flex flex-col items-center bg-[#E8F2F6] px-5 pb-8 pt-10">
+          <div
+            className="relative select-none font-clash-display text-[7.5rem] font-semibold leading-none tracking-tight text-[#B5C7CD] sm:text-[8.5rem]"
+            aria-hidden
+          >
+            <span>4</span>
+            <span className="relative inline-block">
+              0
+              <span className="absolute inset-0 flex items-center justify-center text-[0.7rem] font-medium tracking-normal text-[#92A8B0]">
+                Error
+              </span>
+            </span>
+            <span>4</span>
+          </div>
+
+          <p className="mt-2 max-w-xs text-center text-sm leading-relaxed text-[#64748B]">
+            Sorry we couldn&apos;t find your details, contact support!
+          </p>
+
+          <Link
+            href={supportHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-flex h-11 items-center justify-center rounded-full bg-[#156374] px-6 text-sm font-semibold text-white transition hover:bg-[#124F5D]"
+          >
+            Contact support
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function DetailRow({
   label,
