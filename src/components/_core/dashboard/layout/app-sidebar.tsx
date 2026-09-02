@@ -32,7 +32,7 @@ const navMain = [
   // { title: "Hackathons", url: "/live-hackathon", icon: HackathonIcon },
   { title: "Learn", url: "/learn", icon: LearnIcon },
   { title: "Blog", url: "/dashboard-blog", icon: BlogIcon },
-  { title: "Billings", url: "/billing", icon: BillingIcon },
+  // { title: "Billings", url: "/dashboard/billing", icon: BillingIcon },
 ];
 
 
