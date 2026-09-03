@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Play, Pause } from "lucide-react";
+import { ChevronDown, Play, Pause } from "lucide-react";
 import Link from "next/link";
 import Autoplay from "embla-carousel-autoplay";
 import {
@@ -14,8 +14,10 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Flag from "../landing-pages/home/hero/flag";
 import ReactPlayer from "react-player";
-import { CohortSwitcher } from "../journey-aside/cohort-switcher";
+// import { CohortSwitcher } from "../journey-aside/cohort-switcher";
 import { DeferInternshipButton } from "../journey-aside/defer-internship-button";
+import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
+import { formatCohortLabel } from "@/types/internship-program/user-program";
 
 const TESTIMONIALS = [
   {
@@ -63,6 +65,11 @@ const Aside = ({ showJourneyControls = false }: { showJourneyControls?: boolean 
   const [volume, setVolume] = useState(0.5); // Volume state (0 to 1)
   const [videoPlaying, setVideoPlaying] = useState(true);
   const [asideVisible, setAsideVisible] = useState(false);
+  const [showDeferButton, setShowDeferButton] = useState(false);
+  const { data: enrollment } = useGetUserEnrollment();
+  const currentCohortLabel = enrollment?.cohort
+    ? formatCohortLabel(enrollment.cohort)
+    : null;
 
   useEffect(() => {
     const mq = window.matchMedia(`(min-width: ${LG_MIN_WIDTH}px)`);
@@ -99,11 +106,37 @@ const Aside = ({ showJourneyControls = false }: { showJourneyControls?: boolean 
                 alt="amdari"
               />
             </Link>
-            <CohortSwitcher />
+            {/* <CohortSwitcher /> */}
+            {currentCohortLabel ? (
+              <button
+                type="button"
+                onClick={() => setShowDeferButton((visible) => !visible)}
+                aria-expanded={showDeferButton}
+                aria-controls="auth-aside-defer-internship-toggle"
+                className="inline-flex items-center gap-1 rounded-full bg-[#0C5A66] px-3 py-1.5 text-left text-xs font-medium text-[#E8F4F6] transition hover:bg-[#0A4E58]"
+                title={currentCohortLabel}
+              >
+                <span className="min-w-0 flex-1 truncate">
+                  {currentCohortLabel}
+                </span>
+                <ChevronDown
+                  className={cn(
+                    "size-3.5 shrink-0 text-[#C4DEE3] transition-transform",
+                    showDeferButton && "rotate-180",
+                  )}
+                  aria-hidden
+                />
+              </button>
+            ) : null}
           </div>
-          <div className="flex justify-end">
-            <DeferInternshipButton />
-          </div>
+          {showDeferButton ? (
+            <div
+              id="auth-aside-defer-internship-toggle"
+              className="flex justify-end"
+            >
+              <DeferInternshipButton />
+            </div>
+          ) : null}
         </div>
       ) : (
         <Link href="/" className="text-2xl font-bold tracking-tight">

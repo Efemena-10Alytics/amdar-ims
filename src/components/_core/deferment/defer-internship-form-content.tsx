@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { CheckCheck, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -111,6 +112,68 @@ function RadioOption({
       />
       {label}
     </label>
+  );
+}
+
+function FieldSkeleton({
+  labelWidth = "w-24",
+  fieldHeight = "h-11",
+}: {
+  labelWidth?: string;
+  fieldHeight?: string;
+}) {
+  return (
+    <div>
+      <Skeleton className={cn("mb-1.5 h-4 bg-black/8", labelWidth)} />
+      <Skeleton className={cn("w-full rounded-lg bg-black/8", fieldHeight)} />
+    </div>
+  );
+}
+
+function DeferInternshipFormSkeleton({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn("space-y-5", className)}
+      aria-busy="true"
+      aria-label="Loading deferment form"
+    >
+      <FieldSkeleton labelWidth="w-20" />
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <FieldSkeleton labelWidth="w-14" />
+        <FieldSkeleton labelWidth="w-28" />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <FieldSkeleton labelWidth="w-32" />
+        <FieldSkeleton labelWidth="w-48" />
+      </div>
+
+      <div>
+        <Skeleton className="mb-1.5 h-4 w-64 bg-black/8" />
+        <div className="flex items-center gap-6">
+          <Skeleton className="h-4 w-14 bg-black/8" />
+          <Skeleton className="h-4 w-12 bg-black/8" />
+        </div>
+      </div>
+
+      <FieldSkeleton labelWidth="w-40" fieldHeight="h-28" />
+
+      <div className="space-y-3">
+        <div className="flex items-start gap-3">
+          <Skeleton className="mt-0.5 size-4 shrink-0 rounded bg-black/8" />
+          <Skeleton className="h-4 w-full max-w-xs bg-black/8" />
+        </div>
+        <div className="flex items-start gap-3">
+          <Skeleton className="mt-0.5 size-4 shrink-0 rounded bg-black/8" />
+          <Skeleton className="h-10 w-full bg-black/8" />
+        </div>
+      </div>
+
+      <div className="flex justify-end pt-1">
+        <Skeleton className="h-11 w-36 rounded-full bg-black/8" />
+      </div>
+    </div>
   );
 }
 
@@ -297,11 +360,7 @@ export function DeferInternshipFormContent({
   }
 
   if (isLoading) {
-    return (
-      <p className={cn("text-sm text-[#64748B]", className)}>
-        Loading deferment form...
-      </p>
-    );
+    return <DeferInternshipFormSkeleton className={className} />;
   }
 
   if (!enrollment) {

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 import { WHATSAPP_URL } from "@/components/_core/landing-pages/shared/whatsapp-widget";
 
 export type TenAnalyticsOnboardingProfile = {
@@ -55,6 +56,66 @@ function BrokenImageIcon() {
         strokeLinejoin="round"
       />
     </svg>
+  );
+}
+
+function SkeletonRow() {
+  return (
+    <div className="flex items-center justify-between gap-6 py-1.5">
+      <Skeleton className="h-4 w-24 bg-black/8" />
+      <Skeleton className="h-4 w-28 bg-black/8" />
+    </div>
+  );
+}
+
+export function ProfileDetailsCardSkeleton({
+  className,
+}: {
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "rounded-3xl bg-white p-5 shadow-[0_20px_50px_rgba(15,70,82,0.1)] sm:p-6",
+        className,
+      )}
+      aria-busy="true"
+      aria-label="Loading profile details"
+    >
+      <Skeleton className="h-7 w-48 bg-black/8" />
+
+      <div className="relative mt-4">
+        <div className="rounded-2xl bg-[#FFF4EA] p-5">
+          <Skeleton className="h-5 w-36 bg-[#A6632D]/20" />
+          <div className="mt-3 space-y-1">
+            <SkeletonRow />
+            <SkeletonRow />
+            <SkeletonRow />
+          </div>
+        </div>
+
+        <div className="relative z-10 -my-3.5 flex justify-center">
+          <div className="flex items-center">
+            <Skeleton className="size-7 rounded-full bg-black/10 ring-2 ring-white" />
+            <Skeleton className="-ml-2.5 size-7 rounded-full bg-black/10 ring-2 ring-white" />
+            <Skeleton className="-ml-2.5 size-7 rounded-full bg-black/10 ring-2 ring-white" />
+          </div>
+        </div>
+
+        <div className="rounded-2xl bg-[#E8F2F6] px-5 pb-5 pt-7">
+          <Skeleton className="h-5 w-32 bg-[#092A31]/10" />
+          <div className="mt-3 space-y-1">
+            <SkeletonRow />
+            <SkeletonRow />
+            <SkeletonRow />
+            <SkeletonRow />
+            <SkeletonRow />
+            <SkeletonRow />
+            <SkeletonRow />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
