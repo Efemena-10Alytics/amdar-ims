@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -13,6 +12,7 @@ import {
   useGetTenAnalyticsOnboardingProfile,
   type TenAnalyticsOnboardingProfileData,
 } from "@/features/10nalytics/use-get-profile";
+import { useForgotPassword } from "@/features/auth/use-forgot-password";
 import Flag from "../landing-pages/home/hero/flag";
 import { COMPANY_LOGOS } from "@/constants/company-logos";
 
@@ -89,9 +89,22 @@ export default function TenAnalyticsOnboarding({
 }: TenAnalyticsOnboardingProps) {
   const { data, isLoading, isError } =
     useGetTenAnalyticsOnboardingProfile(email);
+  const {
+    submit: startResetPassword,
+    isLoading: isStartingReset,
+    errorMessage: resetErrorMessage,
+  } = useForgotPassword();
 
   const resolvedProfile = data ? mapProfileToCard(email, data) : null;
-  const proceedHref = `/auth/sign-in?redirect=${encodeURIComponent("/onboarding")}&email=${encodeURIComponent(email)}`;
+  const proceedEmail = data?.user.email?.trim() || email.trim();
+  const canProceed = !!proceedEmail && !isStartingReset && !isLoading;
+
+  const handleProceed = () => {
+    if (!canProceed) return;
+    void startResetPassword(proceedEmail).catch(() => {
+      // errorMessage is set by the hook
+    });
+  };
 
   return (
     <main className="relative min-h-screen overflow-hidden text-[#092A31]">
@@ -123,13 +136,21 @@ export default function TenAnalyticsOnboarding({
               confidently into your career.
             </p>
 
-            <Link
-              href={proceedHref}
-              className="mt-8 inline-flex h-14 items-center gap-3 rounded-full bg-[#156374] px-6 text-base font-semibold text-white transition hover:bg-[#124F5D] sm:px-8 sm:text-lg"
+            <button
+              type="button"
+              onClick={handleProceed}
+              disabled={!canProceed}
+              className="mt-8 inline-flex h-14 items-center gap-3 rounded-full bg-[#156374] px-6 text-base font-semibold text-white transition hover:bg-[#124F5D] disabled:pointer-events-none disabled:opacity-60 sm:px-8 sm:text-lg"
             >
-              Proceed to internship
-              <ProceedArrowIcon />
-            </Link>
+              {isStartingReset ? "Sending code…" : "Proceed to internship"}
+              {!isStartingReset ? <ProceedArrowIcon /> : null}
+            </button>
+
+            {resetErrorMessage ? (
+              <p className="mt-3 text-sm text-[#B42318]" role="alert">
+                {resetErrorMessage}
+              </p>
+            ) : null}
 
             <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-[#64748B] sm:text-base">
               <Flag width={30} />
