@@ -20,7 +20,7 @@ export function JourneyAsideHeader({
   isCollapsed,
   onToggleCollapse,
 }: JourneyAsideHeaderProps) {
-  const [showDeferButton, setShowDeferButton] = useState(true);
+  const [showDeferButton, setShowDeferButton] = useState(false);
   const { data: enrollment } = useGetUserEnrollment();
   const currentCohortLabel = enrollment?.cohort
     ? formatCohortLabel(enrollment.cohort)
