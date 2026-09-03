@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Sora } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
 import "aos/dist/aos.css";
@@ -10,11 +9,6 @@ import { GoogleAnalytics } from '@next/third-parties/google'
 import MetaPixel from "@/components/_core/meta-pixel";
 import SnapPixel from "@/components/_core/snap-pixel";
 import { GoogleTagManagerScript, GoogleTagManagerNoScript, GoogleAdsScript } from "@/components/_core/google-tag-manager";
-
-const sora = Sora({
-  variable: "--font-sora",
-  subsets: ["latin"],
-});
 
 export const viewport: Viewport = {
   themeColor: [
@@ -45,7 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${sora.variable}! antialiased`}
+        className="antialiased"
         suppressHydrationWarning
       >
         <GoogleTagManagerNoScript />

@@ -47,7 +47,7 @@ export function BillingDashboard() {
             totalPlanAmount: 0,
             totalPaid: 0,
             remainingBalance: 0,
-            paymentStatus: "",
+            paymentStatus: "Nil",
           }}
         />
         <PaymentScheduleTable schedule={[]} />

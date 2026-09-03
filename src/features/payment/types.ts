@@ -23,7 +23,7 @@ export interface BillingSummary {
   totalPlanAmount: number;
   totalPaid: number;
   remainingBalance: number;
-  paymentStatus: "Active" | "Complete" | "";
+  paymentStatus: "Active" | "Complete" | "Nil";
 }
 
 export interface NextPayment {
