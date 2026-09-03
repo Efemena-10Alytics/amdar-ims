@@ -12,7 +12,7 @@ export default function SideNavExpandCollapse({
     <button
       type="button"
       onClick={onToggle}
-      className="absolute top-7 right-0 z-1000 inline-flex size-9 translate-x-1/2 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#E8CC76] shadow-lg transition hover:bg-[#D4B76A]/90"
+      className="absolute top-7 right-0 z-20 inline-flex size-9 translate-x-1/2 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#E8CC76] shadow-lg transition hover:bg-[#D4B76A]/90"
       aria-label={isCollapsed ? "Expand side navigation" : "Collapse side navigation"}
       aria-expanded={!isCollapsed}
     >
