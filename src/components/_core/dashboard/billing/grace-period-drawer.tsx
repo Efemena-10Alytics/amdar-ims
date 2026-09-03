@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { ChevronDown, Info, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,10 +12,19 @@ import {
 } from "@/components/ui/popover";
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { useGetUserInfo } from "@/features/auth/use-get-user-info";
+import { useGetGracePeriodDateBounds } from "@/features/payment/use-get-grace-period-bounds";
+import {
+  getGracePeriodErrorDetails,
+  useSubmitGracePeriod,
+} from "@/features/payment/use-submit-grace-period";
 
 type GracePeriodDrawerProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  paymentPlanId?: string | number;
+  defaultCohort?: string;
+  defaultProgram?: string;
 };
 
 type GracePeriodFormState = {
@@ -41,6 +50,8 @@ const INITIAL_FORM_STATE: GracePeriodFormState = {
 const FIELD_LABEL_CLASS = "mb-1.5 block text-sm font-medium text-[#092A31]";
 const FIELD_INPUT_CLASS =
   "h-11 rounded-xl border border-[#DCE5E9] bg-[#F6F8FA] px-3 text-sm text-[#092A31] placeholder:text-[#94A3B8] shadow-none outline-none focus-visible:border-[#156374] focus-visible:ring-0";
+const FIELD_READONLY_CLASS =
+  "h-11 rounded-xl border border-[#DCE5E9] bg-[#EEF2F5] px-3 text-sm text-[#64748B] shadow-none outline-none cursor-default select-none";
 
 function formatDisplayDate(ymd: string): string {
   if (!ymd) return "";
@@ -58,15 +69,49 @@ function formatDateToLocalYmd(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-export function GracePeriodDrawer({ open, onOpenChange }: GracePeriodDrawerProps) {
+export function GracePeriodDrawer({
+  open,
+  onOpenChange,
+  paymentPlanId,
+  defaultCohort,
+  defaultProgram,
+}: GracePeriodDrawerProps) {
   const [form, setForm] = useState<GracePeriodFormState>(INITIAL_FORM_STATE);
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  const { data: userInfo } = useGetUserInfo();
+  const { data: bounds, isLoading: isLoadingBounds } = useGetGracePeriodDateBounds(
+    paymentPlanId,
+    open,
+  );
+  const { mutateAsync: submitGracePeriod, isPending: isSubmitting } =
+    useSubmitGracePeriod();
+
+  // Prefill name/email from the user's profile once it loads, without
+  // overwriting anything the user has already typed.
+  useEffect(() => {
+    if (!open) return;
+    const info = (userInfo ?? {}) as {
+      firstName?: string;
+      lastName?: string;
+      email?: string;
+    };
+    setForm((current) => ({
+      ...current,
+      firstName: current.firstName || info.firstName || "",
+      lastName: current.lastName || info.lastName || "",
+      email: current.email || info.email || "",
+      cohort: current.cohort || defaultCohort || "",
+      program: current.program || defaultProgram || "",
+    }));
+  }, [open, userInfo, defaultCohort, defaultProgram]);
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
       setForm(INITIAL_FORM_STATE);
       setCalendarOpen(false);
+      setSubmitError("");
     }
     onOpenChange(nextOpen);
   };
@@ -77,7 +122,11 @@ export function GracePeriodDrawer({ open, onOpenChange }: GracePeriodDrawerProps
     setForm((current) => ({ ...current, [field]: event.target.value }));
   };
 
+  const isEligible = bounds?.eligible !== false;
+
   const canSubmit =
+    !!paymentPlanId &&
+    isEligible &&
     form.firstName.trim() &&
     form.lastName.trim() &&
     form.email.trim() &&
@@ -86,14 +135,19 @@ export function GracePeriodDrawer({ open, onOpenChange }: GracePeriodDrawerProps
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!canSubmit || isSubmitting) return;
+    if (!canSubmit || isSubmitting || !paymentPlanId) return;
 
-    setIsSubmitting(true);
+    setSubmitError("");
     try {
-      // TODO: wire up to the grace period request API once available.
+      await submitGracePeriod({
+        payment_plan_id: paymentPlanId,
+        reason: form.reason.trim(),
+        requested_date: form.gracePeriodDate,
+      });
       handleOpenChange(false);
-    } finally {
-      setIsSubmitting(false);
+    } catch (error) {
+      const details = getGracePeriodErrorDetails(error);
+      setSubmitError(details.message ?? "Failed to submit grace period request.");
     }
   };
 
@@ -124,9 +178,8 @@ export function GracePeriodDrawer({ open, onOpenChange }: GracePeriodDrawerProps
                 <Input
                   id="grace-first-name"
                   value={form.firstName}
-                  onChange={updateField("firstName")}
-                  placeholder="John"
-                  className={FIELD_INPUT_CLASS}
+                  readOnly
+                  className={FIELD_READONLY_CLASS}
                 />
               </div>
               <div>
@@ -136,9 +189,8 @@ export function GracePeriodDrawer({ open, onOpenChange }: GracePeriodDrawerProps
                 <Input
                   id="grace-last-name"
                   value={form.lastName}
-                  onChange={updateField("lastName")}
-                  placeholder="Doe"
-                  className={FIELD_INPUT_CLASS}
+                  readOnly
+                  className={FIELD_READONLY_CLASS}
                 />
               </div>
             </div>
@@ -151,9 +203,8 @@ export function GracePeriodDrawer({ open, onOpenChange }: GracePeriodDrawerProps
                 id="grace-email"
                 type="email"
                 value={form.email}
-                onChange={updateField("email")}
-                placeholder="example@gmail.com"
-                className={FIELD_INPUT_CLASS}
+                readOnly
+                className={FIELD_READONLY_CLASS}
               />
             </div>
 
@@ -164,9 +215,8 @@ export function GracePeriodDrawer({ open, onOpenChange }: GracePeriodDrawerProps
               <Input
                 id="grace-cohort"
                 value={form.cohort}
-                onChange={updateField("cohort")}
-                placeholder="July"
-                className={FIELD_INPUT_CLASS}
+                readOnly
+                className={FIELD_READONLY_CLASS}
               />
             </div>
 
@@ -177,9 +227,8 @@ export function GracePeriodDrawer({ open, onOpenChange }: GracePeriodDrawerProps
               <Input
                 id="grace-program"
                 value={form.program}
-                onChange={updateField("program")}
-                placeholder="Project Management"
-                className={FIELD_INPUT_CLASS}
+                readOnly
+                className={FIELD_READONLY_CLASS}
               />
             </div>
 
@@ -240,6 +289,19 @@ export function GracePeriodDrawer({ open, onOpenChange }: GracePeriodDrawerProps
                         setCalendarOpen(false);
                       }
                     }}
+                    disabled={(date) => {
+                      const d = new Date(date);
+                      d.setHours(0, 0, 0, 0);
+                      if (bounds?.min_selectable_date) {
+                        const min = new Date(`${bounds.min_selectable_date}T00:00:00`);
+                        if (d < min) return true;
+                      }
+                      if (bounds?.max_selectable_date) {
+                        const max = new Date(`${bounds.max_selectable_date}T00:00:00`);
+                        if (d > max) return true;
+                      }
+                      return false;
+                    }}
                   />
                 </PopoverContent>
               </Popover>
@@ -253,11 +315,18 @@ export function GracePeriodDrawer({ open, onOpenChange }: GracePeriodDrawerProps
                 <Info className="size-3" strokeWidth={3} />
               </span>
               <p className="text-xs leading-relaxed text-[#092A31]">
-                Please note that the grace period extends up to 7 days after one
-                month of internship commencement. You cannot request for a grace
-                period beyond this timeframe
+                {isLoadingBounds
+                  ? "Checking grace period eligibility…"
+                  : bounds && !bounds.eligible
+                    ? bounds.reason ||
+                      "You are not currently eligible for a grace period."
+                    : "Please note that the grace period extends up to 7 days after one month of internship commencement. You cannot request for a grace period beyond this timeframe"}
               </p>
             </div>
+
+            {submitError ? (
+              <p className="mt-3 text-xs font-medium text-[#C0392B]">{submitError}</p>
+            ) : null}
           </div>
 
           <div className="border-t border-[#E2EBEF] px-6 py-4">

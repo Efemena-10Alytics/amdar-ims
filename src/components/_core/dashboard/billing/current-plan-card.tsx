@@ -1,14 +1,20 @@
 import { formatCurrency } from "@/features/payment/mock-data";
 import type { PaymentPlan } from "@/features/payment/types";
 
-export function CurrentPlanCard({ plan }: { plan: PaymentPlan }) {
+export function CurrentPlanCard({
+  plan,
+  nextDueDate,
+}: {
+  plan: PaymentPlan;
+  nextDueDate?: string;
+}) {
   const rows: Array<[string, string]> = [
-    ["Plan Amount", "$600"],
-    ["Installments", "3"],
-    ["Installment Amount", "2600"],
+    ["Plan Amount", formatCurrency(plan.totalAmount)],
+    ["Installments", String(plan.installmentsCount)],
+    ["Installment Amount", formatCurrency(plan.installmentAmount)],
     ["Start Date", plan.startDate],
-    ["Next Due Date", plan.startDate],
-    ["Payment Method", "Stripe"],
+    ["Next Due Date", nextDueDate ?? plan.startDate],
+    ["Payment Method", plan.paymentMethod],
   ];
 
   return (

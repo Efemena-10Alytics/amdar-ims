@@ -8,8 +8,10 @@ import { EmptyScheduleState } from "./empty-schedule-state";
 
 export function PaymentScheduleTable({
   schedule,
+  installmentsCount,
 }: {
   schedule: Installment[];
+  installmentsCount?: number;
 }) {
   return (
     <div className="rounded-2xl bg-white p-5 shadow">
@@ -19,7 +21,7 @@ export function PaymentScheduleTable({
             Payment Schedule
           </h2>
           <p className="font-sora text-sm text-[#092A31]">
-            {10} Installments Plan
+            {installmentsCount ?? schedule.length} Installments Plan
           </p>
         </div>
         {schedule.length > 0 ? (

@@ -63,8 +63,15 @@ export const mockEmptyBillingData: BillingData = {
   schedule: [],
 };
 
-export function formatCurrency(amount: number): string {
-  return `£${amount.toLocaleString("en-GB")}`;
+const CURRENCY_SYMBOLS: Record<string, string> = {
+  GBP: "£",
+  USD: "$",
+  EUR: "€",
+};
+
+export function formatCurrency(amount: number, currency?: string): string {
+  const symbol = currency ? CURRENCY_SYMBOLS[currency] ?? `${currency} ` : "£";
+  return `${symbol}${amount.toLocaleString("en-GB")}`;
 }
 
 const RECEIPT_USER = {
