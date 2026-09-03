@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   ProfileDetailsCard,
+  ProfileDetailsCardSkeleton,
   ProfileDetailsErrorCard,
   type TenAnalyticsOnboardingProfile,
 } from "@/components/_core/10nalytics-onboarding/profile-details-card";
@@ -233,12 +233,7 @@ export default function TenAnalyticsOnboarding({
             ))}
 
             {isLoading ? (
-              <div className="flex min-h-80 items-center justify-center rounded-3xl bg-white shadow-[0_20px_50px_rgba(15,70,82,0.1)]">
-                <Loader2
-                  className="size-8 animate-spin text-[#156374]"
-                  aria-label="Loading profile"
-                />
-              </div>
+              <ProfileDetailsCardSkeleton />
             ) : isError ? (
               <ProfileDetailsErrorCard />
             ) : resolvedProfile ? (
