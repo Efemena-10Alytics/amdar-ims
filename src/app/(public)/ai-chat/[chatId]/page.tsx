@@ -63,7 +63,7 @@ const AIChatPage = () => {
   const hasMessages = messages.length > 0;
 
   return (
-    <div className="h-screen flex flex-col" style={{ backgroundColor: '#E8EFF1', fontFamily: 'Sora, sans-serif' }}>
+    <div className="h-screen flex flex-col" style={{ backgroundColor: '#E8EFF1', fontFamily: '"Sora Variable", sans-serif' }}>
       <div className="fixed top-0 left-0 right-0 z-30">
         <ChatNavbar 
           onOpenHistory={() => setIsHistoryOpen(true)}
