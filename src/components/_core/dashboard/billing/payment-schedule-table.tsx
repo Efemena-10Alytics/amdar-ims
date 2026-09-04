@@ -63,14 +63,16 @@ export function PaymentScheduleTable({
                   </td>
                   <td className="px-4">
                     {installment.status === "paid" ? (
-                      <Link
-                        href={`/dashboard/billing?receiptid=${installment.id}`}
-                        aria-label="View receipt"
-                        className="flex items-center gap-1"
-                      >
-                        <ViewReceiptIcon />
-                        View Receipt
-                      </Link>
+                      // <Link
+                      //   href={`/dashboard/billing?receiptid=${installment.id}`}
+                      //   aria-label="View receipt"
+                      //   className="flex items-center gap-1"
+                      // >
+                      //   <ViewReceiptIcon />
+                      //   View Receipt
+                      // </Link>
+                      <>
+                      </>
                     ) : (
                       <span className="text-[#B6CFD4]">—</span>
                     )}
