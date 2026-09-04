@@ -31,24 +31,24 @@ type InternshipDetailsProps = {
   onWhoIsOnlineClick?: () => void;
 };
 
-function WhoIsOnlineButton({ onClick }: { onClick?: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-full bg-linear-to-r from-[#EDE4FF] to-[#F4EEFF] px-4 py-2.5 text-sm font-semibold text-[#5B4B8A] transition hover:from-[#E4D8FF] hover:to-[#EDE4FF]"
-    >
-      Who is online?
-      <span className="flex size-7 items-center justify-center rounded-full bg-[#5B4B8A] text-white">
-        <MessageCircleMore className="size-4" strokeWidth={2.25} aria-hidden />
-      </span>
-    </button>
-  );
-}
+// function WhoIsOnlineButton({ onClick }: { onClick?: () => void }) {
+//   return (
+//     <button
+//       type="button"
+//       onClick={onClick}
+//       className="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-full bg-linear-to-r from-[#EDE4FF] to-[#F4EEFF] px-4 py-2.5 text-sm font-semibold text-[#5B4B8A] transition hover:from-[#E4D8FF] hover:to-[#EDE4FF]"
+//     >
+//       Who is online?
+//       <span className="flex size-7 items-center justify-center rounded-full bg-[#5B4B8A] text-white">
+//         <MessageCircleMore className="size-4" strokeWidth={2.25} aria-hidden />
+//       </span>
+//     </button>
+//   );
+// }
 
 const InternshipDetails = ({
   defaultTab = "career-stage",
-  onWhoIsOnlineClick,
+  // onWhoIsOnlineClick,
 }: InternshipDetailsProps) => {
   const router = useRouter();
   const pathname = usePathname();

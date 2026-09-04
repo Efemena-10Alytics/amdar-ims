@@ -18,6 +18,8 @@ import type {
   EnrollmentProgressSection,
 } from "@/features/interns-project/use-get-internship-progress";
 import { useGetInternshipProgress } from "@/features/interns-project/use-get-internship-progress";
+import { InternProjectCareerStage } from "@/features/interns-project/internship-project.types";
+import { usePublishedProjectsUnlockByStages } from "@/features/interns-project/use-get-project-by-stage";
 import { isTenAlyticsEnrollment } from "@/features/internship/is-10alytics-cohort";
 import {
   isOnboardingNotFoundError,
@@ -27,6 +29,8 @@ import {
   isPreDiagnosticNotFoundError,
   useGetPreDiagnostic,
 } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
+import type { StageProjectScheduleTone } from "@/components/_core/dashboard/internship-program/internship-details/career-stage/stage-project-schedule";
+import { useSelectedEnrollmentIds } from "@/store/enrollment-selection-store";
 
 type CareerStageStatus = "completed" | "active" | "upcoming" | "locked";
 
@@ -57,6 +61,23 @@ const CAREER_STAGE_ID_BY_API_STAGE: Record<string, string> = {
   collaborative: "collaborative-stage",
   professional: "professional-stage",
 };
+
+const ALL_PROJECT_CAREER_STAGES = [
+  InternProjectCareerStage.Uniformity,
+  InternProjectCareerStage.Formative,
+  InternProjectCareerStage.Transitional,
+  InternProjectCareerStage.Emerging,
+  InternProjectCareerStage.Collaborative,
+  InternProjectCareerStage.Professional,
+] as const;
+
+function scheduleToneFromStatus(
+  status: CareerStageStatus,
+): StageProjectScheduleTone {
+  if (status === "locked") return "locked";
+  if (status === "upcoming") return "upcoming";
+  return "active";
+}
 
 const CAREER_STAGE_NAV: CareerStageNavItem[] = [
   { id: "onboarding", label: "On-boarding", status: "locked" },
@@ -177,22 +198,27 @@ function resolveResourceStageState({
   return { status: "locked", progress };
 }
 
-function resolveCareerStageState(
-  stage: EnrollmentCareerStageProgress,
-  previousStages: EnrollmentCareerStageProgress[],
-): LiveStageState {
-  const progress = clampPercent(stage.percent);
-
-  if (stage.isComplete || progress >= 100) {
-    return { status: "completed", progress: 100 };
+/**
+ * Unlocks from Active/Completed (published) projects. Enrollment percent still
+ * drives completed / active / upcoming once unlocked.
+ */
+function resolveCareerStageState({
+  stage,
+  hasUnlockingProject,
+  isResolvingProjects,
+}: {
+  stage: EnrollmentCareerStageProgress | undefined;
+  hasUnlockingProject: boolean;
+  isResolvingProjects: boolean;
+}): LiveStageState {
+  if (isResolvingProjects || !hasUnlockingProject) {
+    return { status: "locked", progress: 0 };
   }
 
-  const previousComplete = previousStages.every(
-    (item) => item.isComplete || clampPercent(item.percent) >= 100,
-  );
+  const progress = clampPercent(stage?.percent);
 
-  if (!previousComplete) {
-    return { status: "locked", progress: 0 };
+  if (stage?.isComplete || progress >= 100) {
+    return { status: "completed", progress: 100 };
   }
 
   if (progress > 0) {
@@ -345,6 +371,7 @@ function CareerStageCard({
   const isUpcoming = card.status === "upcoming";
   const isLocked = card.status === "locked";
   const isExpandedCompleted = isCompleted && isExpanded;
+  const scheduleTone = scheduleToneFromStatus(card.status);
 
   return (
     <article
@@ -457,17 +484,17 @@ function CareerStageCard({
       ) : isExpanded && card.id === "pre-entry-diagnostic" ? (
         <PreDiagnostic />
       ) : isExpanded && card.id === "uniformity-stage" ? (
-        <UniformityStage />
+        <UniformityStage tone={scheduleTone} />
       ) : isExpanded && card.id === "formative-stage" ? (
-        <FormativeStage />
+        <FormativeStage tone={scheduleTone} />
       ) : isExpanded && card.id === "transitional-stage" ? (
-        <TransitionalStage />
+        <TransitionalStage tone={scheduleTone} />
       ) : isExpanded && card.id === "emerging-stage" ? (
-        <EmergingStage />
+        <EmergingStage tone={scheduleTone} />
       ) : isExpanded && card.id === "collaborative-stage" ? (
-        <CollaborativeStage />
+        <CollaborativeStage tone={scheduleTone} />
       ) : isExpanded && card.id === "professional-stage" ? (
-        <ProfessionalStage />
+        <ProfessionalStage tone={scheduleTone} />
       ) : null}
     </article>
   );
@@ -502,9 +529,38 @@ const CareerStage = () => {
     isPending: isProgressPending,
     isEnrollmentLoading: isProgressEnrollmentLoading,
     enrollment,
+    cohortId: progressCohortId,
+    programId: progressProgramId,
   } = useGetInternshipProgress();
 
+  const { cohortId: selectedCohortId, programId: selectedProgramId } =
+    useSelectedEnrollmentIds();
+  const cohortId = progressCohortId ?? selectedCohortId;
+  const programId = progressProgramId ?? selectedProgramId;
+
   const isTenAlytics = isTenAlyticsEnrollment(enrollment);
+
+  const visibleProjectStages = useMemo(
+    () =>
+      (isTenAlytics
+        ? ALL_PROJECT_CAREER_STAGES.filter((stage) =>
+            TEN_ALYTICS_STAGE_ID_SET.has(CAREER_STAGE_ID_BY_API_STAGE[stage]),
+          )
+        : [...ALL_PROJECT_CAREER_STAGES]) as InternProjectCareerStage[],
+    [isTenAlytics],
+  );
+
+  const {
+    unlockingByApiStage,
+    isResolving: isResolvingPublishedProjects,
+  } = usePublishedProjectsUnlockByStages(visibleProjectStages, {
+    cohortId,
+    programId,
+  });
+
+  const unlockSignature = visibleProjectStages
+    .map((stage) => `${stage}:${unlockingByApiStage[stage] ? "1" : "0"}`)
+    .join("|");
 
   const isOnboardingLoading = isOnboardingPending || isOnboardingQueryLoading;
   const isResolvingOnboarding =
@@ -576,32 +632,37 @@ const CareerStage = () => {
     const states = new Map<string, LiveStageState>();
     const allStages = enrollmentProgress?.careerStages ?? [];
 
-    if (isResolvingProgress) {
+    if (isResolvingProgress || isResolvingPublishedProjects) {
       return states;
     }
 
-    // Hidden stages must not gate the visible ones, otherwise the first stage
-    // a 10Alytics intern can see would stay locked behind stages they skip.
-    const stages = isTenAlytics
-      ? allStages.filter((stage) =>
-          TEN_ALYTICS_STAGE_ID_SET.has(
-            CAREER_STAGE_ID_BY_API_STAGE[stage.stage] ?? "",
-          ),
-        )
-      : allStages;
+    const progressByApiStage = new Map(
+      allStages.map((stage) => [stage.stage, stage] as const),
+    );
 
-    stages.forEach((stage, index) => {
-      const cardId = CAREER_STAGE_ID_BY_API_STAGE[stage.stage];
+    visibleProjectStages.forEach((apiStage) => {
+      const cardId = CAREER_STAGE_ID_BY_API_STAGE[apiStage];
       if (!cardId) return;
 
       states.set(
         cardId,
-        resolveCareerStageState(stage, stages.slice(0, index)),
+        resolveCareerStageState({
+          stage: progressByApiStage.get(apiStage),
+          hasUnlockingProject: unlockingByApiStage[apiStage] === true,
+          isResolvingProjects: false,
+        }),
       );
     });
 
     return states;
-  }, [enrollmentProgress?.careerStages, isResolvingProgress, isTenAlytics]);
+  }, [
+    enrollmentProgress?.careerStages,
+    isResolvingProgress,
+    isResolvingPublishedProjects,
+    unlockSignature,
+    unlockingByApiStage,
+    visibleProjectStages,
+  ]);
 
   const stageNav = useMemo(
     () =>
