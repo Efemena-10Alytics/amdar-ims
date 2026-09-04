@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Menu, LogOut } from "lucide-react";
@@ -22,6 +22,13 @@ import {
 import { UserAvatar } from "../../internship-program/svg";
 import { MoreDropdown } from "../navbar/more-dropdown";
 import { AnniversaryBanner } from "@/components/_core/two-years-aniversary-offer/banner";
+import {
+  getSpecialOfferDismissed,
+  getSpecialOfferDismissedServerSnapshot,
+  getSpecialOfferModalOpen,
+  getSpecialOfferModalOpenServerSnapshot,
+  subscribeSpecialOfferVisibility,
+} from "@/components/_core/two-years-aniversary-offer/special-offer-visibility";
 
 const linkClass = (isActive: boolean, useWhiteText: boolean) =>
   cn(
@@ -92,8 +99,25 @@ const Navbar = () => {
     pathname.startsWith("/talent-loop") ||
     pathname.startsWith("/contact");
 
-  const showAnniversaryBanner =
+  const showAnniversaryBannerRoute =
     !pathname.startsWith("/internship/") && !pathname.startsWith("/payment");
+
+  const specialOfferDismissed = useSyncExternalStore(
+    subscribeSpecialOfferVisibility,
+    getSpecialOfferDismissed,
+    getSpecialOfferDismissedServerSnapshot,
+  );
+  const specialOfferModalOpen = useSyncExternalStore(
+    subscribeSpecialOfferVisibility,
+    getSpecialOfferModalOpen,
+    getSpecialOfferModalOpenServerSnapshot,
+  );
+
+  // Home: banner only after the modal is dismissed. Elsewhere: hide while modal is open.
+  const showAnniversaryBanner =
+    showAnniversaryBannerRoute &&
+    !specialOfferModalOpen &&
+    (specialOfferDismissed || !isHomePageRoute);
 
   useEffect(() => {
     if (isDrawerOpen) {
