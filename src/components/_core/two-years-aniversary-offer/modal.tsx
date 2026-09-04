@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import confetti from "canvas-confetti";
@@ -14,6 +14,7 @@ const CLARITY_HREF_DEFAULT = "/clarity-session/data-track";
 const SPOTS_CLAIMED = 350;
 const SPOTS_TOTAL = 500;
 const PEOPLE_HIRED = 250;
+const CLOSE_BUTTON_DELAY_MS = 10_000;
 
 const CONFETTI_COLORS = [
   "#F2C94C",
@@ -115,8 +116,23 @@ export function SpecialOfferModal({
   clarityHref = CLARITY_HREF_DEFAULT,
 }: SpecialOfferModalProps) {
   const { days, hrs, mins, secs } = usePromoCountdown();
+  const totalHours = days * 24 + hrs;
   const claimedPct = Math.round((SPOTS_CLAIMED / SPOTS_TOTAL) * 100);
   const confettiFired = useRef(false);
+  const [showCloseButton, setShowCloseButton] = useState(false);
+
+  useEffect(() => {
+    if (!open) {
+      setShowCloseButton(false);
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setShowCloseButton(true);
+    }, CLOSE_BUTTON_DELAY_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [open]);
 
   useEffect(() => {
     if (!open) {
@@ -165,14 +181,16 @@ export function SpecialOfferModal({
           "z-200 max-h-[min(96vh,900px)] w-full max-w-222.5 sm:max-w-222.5 gap-0 overflow-hidden border-0 bg-[#083A45] p-0 text-white rounded-xs!",
         )}
       >
-        <button
-          type="button"
-          onClick={() => onOpenChange(false)}
-          className="absolute top-3 right-3 z-20 flex size-8 items-center justify-center rounded-full border border-white/70 text-white transition hover:bg-white/10 sm:top-4 sm:right-4"
-          aria-label="Close"
-        >
-          <X className="size-4" />
-        </button>
+        {showCloseButton ? (
+          <button
+            type="button"
+            onClick={() => onOpenChange(false)}
+            className="absolute top-3 right-3 z-20 flex size-8 items-center justify-center rounded-full border border-white/70 text-white transition hover:bg-white/10 sm:top-4 sm:right-4"
+            aria-label="Close"
+          >
+            <X className="size-4" />
+          </button>
+        ) : null}
 
         <div className="relative max-h-[min(96vh,900px)] overflow-y-auto md:overflow-hidden">
           {/* Soft office backdrop across the modal */}
@@ -210,36 +228,36 @@ export function SpecialOfferModal({
 
           {/* Left content — stretches past center like the Figma frame */}
           <div className="relative z-10 flex w-[80%] flex-col px-5 py-6 sm:px-8 sm:py-8 md:w-[62%] lg:px-10 lg:py-10">
-            <span className="inline-flex w-fit rounded-full bg-[#6B4C9A] px-3 py-1 text-[11px] font-medium tracking-wide text-white sm:text-xs">
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-[#C7B0E4] px-3 py-1 text-[11px] font-semibold tracking-wide text-[#1F0047] sm:text-xs">
+              <Image
+                src="/iwd/iwd-time-icon.svg"
+                width={18}
+                height={18}
+                alt=""
+                className="animate-vibrate shrink-0"
+              />
               Limited-Time Anniversary Celebration
             </span>
 
-            <DialogTitle className="mt-4 font-clash-display text-3xl leading-[1.1] font-semibold text-white sm:text-4xl lg:text-[2.65rem]">
-              Celebrating 500+ Success Stories
+            <DialogTitle className="mt-4 font-clash-display! text-3xl leading-[1.1] font-semibold text-white sm:text-4xl lg:text-[2.65rem]">
+              Celebrating <span className="text-[#FFE082]">500+</span> Success Stories
             </DialogTitle>
 
-            <p className="mt-3 text-base font-semibold text-[#F2C94C] sm:text-lg">
-              Your Story Could Be Next.{" "}
-              <em className="not-italic font-bold">Every Program is 50% OFF</em>
+            <p className="mt-3 text-base md:text-lg font-semibold">Your Story Could Be Next.{" "}</p>
+            <p className="text-base md:text-lg font-semibold text-[#FFE082] sm:text-lg">
+              <em className="not-italic font-bold">
+                "Every Program is 50% off for 24hrs”</em>
             </p>
 
             <p className="mt-3 max-w-md text-sm leading-relaxed text-white/85 sm:text-[15px]">
-              For a limited time, join Amdari at 50% off and be part of our
-              next 500 success stories. We&apos;ve spent two years helping
-              professionals gain real-world experience, build portfolios, and
-              land roles that change careers — now it&apos;s your turn.
+              For two years we've helped aspiring professionals gain real-world experience, build job-ready portfolios, and launch global tech careers.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-2.5 sm:gap-4 md:gap-5">
               <CountdownRing
-                value={days}
-                label="Days"
-                progress={days / Math.max(days, 1)}
-              />
-              <CountdownRing
-                value={hrs}
+                value={totalHours}
                 label="Hours"
-                progress={hrs / 24}
+                progress={totalHours / 24}
               />
               <CountdownRing
                 value={mins}
@@ -260,18 +278,18 @@ export function SpecialOfferModal({
               <Link
                 href={claimHref}
                 onClick={() => onOpenChange(false)}
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-[#F2C94C] px-5 text-sm font-bold text-[#0F4652] transition hover:bg-[#E8BC35]"
+                className="group inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-transparent bg-[#FFE082] px-5 text-sm font-bold text-[#0F4652] transition hover:border-white/80 hover:bg-transparent hover:font-semibold hover:text-white"
               >
                 Claim My 50% Discount
-                <ArrowIcon className="bg-[#0F4652]/12 text-[#0F4652]" />
+                <ArrowIcon className="bg-[#156374] text-base text-[#FFE082] transition group-hover:bg-[#FFE082] group-hover:text-[#156374]" />
               </Link>
               <Link
                 href={clarityHref}
                 onClick={() => onOpenChange(false)}
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-white/80 bg-transparent px-5 text-sm font-semibold text-white transition hover:bg-white/10"
+                className="group inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-white/80 bg-transparent px-5 text-sm font-semibold text-white transition hover:border-transparent hover:bg-[#FFE082] hover:font-bold hover:text-[#0F4652]"
               >
                 Book Clarity Session
-                <ArrowIcon className="bg-white/15 text-white" />
+                <ArrowIcon className="bg-[#FFE082] text-[#156374] transition group-hover:bg-[#156374] group-hover:text-[#FFE082]" />
               </Link>
             </div>
 
@@ -297,16 +315,16 @@ export function SpecialOfferModal({
                   <span className="font-semibold">
                     {SPOTS_CLAIMED} of {SPOTS_TOTAL} spots claimed
                   </span>{" "}
-                  <span className="text-white/75">
+                  {/* <span className="text-white/75">
                     {PEOPLE_HIRED} people hired toward our next 500
-                  </span>
+                  </span> */}
                 </p>
-                <div className="mt-1.5 h-1.5 w-full max-w-xs overflow-hidden rounded-full bg-white/20">
+                {/* <div className="mt-1.5 h-1.5 w-full max-w-xs overflow-hidden rounded-full bg-white/20">
                   <div
                     className="h-full rounded-full bg-[#F2C94C]"
                     style={{ width: `${claimedPct}%` }}
                   />
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
