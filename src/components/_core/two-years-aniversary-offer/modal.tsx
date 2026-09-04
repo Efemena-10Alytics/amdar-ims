@@ -279,7 +279,7 @@ export function SpecialOfferModal({
               <Link
                 href={claimHref}
                 onClick={() => onOpenChange(false)}
-                className="group inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-transparent bg-[#FFE082] px-5 text-sm font-bold text-[#0F4652] transition hover:border-white/80 hover:bg-transparent hover:font-semibold hover:text-white"
+                className="group inline-flex h-12 items-center justify-center gap-2 rounded-full border border-transparent bg-[#FFE082] px-5 text-sm font-bold text-[#0F4652] transition hover:border-white/80 hover:bg-transparent hover:font-semibold hover:text-white"
               >
                 Claim My 50% Discount
                 <ArrowIcon className="bg-[#156374] text-base text-[#FFE082] transition group-hover:bg-[#FFE082] group-hover:text-[#156374]" />
@@ -289,7 +289,7 @@ export function SpecialOfferModal({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => onOpenChange(false)}
-                className="group inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-white/80 bg-transparent px-5 text-sm font-semibold text-white transition hover:border-transparent hover:bg-[#FFE082] hover:font-bold hover:text-[#0F4652]"
+                className="group inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/80 bg-transparent px-5 text-sm font-semibold text-white transition hover:border-transparent hover:bg-[#FFE082] hover:font-bold hover:text-[#0F4652]"
               >
                 Book Clarity Session
                 <ArrowIcon className="bg-[#FFE082] text-[#156374] transition group-hover:bg-[#156374] group-hover:text-[#FFE082]" />
