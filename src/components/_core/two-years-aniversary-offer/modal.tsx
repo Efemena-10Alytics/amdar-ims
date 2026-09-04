@@ -10,7 +10,8 @@ import { usePromoCountdown } from "@/components/_core/landing-pages/shared/iwd-b
 import { cn } from "@/lib/utils";
 
 const CLAIM_HREF_DEFAULT = "/internship";
-const CLARITY_HREF_DEFAULT = "/clarity-session/data-track";
+const CLARITY_HREF_DEFAULT =
+  "https://calendly.com/efemena-amdari/how-we-can-help-you-land-a-job-through-work-exp-clone";
 const SPOTS_CLAIMED = 350;
 const SPOTS_TOTAL = 500;
 const PEOPLE_HIRED = 250;
@@ -285,6 +286,8 @@ export function SpecialOfferModal({
               </Link>
               <Link
                 href={clarityHref}
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={() => onOpenChange(false)}
                 className="group inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-white/80 bg-transparent px-5 text-sm font-semibold text-white transition hover:border-transparent hover:bg-[#FFE082] hover:font-bold hover:text-[#0F4652]"
               >

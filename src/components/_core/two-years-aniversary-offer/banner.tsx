@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-const CLARITY_HREF_DEFAULT = "/clarity-session/data-track";
+const CLARITY_HREF_DEFAULT =
+  "https://calendly.com/efemena-amdari/how-we-can-help-you-land-a-job-through-work-exp-clone";
 
 const TICKER_SEGMENTS = [
   "🎉 500+ Amdari Interns Hired in the UK",
@@ -77,6 +78,8 @@ export function AnniversaryBanner({
 
         <Link
           href={clarityHref}
+          target="_blank"
+          rel="noopener noreferrer"
           className="shrink-0 rounded-md bg-[#FFE082] px-4 py-2 text-xs font-semibold text-[#0F4652] transition hover:bg-[#FFD56A] sm:px-5 sm:py-2.5 sm:text-sm"
         >
           Book Clarity
