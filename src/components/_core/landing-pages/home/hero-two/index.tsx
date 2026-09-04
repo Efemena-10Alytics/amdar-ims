@@ -23,13 +23,13 @@ const InternshipHeroTwo = () => {
   return (
     <div
       id="home-hero-section"
-      className="relative w-full -translate-y-25 overflow-x-hidden overflow-y-hidden text-white"
+      className="relative w-full -translate-y-36 overflow-x-hidden overflow-y-hidden text-white sm:-translate-y-38 md:-translate-y-40 lg:-translate-y-45"
     >
       {/* Primary Color Background */}
       <div className="absolute inset-0 bg-primary z-0" />
       <IconOrbit />
 
-      <div className="relative mt-20 z-10 max-w-325 mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-20 lg:py-24">
+      <div className="relative z-10 mx-auto mt-36 max-w-325 px-4 py-10 sm:mt-38 sm:px-6 sm:py-20 md:mt-40 lg:mt-45 lg:px-8 lg:py-24">
         <div className="text-center max-w-202.5 mx-auto">
           <h1 className="text-4xl sm:text-5xl lg:text-[48px] font-semibold mb-6 leading-12 md:leading-16">
             <WordDrop />

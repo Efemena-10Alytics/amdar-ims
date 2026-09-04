@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/tooltip";
 import { UserAvatar } from "../../internship-program/svg";
 import { MoreDropdown } from "../navbar/more-dropdown";
+import { AnniversaryBanner } from "@/components/_core/two-years-aniversary-offer/banner";
 
 const linkClass = (isActive: boolean, useWhiteText: boolean) =>
   cn(
@@ -58,7 +59,7 @@ const Navbar = () => {
   const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
   const [useGlassNav, setUseGlassNav] = useState(false);
   const [isPastHomeHero, setIsPastHomeHero] = useState(false);
-  const navBarRef = useRef<HTMLElement>(null);
+  const navBarRef = useRef<HTMLDivElement>(null);
 
   const pathname = usePathname();
   const { user, logout } = useAuthStore();
@@ -91,7 +92,7 @@ const Navbar = () => {
     pathname.startsWith("/talent-loop") ||
     pathname.startsWith("/contact");
 
-  const showSalesBanner =
+  const showAnniversaryBanner =
     !pathname.startsWith("/internship/") && !pathname.startsWith("/payment");
 
   useEffect(() => {
@@ -158,15 +159,14 @@ const Navbar = () => {
 
   return (
     <>
-      {/* {showSalesBanner && <SalesBanner />} */}
       <div
+        ref={navBarRef}
         className={cn(
           "top-0 left-0 right-0 z-120 isolate -mt-px",
           shouldStickNav ? "sticky" : "relative",
         )}
       >
         <nav
-          ref={navBarRef}
           className={cn(
             "relative z-121 w-full mt-0 border-b border-t-0 shadow-sm",
             "transition-[background-color,backdrop-filter,border-b-color,box-shadow,color] duration-300 ease-out",
@@ -327,6 +327,11 @@ const Navbar = () => {
             </div>
           </div>
         </nav>
+        {showAnniversaryBanner && (
+          <AnniversaryBanner
+            variant={isHomePageRoute ? "home" : "internship"}
+          />
+        )}
       </div>
 
       <MobileDrawer
