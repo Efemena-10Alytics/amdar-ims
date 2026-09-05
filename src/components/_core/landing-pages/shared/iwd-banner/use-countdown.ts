@@ -9,8 +9,8 @@ import { useCallback, useState, useEffect } from "react";
 const CYCLE_HOURS = 24;
 const CYCLE_MS = CYCLE_HOURS * 60 * 60 * 1000;
 
-/** Anchor for the 24h rolling cycle — reset so the current window starts at 24h. */
-const CYCLE_ANCHOR_MS = Date.UTC(2026, 8, 5, 16, 30, 0);
+/** Anchor for the 24h rolling cycle — resets daily at 5:00pm (UTC+1 / 16:00 UTC). */
+const CYCLE_ANCHOR_MS = Date.UTC(2026, 8, 5, 16, 0, 0);
 
 /**
  * Next boundary of the rolling cycle — always in the future, never more than
