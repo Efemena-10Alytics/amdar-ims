@@ -161,8 +161,8 @@ function getPaymentPlansFromPricing(
     display_five_installment_breakdown,
     six_installments_amount,
     display_six_installment_breakdown,
-    seven_installments_amount,
-    display_seven_installment_breakdown,
+    // seven_installments_amount,
+    // display_seven_installment_breakdown,
     eight_installments_amount,
     display_eight_installment_breakdown,
     nine_installments_amount,
@@ -272,28 +272,28 @@ function getPaymentPlansFromPricing(
     });
   }
 
-  if (seven_installments_amount != null) {
-    plans.push({
-      id: "7-installments",
-      label: "Flexi-Pay",
-      description: buildReserveDescription(
-        currency,
-        getInstallmentAmounts(
-          seven_installments_amount,
-          7,
-          display_seven_installment_breakdown,
-        ),
-        "bi-weekly",
-      ),
-      total: `${currency} ${seven_installments_amount}`,
-      breakdown: buildBiweeklyBreakdown(
-        currency,
-        seven_installments_amount,
-        7,
-        display_seven_installment_breakdown,
-      ),
-    });
-  }
+  // if (seven_installments_amount != null) {
+  //   plans.push({
+  //     id: "7-installments",
+  //     label: "Flexi-Pay",
+  //     description: buildReserveDescription(
+  //       currency,
+  //       getInstallmentAmounts(
+  //         seven_installments_amount,
+  //         7,
+  //         display_seven_installment_breakdown,
+  //       ),
+  //       "bi-weekly",
+  //     ),
+  //     total: `${currency} ${seven_installments_amount}`,
+  //     breakdown: buildBiweeklyBreakdown(
+  //       currency,
+  //       seven_installments_amount,
+  //       7,
+  //       display_seven_installment_breakdown,
+  //     ),
+  //   });
+  // }
 
   if (eight_installments_amount != null) {
     plans.push({
@@ -361,6 +361,8 @@ const Checkout = ({
   onProceed,
 }: CheckoutProps) => {
   const { hrs, mins, secs } = usePromoCountdown();
+  const discountPercentage = checkoutData?.promo_code_data
+    ?.discount_percentage as string | number | undefined;
   const firstCurrency = checkoutData?.pricings?.[0]?.currency ?? "USD";
   const {
     selectedCohort,
@@ -502,7 +504,9 @@ const Checkout = ({
             <div className="mt-4 flex flex-wrap items-end justify-between gap-2">
               <div className="flex flex-col gap-x-4 gap-y-1 text-sm text-[#6b7280]">
                 <span className="text-[#092A31] font-semibold text-base">
-                  30% discount
+                  {discountPercentage != null && discountPercentage !== ""
+                    ? `${discountPercentage}% discount`
+                    : "No discount applied"}
                 </span>
                 <span>
                   Ends in:{" "}

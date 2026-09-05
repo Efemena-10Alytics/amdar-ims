@@ -13,7 +13,6 @@ import type { CheckoutData } from "@/features/payment/use-get-checkout-data";
 import { usePayNow } from "@/features/payment/use-pay-now";
 import { useCheckoutSelectionsStorage } from "@/features/payment/use-checkout-storage";
 import { useAuthStore } from "@/store/auth-store";
-import { DEFAULT_PROMO_CODE } from "./coupon";
 import { PaymentSuccessModal } from "./payment-success-modal";
 import { SignInModal } from "./auth/sign-in-modal";
 import { SignUpModal } from "./auth/sign-up-modal";
@@ -55,7 +54,7 @@ const PaymentMain = ({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const promoCode = searchParams.get("promo_code") ?? DEFAULT_PROMO_CODE;
+  const promoCode = searchParams.get("promo_code") ?? "";
   const isUnique = searchParams.get("unique") === "1";
   const activeStep = stepFromParam(searchParams.get("step"));
   const statusParam = searchParams.get("status") ?? "";
@@ -236,12 +235,12 @@ const PaymentMain = ({
       </div>
       {activeStep === "checkout" && (
         <div className="lg:sticky lg:top-48 lg:self-start shrink-0 space-y-6 lg:w-60 xl:w-80">
-          <OffersCard />
           <Coupon
             discount={
               checkoutData?.promo_code_data?.discount_percentage as string
             }
           />
+          <OffersCard />
         </div>
       )}
 
