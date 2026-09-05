@@ -45,7 +45,7 @@ const AboutHero = () => {
   return (
     <section
       id="about-hero-section"
-      className="relative -translate-y-25 overflow-x-hidden bg-[#0D6D84] pb-16 pt-12 lg:pb-24 lg:pt-16"
+      className="relative -translate-y-36 overflow-x-hidden bg-[#0D6D84] pb-16 pt-12 sm:-translate-y-38 md:-translate-y-40 lg:-translate-y-45 lg:pb-24 lg:pt-16"
     >
       <div
         className="pointer-events-none absolute inset-0 opacity-35"
@@ -57,7 +57,7 @@ const AboutHero = () => {
         aria-hidden
       />
 
-      <div className="app-width relative z-10 mt-20">
+      <div className="app-width relative z-10 mt-36 sm:mt-38 md:mt-40 lg:mt-45">
         <div
           data-aos="fade-up"
           className="mx-auto mb-20 max-w-195 text-center text-white"

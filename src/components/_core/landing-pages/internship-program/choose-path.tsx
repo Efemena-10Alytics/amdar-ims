@@ -11,6 +11,7 @@ import {
   INTERNSHIP_ORIGINAL_PRICE_LABEL,
   INTERNSHIP_DISCOUNTED_PRICE_LABEL,
 } from "@/constants/internship-pricing";
+import { SpecialOfferBadge } from "@/components/_core/two-years-aniversary-offer/badge";
 
 const FALLBACK_IMAGE = "/images/pngs/internship.png";
 
@@ -66,6 +67,7 @@ const ChoosePath = ({ internshipPrograms }: ChoosePathProps) => {
                       !!(career.image && !career.image.startsWith("/"))
                     }
                   />
+                  <SpecialOfferBadge className="absolute top-3 left-2.5 z-10" />
                 </div>
                 <div className="mt-4">
                   <h3 className="text-xl font-semibold group-hover:text-white text-[#092A31] mb-3">
@@ -77,9 +79,9 @@ const ChoosePath = ({ internshipPrograms }: ChoosePathProps) => {
                   <div className="flex items-center justify-between">
                     <div>
                       <span className="text-lg font-semibold group-hover:text-white text-[#092A31]">
-                        <div className="text-[#64748B] group-hover:text-white line-through text-sm font-normal">
+                        {/* <div className="text-[#64748B] group-hover:text-white line-through text-sm font-normal">
                           {INTERNSHIP_ORIGINAL_PRICE_LABEL}
-                        </div>
+                        </div> */}
                         <div>{INTERNSHIP_DISCOUNTED_PRICE_LABEL}</div>
                       </span>
                     </div>
