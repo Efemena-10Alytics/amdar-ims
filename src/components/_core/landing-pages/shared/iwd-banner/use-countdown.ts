@@ -1,22 +1,20 @@
 "use client";
 
 import { useCallback, useState, useEffect } from "react";
-import { useGetPromoUrgency } from "@/features/payment/use-get-promo-time";
 
 /**
  * The promo countdown is a rolling cycle rather than a fixed campaign deadline,
- * so it can never display more than this many hours. Mirrors
- * `promo_urgency.countdown_cycle_hours` on the API.
+ * so it can never display more than this many hours.
  */
-const CYCLE_HOURS = 12;
+const CYCLE_HOURS = 24;
 const CYCLE_MS = CYCLE_HOURS * 60 * 60 * 1000;
 
-/** Matches `promo_urgency.countdown_anchor` so the fallback lines up with the API. */
-const CYCLE_ANCHOR_MS = Date.UTC(2026, 0, 1, 0, 0, 0);
+/** Anchor for the 24h rolling cycle — reset so the current window starts at 24h. */
+const CYCLE_ANCHOR_MS = Date.UTC(2026, 8, 5, 16, 30, 0);
 
 /**
- * Next boundary of the rolling cycle. Used when the API has not responded yet
- * or returned something unusable — always in the future, never a full cycle away.
+ * Next boundary of the rolling cycle — always in the future, never more than
+ * one full cycle away.
  */
 export function getRollingCycleEnd(now: number = Date.now()): Date {
   const completedCycles = Math.floor((now - CYCLE_ANCHOR_MS) / CYCLE_MS);
@@ -81,38 +79,11 @@ export function useCountdown(getEndDate: () => Date | null): CountdownResult {
 }
 
 /**
- * Single source of truth for every promo countdown on the internship and
- * payment pages. Resolves, in order:
- *
- * 1. `seconds_remaining` measured from when the response arrived — immune to a
- *    skewed client clock
- * 2. the absolute `end_at` timestamp
- * 3. a locally computed rolling cycle, if the API is unreachable
- *
- * Anything already elapsed or further out than one cycle falls through to the
- * rolling cycle, so the display is guaranteed to sit between 00:00:00 and 12:00:00
- * and never freezes on "Ended".
+ * Single source of truth for every promo countdown. Uses a local 24h rolling
+ * cycle so the timer stays between 00:00:00 and 24:00:00 and never freezes
+ * on "Ended".
  */
 export function usePromoCountdown(): CountdownResult {
-  const { data, dataUpdatedAt } = useGetPromoUrgency();
-  const secondsRemaining = data?.seconds_remaining;
-  const endAt = data?.end_at;
-
-  const getEndDate = useCallback((): Date => {
-    const now = Date.now();
-
-    let candidate: number | null = null;
-    if (typeof secondsRemaining === "number" && dataUpdatedAt > 0) {
-      candidate = dataUpdatedAt + secondsRemaining * 1000;
-    } else {
-      candidate = parseEndAt(endAt)?.getTime() ?? null;
-    }
-
-    if (candidate === null || candidate <= now || candidate - now > CYCLE_MS) {
-      return getRollingCycleEnd(now);
-    }
-    return new Date(candidate);
-  }, [secondsRemaining, endAt, dataUpdatedAt]);
-
+  const getEndDate = useCallback((): Date => getRollingCycleEnd(), []);
   return useCountdown(getEndDate);
 }
