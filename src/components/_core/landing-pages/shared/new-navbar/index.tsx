@@ -190,6 +190,11 @@ const Navbar = () => {
           shouldStickNav ? "sticky" : "relative",
         )}
       >
+        {showAnniversaryBanner && (
+          <AnniversaryBanner
+            variant={isHomePageRoute ? "home" : "internship"}
+          />
+        )}
         <nav
           className={cn(
             "relative z-121 w-full mt-0 border-b border-t-0 shadow-sm",
@@ -351,11 +356,6 @@ const Navbar = () => {
             </div>
           </div>
         </nav>
-        {showAnniversaryBanner && (
-          <AnniversaryBanner
-            variant={isHomePageRoute ? "home" : "internship"}
-          />
-        )}
       </div>
 
       <MobileDrawer
