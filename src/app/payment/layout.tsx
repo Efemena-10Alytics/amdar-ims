@@ -1,4 +1,4 @@
-import OffersStrip from "@/components/_core/landing-pages/shared/iwd-banner/offers-strip";
+// import OffersStrip from "@/components/_core/landing-pages/shared/iwd-banner/offers-strip";
 import Navbr from "@/components/_core/landing-pages/shared/navbar";
 import React from "react";
 
@@ -8,7 +8,7 @@ const LandingPageLayout = ({
   return (
     <div>
       <Navbr />
-      <OffersStrip />
+      {/* <OffersStrip /> */}
       <div className="pt-10">{children}</div>
     </div>
   );

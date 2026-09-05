@@ -8,10 +8,7 @@ const CLARITY_HREF_DEFAULT =
   "https://calendly.com/efemena-amdari/how-we-can-help-you-land-a-job-through-work-exp-clone";
 
 const TICKER_SEGMENTS = [
-  "🎉 500+ Amdari Interns Hired in the UK",
-  "Now Recruiting the Next 500",
-  "Special Offer Inside",
-  "Limited Spots",
+  "500+ Amdari interns have landed tech jobs in the UK between January - August 2026. We're on a mission to help 500 more people land jobs before the year ends. CLAIM SPOT",
 ] as const;
 
 /** Enough repeats that the -50% scroll loop never shows a gap on wide screens. */

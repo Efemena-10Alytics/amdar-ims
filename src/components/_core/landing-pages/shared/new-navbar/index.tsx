@@ -99,8 +99,7 @@ const Navbar = () => {
     pathname.startsWith("/talent-loop") ||
     pathname.startsWith("/contact");
 
-  const showAnniversaryBannerRoute =
-    !pathname.startsWith("/internship/") && !pathname.startsWith("/payment");
+  const showAnniversaryBannerRoute = !pathname.startsWith("/payment");
 
   const specialOfferDismissed = useSyncExternalStore(
     subscribeSpecialOfferVisibility,
