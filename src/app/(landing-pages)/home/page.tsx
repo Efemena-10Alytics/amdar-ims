@@ -11,12 +11,14 @@ import JobReady from "@/components/_core/landing-pages/internship-program/job-re
 import InternshipHeroTwo from "@/components/_core/landing-pages/home/hero-two";
 import SpeakToExpertWidget from "@/components/_core/landing-pages/shared/speak-to-expert-widget";
 import HomeSpecialOffer from "@/components/_core/two-years-aniversary-offer/home-special-offer";
+import SuccessStoriesShowcase from "@/components/_core/two-years-aniversary-offer/testimonal";
 
 const InternShipProgram = () => {
   return (
     <div>
       <HomeSpecialOffer />
       <InternshipHeroTwo />
+      <SuccessStoriesShowcase />
       <Companies />
       <WhatWeOffer />
       <Partners />
