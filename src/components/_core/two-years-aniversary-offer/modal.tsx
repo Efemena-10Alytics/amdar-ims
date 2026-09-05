@@ -240,20 +240,39 @@ export function SpecialOfferModal({
               Limited-Time Anniversary Celebration
             </span>
 
-            <DialogTitle className="mt-4 font-clash-display! text-3xl leading-[1.1] font-semibold text-white sm:text-4xl lg:text-[2.65rem]">
-              Celebrating <span className="text-[#FFE082]">500+</span> Success Stories
+            <DialogTitle className="mt-4 font-clash-display! text-3xl leading-[1.1] font-semibold text-white sm:text-4xl lg:text-[2.2rem]">
+              Over 500 Amdari interns have landed tech jobs in the UK between <span className="text-[#FFE082]">January - August 2026</span>
             </DialogTitle>
 
-            <p className="mt-3 text-base md:text-lg font-semibold">Your Story Could Be Next.{" "}</p>
+            {/* <p className="mt-3 text-base md:text-lg font-semibold">Your Story Could Be Next.{" "}</p>
             <p className="text-base md:text-lg font-semibold text-[#FFE082] sm:text-lg">
               <em className="not-italic font-bold">
                 "Every Program is 50% off for 24hrs”</em>
-            </p>
+            </p> */}
 
-            <p className="mt-3 max-w-md text-sm leading-relaxed text-white/85 sm:text-[15px]">
-              For two years we've helped aspiring professionals gain real-world experience, build job-ready portfolios, and launch global tech careers.
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-white/85 sm:text-lg">
+              Now, we're on a mission to help 500 more people land jobs before the year ends.
             </p>
-
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Link
+                href={clarityHref}
+                onClick={() => onOpenChange(false)}
+                className="group inline-flex h-12 items-center justify-center gap-2 rounded-full border border-transparent bg-[#FFE082] px-5 text-xs font-bold text-[#0F4652] transition hover:border-white/80 hover:bg-transparent hover:font-semibold hover:text-white"
+              >
+                Book Clarity Session
+                <ArrowIcon className="bg-[#156374] text-base text-[#FFE082] transition group-hover:bg-[#FFE082] group-hover:text-[#156374]" />
+              </Link>
+              <Link
+                href={claimHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => onOpenChange(false)}
+                className="group inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/80 bg-transparent px-5 text-xs font-semibold text-white transition hover:border-transparent hover:bg-[#FFE082] hover:font-bold hover:text-[#0F4652]"
+              >
+                Have coupon code? Claim offer
+                <ArrowIcon className="bg-[#FFE082] text-[#156374] transition group-hover:bg-[#156374] group-hover:text-[#FFE082]" />
+              </Link>
+            </div>
             <div className="mt-6 flex flex-wrap gap-2.5 sm:gap-4 md:gap-5">
               <CountdownRing
                 value={totalHours}
@@ -275,26 +294,7 @@ export function SpecialOfferModal({
               Until the anniversary offer closes
             </p>
 
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link
-                href={claimHref}
-                onClick={() => onOpenChange(false)}
-                className="group inline-flex h-12 items-center justify-center gap-2 rounded-full border border-transparent bg-[#FFE082] px-5 text-sm font-bold text-[#0F4652] transition hover:border-white/80 hover:bg-transparent hover:font-semibold hover:text-white"
-              >
-                Claim My 50% Discount
-                <ArrowIcon className="bg-[#156374] text-base text-[#FFE082] transition group-hover:bg-[#FFE082] group-hover:text-[#156374]" />
-              </Link>
-              <Link
-                href={clarityHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => onOpenChange(false)}
-                className="group inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/80 bg-transparent px-5 text-sm font-semibold text-white transition hover:border-transparent hover:bg-[#FFE082] hover:font-bold hover:text-[#0F4652]"
-              >
-                Book Clarity Session
-                <ArrowIcon className="bg-[#FFE082] text-[#156374] transition group-hover:bg-[#156374] group-hover:text-[#FFE082]" />
-              </Link>
-            </div>
+
 
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <div className="flex items-center">
