@@ -59,7 +59,7 @@ export function AnniversaryBanner({
 
         <div className="min-w-0 flex-1 overflow-hidden mask-[linear-gradient(90deg,transparent,black_12px,black_calc(100%-12px),transparent)]">
           <div
-            className="flex w-max shrink-0 items-center whitespace-nowrap text-xs font-medium text-white sm:text-sm"
+            className="flex w-max shrink-0 items-center whitespace-nowrap text-xs font-medium text-white sm:text-base"
             style={{ animation: "scroll-strip 45s linear infinite" }}
             aria-hidden
           >
