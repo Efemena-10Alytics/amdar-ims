@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import {
-  INTERNSHIP_ORIGINAL_PRICE_LABEL,
+  // INTERNSHIP_ORIGINAL_PRICE_LABEL,
   INTERNSHIP_DISCOUNTED_PRICE_LABEL,
 } from "@/constants/internship-pricing";
 import { cn } from "@/lib/utils";
@@ -53,7 +53,7 @@ export type IWDPaymentProps = {
 export default function IWDPayment({ applyHref, className }: IWDPaymentProps) {
   const { hrs, mins, secs } = usePromoCountdown();
 
-  const originalLabel = toPoundLabel(INTERNSHIP_ORIGINAL_PRICE_LABEL);
+  // const originalLabel = toPoundLabel(INTERNSHIP_ORIGINAL_PRICE_LABEL);
   const discountedLabel = toPoundLabel(INTERNSHIP_DISCOUNTED_PRICE_LABEL);
 
   return (
@@ -85,9 +85,9 @@ export default function IWDPayment({ applyHref, className }: IWDPaymentProps) {
           </div>
 
           <div className="mt-4 flex items-baseline gap-2.5">
-            <span className="text-sm text-[#94A3B8] line-through sm:text-base">
+            {/* <span className="text-sm text-[#94A3B8] line-through sm:text-base">
               {originalLabel}
-            </span>
+            </span> */}
             <span className="text-3xl font-bold tracking-tight text-[#092A31] sm:text-4xl">
               {discountedLabel}
             </span>
