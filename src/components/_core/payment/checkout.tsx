@@ -517,11 +517,11 @@ const Checkout = ({
                 </span>
               </div>
               <div className="flex flex-col items-baseline gap-2">
-                <span className="text-sm text-[#9ca3af] line-through">
-                  {selectedPricing
-                    ? `${selectedPricing.currency} ${selectedPricing.original_amount}`
-                    : "—"}
-                </span>
+                {promoCode?.trim() && selectedPricing ? (
+                  <span className="text-sm text-[#9ca3af] line-through">
+                    {`${selectedPricing.currency} ${selectedPricing.original_amount}`}
+                  </span>
+                ) : null}
                 <span className="font-clash-display text-xl font-bold text-primary">
                   {selectedPricing
                     ? `${selectedPricing.currency} ${selectedPricing.amount}`
