@@ -32,86 +32,57 @@ type TextTestimonial = {
   quote: string;
   outcomeRole: string;
   company: string;
-  avatar: string;
+  avatarBg: string;
   flag: string;
 };
 
 const TEXT_TESTIMONIALS: TextTestimonial[] = [
   {
     id: "1",
-    name: "Amber Jay",
-    role: "Product Design Intern",
+    name: "Obinna Nnamdi Nkemakolam",
+    role: "",
     quote:
-      "Within 3 months of completing the program, I got 4 job offers. The interview prep and portfolio building were game-changers!",
-    outcomeRole: "Product Designer",
-    company: "@Nike",
-    avatar:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=face",
+      "I signed up with Amdari because of the ads, reviews, and testimonials I came across, and honestly, they truly lived up to my expectations. From the moment I joined, I was impressed by how well structured, focused, and organized the company is. There were plenty of projects, classes, mentorship sessions, and opportunities. A special shout out to the preceptor of my cohort, @Remilekun, for the guidance, support, and dedication throughout the journey. He's doing an amazing job! Also @Damilola for checking up how things was going during the journey and the rest of the teams Truly, joining Amdari has been a great and smooth experience, and I'm genuinely grateful. Thank you, Amdari! 🙌",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#F3C6B0",
     flag: "/images/svgs/country/UK.svg",
   },
   {
     id: "2",
-    name: "Sarah Williams",
-    role: "Data Analytics Intern",
+    name: "Rilwan Olakunle Bolaji",
+    role: "",
     quote:
-      "The real-world projects gave me confidence in interviews. I landed a data analyst role within weeks of finishing.",
-    outcomeRole: "Data Analyst",
-    company: "@Barclays",
-    avatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&h=120&fit=crop&crop=face",
-    flag: "/images/svgs/country/USA.svg",
-  },
-  {
-    id: "3",
-    name: "James Okoro",
-    role: "Business Analyst Intern",
-    quote:
-      "Mentorship and portfolio reviews made the difference. I went from applying blindly to getting multiple callbacks.",
-    outcomeRole: "Business Analyst",
-    company: "@Deloitte",
-    avatar:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face",
-    flag: "/images/svgs/country/CAD.svg",
-  },
-  {
-    id: "4",
-    name: "Aliagha Gladys",
-    role: "Cybersecurity Intern",
-    quote:
-      "Hands-on labs and career support helped me transition into tech. I secured a junior security analyst role.",
-    outcomeRole: "Security Analyst",
-    company: "@IBM",
-    avatar:
-      "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=120&h=120&fit=crop&crop=face",
+      "This program, helped me grow by teaching what I needed to do to be an experienced professional",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#C5D4D8",
     flag: "/images/svgs/country/NG.svg",
   },
   {
-    id: "5",
-    name: "Simon Chuks",
-    role: "Data Intern",
+    id: "3",
+    name: "Ndiana-Abasi Okon",
+    role: "",
     quote:
-      "Building a job-ready portfolio with Amdari was the turning point. Recruiters finally understood my experience.",
-    outcomeRole: "Data Consultant",
-    company: "@Accenture",
-    avatar:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&fit=crop&crop=face",
-    flag: "/images/svgs/country/GER.svg",
-  },
-  {
-    id: "6",
-    name: "Maya Chen",
-    role: "UX Research Intern",
-    quote:
-      "The clarity sessions and project feedback sharpened my story. I accepted an offer at a product company abroad.",
-    outcomeRole: "UX Researcher",
-    company: "@Spotify",
-    avatar:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&h=120&fit=crop&crop=face",
+      "Amdari work experience programme has been an impactful journey that truly helped me transform my career. The individual projects, group discussions, feedback sessions, mentorship sessions, interview preparation, CV guidance, and LinkedIn optimisation support were all incredibly valuable. I met great minds and the mentors are super Amazing.",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#F97316",
     flag: "/images/svgs/country/UK.svg",
   },
 ];
 
 const CARDS_PER_PAGE = 3;
+
+function getInitials(name: string): string {
+  return name
+    .trim()
+    .split(/\s+/)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
 
 function QuoteMark({ className }: { className?: string }) {
   return (
@@ -177,22 +148,22 @@ function TextTestimonialCard({ item }: { item: TextTestimonial }) {
     <article className="flex h-full flex-col rounded-2xl bg-white p-5 shadow-[0_8px_30px_rgba(15,70,82,0.06)] sm:p-6">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="relative size-12 shrink-0 overflow-hidden rounded-full bg-[#E8EFF1]">
-            <Image
-              src={item.avatar}
-              alt=""
-              fill
-              className="object-cover"
-              sizes="48px"
-            />
+          <div
+            className="flex size-12 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-[#1F2937]"
+            style={{ backgroundColor: item.avatarBg }}
+            aria-hidden
+          >
+            {getInitials(item.name)}
           </div>
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-[#092A31] sm:text-base">
               {item.name}
             </p>
-            <p className="truncate text-xs text-[#64748B] sm:text-sm">
-              {item.role}
-            </p>
+            {item.role ? (
+              <p className="truncate text-xs text-[#64748B] sm:text-sm">
+                {item.role}
+              </p>
+            ) : null}
           </div>
         </div>
         <Image
@@ -210,10 +181,18 @@ function TextTestimonialCard({ item }: { item: TextTestimonial }) {
         {item.quote}
       </p>
 
-      <div className="mt-5 rounded-xl bg-[#E8EFF1] px-4 py-3">
-        <p className="text-sm font-semibold text-[#092A31]">{item.outcomeRole}</p>
-        <p className="text-xs text-[#64748B] sm:text-sm">{item.company}</p>
-      </div>
+      {item.outcomeRole || item.company ? (
+        <div className="mt-5 rounded-xl bg-[#E8EFF1] px-4 py-3">
+          {item.outcomeRole ? (
+            <p className="text-sm font-semibold text-[#092A31]">
+              {item.outcomeRole}
+            </p>
+          ) : null}
+          {item.company ? (
+            <p className="text-xs text-[#64748B] sm:text-sm">{item.company}</p>
+          ) : null}
+        </div>
+      ) : null}
     </article>
   );
 }
@@ -241,7 +220,7 @@ function FeaturedVideoTestimonial({ videoUrl }: { videoUrl: string }) {
   return (
     <div
       ref={containerRef}
-      className="relative h-64 w-full overflow-hidden rounded-2xl bg-[#0F4652] sm:h-80 sm:rounded-3xl md:h-96 lg:h-[28rem]"
+      className="relative h-64 w-full overflow-hidden rounded-2xl bg-[#0F4652] sm:h-80 sm:rounded-3xl md:h-96 lg:h-112"
     >
       {isPlaying && videoId ? (
         <iframe
