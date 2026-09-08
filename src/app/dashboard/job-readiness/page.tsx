@@ -105,7 +105,7 @@ const CvMatchlyCardSkeleton = () => (
 
 /* Mirrors: JobCard */
 const JobCardSkeleton = () => (
-  <div className="flex h-74.25 flex-col justify-between rounded-xl bg-[#F8FAFC] p-6">
+  <div className="flex min-h-[260px] flex-col justify-between rounded-xl bg-[#F8FAFC] p-6">
     <div>
       <div className="flex items-center gap-2">
         <Bone className="size-14 shrink-0 rounded-full" />

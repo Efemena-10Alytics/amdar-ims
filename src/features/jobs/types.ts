@@ -8,6 +8,7 @@ export type NormalizedJob = {
   remoteMode: string;
   sponsorship: string;
   datePosted: string;
+  closingDate: string;
   source: string;
   applyUrl: string;
 };

@@ -51,21 +51,41 @@ function formatSponsorship(record: RawRecord): string {
 function formatLocation(record: RawRecord): string {
   const locations = record?.locations;
   if (Array.isArray(locations) && locations.length > 0) {
-    return locations
-      .map((loc) => loc?.name ?? loc?.town)
-      .filter(Boolean)
-      .slice(0, 2)
-      .join("; ");
+    // Prefer the entry that includes a postcode (most specific), falling back
+    // to the first entry with a usable name/town. Locations from this API
+    // are often duplicated: one with just the town, one with "town, postcode".
+    const withPostcode = locations.find((loc) => loc?.postcode);
+    const best = withPostcode ?? locations[0];
+
+    const name: string = best?.name ?? best?.town ?? "";
+    const town: string = best?.town ?? "";
+    const postcode: string = best?.postcode ?? "";
+
+    if (name) {
+      // If name already contains the postcode (e.g. "Bracknell, RG12 2UT"), use it as-is.
+      if (postcode && name.includes(postcode)) return name;
+      if (postcode) return `${name}, ${postcode}`;
+      return name;
+    }
+    if (town && postcode) return `${town}, ${postcode}`;
+    return town || postcode;
   }
   return firstString(record, ["location"]);
 }
 
-function formatDatePosted(record: RawRecord): string {
-  const raw = record?.publishedAt ?? record?.firstSeenAt;
+function formatDate(raw: unknown): string {
   if (typeof raw !== "string" || !raw.trim()) return "";
   const date = new Date(raw);
   if (Number.isNaN(date.getTime())) return raw;
   return date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+}
+
+function formatDatePosted(record: RawRecord): string {
+  return formatDate(record?.publishedAt ?? record?.firstSeenAt);
+}
+
+function formatClosingDate(record: RawRecord): string {
+  return formatDate(record?.closingAt ?? record?.closingDate ?? record?.expiresAt);
 }
 
 export function normalizeJob(raw: RawRecord): NormalizedJob {
@@ -79,6 +99,7 @@ export function normalizeJob(raw: RawRecord): NormalizedJob {
     remoteMode: firstString(raw, ["remoteMode"]),
     sponsorship: formatSponsorship(raw),
     datePosted: formatDatePosted(raw),
+    closingDate: formatClosingDate(raw),
     source: firstString(raw, ["source"]),
     applyUrl: firstString(raw, ["sourceUrl"]),
   };
