@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Play } from "lucide-react";
 import Autoplay from "embla-carousel-autoplay";
@@ -12,6 +12,13 @@ import {
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
 import { getYoutubeThumbnail } from "@/features/testimonials/constants";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type TestimonialMode = "video" | "text";
 
@@ -36,7 +43,54 @@ type TextTestimonial = {
   flag: string;
 };
 
-const TEXT_TESTIMONIALS: TextTestimonial[] = [
+/** Programs Amdari offers — assigned across testimonials. */
+const PROGRAM_ROLES = [
+  "Data Analytics Intern",
+  "Business Analysis Intern",
+  "Data Science Intern",
+  "Data Engineering Intern",
+  "Project Management Intern",
+  "Cybersecurity Intern",
+  "SOC Analyst Intern",
+  "GRC Intern",
+  "Ethical Hacking Intern",
+  "App and Cloud Security Intern",
+  "DevOps Intern",
+  "Product Design Intern",
+] as const;
+
+/** Job title after the matching internship track. */
+const OUTCOME_ROLES: Record<(typeof PROGRAM_ROLES)[number], string> = {
+  "Data Analytics Intern": "Data Analyst",
+  "Business Analysis Intern": "Business Analyst",
+  "Data Science Intern": "Data Scientist",
+  "Data Engineering Intern": "Data Engineer",
+  "Project Management Intern": "Project Manager",
+  "Cybersecurity Intern": "Cybersecurity Analyst",
+  "SOC Analyst Intern": "SOC Analyst",
+  "GRC Intern": "GRC Analyst",
+  "Ethical Hacking Intern": "Penetration Tester",
+  "App and Cloud Security Intern": "Cloud Security Analyst",
+  "DevOps Intern": "DevOps Engineer",
+  "Product Design Intern": "Product Designer",
+};
+
+// const OUTCOME_COMPANIES = [
+//   "@NHS",
+//   "@HSBC",
+//   "@Deloitte",
+//   "@Barclays",
+//   "@Accenture",
+//   "@IBM",
+//   "@National Grid",
+//   "@GOV.UK",
+//   "@PWC",
+//   "@Capgemini",
+//   "@BT",
+//   "@Sky",
+// ] as const;
+
+const TEXT_TESTIMONIALS_DATA: TextTestimonial[] = [
   {
     id: "1",
     name: "Obinna Nnamdi Nkemakolam",
@@ -70,9 +124,260 @@ const TEXT_TESTIMONIALS: TextTestimonial[] = [
     avatarBg: "#F97316",
     flag: "/images/svgs/country/UK.svg",
   },
+  {
+    id: "4",
+    name: "MrsMchivirAmodu",
+    role: "",
+    quote:
+      "My internship Experience was enlightening and helped me gain a lot of confidence as an HR Data Analyst. My instructor Mr Damilare was brilliant in his delivery of projects he guided me with. He was patient and understanding when I hit some roadblocks whilst doing my project and ensured I reached my goals. It's been delightful interning with Amdari.",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#C5D4A8",
+    flag: "/images/svgs/country/UK.svg",
+  },
+  {
+    id: "5",
+    name: "Dejavu",
+    role: "",
+    quote: "Excellent service and great team to work with.",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#E57373",
+    flag: "/images/svgs/country/UK.svg",
+  },
+  {
+    id: "6",
+    name: "Mohammed Usman",
+    role: "",
+    quote:
+      "I've had a very positive experience with Amdari. I especially appreciate the practical approach to learning, with projects that encourage you to apply concepts to real-world scenarios rather than focus only on theory. The experience has helped me strengthen my data engineering skills, problem-solving, and confidence in building end-to-end projects. I'd definitely recommend Amdari to anyone looking for hands-on, practical learning.",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#90CAF9",
+    flag: "/images/svgs/country/NG.svg",
+  },
+  {
+    id: "7",
+    name: "Sakeenah",
+    role: "",
+    quote:
+      "I had a really great experience with the Data/Cloud Engineering Internship experience. Our program instructor, Ifeanyi, was a really patient and engaging teacher, always making sure we had a deep understanding of the concepts needed to work on our assigned projects, which made the experience really enjoyable. Would definitely recommend.",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#C4B5FD",
+    flag: "/images/svgs/country/NG.svg",
+  },
+  {
+    id: "8",
+    name: "Nwanneka Odenigbo",
+    role: "",
+    quote:
+      "My experience at Amdari has been great. From working on live projects, to understanding project artefacts. My specialist, Blessing, has been amazing, providing me with the support I need. My experience has been amazing overall.",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#BCAAA4",
+    flag: "/images/svgs/country/UK.svg",
+  },
+  {
+    id: "9",
+    name: "Francisca Igwe",
+    role: "",
+    quote:
+      "It's a great platform for gaining hands-on project experience, especially if you're trying to break into project management, product, or business analysis without prior experience. The projects are well structured, practical, and help you build a portfolio while working in a collaborative environment. Overall, I'd recommend it to anyone looking to develop real-world skills and confidence.",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#F48FB1",
+    flag: "/images/svgs/country/CAD.svg",
+  },
+  {
+    id: "10",
+    name: "Kwame Bamfo Asante",
+    role: "",
+    quote:
+      "Blessing, my supervisor has been amazing; displaying deep knowledge in Project Management and business analysis. She's extremely patient and makes time to address every challenge I've faced. I have gained practical experience on this journey and I'm incredibly grateful to have been here to imbibe such knowledge. Amdari! 🍻",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#80CBC4",
+    flag: "/images/svgs/country/UK.svg",
+  },
+  {
+    id: "11",
+    name: "Ifeoluwa Daniel",
+    role: "",
+    quote:
+      'The data science program is a good one and the program head "Aderemi" explains so well in details',
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#FFE082",
+    flag: "/images/svgs/country/UK.svg",
+  },
+  {
+    id: "12",
+    name: "Obed Nwachukwu",
+    role: "",
+    quote: "Our team lead, Ayo was always on point.",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#64B5F6",
+    flag: "/images/svgs/country/UK.svg",
+  },
+  {
+    id: "13",
+    name: "Ayotunde Daniel Akinwumi",
+    role: "",
+    quote:
+      "Great practical exposure to Data Engineering Amdari provided me with solid hands-on experience in Data Engineering. Working on real-world scenarios and practical projects helped bridge the gap between theoretical knowledge and actual industry application. The structure of the program and the support from mentors made a significant difference in boosting my confidence and technical expertise. Highly recommended for anyone looking to gain practical experience!",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#A5D6A7",
+    flag: "/images/svgs/country/UK.svg",
+  },
+  {
+    id: "14",
+    name: "Anonymous",
+    role: "",
+    quote:
+      "An amazing experience that makes you genuinely job-ready! Between the highly knowledgeable tutors, practical AI integration, and solid hands-on projects, the learning environment is fantastic. Plus, the continuous CV/application guidance is invaluable. Just be prepared to commit your time and put in the work!",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#CE93D8",
+    flag: "/images/svgs/country/UK.svg",
+  },
+  {
+    id: "15",
+    name: "Thelma Angela",
+    role: "",
+    quote:
+      "Amdari is great platform that gives students like me an opportunity to get hands on learning, improve one's skills and practice the newly acquired skill to boost confidence and become job market ready.",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#FFCC80",
+    flag: "/images/svgs/country/CAD.svg",
+  },
+  {
+    id: "16",
+    name: "Eniola Babatunde",
+    role: "",
+    quote: "Great company, learnt a alot",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#4DB6AC",
+    flag: "/images/svgs/country/UK.svg",
+  },
+  {
+    id: "17",
+    name: "Noble",
+    role: "",
+    quote:
+      "I had a great experience as a Data Analytics Consultant at AMDARI. The programme provided a valuable opportunity to apply analytical thinking to real business challenges, work on real-world projects across diverse industries, and gain hands-on experience analysing problems and delivering meaningful insights.\n\nI particularly appreciated the personal, one-on-one support and guidance from Data Analytics Specialist /Team Lead Moriam Adegbite, which made the experience engaging and valuable. The programme helped me develop not only my technical skills but also the mindset and confidence needed to approach challenges as a Data Analyst. I would highly recommend it to anyone looking to build practical experience and take their data analytics skills to the next level.",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#AED581",
+    flag: "/images/svgs/country/UK.svg",
+  },
+  {
+    id: "18",
+    name: "praygod mchome",
+    role: "",
+    quote:
+      "I had a great experience since I was able to learn and meet new people, who contributed to my Data Analysis career path.",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#81D4FA",
+    flag: "/images/svgs/country/CAD.svg",
+  },
+  {
+    id: "19",
+    name: "Chinedu Wisdom Ikem",
+    role: "",
+    quote:
+      "Working at AMDARI has been a genuinely rewarding experience. The work is meaningful, challenging, and gives me room to take ownership, solve real problems, and keep developing professionally. What stands out most is the culture of innovation and collaboration, there's a strong focus on building practical solutions with real-world value. It has been a great place to grow while contributing to work that makes an impact.",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#FFAB91",
+    flag: "/images/svgs/country/USA.svg",
+  },
+  {
+    id: "20",
+    name: "Itua ehis Henry",
+    role: "",
+    quote:
+      "My experience at AMDARI as a data science consultant has been great so far. Working on projects that are in demand and industrial based. Well coordinated. And the staff know the onus - It is a place to go if you really want to get work experience and get involve in live projects.",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#66BB6A",
+    flag: "/images/svgs/country/UK.svg",
+  },
+  {
+    id: "21",
+    name: "Abena",
+    role: "",
+    quote:
+      "Great experience with Amdari. Oluchi my facilitator has been fantastic!",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#F3C6B0",
+    flag: "/images/svgs/country/UK.svg",
+  },
+  {
+    id: "22",
+    name: "Balogun Ajibike",
+    role: "",
+    quote:
+      "My name is Ajibike Balogun, and I am currently participating in AMDARI's Data Analytics Internship Programme. I would like to share my experience and express my appreciation for the opportunities AMDARI has provided throughout my journey. I highly recommend AMDARI to anyone looking to gain practical experience in data analytics and technology.\n\nMy experience with AMDARI has been extremely positive. The internship programme provides hands-on exposure to real-world projects, allowing participants to apply analytical skills in practical business scenarios rather than just learning theory.\n\nOne of the things I appreciate most is the collaborative environment. Interns have the opportunity to work closely with Project Managers, Business Analysts, Data Scientists, Scrum Masters, and fellow Data Analysts, which provides valuable insight into how multidisciplinary teams work together in a professional setting.\n\nThe projects are well-structured and have helped me develop my skills in SQL, data analysis, data cleaning, reporting, dashboard development, stakeholder communication, and problem-solving. Through the programme, I have also gained experience with Agile methodologies, Jira, project documentation, and working with real datasets to answer business questions and support decision-making.\n\nA particularly rewarding experience was being appointed Team Lead during one of our collaborative projects. This opportunity allowed me to strengthen my leadership abilities while coordinating team activities, facilitating meetings, supporting project documentation, encouraging collaboration, and ensuring effective communication among team members. The experience significantly improved my confidence in leadership, organisation, teamwork, and professional communication.\n\nThe support from mentors and team leads has been excellent. Questions are welcomed, guidance is provided when needed, and there is a genuine focus on helping interns learn and grow professionally.\n\nAMDARI has given me the confidence to apply my skills in real-world situations and has significantly contributed to my development as a Data Analyst and aspiring analytics professional. I am grateful for the opportunity and would strongly recommend the programme to anyone looking to build practical experience, develop leadership skills, and advance their career in data and technology.",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#66BB6A",
+    flag: "/images/svgs/country/UK.svg",
+  },
+  {
+    id: "23",
+    name: "Adenuga Olajide",
+    role: "",
+    quote:
+      "I recently completed a 4-month Data Engineering Internship with Amdari, and it was an exceptional learning experience. The program combines hands-on projects, industry-standard tools, and strong mentorship to provide practical exposure to modern data engineering practices.\n\nDuring the internship, I built end-to-end data pipelines using Python, AWS, Snowflake, Airflow, PostgreSQL, Docker, and other cloud technologies while gaining a deeper understanding of data architecture, warehousing, orchestration, and analytics.\n\nThe mentors were highly supportive and focused on developing both technical expertise and problem-solving skills. I would highly recommend Amdari to anyone looking to transition into Data Engineering or strengthen their data and cloud engineering capabilities.\n\nThank you, Amdari, for an impactful and career-transforming experience.",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#FF9800",
+    flag: "/images/svgs/country/UK.svg",
+  },
+  {
+    id: "24",
+    name: "Yetunde Esther",
+    role: "",
+    quote:
+      "Had a wonderful experience with Amdari team, lots of real world projects to work on, My cordinator was very responsive to all questions and even when I needed reference for my Job, the team were all helpful. Would recommend Amdari to anyone seeking to gain a level of industry experience in DE.",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#C5D4A8",
+    flag: "/images/svgs/country/UK.svg",
+  },
+  {
+    id: "25",
+    name: "Wasiu Adelowo",
+    role: "",
+    quote:
+      "No two weeks are the same at Amdari. Each week offers exposure to real client-based projects, which is great for building UK job experience.",
+    outcomeRole: "",
+    company: "",
+    avatarBg: "#F3C6B0",
+    flag: "/images/svgs/country/UK.svg",
+  },
 ];
 
-const CARDS_PER_PAGE = 3;
+/** Stable pseudo-random role + outcome assignment so cards stay mixed across reloads. */
+const TEXT_TESTIMONIALS: TextTestimonial[] = TEXT_TESTIMONIALS_DATA.map(
+  (item, index) => {
+    const role = PROGRAM_ROLES[(index * 7 + 3) % PROGRAM_ROLES.length];
+    return {
+      ...item,
+      role,
+      outcomeRole: OUTCOME_ROLES[role],
+      // company: OUTCOME_COMPANIES[(index * 5 + 1) % OUTCOME_COMPANIES.length],
+      company: "",
+    };
+  },
+);
 
 function getInitials(name: string): string {
   return name
@@ -144,56 +449,145 @@ function ModeToggle({
 }
 
 function TextTestimonialCard({ item }: { item: TextTestimonial }) {
+  const [open, setOpen] = useState(false);
+  const [isClamped, setIsClamped] = useState(false);
+  const quoteRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    const el = quoteRef.current;
+    if (!el) return;
+
+    const checkClamp = () => {
+      setIsClamped(el.scrollHeight > el.clientHeight + 1);
+    };
+
+    checkClamp();
+    const observer = new ResizeObserver(checkClamp);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [item.quote]);
+
   return (
-    <article className="flex h-full flex-col rounded-2xl bg-white p-5 shadow-[0_8px_30px_rgba(15,70,82,0.06)] sm:p-6">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <div
-            className="flex size-12 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-[#1F2937]"
-            style={{ backgroundColor: item.avatarBg }}
-            aria-hidden
-          >
-            {getInitials(item.name)}
+    <>
+      <article className="flex h-full flex-col rounded-2xl bg-white p-5 shadow-[0_8px_30px_rgba(15,70,82,0.06)] sm:p-6">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <div
+              className="flex size-12 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-[#1F2937]"
+              style={{ backgroundColor: item.avatarBg }}
+              aria-hidden
+            >
+              {getInitials(item.name)}
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-[#092A31] sm:text-base">
+                {item.name}
+              </p>
+              {item.role ? (
+                <p className="truncate text-xs text-[#64748B] sm:text-sm">
+                  {item.role}
+                </p>
+              ) : null}
+            </div>
           </div>
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-[#092A31] sm:text-base">
-              {item.name}
-            </p>
-            {item.role ? (
-              <p className="truncate text-xs text-[#64748B] sm:text-sm">
-                {item.role}
+          <Image
+            src={item.flag}
+            alt=""
+            width={22}
+            height={22}
+            className="mt-0.5 shrink-0 rounded-full"
+          />
+        </div>
+
+        <QuoteMark className="mt-5 size-7 text-[#C8D5DA] sm:size-8" />
+
+        <div className="mt-3 flex flex-1 flex-col">
+          <p
+            ref={quoteRef}
+            className="line-clamp-3 text-sm leading-relaxed text-[#0C3640] sm:text-[15px]"
+          >
+            {item.quote}
+          </p>
+          {isClamped ? (
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="mt-2 self-start text-sm font-semibold text-[#156374] transition hover:text-[#0C3640]"
+            >
+              See more
+            </button>
+          ) : null}
+        </div>
+
+        {item.outcomeRole || item.company ? (
+          <div className="mt-5 rounded-xl bg-[#E8EFF1] px-4 py-3">
+            {item.outcomeRole ? (
+              <p className="text-sm font-semibold text-[#092A31]">
+                {item.outcomeRole}
               </p>
             ) : null}
+            {item.company ? (
+              <p className="text-xs text-[#64748B] sm:text-sm">{item.company}</p>
+            ) : null}
           </div>
-        </div>
-        <Image
-          src={item.flag}
-          alt=""
-          width={22}
-          height={22}
-          className="mt-0.5 shrink-0 rounded-full"
-        />
-      </div>
+        ) : null}
+      </article>
 
-      <QuoteMark className="mt-5 size-7 text-[#C8D5DA] sm:size-8" />
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
+          <DialogHeader>
+            <div className="flex items-start gap-3">
+              <div
+                className="flex size-12 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-[#1F2937]"
+                style={{ backgroundColor: item.avatarBg }}
+                aria-hidden
+              >
+                {getInitials(item.name)}
+              </div>
+              <div className="min-w-0 flex-1 text-left">
+                <DialogTitle className="text-[#092A31]">{item.name}</DialogTitle>
+                {item.role ? (
+                  <DialogDescription className="text-[#64748B]">
+                    {item.role}
+                  </DialogDescription>
+                ) : (
+                  <DialogDescription className="sr-only">
+                    Full testimonial from {item.name}
+                  </DialogDescription>
+                )}
+              </div>
+              <Image
+                src={item.flag}
+                alt=""
+                width={22}
+                height={22}
+                className="mt-1 shrink-0 rounded-full"
+              />
+            </div>
+          </DialogHeader>
 
-      <p className="mt-3 flex-1 text-sm leading-relaxed text-[#0C3640] sm:text-[15px]">
-        {item.quote}
-      </p>
+          <QuoteMark className="size-7 text-[#C8D5DA]" />
+          <p className="whitespace-pre-line text-sm leading-relaxed text-[#0C3640] sm:text-[15px]">
+            {item.quote}
+          </p>
 
-      {item.outcomeRole || item.company ? (
-        <div className="mt-5 rounded-xl bg-[#E8EFF1] px-4 py-3">
-          {item.outcomeRole ? (
-            <p className="text-sm font-semibold text-[#092A31]">
-              {item.outcomeRole}
-            </p>
+          {item.outcomeRole || item.company ? (
+            <div className="rounded-xl bg-[#E8EFF1] px-4 py-3">
+              {item.outcomeRole ? (
+                <p className="text-sm font-semibold text-[#092A31]">
+                  {item.outcomeRole}
+                </p>
+              ) : null}
+              {item.company ? (
+                <p className="text-xs text-[#64748B] sm:text-sm">
+                  {item.company}
+                </p>
+              ) : null}
+            </div>
           ) : null}
-          {item.company ? (
-            <p className="text-xs text-[#64748B] sm:text-sm">{item.company}</p>
-          ) : null}
-        </div>
-      ) : null}
-    </article>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
@@ -307,15 +701,7 @@ export function SuccessStoriesShowcase({
     Autoplay({ delay: 5000, stopOnInteraction: false }),
   );
 
-  const textPages = useMemo(() => {
-    const pages: TextTestimonial[][] = [];
-    for (let i = 0; i < TEXT_TESTIMONIALS.length; i += CARDS_PER_PAGE) {
-      pages.push(TEXT_TESTIMONIALS.slice(i, i + CARDS_PER_PAGE));
-    }
-    return pages;
-  }, []);
-
-  const pageCount = textPages.length;
+  const slideCount = TEXT_TESTIMONIALS.length;
 
   useEffect(() => {
     if (!api) return;
@@ -375,21 +761,20 @@ export function SuccessStoriesShowcase({
                 className="w-full"
               >
                 <CarouselContent className="-ml-4 py-4">
-                  {textPages.map((page, pageIdx) => (
-                    <CarouselItem key={`text-page-${pageIdx}`} className="pl-4">
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-5">
-                        {page.map((item) => (
-                          <TextTestimonialCard key={item.id} item={item} />
-                        ))}
-                      </div>
+                  {TEXT_TESTIMONIALS.map((item) => (
+                    <CarouselItem
+                      key={item.id}
+                      className="pl-4 basis-full md:basis-1/2 lg:basis-1/3"
+                    >
+                      <TextTestimonialCard item={item} />
                     </CarouselItem>
                   ))}
                 </CarouselContent>
               </Carousel>
 
-              {pageCount > 1 ? (
+              {slideCount > 1 ? (
                 <PageDots
-                  count={pageCount}
+                  count={slideCount}
                   activeIndex={pageIndex}
                   onSelect={handleSelectPage}
                 />
