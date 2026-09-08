@@ -1,6 +1,6 @@
 export const EXCLUDED_INTERNSHIP_PROGRAM_SLUGS: string[] = [
   "hr-analytics-career-experience-internship-hacei",
-  "ethical-hacking-work-experience-internship-uk-canada",
+  // "ethical-hacking-work-experience-internship-uk-canada",
   "cybersecurity-career-experience-internship-ccei",
   "financial-analytics-career-experience-internship-facei",
   "devops-career-experience-internship-dcei",
