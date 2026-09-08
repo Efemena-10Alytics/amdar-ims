@@ -1,6 +1,7 @@
 "use client";
 
 import CareerStageSchedule from "@/components/_core/dashboard/internship-program/internship-details/career-stage/career-stage-schedule";
+import type { StageProjectScheduleTone } from "@/components/_core/dashboard/internship-program/internship-details/career-stage/stage-project-schedule";
 import { useEnrollmentCohortProgramIds } from "@/components/_core/dashboard/internship-program/internship-details/career-stage/use-stage-project-schedule-data";
 import { InternProjectCareerStage } from "@/features/interns-project/internship-project.types";
 import { useGetProjectByStage } from "@/features/interns-project/use-get-project-by-stage";
@@ -8,7 +9,11 @@ import { useGetProjectByStage } from "@/features/interns-project/use-get-project
 const EMERGING_DESCRIPTION =
   "Strengthens emerging professional judgment through denser delivery cycles, peer critique, and outcome-focused iteration.";
 
-const EmergingStage = () => {
+type EmergingStageProps = {
+  tone?: StageProjectScheduleTone;
+};
+
+const EmergingStage = ({ tone = "locked" }: EmergingStageProps) => {
   const { cohortId, programId, isLoading, isError, refetch } =
     useEnrollmentCohortProgramIds();
   const projectsQuery = useGetProjectByStage({
@@ -20,7 +25,7 @@ const EmergingStage = () => {
   return (
     <CareerStageSchedule
       description={EMERGING_DESCRIPTION}
-      tone="locked"
+      tone={tone}
       projects={projectsQuery.data ?? []}
       isProjectsLoading={isLoading || projectsQuery.isLoading}
       isProjectsError={isError || projectsQuery.isError}

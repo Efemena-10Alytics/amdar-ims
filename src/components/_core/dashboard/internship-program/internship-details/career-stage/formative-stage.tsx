@@ -1,6 +1,7 @@
 "use client";
 
 import CareerStageSchedule from "@/components/_core/dashboard/internship-program/internship-details/career-stage/career-stage-schedule";
+import type { StageProjectScheduleTone } from "@/components/_core/dashboard/internship-program/internship-details/career-stage/stage-project-schedule";
 import { useEnrollmentCohortProgramIds } from "@/components/_core/dashboard/internship-program/internship-details/career-stage/use-stage-project-schedule-data";
 import { InternProjectCareerStage } from "@/features/interns-project/internship-project.types";
 import { useGetProjectByStage } from "@/features/interns-project/use-get-project-by-stage";
@@ -8,7 +9,11 @@ import { useGetProjectByStage } from "@/features/interns-project/use-get-project
 const FORMATIVE_DESCRIPTION =
   "Builds applied competence through structured project execution, guided practice, and progressive skill development.";
 
-const FormativeStage = () => {
+type FormativeStageProps = {
+  tone?: StageProjectScheduleTone;
+};
+
+const FormativeStage = ({ tone = "upcoming" }: FormativeStageProps) => {
   const { cohortId, programId, isLoading, isError, refetch } =
     useEnrollmentCohortProgramIds();
   const projectsQuery = useGetProjectByStage({
@@ -20,7 +25,7 @@ const FormativeStage = () => {
   return (
     <CareerStageSchedule
       description={FORMATIVE_DESCRIPTION}
-      tone="upcoming"
+      tone={tone}
       projects={projectsQuery.data ?? []}
       isProjectsLoading={isLoading || projectsQuery.isLoading}
       isProjectsError={isError || projectsQuery.isError}

@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "@fontsource-variable/sora";
 
 @custom-variant dark (&:is(.dark *));
 @font-face {
@@ -246,7 +245,7 @@ html {
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    font-family: "Sora", sans-serif !important;
+    font-family: "Sora Variable", sans-serif !important;
     /* scrollbar-width: thin; */
     scrollbar-color: #ebecee transparent;
   }
@@ -263,7 +262,7 @@ html {
   }
 
   /*
-   * The universal `font-family: Sora !important` above lives in this layer, and
+   * The universal `font-family: Sora Variable !important` above lives in this layer, and
    * important declarations resolve earlier-layer-first — so it outranks the
    * `font-clash-display!` utility, which Tailwind emits into @layer utilities.
    * Declaring the class here puts it in the same layer, where its class

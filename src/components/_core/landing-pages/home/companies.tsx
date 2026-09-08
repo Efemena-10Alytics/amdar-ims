@@ -20,7 +20,7 @@ export default function Companies() {
 
   return (
     <section
-      className="bg-[#F0F4F8] py-14 lg:py-20 -translate-y-25"
+      className="bg-[#F0F4F8] py-14 lg:py-20"
       aria-labelledby="companies-heading"
     >
       <div className="">

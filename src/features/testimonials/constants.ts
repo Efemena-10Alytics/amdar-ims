@@ -36,9 +36,11 @@ export const TESTIMONIAL_VIDEOS: TestimonialVideo[] = [
   },
 ];
 
-/** Get YouTube thumbnail image URL from a watch URL or video ID. */
+/** Get YouTube thumbnail image URL from a watch URL, youtu.be link, or video ID. */
 export function getYoutubeThumbnail(urlOrId: string): string {
-  const match = urlOrId.match(/(?:v=|\/vi\/)([a-zA-Z0-9_-]{11})/);
+  const match = urlOrId.match(
+    /(?:v=|\/vi\/|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/,
+  );
   const videoId = match ? match[1] : urlOrId;
   return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 }

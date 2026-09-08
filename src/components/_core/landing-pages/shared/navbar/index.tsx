@@ -25,6 +25,7 @@ import AboutBar from "../../about/AboutBar";
 import { ChevronDown } from "lucide-react";
 import { SalesBanner } from "./sales-banner";
 import { MoreDropdown } from "./more-dropdown";
+import { AnniversaryBanner } from "@/components/_core/two-years-aniversary-offer/banner";
 
 export function TooltipDemo() {
   return (
@@ -81,6 +82,7 @@ const Navbr = () => {
 
   const showSalesBanner =
     !pathname.startsWith("/internship/") && !pathname.startsWith("/payment");
+  const showAnniversaryBanner = pathname.startsWith("/payment");
   const showWhiteNav = isScrolled || !isHomePageRoute;
 
   // Track scroll to add white bg on home when user scrolls
@@ -119,6 +121,9 @@ const Navbr = () => {
     <>
       {/* {showSalesBanner && <SalesBanner />} */}
       <div className="sticky top-0 left-0 right-0 z-50">
+        {showAnniversaryBanner && (
+          <AnniversaryBanner variant="internship" />
+        )}
         <nav
           className={cn(
             "w-full border-b transition-colors duration-300",

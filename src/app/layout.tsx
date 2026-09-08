@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import "@fontsource-variable/sora";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
 import "aos/dist/aos.css";
