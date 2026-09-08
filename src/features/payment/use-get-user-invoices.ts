@@ -15,14 +15,14 @@ type RawInvoicesResponse = {
   };
 };
 
-/** Unwraps the doubly-nested `{ data: { data: { data: [...] } } }` envelope defensively. */
-function unwrapInvoices(payload: RawInvoicesResponse["data"]): ApiInvoice[] {
-  const inner = payload?.data?.data;
+/** Unwraps the triply-nested `{ data: { data: { data: [...] } } }` envelope defensively. */
+function unwrapInvoices(payload: RawInvoicesResponse | undefined): ApiInvoice[] {
+  const inner = payload?.data?.data?.data;
   return Array.isArray(inner) ? inner : [];
 }
 
 export async function getUserInvoices(): Promise<ApiInvoice[]> {
-  const { data } = await axiosInstance.get<RawInvoicesResponse["data"]>(
+  const { data } = await axiosInstance.get<RawInvoicesResponse>(
     "payment/user/invoices",
   );
   return unwrapInvoices(data);

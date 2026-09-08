@@ -28,6 +28,7 @@ const pathToTitle: Record<string, string> = {
   "/dashboard/internship-program": "Internship Program",
   "/dashboard/portfolio": "Portfolio",
   "/dashboard/billing": "Billings",
+  "/dashboard/job-readiness": "Job Readiness",
 };
 
 function getHeaderTitle(pathname: string): string {

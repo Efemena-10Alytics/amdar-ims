@@ -17,6 +17,7 @@ import {
   BlogIcon,
   InternshipProgramIcon,
   InterviewPrepIcon,
+  JobReadinessIcon,
   LearnIcon,
   PortfolioIcon,
 } from "../svg";
@@ -27,7 +28,7 @@ const navMain = [
   { title: "Internship program", url: "/dashboard/internship-program", icon: InternshipProgramIcon },
   // { title: "Project vault", url: "/dashboard-projects/dashboard-project-paths/filter", icon: ProjectVaultIcon },
   // { title: "Interview prep", url: "/dashboard/portfolio", icon: InterviewPrepIcon },
-  { title: "Job board", url: "#", icon: InterviewPrepIcon },
+  { title: "Job Readiness", url: "/dashboard/job-readiness", icon: JobReadinessIcon },
   { title: "Portfolio", url: "/dashboard/portfolio", icon: PortfolioIcon },
   // { title: "Hackathons", url: "/live-hackathon", icon: HackathonIcon },
   { title: "Learn", url: "/learn", icon: LearnIcon },
