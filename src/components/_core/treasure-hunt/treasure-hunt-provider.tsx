@@ -122,12 +122,18 @@ export function TreasureHuntProvider({
   );
 }
 
+const inactiveTreasureHunt: TreasureHuntContextValue = {
+  isHuntActive: false,
+  isClaiming: false,
+  slotToTreasureId: [],
+  openDecoy: () => {},
+  claimTreasure: async () => {},
+};
+
 export function useTreasureHunt() {
   const ctx = useContext(TreasureHuntContext);
-  if (!ctx) {
-    throw new Error("useTreasureHunt must be used within TreasureHuntProvider");
-  }
-  return ctx;
+  // Shared chrome (e.g. Footer CTA) can render outside landing-pages layout.
+  return ctx ?? inactiveTreasureHunt;
 }
 
 type TreasureSpotProps = {

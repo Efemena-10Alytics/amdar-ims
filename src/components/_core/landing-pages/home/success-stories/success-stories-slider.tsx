@@ -26,7 +26,8 @@ const CustomCarouselPrevious = ({
   enableTreasureHunt?: boolean;
 }) => {
   const [canScrollPrev, setCanScrollPrev] = useState(false);
-  const { isHuntActive } = useTreasureHunt();
+  const hunt = useTreasureHunt();
+  const isHuntActive = enableTreasureHunt ? hunt.isHuntActive : false;
 
   useEffect(() => {
     if (!api) return;
@@ -88,7 +89,8 @@ const CustomCarouselNext = ({
   enableTreasureHunt?: boolean;
 }) => {
   const [canScrollNext, setCanScrollNext] = useState(false);
-  const { isHuntActive } = useTreasureHunt();
+  const hunt = useTreasureHunt();
+  const isHuntActive = enableTreasureHunt ? hunt.isHuntActive : false;
 
   useEffect(() => {
     if (!api) return;
