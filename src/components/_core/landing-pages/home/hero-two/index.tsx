@@ -12,7 +12,12 @@ import Flag from "../hero/flag";
 import ServiceCard from "../hero/service-card";
 import IconOrbit from "./icon-orbit";
 import { SpeakToExpertPopover } from "./speak-to-our-expert";
-import { useGetTreasures } from "@/features/treasure-hunt/use-get-treasures";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  TREASURES_QUERY_KEY,
+  useGetTreasures,
+} from "@/features/treasure-hunt/use-get-treasures";
+import { useWinTreasure } from "@/features/treasure-hunt/use-win";
 import { TreasureHuntCongratulationsModal } from "@/components/_core/treasure-hunt/congratulations";
 
 const InternshipHeroTwo = () => {
@@ -20,11 +25,26 @@ const InternshipHeroTwo = () => {
   const [treasureModal, setTreasureModal] = React.useState<"decoy" | "win" | null>(
     null,
   );
-  const { data, error: treasuresError, isLoading: treasuresLoading } =
-    useGetTreasures();
+  const queryClient = useQueryClient();
+  const { data } = useGetTreasures();
+  const { win, isSubmitting: isClaiming, data: winData } = useWinTreasure();
   const treasures = data?.treasures;
   const treasureId = treasures?.at(-1)?.id;
+  const hunterId = data?.hunter?.id;
   const showOften = data?.hunter?.treasure_id === null;
+  const wonTreasureName = winData?.treasure?.name;
+
+  const handleClaimTreasure = async () => {
+    if (hunterId == null || treasureId == null || isClaiming) return;
+
+    try {
+      await win({ hunter_id: hunterId, treasure_id: treasureId });
+      await queryClient.invalidateQueries({ queryKey: TREASURES_QUERY_KEY });
+      setTreasureModal("win");
+    } catch {
+      // errorMessage is set by the win hook
+    }
+  };
 
   React.useEffect(() => {
     Aos.init({ duration: 600 });
@@ -54,15 +74,20 @@ const InternshipHeroTwo = () => {
           >
             Join the Work Experience Platform Trusted by Aspiring Tech
             Professionals Worldwide to Build Real-World Experience and Land Your
-            Dream Job{" "}
-            <button
-              type="button"
-              className="cursor-pointer text-amdari-yellow"
-              onClick={() => setTreasureModal("decoy")}
-            >
-              here
-            </button>
-            !
+            Dream Job
+            {showOften ? (
+              <>
+                {" "}
+                <button
+                  type="button"
+                  className="cursor-pointer text-amdari-yellow"
+                  onClick={() => setTreasureModal("decoy")}
+                >
+                  here
+                </button>
+                !
+              </>
+            ) : null}
           </p>
 
           {/* CTA Buttons */}
@@ -110,18 +135,11 @@ const InternshipHeroTwo = () => {
                   {" "}
                   <button
                     type="button"
-                    className="cursor-pointer"
+                    className="cursor-pointer disabled:cursor-wait disabled:opacity-70"
                     data-treasure-id={treasureId}
                     data-treasure-icon="true"
-                    onClick={() => {
-                      console.log("treasure id:", treasureId, {
-                        hunter: data?.hunter,
-                        treasures,
-                        treasuresLoading,
-                        treasuresError,
-                      });
-                      setTreasureModal("win");
-                    }}
+                    disabled={isClaiming || treasureId == null || hunterId == null}
+                    onClick={handleClaimTreasure}
                   >
                     often
                   </button>
@@ -163,6 +181,7 @@ const InternshipHeroTwo = () => {
       <TreasureHuntCongratulationsModal
         open={treasureModal != null}
         variant={treasureModal ?? "decoy"}
+        treasureName={wonTreasureName}
         onOpenChange={(open) => {
           if (!open) setTreasureModal(null);
         }}

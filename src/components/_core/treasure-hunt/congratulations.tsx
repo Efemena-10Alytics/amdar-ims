@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { getTreasureImageSrc } from "./treasure-images";
 
 export type TreasureHuntModalVariant = "decoy" | "win";
 
@@ -19,15 +20,18 @@ type TreasureHuntCongratulationsModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   variant?: TreasureHuntModalVariant;
+  treasureName?: string | null;
 };
 
 export function TreasureHuntCongratulationsModal({
   open,
   onOpenChange,
   variant = "decoy",
+  treasureName,
 }: TreasureHuntCongratulationsModalProps) {
   const confettiFired = useRef(false);
   const isWin = variant === "win";
+  const treasureImageSrc = isWin ? getTreasureImageSrc(treasureName) : null;
 
   useEffect(() => {
     if (!open || !isWin) {
@@ -64,13 +68,30 @@ export function TreasureHuntCongratulationsModal({
       >
         <DialogHeader className="items-center sm:text-center">
           {isWin ? (
-            <div className="mx-auto mb-2 flex size-14 items-center justify-center rounded-full bg-[#0F4652]/10">
-              <Gift className="size-7 text-[#0F4652]" />
-            </div>
+            treasureImageSrc ? (
+              <div className="mx-auto mb-2 flex h-40 w-40 items-center justify-center overflow-hidden rounded-2xl bg-[#F8FAFC] p-2">
+                <img
+                  src={treasureImageSrc}
+                  alt={treasureName ?? "Won treasure"}
+                  width={160}
+                  height={160}
+                  className="h-40 w-40 object-contain"
+                />
+              </div>
+            ) : (
+              <div className="mx-auto mb-2 flex size-14 items-center justify-center rounded-full bg-[#0F4652]/10">
+                <Gift className="size-7 text-[#0F4652]" />
+              </div>
+            )
           ) : null}
           <DialogTitle className="font-clash-display text-2xl font-semibold text-[#092A31]">
             {isWin ? "You've won!" : "Oops! no treasure here,"}
           </DialogTitle>
+          {isWin && treasureName ? (
+            <p className="font-clash-display text-3xl font-bold text-[#092A31] sm:text-4xl">
+              {treasureName}
+            </p>
+          ) : null}
           <DialogDescription className="text-sm text-[#64748B] sm:text-base">
             {isWin
               ? "Congratulations — you found a treasure. We'll be in touch with next steps."
