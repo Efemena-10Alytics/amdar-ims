@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Aos from "aos";
+import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const PROJECT_DETAILS = [
   {
@@ -24,6 +25,7 @@ const PROJECT_DETAILS = [
     title: "Micro-copy below",
     description:
       "Most partners spend less than 30 minutes contributing their brief. The rest is on us.",
+    treasure: "decoy" as const,
   },
 ] as const;
 
@@ -59,11 +61,23 @@ export default function LiveProject() {
             id="live-project-heading"
             className="font-clash-display max-w-xl text-balance text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-[2.625rem]"
           >
-            A problem. A scenario. A challenge space.
+            A problem. A scenario. A{" "}
+            <TreasureSpot
+              kind="win"
+              treasureSlotIndex={7}
+              className="text-inherit"
+            >
+              challenge space
+            </TreasureSpot>
+            .
           </h2>
           <p className="mt-3 max-w-lg text-sm font-semibold leading-relaxed text-[#64748B] sm:text-base">
-            You don&apos;t need to hand over sensitive data or internal
-            documents. You just need to point us toward something real.
+            You don&apos;t need to hand over{" "}
+            <TreasureSpot kind="decoy" className="text-inherit">
+              sensitive data
+            </TreasureSpot>{" "}
+            or internal documents. You just need to point us toward something
+            real.
           </p>
 
           <div className="mt-9 divide-y divide-[#C9D6DB]">
@@ -75,7 +89,13 @@ export default function LiveProject() {
                 className="py-5 first:pt-0 last:pb-0"
               >
                 <h3 className="text-lg font-bold leading-snug text-[#475569] md:text-xl">
-                  {item.title}
+                  {"treasure" in item && item.treasure === "decoy" ? (
+                    <TreasureSpot kind="decoy" className="text-inherit">
+                      {item.title}
+                    </TreasureSpot>
+                  ) : (
+                    item.title
+                  )}
                 </h3>
                 <p className="mt-2 text-sm font-medium leading-relaxed text-[#64748B] sm:text-base">
                   {item.description}

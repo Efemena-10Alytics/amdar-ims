@@ -11,6 +11,7 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import Aos from "aos";
+import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const WhatWeOffer = () => {
   const [activeTab, setActiveTab] = React.useState<
@@ -58,7 +59,11 @@ const WhatWeOffer = () => {
       className="app-width pb-10"
     >
       <div className="flex flex-col md:flex-row md:items-end justify-between">
-        <p className="text-sm text-gray-500 mb-4">Use switch tab</p>
+        <p className="text-sm text-gray-500 mb-4">
+          <TreasureSpot kind="decoy" className="text-inherit">
+            Use switch tab
+          </TreasureSpot>
+        </p>
         <div className="flex justify-end mb-6">
           <div className="flex gap-2 rounded-full bg-[#E8EFF1] py-2 px-3">
             {tabs.map((tab) => (

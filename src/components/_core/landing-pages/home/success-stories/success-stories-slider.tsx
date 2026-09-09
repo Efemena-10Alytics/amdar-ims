@@ -10,16 +10,24 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ArrowLeftCurve, ArrowRightCurve } from "../svg";
+import {
+  TreasureSpot,
+  useTreasureHunt,
+} from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 // Custom Navigation Buttons
 const CustomCarouselPrevious = ({
   className,
   api,
+  enableTreasureHunt,
 }: {
   className?: string;
   api: CarouselApi | undefined;
+  enableTreasureHunt?: boolean;
 }) => {
   const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const hunt = useTreasureHunt();
+  const isHuntActive = enableTreasureHunt ? hunt.isHuntActive : false;
 
   useEffect(() => {
     if (!api) return;
@@ -38,14 +46,30 @@ const CustomCarouselPrevious = ({
     };
   }, [api]);
 
+  const buttonClassName = cn(
+    "w-10 h-10 rounded-full bg-white border-primary/30 text-gray-600 hover:bg-white/80",
+    className,
+  );
+
+  if (enableTreasureHunt && isHuntActive) {
+    return (
+      <TreasureSpot
+        kind="decoy"
+        className={cn(
+          buttonClassName,
+          "inline-flex items-center justify-center border",
+        )}
+      >
+        <ArrowLeftCurve />
+      </TreasureSpot>
+    );
+  }
+
   return (
     <Button
       variant="outline"
       size="icon"
-      className={cn(
-        "w-10 h-10 rounded-full bg-white border-primary/30 text-gray-600 hover:bg-white/80",
-        className
-      )}
+      className={buttonClassName}
       disabled={!canScrollPrev}
       onClick={() => api?.scrollPrev()}
       aria-label="Previous slide"
@@ -58,11 +82,15 @@ const CustomCarouselPrevious = ({
 const CustomCarouselNext = ({
   className,
   api,
+  enableTreasureHunt,
 }: {
   className?: string;
   api: CarouselApi | undefined;
+  enableTreasureHunt?: boolean;
 }) => {
   const [canScrollNext, setCanScrollNext] = useState(false);
+  const hunt = useTreasureHunt();
+  const isHuntActive = enableTreasureHunt ? hunt.isHuntActive : false;
 
   useEffect(() => {
     if (!api) return;
@@ -81,14 +109,31 @@ const CustomCarouselNext = ({
     };
   }, [api]);
 
+  const buttonClassName = cn(
+    "w-10 h-10 rounded-full bg-primary text-white hover:bg-primary/90 border-0",
+    className,
+  );
+
+  if (enableTreasureHunt && isHuntActive) {
+    return (
+      <TreasureSpot
+        kind="win"
+        treasureSlotIndex={10}
+        className={cn(
+          buttonClassName,
+          "inline-flex items-center justify-center",
+        )}
+      >
+        <ArrowRightCurve />
+      </TreasureSpot>
+    );
+  }
+
   return (
     <Button
       variant="outline"
       size="icon"
-      className={cn(
-        "w-10 h-10 rounded-full bg-primary text-white hover:bg-primary/90 border-0",
-        className
-      )}
+      className={buttonClassName}
       disabled={!canScrollNext}
       onClick={() => api?.scrollNext()}
       aria-label="Next slide"
@@ -137,6 +182,7 @@ interface SuccessStoriesSliderProps {
   testimonials: Testimonial[];
   current: number;
   onApiChange?: (api: CarouselApi | undefined) => void;
+  enableTreasureHunt?: boolean;
 }
 
 const AUTO_SLIDE_INTERVAL_MS = 5000;
@@ -145,6 +191,7 @@ const SuccessStoriesSlider = ({
   testimonials,
   current,
   onApiChange,
+  enableTreasureHunt = false,
 }: SuccessStoriesSliderProps) => {
   const [api, setApi] = useState<CarouselApi>();
 
@@ -199,10 +246,16 @@ const SuccessStoriesSlider = ({
         {/* Navigation Buttons */}
         <div className="flex justify-between items-center absolute -left-12 -right-12 top-1/2 -translate-y-1/2 pointer-events-none">
           <div className="pointer-events-auto">
-            <CustomCarouselPrevious api={api} />
+            <CustomCarouselPrevious
+              api={api}
+              enableTreasureHunt={enableTreasureHunt}
+            />
           </div>
           <div className="pointer-events-auto">
-            <CustomCarouselNext api={api} />
+            <CustomCarouselNext
+              api={api}
+              enableTreasureHunt={enableTreasureHunt}
+            />
           </div>
         </div>
       </Carousel>

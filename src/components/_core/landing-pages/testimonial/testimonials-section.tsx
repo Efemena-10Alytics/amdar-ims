@@ -14,13 +14,20 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ArrowLeftCurve, ArrowRightCurve } from "@/components/_core/landing-pages/home/svg";
+import {
+  ArrowLeftCurve,
+  ArrowRightCurve,
+} from "@/components/_core/landing-pages/home/svg";
 import {
   getYoutubeThumbnail,
   TESTIMONIAL_VIDEOS,
 } from "@/features/testimonials/constants";
 import { useYoutubeCaptions } from "@/features/youtube/use-youtube-caption";
 import SuccessStories from "../home/success-stories";
+import {
+  TreasureSpot,
+  useTreasureHunt,
+} from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 type TestimonialVideoCardProps = {
   testimonial: (typeof TESTIMONIAL_VIDEOS)[number];
@@ -29,6 +36,8 @@ type TestimonialVideoCardProps = {
   hasImageError: boolean;
   onImageError: () => void;
   onPlay: () => void;
+  playTreasure?: { kind: "decoy" | "win"; slot?: number };
+  badgeTreasure?: "decoy";
 };
 
 function TestimonialVideoCard({
@@ -38,8 +47,11 @@ function TestimonialVideoCard({
   hasImageError,
   onImageError,
   onPlay,
+  playTreasure,
+  badgeTreasure,
 }: TestimonialVideoCardProps) {
   const { containerRef, isFullscreen, toggleFullscreen } = useVideoFullscreen();
+  const { isHuntActive } = useTreasureHunt();
 
   if (isPlaying) {
     return (
@@ -68,6 +80,18 @@ function TestimonialVideoCard({
       </div>
     );
   }
+
+  const youtubeBadge = (
+    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[#FF0000]">
+      <Play className="h-4 w-4 fill-white text-white" />
+    </div>
+  );
+
+  const centerPlay = (
+    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#0F6A79]/85 shadow-lg transition group-hover:scale-105">
+      <Play className="ml-1 h-7 w-7 fill-white text-white" />
+    </div>
+  );
 
   return (
     <div
@@ -100,19 +124,38 @@ function TestimonialVideoCard({
         )}
 
         <div className="absolute top-4 left-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[#FF0000]">
-            <Play className="h-4 w-4 fill-white text-white" />
-          </div>
+          {isHuntActive && badgeTreasure ? (
+            <TreasureSpot kind="decoy" className="inline-flex">
+              {youtubeBadge}
+            </TreasureSpot>
+          ) : (
+            youtubeBadge
+          )}
         </div>
 
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#0F6A79]/85 shadow-lg transition group-hover:scale-105">
-            <Play className="ml-1 h-7 w-7 fill-white text-white" />
-          </div>
+          {isHuntActive && playTreasure ? (
+            <TreasureSpot
+              kind={playTreasure.kind}
+              treasureSlotIndex={playTreasure.slot}
+              className="inline-flex"
+            >
+              {centerPlay}
+            </TreasureSpot>
+          ) : (
+            centerPlay
+          )}
         </div>
       </div>
     </div>
   );
+}
+
+function cardPlayTreasure(index: number): TestimonialVideoCardProps["playTreasure"] {
+  if (index <= 4) {
+    return { kind: "win", slot: index + 1 };
+  }
+  return { kind: "decoy" };
 }
 
 function CarouselPrevious({
@@ -123,6 +166,7 @@ function CarouselPrevious({
   className?: string;
 }) {
   const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const { isHuntActive } = useTreasureHunt();
 
   useEffect(() => {
     if (!api) return;
@@ -139,11 +183,27 @@ function CarouselPrevious({
     };
   }, [api]);
 
+  const buttonClassName = cn("h-10 w-10 rounded-full", className);
+
+  if (isHuntActive) {
+    return (
+      <TreasureSpot
+        kind="decoy"
+        className={cn(
+          buttonClassName,
+          "inline-flex items-center justify-center border-0",
+        )}
+      >
+        <ArrowLeftCurve />
+      </TreasureSpot>
+    );
+  }
+
   return (
     <Button
       variant="outline"
       size="icon"
-      className={cn("h-10 w-10 rounded-full", className)}
+      className={buttonClassName}
       disabled={!canScrollPrev}
       onClick={() => api?.scrollPrev()}
       aria-label="Previous testimonial"
@@ -161,6 +221,7 @@ function CarouselNext({
   className?: string;
 }) {
   const [canScrollNext, setCanScrollNext] = useState(false);
+  const { isHuntActive } = useTreasureHunt();
 
   useEffect(() => {
     if (!api) return;
@@ -177,11 +238,28 @@ function CarouselNext({
     };
   }, [api]);
 
+  const buttonClassName = cn("h-10 w-10 rounded-full", className);
+
+  if (isHuntActive) {
+    return (
+      <TreasureSpot
+        kind="win"
+        treasureSlotIndex={6}
+        className={cn(
+          buttonClassName,
+          "inline-flex items-center justify-center border-0",
+        )}
+      >
+        <ArrowRightCurve />
+      </TreasureSpot>
+    );
+  }
+
   return (
     <Button
       variant="outline"
       size="icon"
-      className={cn("h-10 w-10 rounded-full", className)}
+      className={buttonClassName}
       disabled={!canScrollNext}
       onClick={() => api?.scrollNext()}
       aria-label="Next testimonial"
@@ -218,16 +296,40 @@ const TestimonialsSection = () => {
       <div className="app-width">
         <div className="mx-auto max-w-3xl text-center">
           <h1 className="text-3xl font-semibold text-[#092A31] sm:text-4xl lg:text-5xl">
-            What Our Interns Say
+            What Our{" "}
+            <TreasureSpot
+              kind="win"
+              treasureSlotIndex={0}
+              className="text-inherit"
+            >
+              Interns
+            </TreasureSpot>{" "}
+            <TreasureSpot kind="decoy" className="text-inherit">
+              Say
+            </TreasureSpot>
           </h1>
           <p className="mt-4 text-base text-[#092A31]/70 sm:text-lg">
-            Our interns have gone on to secure roles across the UK, US, Canada,
-            and Africa
+            Our interns have gone on to secure roles across the{" "}
+            <TreasureSpot kind="decoy" className="text-inherit">
+              UK
+            </TreasureSpot>
+            ,{" "}
+            <TreasureSpot kind="decoy" className="text-inherit">
+              US
+            </TreasureSpot>
+            ,{" "}
+            <TreasureSpot kind="decoy" className="text-inherit">
+              Canada
+            </TreasureSpot>
+            , and{" "}
+            <TreasureSpot kind="decoy" className="text-inherit">
+              Africa
+            </TreasureSpot>
           </p>
         </div>
       </div>
 
-      <div className="relative mt-12 w-full lg:mt-16 pl-6 xl:pl-16">
+      <div className="relative mt-12 w-full pl-6 lg:mt-16 xl:pl-16">
         <Carousel
           setApi={setApi}
           opts={{
@@ -237,7 +339,7 @@ const TestimonialsSection = () => {
           className="w-full"
         >
           <CarouselContent className="ml-0">
-            {TESTIMONIAL_VIDEOS.map((testimonial) => (
+            {TESTIMONIAL_VIDEOS.map((testimonial, index) => (
               <CarouselItem
                 key={testimonial.id}
                 className="min-w-0 shrink-0 grow-0 basis-[90vw] pr-4"
@@ -254,6 +356,8 @@ const TestimonialsSection = () => {
                     }));
                   }}
                   onPlay={() => setPlayingId(testimonial.id)}
+                  playTreasure={cardPlayTreasure(index)}
+                  badgeTreasure={index <= 2 ? "decoy" : undefined}
                 />
               </CarouselItem>
             ))}
@@ -274,9 +378,8 @@ const TestimonialsSection = () => {
         </div>
       </div>
       <div className="mt-12">
-        <SuccessStories />
+        <SuccessStories enableTreasureHunt />
       </div>
-
     </section>
   );
 };

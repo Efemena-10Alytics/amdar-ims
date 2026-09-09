@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import Aos from "aos";
 import { ArrowRight } from "lucide-react";
 import { useAuthStore } from "@/store/auth-store";
+import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const CTAbanner = () => {
   const user = useAuthStore((s) => s.user);
@@ -25,7 +26,10 @@ const CTAbanner = () => {
               Ready To Get the job you always wanted?
             </h2>
             <p className="text-lg sm:text-xl text-white/90">
-              Start here - with a career experience Internship
+              <TreasureSpot kind="decoy" className="text-inherit">
+                Start here
+              </TreasureSpot>{" "}
+              - with a career experience Internship
             </p>
           </div>
 

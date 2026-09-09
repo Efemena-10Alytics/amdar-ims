@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import Aos from "aos";
+import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const HowWeHelp = () => {
   useEffect(() => {
@@ -22,14 +23,30 @@ const HowWeHelp = () => {
           data-aos="fade-up"
           className="mx-auto max-w-130 text-center text-4xl leading-tight font-semibold text-[#123943] md:text-5xl"
         >
-          How We Help <br /> Tech Professionals
+          <TreasureSpot kind="decoy" className="text-inherit">
+            How We Help
+          </TreasureSpot>{" "}
+          <br />{" "}
+          <TreasureSpot
+            kind="win"
+            treasureSlotIndex={5}
+            className="text-inherit"
+          >
+            Tech Professionals
+          </TreasureSpot>
         </h2>
 
         <div className="mt-12 grid gap-8 md:grid-cols-2 md:gap-14 lg:mt-14">
           <article data-aos="fade-right" data-aos-delay="80">
             <h3 className="text-2xl leading-tight font-semibold text-[#1D4A55] md:text-3xl">
               Internships{" "}
-              <span className="text-[#1B8194]">(RAVE by Amdari)</span>
+              <TreasureSpot
+                kind="win"
+                treasureSlotIndex={6}
+                className="text-[#1B8194]"
+              >
+                (RAVE by Amdari)
+              </TreasureSpot>
             </h3>
             <div className=" max-w-130">
               <p className="mt-4 text-sm leading-relaxed text-[#67828A] md:text-base">
@@ -63,7 +80,9 @@ const HowWeHelp = () => {
               />
             </div>
             <h3 className="text-2xl leading-tight font-semibold text-[#123943] md:text-3xl">
-              Real-World Projects
+              <TreasureSpot kind="decoy" className="text-inherit">
+                Real-World Projects
+              </TreasureSpot>
             </h3>
             <p className="mt-4 max-w-125 text-sm leading-relaxed text-[#67828A] md:text-base">
               Our projects go beyond the generic tasks available online,

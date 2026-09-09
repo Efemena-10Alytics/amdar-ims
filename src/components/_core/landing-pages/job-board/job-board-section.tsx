@@ -13,6 +13,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTreasureHunt } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
+import {
+  JOB_BOARD_HUNT_PAGE_SIZE,
+  jobCardTreasure,
+} from "./job-board-treasure";
+import type { NormalizedJob } from "@/features/jobs/types";
 
 const ResetFilterIcon = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -27,6 +33,31 @@ const FILTER_DEFAULT = "";
 const PAGE_SIZE = 9;
 const MIN_LOADING_MS = 3000;
 
+/** Placeholder jobs so hunt always has 50 cards × 4 spots = 200. */
+function padJobsForHunt(jobs: NormalizedJob[]): NormalizedJob[] {
+  if (jobs.length >= JOB_BOARD_HUNT_PAGE_SIZE) {
+    return jobs.slice(0, JOB_BOARD_HUNT_PAGE_SIZE);
+  }
+  const padded = [...jobs];
+  for (let i = jobs.length; i < JOB_BOARD_HUNT_PAGE_SIZE; i++) {
+    padded.push({
+      id: `treasure-pad-${i}`,
+      title: "Featured role",
+      employer: "Amdari Partner",
+      location: "",
+      salary: "",
+      jobType: "",
+      remoteMode: "",
+      sponsorship: "",
+      datePosted: "",
+      closingDate: "",
+      source: "",
+      applyUrl: "#",
+    });
+  }
+  return padded;
+}
+
 /* ------------------------------------------------------------------ */
 /* Section                                                              */
 /* ------------------------------------------------------------------ */
@@ -37,21 +68,24 @@ const JobBoardSection = () => {
   const [sponsorship, setSponsorship] = useState(FILTER_DEFAULT);
   const [page, setPage] = useState(1);
   const sectionRef = useRef<HTMLElement>(null);
+  const { isHuntActive } = useTreasureHunt();
 
   const sponsorshipOptions = ["Yes", "No"];
+  const pageSize = isHuntActive ? JOB_BOARD_HUNT_PAGE_SIZE : PAGE_SIZE;
 
   const { data, isLoading, isError } = useJobs({
     location: location || undefined,
     q: jobTitle || undefined,
     sponsorship: sponsorship || undefined,
-    page,
-    pageSize: PAGE_SIZE,
+    page: isHuntActive ? 1 : page,
+    pageSize,
   });
 
   const showSkeleton = useMinDurationLoading(isLoading, MIN_LOADING_MS);
 
   const jobs = data?.jobs ?? [];
-  const totalPages = data?.totalPages ?? 1;
+  const displayJobs = isHuntActive ? padJobsForHunt(jobs) : jobs;
+  const totalPages = isHuntActive ? 1 : (data?.totalPages ?? 1);
 
   const resetFilters = () => {
     setLocation(FILTER_DEFAULT);
@@ -147,7 +181,9 @@ const JobBoardSection = () => {
         {/* Loading skeleton */}
         {showSkeleton && (
           <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: PAGE_SIZE }).map((_, index) => (
+            {Array.from({
+              length: isHuntActive ? JOB_BOARD_HUNT_PAGE_SIZE : PAGE_SIZE,
+            }).map((_, index) => (
               <JobCardSkeleton key={index} />
             ))}
           </div>
@@ -164,20 +200,26 @@ const JobBoardSection = () => {
         {!showSkeleton && !isError && (
           <>
             <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {jobs.map((job, index) => (
-                <Reveal key={job.id} delay={(index % PAGE_SIZE) * 60}>
-                  <JobCard job={job} />
+              {displayJobs.map((job, index) => (
+                <Reveal
+                  key={job.id}
+                  delay={(index % (isHuntActive ? JOB_BOARD_HUNT_PAGE_SIZE : PAGE_SIZE)) * 60}
+                >
+                  <JobCard
+                    job={job}
+                    treasure={isHuntActive ? jobCardTreasure(index) : undefined}
+                  />
                 </Reveal>
               ))}
             </div>
 
-            {jobs.length === 0 && (
+            {!isHuntActive && jobs.length === 0 && (
               <p className="mt-8 font-sora text-sm text-[#64748B]">
                 No jobs match your filters right now. Try resetting or choosing a different combination.
               </p>
             )}
 
-            {jobs.length > 0 && totalPages > 1 && (
+            {!isHuntActive && jobs.length > 0 && totalPages > 1 && (
               <div className="mt-8 flex items-center justify-center gap-4">
                 <button
                   type="button"

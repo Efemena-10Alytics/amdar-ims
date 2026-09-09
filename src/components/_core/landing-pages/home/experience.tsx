@@ -2,6 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import Aos from "aos";
+import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const Experience = () => {
   React.useEffect(() => {
@@ -25,7 +26,12 @@ const Experience = () => {
         <div data-aos="fade-up" className="text-center max-w-211 mx-auto">
           <h2 className="text-4xl lg:text-[52px] font-semibold text-[#092A31] leading-14 sm:leading-16">
             We Have Worked With Over{" "}
-            <span className="text-primary font-black text-4xl lg:text-[72px]">10,000+</span> Tech
+            <TreasureSpot kind="decoy" className="text-inherit">
+              <span className="text-primary font-black text-4xl lg:text-[72px]">
+                10,000+
+              </span>
+            </TreasureSpot>{" "}
+            Tech
             Professionals
           </h2>
         </div>

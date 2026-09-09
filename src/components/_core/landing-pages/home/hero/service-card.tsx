@@ -1,7 +1,13 @@
+"use client";
+
 import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import {
+  TreasureSpot,
+  useTreasureHunt,
+} from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 interface ServiceCardProps {
   title: string;
@@ -9,6 +15,8 @@ interface ServiceCardProps {
   buttonText: string;
   dataAos?: string;
   dataAosDuration?: string;
+  treasureKind?: "decoy" | "win";
+  treasureSlotIndex?: number;
 }
 
 const ServiceCard = ({
@@ -17,7 +25,26 @@ const ServiceCard = ({
   buttonText,
   dataAos,
   dataAosDuration,
+  treasureKind,
+  treasureSlotIndex = 0,
 }: ServiceCardProps) => {
+  const { isHuntActive } = useTreasureHunt();
+  const showTreasureCta = isHuntActive && treasureKind;
+
+  const ctaClassName = cn(
+    "bg-transparent rounded-full p-0 hover:p-4 hover:bg-transparent",
+    "inline-flex items-center gap-2 justify-start text-[#B6CFD4]!",
+  );
+
+  const ctaInner = (
+    <>
+      {buttonText}
+      <div className="flex justify-center items-center h-6 w-6 bg-[#156374] group-hover:bg-amdari-yellow group-hover:text-primary rounded-full">
+        <ArrowUpRight className="w-4 h-4" />
+      </div>
+    </>
+  );
+
   return (
     <div
       data-aos={dataAos}
@@ -28,20 +55,19 @@ const ServiceCard = ({
         <h3 className="text-xl lg:text-[22px] font-semibold mb-4">{title}</h3>
         <p className="mb-6 text-sm">{description}</p>
       </div>
-      <Link href="/internship">
-        <Button
-          // variant={"link"}
-          className={cn(
-            "bg-transparent rounded-full p-0 hover:p-4 hover:bg-transparent",
-            "inline-flex items-center gap-2 justify-start text-[#B6CFD4]!",
-          )}
+      {showTreasureCta ? (
+        <TreasureSpot
+          kind={treasureKind}
+          treasureSlotIndex={treasureSlotIndex}
+          className={ctaClassName}
         >
-          {buttonText}
-          <div className="flex justify-center items-center h-6 w-6 bg-[#156374] group-hover:bg-amdari-yellow group-hover:text-primary rounded-full">
-            <ArrowUpRight className="w-4 h-4" />
-          </div>
-        </Button>
-      </Link>
+          {ctaInner}
+        </TreasureSpot>
+      ) : (
+        <Link href="/internship">
+          <Button className={ctaClassName}>{ctaInner}</Button>
+        </Link>
+      )}
     </div>
   );
 };
