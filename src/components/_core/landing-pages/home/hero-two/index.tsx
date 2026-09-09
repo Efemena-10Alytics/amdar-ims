@@ -12,9 +12,19 @@ import Flag from "../hero/flag";
 import ServiceCard from "../hero/service-card";
 import IconOrbit from "./icon-orbit";
 import { SpeakToExpertPopover } from "./speak-to-our-expert";
+import { useGetTreasures } from "@/features/treasure-hunt/use-get-treasures";
+import { TreasureHuntCongratulationsModal } from "@/components/_core/treasure-hunt/congratulations";
 
 const InternshipHeroTwo = () => {
   const [showPopUpVid, setShowPopUpVid] = React.useState(false);
+  const [treasureModal, setTreasureModal] = React.useState<"decoy" | "win" | null>(
+    null,
+  );
+  const { data, error: treasuresError, isLoading: treasuresLoading } =
+    useGetTreasures();
+  const treasures = data?.treasures;
+  const treasureId = treasures?.at(-1)?.id;
+  const showOften = data?.hunter?.treasure_id === null;
 
   React.useEffect(() => {
     Aos.init({ duration: 600 });
@@ -44,7 +54,15 @@ const InternshipHeroTwo = () => {
           >
             Join the Work Experience Platform Trusted by Aspiring Tech
             Professionals Worldwide to Build Real-World Experience and Land Your
-            Dream Job
+            Dream Job{" "}
+            <button
+              type="button"
+              className="cursor-pointer text-amdari-yellow"
+              onClick={() => setTreasureModal("decoy")}
+            >
+              here
+            </button>
+            !
           </p>
 
           {/* CTA Buttons */}
@@ -87,6 +105,28 @@ const InternshipHeroTwo = () => {
             <Flag />
             <span className="text-white/80">
               + 10K interns Across the world Got hired
+              {showOften ? (
+                <>
+                  {" "}
+                  <button
+                    type="button"
+                    className="cursor-pointer"
+                    data-treasure-id={treasureId}
+                    data-treasure-icon="true"
+                    onClick={() => {
+                      console.log("treasure id:", treasureId, {
+                        hunter: data?.hunter,
+                        treasures,
+                        treasuresLoading,
+                        treasuresError,
+                      });
+                      setTreasureModal("win");
+                    }}
+                  >
+                    often
+                  </button>
+                </>
+              ) : null}
             </span>
           </div>
         </div>
@@ -120,6 +160,13 @@ const InternshipHeroTwo = () => {
       </div>
 
       <LearnMoreVideo setShowPopUpVid={setShowPopUpVid} showPopUpVid={showPopUpVid} />
+      <TreasureHuntCongratulationsModal
+        open={treasureModal != null}
+        variant={treasureModal ?? "decoy"}
+        onOpenChange={(open) => {
+          if (!open) setTreasureModal(null);
+        }}
+      />
     </div>
   );
 };

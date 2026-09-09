@@ -1,39 +1,53 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
+import type { TreasureHunterTreasure } from "./use-register";
 
 export type TreasureListItem = {
   id: number;
   units: number;
 };
 
+export type TreasureHunter = {
+  id: number;
+  full_name: string;
+  email: string;
+  phone_number: string;
+  address: string;
+  treasure_id: number | null;
+  treasure: TreasureHunterTreasure | null;
+};
+
+export type GetTreasuresData = {
+  hunter: TreasureHunter;
+  treasures: TreasureListItem[];
+};
+
 export type GetTreasuresResponse = {
   success: boolean;
   message: string;
-  data: TreasureListItem[];
+  data: GetTreasuresData;
 };
 
-export const TREASURES_QUERY_KEY = (hunterId: number | null | undefined) =>
-  ["treasure-hunt", "treasures", hunterId ?? null] as const;
+export const TREASURES_QUERY_KEY = ["treasure-hunt", "treasures", "me"] as const;
 
-/** GET /api/v3/treasures?hunter_id= */
-export async function fetchTreasures(
-  hunterId: number,
-): Promise<TreasureListItem[]> {
-  const { data } = await axiosInstance.get<GetTreasuresResponse>("v3/treasures", {
-    params: { hunter_id: hunterId },
-  });
+/** GET /api/v3/treasures/me */
+export async function fetchTreasures(): Promise<GetTreasuresData> {
+  const { data } = await axiosInstance.get<GetTreasuresResponse>("v3/treasures/me");
 
   if (data.success === false) {
     throw new Error(data.message?.trim() || "Failed to retrieve treasures.");
   }
 
-  return Array.isArray(data.data) ? data.data : [];
+  return {
+    hunter: data.data.hunter,
+    treasures: Array.isArray(data.data.treasures) ? data.data.treasures : [],
+  };
 }
 
-export function useGetTreasures(hunterId: number | null | undefined) {
+export function useGetTreasures() {
   return useQuery({
-    queryKey: TREASURES_QUERY_KEY(hunterId),
-    queryFn: () => fetchTreasures(hunterId as number),
-    enabled: !!apiBaseURL && typeof hunterId === "number" && hunterId > 0,
+    queryKey: TREASURES_QUERY_KEY,
+    queryFn: fetchTreasures,
+    enabled: !!apiBaseURL,
   });
 }
