@@ -5,11 +5,11 @@ import Image from "next/image";
 import Aos from "aos";
 
 interface FeatureSplitSectionProps {
-  title: string;
-  description: string;
+  title: ReactNode;
+  description: ReactNode;
   imageSrc: string;
   imageAlt: string;
-  overlayQuote: string;
+  overlayQuote: ReactNode;
   footerContent?: ReactNode;
 }
 

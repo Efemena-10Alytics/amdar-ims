@@ -3,9 +3,7 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import Aos from "aos";
-
-const MISSION_COPY =
-  "We have been where you are navigating to career uncertainties, job rejections, and skill gaps. We understand how difficult it can be to land your first role intake without the right experience or guidance. That's why Amdari exist: to provide the stepping stones between learning and achieving, helping you build the confidence and expertise to stand out";
+import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const Mission = () => {
   useEffect(() => {
@@ -23,7 +21,17 @@ const Mission = () => {
             data-aos="fade-right"
             className="max-w-105 text-4xl leading-tight font-semibold text-[#EAF2F4] md:text-5xl"
           >
-            Why Did We <br /> Start Amdari?
+            <TreasureSpot kind="decoy" className="text-inherit">
+              Why Did We
+            </TreasureSpot>{" "}
+            <br /> Start{" "}
+            <TreasureSpot
+              kind="win"
+              treasureSlotIndex={3}
+              className="text-inherit"
+            >
+              Amdari?
+            </TreasureSpot>
           </h2>
 
           <p
@@ -31,7 +39,12 @@ const Mission = () => {
             data-aos-delay="120"
             className="max-w-160 text-base leading-relaxed text-[#C4D6DA] lg:pt-1"
           >
-            {MISSION_COPY}
+            We have been where you are navigating to career uncertainties, job
+            rejections, and skill gaps. We understand how difficult it can be to
+            land your first role intake without the right experience or
+            guidance. That&apos;s why Amdari exist: to provide the stepping stones
+            between learning and achieving, helping you build the confidence and
+            expertise to stand out
           </p>
         </div>
 
@@ -44,15 +57,16 @@ const Mission = () => {
               className="object-cover"
             />
 
-            <button
-              type="button"
-              aria-label="Play mission video"
+            <div
               className="absolute top-1/2 left-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/30 backdrop-blur-sm transition hover:bg-white/40"
+              aria-label="Play mission video"
             >
-              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0A778E]">
-                <span className="ml-0.5 h-0 w-0 border-t-[7px] border-b-[7px] border-l-11 border-t-transparent border-b-transparent border-l-white" />
-              </span>
-            </button>
+              <TreasureSpot kind="decoy" className="inline-flex">
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0A778E]">
+                  <span className="ml-0.5 h-0 w-0 border-t-[7px] border-b-[7px] border-l-11 border-t-transparent border-b-transparent border-l-white" />
+                </span>
+              </TreasureSpot>
+            </div>
           </div>
         </div>
       </div>

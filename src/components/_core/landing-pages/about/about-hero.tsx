@@ -6,6 +6,7 @@ import { Linkedin } from "lucide-react";
 import Aos from "aos";
 import Flag from "../home/hero/flag";
 import { cn } from "@/lib/utils";
+import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 type FounderCard = {
   name: string;
@@ -63,13 +64,30 @@ const AboutHero = () => {
           className="mx-auto mb-20 max-w-195 text-center text-white"
         >
           <h1 className="font-clash-display text-balance text-4xl font-semibold leading-tight lg:text-5xl ">
-            Go from Job Seeker to Employed
+            Go from{" "}
+            <TreasureSpot kind="decoy" className="text-inherit">
+              Job Seeker
+            </TreasureSpot>{" "}
+            to{" "}
+            <TreasureSpot
+              kind="win"
+              treasureSlotIndex={0}
+              className="text-inherit"
+            >
+              Employed
+            </TreasureSpot>
           </h1>
           <div className="flex justify-center">
-            <Flag />
+            <TreasureSpot kind="win" treasureSlotIndex={1} className="inline-flex">
+              <Flag />
+            </TreasureSpot>
             <p className="max-w-90 mt-4 text-base text-white/90 sm:text-lg">
               <span className="mr-2 text-xl">🇬🇧🇺🇸</span>
-              How Amdari is Empowering Tech Professionals, One Experience at a Time
+              How Amdari is Empowering Tech Professionals, One{" "}
+              <TreasureSpot kind="decoy" className="text-inherit">
+                Experience
+              </TreasureSpot>{" "}
+              at a Time
             </p>
           </div>
         </div>

@@ -12,39 +12,10 @@ import Flag from "../hero/flag";
 import ServiceCard from "../hero/service-card";
 import IconOrbit from "./icon-orbit";
 import { SpeakToExpertPopover } from "./speak-to-our-expert";
-import { useQueryClient } from "@tanstack/react-query";
-import {
-  TREASURES_QUERY_KEY,
-  useGetTreasures,
-} from "@/features/treasure-hunt/use-get-treasures";
-import { useWinTreasure } from "@/features/treasure-hunt/use-win";
-import { TreasureHuntCongratulationsModal } from "@/components/_core/treasure-hunt/congratulations";
+import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const InternshipHeroTwo = () => {
   const [showPopUpVid, setShowPopUpVid] = React.useState(false);
-  const [treasureModal, setTreasureModal] = React.useState<"decoy" | "win" | null>(
-    null,
-  );
-  const queryClient = useQueryClient();
-  const { data } = useGetTreasures();
-  const { win, isSubmitting: isClaiming, data: winData } = useWinTreasure();
-  const treasures = data?.treasures;
-  const treasureId = treasures?.at(-1)?.id;
-  const hunterId = data?.hunter?.id;
-  const showOften = data?.hunter?.treasure_id === null;
-  const wonTreasureName = winData?.treasure?.name;
-
-  const handleClaimTreasure = async () => {
-    if (hunterId == null || treasureId == null || isClaiming) return;
-
-    try {
-      await win({ hunter_id: hunterId, treasure_id: treasureId });
-      await queryClient.invalidateQueries({ queryKey: TREASURES_QUERY_KEY });
-      setTreasureModal("win");
-    } catch {
-      // errorMessage is set by the win hook
-    }
-  };
 
   React.useEffect(() => {
     Aos.init({ duration: 600 });
@@ -69,25 +40,25 @@ const InternshipHeroTwo = () => {
             </span>
           </h1>
 
-          <p
-            className="text-lg sm:text-xl text-white/90 max-w-3xl mx-auto mb-10"
-          >
+          <p className="text-lg sm:text-xl text-white/90 max-w-3xl mx-auto mb-10">
             Join the Work Experience Platform Trusted by Aspiring Tech
-            Professionals Worldwide to Build Real-World Experience and Land Your
-            Dream Job
-            {showOften ? (
-              <>
-                {" "}
-                <button
-                  type="button"
-                  className="cursor-pointer text-amdari-yellow"
-                  onClick={() => setTreasureModal("decoy")}
-                >
-                  here
-                </button>
-                !
-              </>
-            ) : null}
+            Professionals{" "}
+            <TreasureSpot
+              kind="win"
+              treasureSlotIndex={3}
+              className="text-inherit"
+            >
+              Worldwide
+            </TreasureSpot>{" "}
+            to Build Real-World Experience and Land Your Dream Job
+            <TreasureSpot
+              kind="decoy"
+              hideWhenInactive
+              className="text-amdari-yellow"
+            >
+              {" "}
+              here!
+            </TreasureSpot>
           </p>
 
           {/* CTA Buttons */}
@@ -115,36 +86,30 @@ const InternshipHeroTwo = () => {
               )}
             >
               Learn more
-              <div className="group-hover:bg-amdari-yellow flex h-5 w-5 rounded-full justify-center items-center bg-white border-2 border-gray-300 text-primary">
+              <TreasureSpot
+                kind="decoy"
+                className="group-hover:bg-amdari-yellow flex h-5 w-5 rounded-full justify-center items-center bg-white border-2 border-gray-300 text-primary"
+              >
                 <PlayIcon
                   className="w-3! h-3!"
                   color="#156374"
                   fill="#156374"
                 />
-              </div>
+              </TreasureSpot>
             </Button>
           </div>
 
           {/* Social Proof */}
           <div className="flex items-center justify-center gap-2 text-sm sm:text-base">
-            <Flag />
+            <TreasureSpot kind="win" treasureSlotIndex={1} className="inline-flex">
+              <Flag />
+            </TreasureSpot>
             <span className="text-white/80">
               + 10K interns Across the world Got hired
-              {showOften ? (
-                <>
-                  {" "}
-                  <button
-                    type="button"
-                    className="cursor-pointer disabled:cursor-wait disabled:opacity-70"
-                    data-treasure-id={treasureId}
-                    data-treasure-icon="true"
-                    disabled={isClaiming || treasureId == null || hunterId == null}
-                    onClick={handleClaimTreasure}
-                  >
-                    often
-                  </button>
-                </>
-              ) : null}
+              <TreasureSpot kind="win" treasureSlotIndex={0} hideWhenInactive>
+                {" "}
+                often
+              </TreasureSpot>
             </span>
           </div>
         </div>
@@ -157,34 +122,29 @@ const InternshipHeroTwo = () => {
             title="Real-world Projects"
             description="Industry-relevant projects that replicate real-world challenges, helping you build practical skills."
             buttonText="Get me started"
-          // dataAos="fade-down"
-          // dataAosDuration="00"
+            treasureKind="win"
+            treasureSlotIndex={2}
           />
           <ServiceCard
             title="Work Experience Internship"
             description="Work experience internship with businesses that will connect you with global work opportunities and mentorship"
             buttonText="Apply now"
-            // dataAos="fade-down"
+            treasureKind="decoy"
             dataAosDuration="1000"
           />
           <ServiceCard
             title="Interview Prep"
             description="We help you prepare for interviews by revamping your CV and coaching you on acing technical questions."
             buttonText="I need this"
-            // dataAos="fade-down"
+            treasureKind="decoy"
             dataAosDuration="1200"
           />
         </div>
       </div>
 
-      <LearnMoreVideo setShowPopUpVid={setShowPopUpVid} showPopUpVid={showPopUpVid} />
-      <TreasureHuntCongratulationsModal
-        open={treasureModal != null}
-        variant={treasureModal ?? "decoy"}
-        treasureName={wonTreasureName}
-        onOpenChange={(open) => {
-          if (!open) setTreasureModal(null);
-        }}
+      <LearnMoreVideo
+        setShowPopUpVid={setShowPopUpVid}
+        showPopUpVid={showPopUpVid}
       />
     </div>
   );

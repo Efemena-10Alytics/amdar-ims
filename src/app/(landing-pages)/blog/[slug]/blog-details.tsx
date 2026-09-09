@@ -1,142 +1,236 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowLeft, MessageCircle } from "lucide-react";
 import BlogCard, {
-    type BlogCardData,
+  type BlogCardData,
 } from "@/components/_core/landing-pages/blog/blog-card";
 import { BlogReaderInfoDialog } from "@/components/_core/landing-pages/blog/blog-reader-info";
 import type { BlogDetail } from "@/features/blog/use-get-blog";
 import { imageStorageUrl } from "@/lib/utils";
+import {
+  TreasureSpot,
+  useTreasureHunt,
+} from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 type BlogDetailsProps = {
-    slug: string;
-    blog: BlogDetail | null;
-    recommendedPosts: BlogCardData[];
+  slug: string;
+  blog: BlogDetail | null;
+  recommendedPosts: BlogCardData[];
 };
 
 const PARAGRAPH =
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.";
-
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.";
 
 const CAREER_COACH_WHATSAPP_URL = "https://wa.me/447782293725";
 
 function formatBlogDate(value: string | null | undefined): string {
-    if (!value) return "—";
-    const parsed = new Date(value);
-    if (Number.isNaN(parsed.getTime())) return value;
-    return parsed.toLocaleDateString("en-US", {
-        month: "short",
-        day: "2-digit",
-        year: "numeric",
-    });
+  if (!value) return "—";
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return value;
+  return parsed.toLocaleDateString("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+  });
 }
 
-export default function BlogDetails({ slug, blog, recommendedPosts }: BlogDetailsProps) {
-    const title = blog?.title
-    const author = blog?.author
-    const date = formatBlogDate(
-        (blog?.date as string | null | undefined) ??
-        ((blog as { created_at?: string } | null)?.created_at ?? null),
-    );
-    const coverImage = `${imageStorageUrl}/images/${blog?.image}`
-    const contentHtml =
-        typeof blog?.text === "string" && blog.text.trim().length > 0
-            ? blog.text
-            : PARAGRAPH;
+function recommendedTreasure(index: number) {
+  if (index === 0) {
+    return { read: "win" as const, readSlot: 9 };
+  }
+  if (index === 1) {
+    return { arrow: "decoy" as const };
+  }
+  return undefined;
+}
 
-    if (!blog) {
-        return (
-            <main className="app-width py-10">
-                <p className="text-sm text-red-600">Unable to load this blog post.</p>
-            </main>
-        );
-    }
+export default function BlogDetails({
+  slug,
+  blog,
+  recommendedPosts,
+}: BlogDetailsProps) {
+  const { isHuntActive } = useTreasureHunt();
+  const title = blog?.title;
+  const author = blog?.author;
+  const date = formatBlogDate(
+    (blog?.date as string | null | undefined) ??
+      ((blog as { created_at?: string } | null)?.created_at ?? null),
+  );
+  const coverImage = `${imageStorageUrl}/images/${blog?.image}`;
+  const contentHtml =
+    typeof blog?.text === "string" && blog.text.trim().length > 0
+      ? blog.text
+      : PARAGRAPH;
 
-    
-
+  if (!blog) {
     return (
-        <main className="app-width py-10">
-            <BlogReaderInfoDialog blogSlug={slug} />
-            <div className="grid gap-10 lg:gap-20 lg:grid-cols-[260px_minmax(0,1fr)]">
-                <aside className="space-y-8 pt-2 lg:sticky lg:top-24 lg:self-start">
-                    <Link
-                        href="/blog"
-                        className="inline-flex items-center gap-2 text-sm text-[#7D8F98] hover:text-[#092A31]"
-                    >
-                        <ArrowLeft className="size-4" />
-                        Back
-                    </Link>
-
-                    <div className="space-y-6 text-[#7D8F98]">
-                        <div>
-                            <p className="text-[11px] uppercase tracking-wide">Category</p>
-                            <div className="flex flex-wrap gap-2">
-                                {blog.categories?.map((item: string, index: number) => (
-                                    <p key={index} className="mt-1 flex gap-1 items-center capitalize text-sm font-medium text-[#092A31]">
-                                        <div className="h-1 w-1 rounded-full bg-primary/20" /> {item.replace(/-/g, " ")}
-                                    </p>
-                                ))}
-                            </div>
-                        </div>
-                        <div>
-                            <p className="text-[11px] uppercase tracking-wide">Written by</p>
-                            <p className="mt-1 text-sm font-medium text-[#092A31]">
-                                {author}
-                            </p>
-                        </div>
-                        <div>
-                            <p className="text-[11px] uppercase tracking-wide">Date</p>
-                            <p className="mt-1 text-sm font-medium text-[#092A31]">{date}</p>
-                        </div>
-                    </div>
-
-                    <a
-                        href={CAREER_COACH_WHATSAPP_URL}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-primary/90"
-                    >
-                        <MessageCircle className="size-4" />
-                        Speak To A Career Coach
-                    </a>
-                </aside>
-
-                <section className="min-w-0 space-y-6">
-                    <header className="space-y-4">
-                        <h1 className="max-w-3xl text-xl sm:text-2xl md:text-4xl font-semibold leading-tight text-[#092A31]">
-                            {title}
-                        </h1>
-                        <div className="overflow-hidden rounded-xl">
-                            <img
-                                src={coverImage}
-                                alt={title ?? ""}
-                                className="h-72.5 w-full object-cover"
-                            />
-                        </div>
-                    </header>
-
-                    <article className="space-y-6">
-                        <section className="space-y-2">
-                            <h2 className="text-xl font-semibold text-[#092A31]">
-                                Important things to know
-                            </h2>
-                            <div
-                                className="tinymce-content ![&_*]:font-sans [&_p]:text-base [&_p]:my-0 [&_ul]:my-0 [&_ol]:my-0 [&_li]:text-base"
-                                dangerouslySetInnerHTML={{ __html: contentHtml }}
-                            />
-                        </section>
-                    </article>
-
-                </section>
-            </div>
-            <section className="space-y-4 pt-6">
-                <h3 className="text-sm font-semibold text-[#092A31]">Recommended Post</h3>
-                <div className="grid gap-4 md:grid-cols-3">
-                    {recommendedPosts.map((post) => (
-                        <BlogCard key={post.id} post={post} />
-                    ))}
-                </div>
-            </section>
-            <p className="sr-only">{slug}</p>
-        </main>
+      <main className="app-width py-10">
+        <p className="text-sm text-red-600">Unable to load this blog post.</p>
+      </main>
     );
+  }
+
+  return (
+    <main className="app-width py-10">
+      <BlogReaderInfoDialog blogSlug={slug} />
+      <div className="grid gap-10 lg:gap-20 lg:grid-cols-[260px_minmax(0,1fr)]">
+        <aside className="space-y-8 pt-2 lg:sticky lg:top-24 lg:self-start">
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-2 text-sm text-[#7D8F98] hover:text-[#092A31]"
+          >
+            <ArrowLeft className="size-4" />
+            <TreasureSpot kind="decoy" className="text-inherit">
+              Back
+            </TreasureSpot>
+          </Link>
+
+          <div className="space-y-6 text-[#7D8F98]">
+            <div>
+              <p className="text-[11px] uppercase tracking-wide">
+                <TreasureSpot kind="decoy" className="text-inherit uppercase">
+                  Category
+                </TreasureSpot>
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {blog.categories?.map((item: string, index: number) => (
+                  <p
+                    key={index}
+                    className="mt-1 flex gap-1 items-center capitalize text-sm font-medium text-[#092A31]"
+                  >
+                    <span className="h-1 w-1 rounded-full bg-primary/20" />
+                    {index === 0 ? (
+                      <TreasureSpot
+                        kind="win"
+                        treasureSlotIndex={5}
+                        className="capitalize text-inherit"
+                      >
+                        {item.replace(/-/g, " ")}
+                      </TreasureSpot>
+                    ) : (
+                      item.replace(/-/g, " ")
+                    )}
+                  </p>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="text-[11px] uppercase tracking-wide">
+                <TreasureSpot kind="decoy" className="text-inherit uppercase">
+                  Written by
+                </TreasureSpot>
+              </p>
+              <p className="mt-1 text-sm font-medium text-[#092A31]">
+                <TreasureSpot
+                  kind="win"
+                  treasureSlotIndex={6}
+                  className="text-inherit"
+                >
+                  {author}
+                </TreasureSpot>
+              </p>
+            </div>
+            <div>
+              <p className="text-[11px] uppercase tracking-wide">Date</p>
+              <p className="mt-1 text-sm font-medium text-[#092A31]">
+                <TreasureSpot kind="decoy" className="text-inherit">
+                  {date}
+                </TreasureSpot>
+              </p>
+            </div>
+          </div>
+
+          {isHuntActive ? (
+            <TreasureSpot
+              kind="win"
+              treasureSlotIndex={4}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-primary/90"
+            >
+              <MessageCircle className="size-4" />
+              Speak To A Career Coach
+            </TreasureSpot>
+          ) : (
+            <a
+              href={CAREER_COACH_WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-primary/90"
+            >
+              <MessageCircle className="size-4" />
+              Speak To A Career Coach
+            </a>
+          )}
+        </aside>
+
+        <section className="min-w-0 space-y-6">
+          <header className="space-y-4">
+            <h1 className="max-w-3xl text-xl sm:text-2xl md:text-4xl font-semibold leading-tight text-[#092A31]">
+              {title}
+            </h1>
+            <TreasureSpot
+              kind="win"
+              treasureSlotIndex={8}
+              className="block w-full overflow-hidden rounded-xl"
+            >
+              <img
+                src={coverImage}
+                alt={title ?? ""}
+                className="h-72.5 w-full object-cover"
+              />
+            </TreasureSpot>
+          </header>
+
+          <article className="space-y-6">
+            <section className="space-y-2">
+              <h2 className="text-xl font-semibold text-[#092A31]">
+                <TreasureSpot kind="decoy" className="text-inherit">
+                  Important
+                </TreasureSpot>{" "}
+                <TreasureSpot
+                  kind="win"
+                  treasureSlotIndex={7}
+                  className="text-inherit"
+                >
+                  things
+                </TreasureSpot>{" "}
+                to{" "}
+                <TreasureSpot kind="decoy" className="text-inherit">
+                  know
+                </TreasureSpot>
+              </h2>
+              <div
+                className="tinymce-content ![&_*]:font-sans [&_p]:text-base [&_p]:my-0 [&_ul]:my-0 [&_ol]:my-0 [&_li]:text-base"
+                dangerouslySetInnerHTML={{ __html: contentHtml }}
+              />
+            </section>
+          </article>
+        </section>
+      </div>
+      <section className="space-y-4 pt-6">
+        <h3 className="text-sm font-semibold text-[#092A31]">
+          <TreasureSpot kind="decoy" className="text-inherit">
+            Recommended
+          </TreasureSpot>{" "}
+          <TreasureSpot
+            kind="win"
+            treasureSlotIndex={10}
+            className="text-inherit"
+          >
+            Post
+          </TreasureSpot>
+        </h3>
+        <div className="grid gap-4 md:grid-cols-3">
+          {recommendedPosts.map((post, index) => (
+            <BlogCard
+              key={post.id}
+              post={post}
+              treasure={recommendedTreasure(index)}
+            />
+          ))}
+        </div>
+      </section>
+      <p className="sr-only">{slug}</p>
+    </main>
+  );
 }

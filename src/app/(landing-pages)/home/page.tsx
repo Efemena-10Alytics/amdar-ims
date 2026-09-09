@@ -1,3 +1,5 @@
+"use client";
+
 import Partners from "@/components/_core/landing-pages/home/partners/index";
 import Companies from "@/components/_core/landing-pages/home/companies";
 import WhatWeOffer from "@/components/_core/landing-pages/home/what-we-offer/index";

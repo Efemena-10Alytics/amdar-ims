@@ -8,6 +8,7 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import { ArrowLeftCurve, ArrowRightCurve } from "../home/svg";
+import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const galleryImages = Array.from(
   { length: 8 },
@@ -20,7 +21,16 @@ const TeamGallery = () => {
   return (
     <section className="bg-white py-14 lg:py-20">
       <div className="app-width pr-0">
-        <h3 className="text-5xl font-semibold text-[#113640]">Team Gallery</h3>
+        <h3 className="text-5xl font-semibold text-[#113640]">
+          Team{" "}
+          <TreasureSpot
+            kind="win"
+            treasureSlotIndex={10}
+            className="text-inherit"
+          >
+            Gallery
+          </TreasureSpot>
+        </h3>
 
         <Carousel
           setApi={setApi}

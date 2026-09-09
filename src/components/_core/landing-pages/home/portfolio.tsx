@@ -5,9 +5,14 @@ import Image from "next/image";
 import Aos from "aos";
 import { useAuthStore } from "@/store/auth-store";
 import CustomButton from "../shared/custom-button";
+import {
+  TreasureSpot,
+  useTreasureHunt,
+} from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const Portfolio = () => {
   const [imageError, setImageError] = React.useState(false);
+  const { isHuntActive } = useTreasureHunt();
   const user = useAuthStore((s) => s.user);
   const portfolioCtaHref =
     user != null
@@ -29,7 +34,11 @@ const Portfolio = () => {
               data-aos="zoom-in"
               className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] mb-6 leading-tight"
             >
-              Build a Professional Portfolio Website
+              Build a{" "}
+              <TreasureSpot kind="decoy" className="text-inherit">
+                Professional
+              </TreasureSpot>{" "}
+              Portfolio Website
             </h2>
             <p
               data-aos="zoom-out"
@@ -38,7 +47,20 @@ const Portfolio = () => {
               Showcase your experience, projects and proficiency level with our
               portfolio builder to stand out in the competitive tech landscape.
             </p>
-            <CustomButton btnText="Create your portfolio" href={portfolioCtaHref} />
+            {isHuntActive ? (
+              <TreasureSpot
+                kind="win"
+                treasureSlotIndex={9}
+                className="inline-flex"
+              >
+                <CustomButton btnText="Create your portfolio" />
+              </TreasureSpot>
+            ) : (
+              <CustomButton
+                btnText="Create your portfolio"
+                href={portfolioCtaHref}
+              />
+            )}
           </div>
         </div>
 

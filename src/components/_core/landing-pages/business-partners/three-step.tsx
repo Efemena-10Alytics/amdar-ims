@@ -4,6 +4,7 @@ import React from "react";
 import Aos from "aos";
 import { FileText, Handshake, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const STEPS = [
   {
@@ -12,6 +13,7 @@ const STEPS = [
     description:
       "Fill in our partner form. Tell us about your company, your industry, and the kind of challenge you'd like interns to work on. It doesn't need to be formal.",
     icon: FileText,
+    treasure: "decoy" as const,
   },
   {
     eyebrow: "STEP 02",
@@ -19,6 +21,8 @@ const STEPS = [
     description:
       "Our team shapes your contribution into a realistic intern project brief. We'll send it to you for a quick review before anything goes live. You stay in control.",
     icon: Pencil,
+    treasure: "win" as const,
+    treasureSlotIndex: 9,
   },
   {
     eyebrow: "STEP 03",
@@ -46,12 +50,36 @@ export default function ThreeStep() {
             data-aos="fade-up"
             className="font-clash-display text-balance text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-[2.5rem]"
           >
-            Three steps to becoming a partner
+            Three steps to becoming a{" "}
+            <TreasureSpot
+              kind="win"
+              treasureSlotIndex={8}
+              className="text-inherit"
+            >
+              partner
+            </TreasureSpot>
           </h2>
 
           <div className="mt-9 grid gap-5 md:grid-cols-3 lg:gap-6">
             {STEPS.map((step, index) => {
               const Icon = step.icon;
+
+              const titleNode =
+                "treasure" in step && step.treasure === "win" ? (
+                  <TreasureSpot
+                    kind="win"
+                    treasureSlotIndex={step.treasureSlotIndex}
+                    className="text-inherit"
+                  >
+                    {step.title}
+                  </TreasureSpot>
+                ) : "treasure" in step && step.treasure === "decoy" ? (
+                  <TreasureSpot kind="decoy" className="text-inherit">
+                    {step.title}
+                  </TreasureSpot>
+                ) : (
+                  step.title
+                );
 
               return (
                 <article
@@ -72,7 +100,7 @@ export default function ThreeStep() {
                     {step.eyebrow}
                   </p>
                   <h3 className="mt-4 max-w-52 text-2xl font-bold leading-tight text-white">
-                    {step.title}
+                    {titleNode}
                   </h3>
                   <p className="mt-4 text-sm font-medium leading-relaxed text-white/65">
                     {step.description}

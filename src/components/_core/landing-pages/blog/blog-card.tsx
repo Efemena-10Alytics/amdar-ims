@@ -1,52 +1,120 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { imageStorageUrl, } from "@/lib/utils";
+import { imageStorageUrl } from "@/lib/utils";
+import {
+  TreasureSpot,
+  useTreasureHunt,
+} from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 export type BlogCardData = {
-    id: string | number;
-    title: string;
-    category: string;
-    date: string;
-    href: string;
-    image: string;
+  id: string | number;
+  title: string;
+  category: string;
+  date: string;
+  href: string;
+  image: string;
 };
 
-export default function BlogCard({ post }: { post: BlogCardData }) {
-    const blogImageUrl = `${imageStorageUrl}/images/${post.image}`;
-    console.log(blogImageUrl);
+type BlogCardTreasureConfig = {
+  category?: "decoy" | "win";
+  categorySlot?: number;
+  date?: "decoy" | "win";
+  dateSlot?: number;
+  read?: "decoy" | "win";
+  readSlot?: number;
+  arrow?: "decoy" | "win";
+  arrowSlot?: number;
+};
+
+export default function BlogCard({
+  post,
+  treasure,
+}: {
+  post: BlogCardData;
+  treasure?: BlogCardTreasureConfig;
+}) {
+  const { isHuntActive } = useTreasureHunt();
+  const blogImageUrl = post.image.startsWith("http")
+    ? post.image
+    : post.image.startsWith("/")
+      ? post.image
+      : `${imageStorageUrl}/images/${post.image}`;
+
+  const wrap = (
+    kind: "decoy" | "win" | undefined,
+    slot: number | undefined,
+    className: string,
+    children: React.ReactNode,
+  ) => {
+    if (!isHuntActive || !kind) return children;
     return (
-        <Link href={post.href}>
-            <article className="space-y-3 cursor-pointer w-full hover:bg-[#E8EFF1] group rounded-lg duration-300 transition-all">
-                <div className="overflow-hidden rounded-lg bg-[#E8EFF1]">
-                    <img
-                        src={blogImageUrl}
-                        alt={post.title}
-                        className="h-44 w-full object-cover"
-                    />
-                </div>
-                <div className="space-y-3 group-hover:p-3 transition-all duration-300">
-                    <div className="flex items-center gap-3 text-xs font-medium uppercase text-[#8EA0AA]">
-                        <span>{post.category}</span>
-                        <span className="normal-case">{post.date}</span>
-                    </div>
+      <TreasureSpot
+        kind={kind}
+        treasureSlotIndex={slot}
+        className={className}
+      >
+        {children}
+      </TreasureSpot>
+    );
+  };
 
-                    <h2 className="text-lg font-semibold text-[#092A31] md:text-xl">
-                        {post.title}
-                    </h2>
+  return (
+    <Link href={isHuntActive && treasure?.read === "win" ? "#" : post.href}>
+      <article className="space-y-3 cursor-pointer w-full hover:bg-[#E8EFF1] group rounded-lg duration-300 transition-all">
+        <div className="overflow-hidden rounded-lg bg-[#E8EFF1]">
+          <img
+            src={blogImageUrl}
+            alt={post.title}
+            className="h-44 w-full object-cover"
+          />
+        </div>
+        <div className="space-y-3 group-hover:p-3 transition-all duration-300">
+          <div className="flex items-center gap-3 text-xs font-medium uppercase text-[#8EA0AA]">
+            {wrap(
+              treasure?.category,
+              treasure?.categorySlot,
+              "text-inherit uppercase",
+              <span>{post.category}</span>,
+            )}
+            {wrap(
+              treasure?.date,
+              treasure?.dateSlot,
+              "normal-case text-inherit",
+              <span className="normal-case">{post.date}</span>,
+            )}
+          </div>
 
-                    <div className="flex items-center justify-between pt-1">
-                        <Link
-                            href={post.href}
-                            className="text-base font-medium leading-none text-[#092A31] hover:underline"
-                        >
-                            Read article
-                        </Link>
-                        <span className="inline-flex group-hover:text-primary size-6 items-center justify-center rounded-full bg-[#0E6A76] group-hover:bg-amdari-yellow text-white">
-                            <ArrowUpRight className="size-3.5" />
-                        </span>
-                    </div>
-                </div>
-            </article>
-        </Link>
-    )
+          <h2 className="text-lg font-semibold text-[#092A31] md:text-xl">
+            {post.title}
+          </h2>
+
+          <div className="flex items-center justify-between pt-1">
+            {isHuntActive && treasure?.read ? (
+              <TreasureSpot
+                kind={treasure.read}
+                treasureSlotIndex={treasure.readSlot}
+                className="text-base font-medium leading-none text-[#092A31]"
+              >
+                Read article
+              </TreasureSpot>
+            ) : (
+              <span className="text-base font-medium leading-none text-[#092A31] hover:underline">
+                Read article
+              </span>
+            )}
+            {wrap(
+              treasure?.arrow,
+              treasure?.arrowSlot,
+              "inline-flex",
+              <span className="inline-flex group-hover:text-primary size-6 items-center justify-center rounded-full bg-[#0E6A76] group-hover:bg-amdari-yellow text-white">
+                <ArrowUpRight className="size-3.5" />
+              </span>,
+            )}
+          </div>
+        </div>
+      </article>
+    </Link>
+  );
 }

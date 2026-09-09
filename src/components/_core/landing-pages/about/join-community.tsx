@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { ArrowUpRight } from "lucide-react";
 import Aos from "aos";
+import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const communityMembers = [
   { name: "A", color: "bg-[#B90F36]" },
@@ -26,7 +27,17 @@ const JoinCommunity = () => {
       <div className="app-width grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
         <div data-aos="fade-right">
           <h2 className="max-w-100 text-5xl leading-tight font-semibold text-[#EAF2F4]">
-            Join the Amdari Community
+            <TreasureSpot kind="decoy" className="text-inherit">
+              Join the
+            </TreasureSpot>{" "}
+            Amdari{" "}
+            <TreasureSpot
+              kind="win"
+              treasureSlotIndex={9}
+              className="text-inherit"
+            >
+              Community
+            </TreasureSpot>
           </h2>
 
           <div className="mt-6 flex items-center">

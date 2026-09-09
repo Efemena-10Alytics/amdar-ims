@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import { cn } from "@/lib/utils";
 import { type TeamSlide } from "./stack-carousel";
 import StackCards from "./stack-cards";
+import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const teamSlides: TeamSlide[] = [
     {
@@ -221,10 +222,22 @@ const Team = () => {
                     <div className="app-width grid items-start gap-8 md:grid-cols-[0.95fr_1fr] md:gap-12">
                         <div className="min-w-0">
                             <h2 className="font-clash-display text-4xl font-semibold text-[#123640] lg:text-5xl">
-                                Amdari Team
+                                <TreasureSpot
+                                    kind="win"
+                                    treasureSlotIndex={7}
+                                    className="text-inherit"
+                                >
+                                    Amdari Team
+                                </TreasureSpot>
                             </h2>
                             <p className="mt-1 text-sm font-medium text-[#6B8088] lg:text-base">
-                                Driving excellence across department
+                                <TreasureSpot kind="decoy" className="text-inherit">
+                                    Driving excellence
+                                </TreasureSpot>{" "}
+                                across{" "}
+                                <TreasureSpot kind="decoy" className="text-inherit">
+                                    department
+                                </TreasureSpot>
                             </p>
 
                             <ul className="mt-10 space-y-3 lg:mt-14">
