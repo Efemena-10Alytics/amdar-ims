@@ -97,6 +97,11 @@ const JobBoardHero = () => {
 
           <button
             type="button"
+            onClick={() =>
+              document
+                .getElementById("job-board-section")
+                ?.scrollIntoView({ behavior: "smooth", block: "start" })
+            }
             className="mt-10 flex h-14 items-center gap-2 rounded-[40px] bg-[#156374] px-6 font-sora text-lg text-white transition-opacity hover:opacity-90"
           >
             Find your next job

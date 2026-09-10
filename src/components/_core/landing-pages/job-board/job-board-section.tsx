@@ -105,7 +105,7 @@ const JobBoardSection = () => {
   };
 
   return (
-    <section ref={sectionRef} className="bg-white">
+    <section id="job-board-section" ref={sectionRef} className="bg-white">
       <div className="mx-auto app-width">
         {/* Heading row */}
         <Reveal className="flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-end">
@@ -127,12 +127,12 @@ const JobBoardSection = () => {
           <p className="font-sora text-base font-normal text-[#003463]">
             Powered by <span className="text-lg font-bold">CVMatchly AI</span>
           </p>
-          <button
-            type="button"
+          <a
+            href="https://www.cvmatchly.ai/"
             className="h-12 shrink-0 rounded-xl bg-[#003463] px-5 py-3 font-sora text-sm text-white transition-opacity hover:opacity-90"
           >
             Learn More
-          </button>
+          </a>
         </Reveal>
 
         {/* Filters row */}
