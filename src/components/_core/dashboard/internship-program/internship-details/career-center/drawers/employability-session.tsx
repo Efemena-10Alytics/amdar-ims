@@ -34,12 +34,12 @@ import {
 import { useAuthStore } from "@/store/auth-store";
 import UserDetails from "./user-details";
 
-const COMPANY_LOCATIONS = [
-  "United Kingdom",
-  "United States",
-  "Canada",
-  "Nigeria",
-] as const;
+// const COMPANY_LOCATIONS = [
+//   "United Kingdom",
+//   "United States",
+//   "Canada",
+//   "Nigeria",
+// ] as const;
 
 /** Same labels the legacy dashboard writes, so admin search keeps matching. */
 const ISSUE_OPTIONS = [
@@ -167,10 +167,9 @@ const EmployabilitySessionDrawer = ({
     phoneNumber &&
     form.issue &&
     form.purposeOfUse.trim() &&
-    form.roleTitle.trim() &&
-    form.companyName.trim() &&
-    form.companyLocation &&
-    form.cvFile &&
+    // form.roleTitle.trim() &&
+    // form.companyName.trim() &&
+    // form.companyLocation &&
     !cvError
       ? {
           ...(userId != null ? { user_id: userId } : {}),
@@ -181,10 +180,10 @@ const EmployabilitySessionDrawer = ({
           phone_number: phoneNumber,
           issue: form.issue,
           purpose_of_use: form.purposeOfUse.trim(),
-          job_role: form.roleTitle.trim(),
-          company_name: form.companyName.trim(),
-          company_location: form.companyLocation,
-          cv: form.cvFile,
+          // job_role: form.roleTitle.trim(),
+          // company_name: form.companyName.trim(),
+          // company_location: form.companyLocation,
+          ...(form.cvFile ? { cv: form.cvFile } : {}),
         }
       : null;
 
@@ -259,7 +258,7 @@ const EmployabilitySessionDrawer = ({
                 </div>
               ) : null}
 
-              <div>
+              {/* <div>
                 <label
                   htmlFor="employability-role-title"
                   className="mb-1.5 block text-sm font-medium text-[#092A31]"
@@ -330,7 +329,7 @@ const EmployabilitySessionDrawer = ({
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
+              </div> */}
 
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-[#092A31]">
