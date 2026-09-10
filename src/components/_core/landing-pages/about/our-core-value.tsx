@@ -13,7 +13,6 @@ import {
   Users,
 } from "lucide-react";
 import Aos from "aos";
-import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 interface CoreValueItem {
   icon: LucideIcon;
@@ -91,17 +90,7 @@ const OurCoreValue = () => {
           data-aos="fade-up"
           className="mx-auto text-center text-4xl font-semibold text-[#062C36] md:text-5xl"
         >
-          <TreasureSpot kind="decoy" className="text-inherit">
-            Our
-          </TreasureSpot>{" "}
-          <br />{" "}
-          <TreasureSpot
-            kind="win"
-            treasureSlotIndex={4}
-            className="text-inherit"
-          >
-            Core Value
-          </TreasureSpot>
+          Our <br /> Core Value
         </h2>
 
         <div className="mt-10 grid gap-8 md:grid-cols-2 overflow-hidden">
@@ -121,13 +110,7 @@ const OurCoreValue = () => {
                   <Icon className={`h-7 w-7 ${item.iconClassName ?? "text-white"}`} />
                 </div>
                 <p className="md:text-2xl leading-tight font-medium text-[#1A3B45] max-w-100">
-                  {index === 0 ? (
-                    <TreasureSpot kind="decoy" className="text-inherit">
-                      {item.label}
-                    </TreasureSpot>
-                  ) : (
-                    item.label
-                  )}
+                  {item.label}
                 </p>
               </article>
             );

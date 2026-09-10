@@ -19,7 +19,6 @@ import {
 } from "@/features/testimonials/constants";
 import { useYoutubeCaptions } from "@/features/youtube/use-youtube-caption";
 import Aos from "aos";
-import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 // Custom Curved Arrow Icons
 
@@ -130,10 +129,7 @@ const WhatOurInternsSays = () => {
         {/* Header Section */}
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] mb-4">
-            What Our Interns{" "}
-            <TreasureSpot kind="decoy" className="text-inherit">
-              Say
-            </TreasureSpot>
+            What Our Interns Say
           </h2>
           <p className="text-[#092A31]/70 text-base lg:text-lg max-w-2xl mx-auto">
             Our interns have gone on to secure roles across the UK, US, Canada,

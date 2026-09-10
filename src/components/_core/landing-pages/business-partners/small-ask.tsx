@@ -5,7 +5,6 @@ import Aos from "aos";
 import { cn } from "@/lib/utils";
 import CustomButton from "../shared/custom-button";
 import { CopierSvg } from "../home/svg";
-import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const RETURNS = [
   {
@@ -13,8 +12,6 @@ const RETURNS = [
     description:
       "Your company name appears on intern project briefs, case studies, and portfolios. That's brand visibility inside a growing community of 25,000+ tech professionals across the UK, US, and Canada.",
     className: "lg:col-span-4",
-    treasure: "win" as const,
-    treasureSlotIndex: 6,
   },
   {
     title: "Social Impact You Can Stand Behind",
@@ -33,7 +30,6 @@ const RETURNS = [
     description:
       "No NDAs unless you want one. No data sharing unless you choose to. No management overhead. You contribute a brief and we handle everything else.",
     className: "lg:col-span-5",
-    treasure: "decoy" as const,
   },
   {
     title: "Recognition as a Forward-Thinking Partner",
@@ -48,33 +44,12 @@ function ReturnCard({
   description,
   className,
   index,
-  treasure,
-  treasureSlotIndex,
 }: {
   title: string;
   description: string;
   className?: string;
   index: number;
-  treasure?: "decoy" | "win";
-  treasureSlotIndex?: number;
 }) {
-  const titleNode =
-    treasure === "win" && treasureSlotIndex != null ? (
-      <TreasureSpot
-        kind="win"
-        treasureSlotIndex={treasureSlotIndex}
-        className="text-inherit"
-      >
-        {title}
-      </TreasureSpot>
-    ) : treasure === "decoy" ? (
-      <TreasureSpot kind="decoy" className="text-inherit">
-        {title}
-      </TreasureSpot>
-    ) : (
-      title
-    );
-
   return (
     <article
       data-aos="fade-up"
@@ -92,7 +67,7 @@ function ReturnCard({
         <CopierSvg />
       </div>
       <h3 className="text-lg font-bold leading-snug text-[#64748B] md:text-xl">
-        {titleNode}
+        {title}
       </h3>
       <p className="mt-3 text-sm font-medium leading-relaxed text-[#64748B] sm:text-base">
         {description}
@@ -127,26 +102,14 @@ export default function SmallAsk() {
             data-aos="fade-up"
             className="font-clash-display max-w-2xl text-balance text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-[2.625rem]"
           >
-            Small ask.{" "}
-            <TreasureSpot
-              kind="win"
-              treasureSlotIndex={5}
-              className="text-inherit"
-            >
-              Genuine return
-            </TreasureSpot>
-            .
+            Small ask. Genuine return.
           </h2>
           <p
             data-aos="fade-up"
             data-aos-delay="80"
             className="max-w-md text-sm font-semibold leading-relaxed text-[#71859F] sm:text-base md:pt-2"
           >
-            This is a{" "}
-            <TreasureSpot kind="decoy" className="text-inherit">
-              light-touch commitment
-            </TreasureSpot>
-            . Here&apos;s what you get in exchange for it.
+            This is a light-touch commitment. Here&apos;s what you get in exchange for it.
           </p>
         </div>
 
@@ -158,10 +121,6 @@ export default function SmallAsk() {
               description={item.description}
               className={item.className}
               index={index}
-              treasure={"treasure" in item ? item.treasure : undefined}
-              treasureSlotIndex={
-                "treasureSlotIndex" in item ? item.treasureSlotIndex : undefined
-              }
             />
           ))}
         </div>

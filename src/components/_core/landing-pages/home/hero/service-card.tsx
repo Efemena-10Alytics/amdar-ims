@@ -4,10 +4,6 @@ import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import {
-  TreasureSpot,
-  useTreasureHunt,
-} from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 interface ServiceCardProps {
   title: string;
@@ -15,8 +11,6 @@ interface ServiceCardProps {
   buttonText: string;
   dataAos?: string;
   dataAosDuration?: string;
-  treasureKind?: "decoy" | "win";
-  treasureSlotIndex?: number;
 }
 
 const ServiceCard = ({
@@ -25,12 +19,7 @@ const ServiceCard = ({
   buttonText,
   dataAos,
   dataAosDuration,
-  treasureKind,
-  treasureSlotIndex = 0,
 }: ServiceCardProps) => {
-  const { isHuntActive } = useTreasureHunt();
-  const showTreasureCta = isHuntActive && treasureKind;
-
   const ctaClassName = cn(
     "bg-transparent rounded-full p-0 hover:p-4 hover:bg-transparent",
     "inline-flex items-center gap-2 justify-start text-[#B6CFD4]!",
@@ -55,19 +44,9 @@ const ServiceCard = ({
         <h3 className="text-xl lg:text-[22px] font-semibold mb-4">{title}</h3>
         <p className="mb-6 text-sm">{description}</p>
       </div>
-      {showTreasureCta ? (
-        <TreasureSpot
-          kind={treasureKind}
-          treasureSlotIndex={treasureSlotIndex}
-          className={ctaClassName}
-        >
-          {ctaInner}
-        </TreasureSpot>
-      ) : (
-        <Link href="/internship">
-          <Button className={ctaClassName}>{ctaInner}</Button>
-        </Link>
-      )}
+      <Link href="/internship">
+        <Button className={ctaClassName}>{ctaInner}</Button>
+      </Link>
     </div>
   );
 };

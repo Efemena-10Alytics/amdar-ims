@@ -10,24 +10,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ArrowLeftCurve, ArrowRightCurve } from "../svg";
-import {
-  TreasureSpot,
-  useTreasureHunt,
-} from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 // Custom Navigation Buttons
 const CustomCarouselPrevious = ({
   className,
   api,
-  enableTreasureHunt,
 }: {
   className?: string;
   api: CarouselApi | undefined;
-  enableTreasureHunt?: boolean;
 }) => {
   const [canScrollPrev, setCanScrollPrev] = useState(false);
-  const hunt = useTreasureHunt();
-  const isHuntActive = enableTreasureHunt ? hunt.isHuntActive : false;
 
   useEffect(() => {
     if (!api) return;
@@ -51,20 +43,6 @@ const CustomCarouselPrevious = ({
     className,
   );
 
-  if (enableTreasureHunt && isHuntActive) {
-    return (
-      <TreasureSpot
-        kind="decoy"
-        className={cn(
-          buttonClassName,
-          "inline-flex items-center justify-center border",
-        )}
-      >
-        <ArrowLeftCurve />
-      </TreasureSpot>
-    );
-  }
-
   return (
     <Button
       variant="outline"
@@ -82,15 +60,11 @@ const CustomCarouselPrevious = ({
 const CustomCarouselNext = ({
   className,
   api,
-  enableTreasureHunt,
 }: {
   className?: string;
   api: CarouselApi | undefined;
-  enableTreasureHunt?: boolean;
 }) => {
   const [canScrollNext, setCanScrollNext] = useState(false);
-  const hunt = useTreasureHunt();
-  const isHuntActive = enableTreasureHunt ? hunt.isHuntActive : false;
 
   useEffect(() => {
     if (!api) return;
@@ -113,21 +87,6 @@ const CustomCarouselNext = ({
     "w-10 h-10 rounded-full bg-primary text-white hover:bg-primary/90 border-0",
     className,
   );
-
-  if (enableTreasureHunt && isHuntActive) {
-    return (
-      <TreasureSpot
-        kind="win"
-        treasureSlotIndex={10}
-        className={cn(
-          buttonClassName,
-          "inline-flex items-center justify-center",
-        )}
-      >
-        <ArrowRightCurve />
-      </TreasureSpot>
-    );
-  }
 
   return (
     <Button
@@ -182,7 +141,6 @@ interface SuccessStoriesSliderProps {
   testimonials: Testimonial[];
   current: number;
   onApiChange?: (api: CarouselApi | undefined) => void;
-  enableTreasureHunt?: boolean;
 }
 
 const AUTO_SLIDE_INTERVAL_MS = 5000;
@@ -191,7 +149,6 @@ const SuccessStoriesSlider = ({
   testimonials,
   current,
   onApiChange,
-  enableTreasureHunt = false,
 }: SuccessStoriesSliderProps) => {
   const [api, setApi] = useState<CarouselApi>();
 
@@ -246,16 +203,10 @@ const SuccessStoriesSlider = ({
         {/* Navigation Buttons */}
         <div className="flex justify-between items-center absolute -left-12 -right-12 top-1/2 -translate-y-1/2 pointer-events-none">
           <div className="pointer-events-auto">
-            <CustomCarouselPrevious
-              api={api}
-              enableTreasureHunt={enableTreasureHunt}
-            />
+            <CustomCarouselPrevious api={api} />
           </div>
           <div className="pointer-events-auto">
-            <CustomCarouselNext
-              api={api}
-              enableTreasureHunt={enableTreasureHunt}
-            />
+            <CustomCarouselNext api={api} />
           </div>
         </div>
       </Carousel>

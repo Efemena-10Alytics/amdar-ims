@@ -5,14 +5,8 @@ import { Star } from "lucide-react";
 import type { CarouselApi } from "@/components/ui/carousel";
 import SuccessStoriesSlider from "./success-stories-slider";
 import Aos from "aos";
-import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
-type SuccessStoriesProps = {
-  /** When true, places treasure-hunt targets (used on /testimonial only). */
-  enableTreasureHunt?: boolean;
-};
-
-const SuccessStories = ({ enableTreasureHunt = false }: SuccessStoriesProps) => {
+const SuccessStories = () => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
@@ -68,8 +62,8 @@ I would recommend Amdari to anyone looking to gain practical experience and grow
       name: "Sarah Williams",
       role: "Cybersecurity Expert",
       quote: `I am currently completing my internship with Amdari in Ethical Hacking, and it has been an incredible experience so far. The team has been brilliant — supportive, knowledgeable, and genuinely committed to helping me grow as a cybersecurity penetration tester.
-My tutor, Christopher Essien, has been outstanding. He’s patient, approachable, and always willing to guide me through every concept to ensure I fully understand the practical and technical aspects of ethical hacking. His mentorship has truly helped me build confidence and sharpen my skills in this field.
-I’m very grateful for the opportunity to learn with Amdari. The experience is not only helping me strengthen my foundation in cybersecurity but also preparing me for a successful career ahead. I’m proud to be part of this internship and excited for what’s next!`,
+My tutor, Christopher Essien, has been outstanding. He's patient, approachable, and always willing to guide me through every concept to ensure I fully understand the practical and technical aspects of ethical hacking. His mentorship has truly helped me build confidence and sharpen my skills in this field.
+I'm very grateful for the opportunity to learn with Amdari. The experience is not only helping me strengthen my foundation in cybersecurity but also preparing me for a successful career ahead. I'm proud to be part of this internship and excited for what's next!`,
       avatar: "/images/pngs/Fintech.png",
     },
 
@@ -105,33 +99,11 @@ Thank you Amdari`,
         {/* Title Section */}
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] mb-4">
-            {enableTreasureHunt ? (
-              <>
-                <TreasureSpot
-                  kind="win"
-                  treasureSlotIndex={7}
-                  className="text-inherit"
-                >
-                  Success
-                </TreasureSpot>{" "}
-                <TreasureSpot kind="decoy" className="text-inherit">
-                  Stories
-                </TreasureSpot>
-              </>
-            ) : (
-              "Success Stories"
-            )}
+            Success Stories
           </h2>
           <p className="text-[#092A31]/80 text-base lg:text-lg max-w-md mx-auto">
-            Our interns have gone on to{" "}
-            {enableTreasureHunt ? (
-              <TreasureSpot kind="decoy" className="text-inherit">
-                secure
-              </TreasureSpot>
-            ) : (
-              "secure"
-            )}{" "}
-            roles across the UK, US, Canada, and Africa
+            Our interns have gone on to secure roles across the UK, US, Canada,
+            and Africa
           </p>
         </div>
 
@@ -140,7 +112,6 @@ Thank you Amdari`,
           testimonials={testimonials}
           current={current}
           onApiChange={setApi}
-          enableTreasureHunt={enableTreasureHunt}
         />
 
         {/* Testimonial Content */}
@@ -153,54 +124,23 @@ Thank you Amdari`,
 
             {/* Author */}
             <div className="mb-4">
-              {enableTreasureHunt ? (
-                <TreasureSpot
-                  kind="win"
-                  treasureSlotIndex={8}
-                  className="text-lg font-semibold text-gray-800"
-                >
-                  {testimonials[current].name}
-                </TreasureSpot>
-              ) : (
-                <span className="text-lg font-semibold text-gray-800">
-                  {testimonials[current].name}
-                </span>
-              )}
+              <span className="text-lg font-semibold text-gray-800">
+                {testimonials[current].name}
+              </span>
               <span className="text-gray-600 mx-2">|</span>
-              {enableTreasureHunt ? (
-                <TreasureSpot kind="decoy" className="text-gray-600">
-                  {testimonials[current].role}
-                </TreasureSpot>
-              ) : (
-                <span className="text-gray-600">
-                  {testimonials[current].role}
-                </span>
-              )}
+              <span className="text-gray-600">
+                {testimonials[current].role}
+              </span>
             </div>
 
             {/* Rating */}
             <div className="flex justify-center gap-1">
-              {enableTreasureHunt ? (
-                <TreasureSpot
-                  kind="win"
-                  treasureSlotIndex={9}
-                  className="inline-flex gap-1"
-                >
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="w-5 h-5 fill-orange-500 text-orange-500"
-                    />
-                  ))}
-                </TreasureSpot>
-              ) : (
-                [...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className="w-5 h-5 fill-orange-500 text-orange-500"
-                  />
-                ))
-              )}
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  className="w-5 h-5 fill-orange-500 text-orange-500"
+                />
+              ))}
             </div>
           </div>
         )}

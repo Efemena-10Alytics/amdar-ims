@@ -3,13 +3,8 @@ import { useEffect } from "react";
 import Aos from "aos";
 import CustomButton from "../shared/custom-button";
 import Link from "next/link";
-import {
-  TreasureSpot,
-  useTreasureHunt,
-} from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const CareerNeeds = () => {
-  const { isHuntActive } = useTreasureHunt();
   const benefits = [
     {
       title: "Real-World Project Experience",
@@ -58,10 +53,7 @@ const CareerNeeds = () => {
               data-aos-duration="500"
               className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] leading-tight"
             >
-              <TreasureSpot kind="decoy" className="text-inherit">
-                Everything
-              </TreasureSpot>{" "}
-              your Tech Career Needs
+              Everything your Tech Career Needs
             </h2>
             <p
               data-aos="zoom-in"
@@ -72,19 +64,9 @@ const CareerNeeds = () => {
               overwhelming. That's why we built Amdari to help you access
               opportunities easily
             </p>
-            {isHuntActive ? (
-              <TreasureSpot
-                kind="win"
-                treasureSlotIndex={7}
-                className="inline-flex"
-              >
-                <CustomButton btnText="Apply now" />
-              </TreasureSpot>
-            ) : (
-              <Link href="/internship">
-                <CustomButton btnText="Apply now" />
-              </Link>
-            )}
+            <Link href="/internship">
+              <CustomButton btnText="Apply now" />
+            </Link>
           </div>
 
           {/* Right Column - Benefits List (overflow here doesn't affect sticky) */}

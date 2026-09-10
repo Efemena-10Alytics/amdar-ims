@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
 import { getYoutubeThumbnail } from "@/features/testimonials/constants";
-import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 type TestimonialMode = "video" | "text";
 
@@ -167,15 +166,13 @@ function TextTestimonialCard({ item }: { item: TextTestimonial }) {
             ) : null}
           </div>
         </div>
-        <TreasureSpot kind="decoy" className="mt-0.5 shrink-0 inline-flex">
-          <Image
-            src={item.flag}
-            alt=""
-            width={22}
-            height={22}
-            className="rounded-full"
-          />
-        </TreasureSpot>
+        <Image
+          src={item.flag}
+          alt=""
+          width={22}
+          height={22}
+          className="mt-0.5 shrink-0 rounded-full"
+        />
       </div>
 
       <QuoteMark className="mt-5 size-7 text-[#C8D5DA] sm:size-8" />
