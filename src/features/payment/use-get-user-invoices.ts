@@ -16,8 +16,10 @@ type RawInvoicesResponse = {
 };
 
 /** Unwraps the triply-nested `{ data: { data: { data: [...] } } }` envelope defensively. */
-function unwrapInvoices(payload: RawInvoicesResponse | undefined): ApiInvoice[] {
-  const inner = payload?.data?.data?.data;
+function unwrapInvoices(
+  payload: RawInvoicesResponse | undefined,
+): ApiInvoice[] {
+  const inner = payload?.data?.data;
   return Array.isArray(inner) ? inner : [];
 }
 
