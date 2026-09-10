@@ -24,10 +24,6 @@ import {
 } from "@/features/testimonials/constants";
 import { useYoutubeCaptions } from "@/features/youtube/use-youtube-caption";
 import SuccessStories from "../home/success-stories";
-import {
-  TreasureSpot,
-  useTreasureHunt,
-} from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 type TestimonialVideoCardProps = {
   testimonial: (typeof TESTIMONIAL_VIDEOS)[number];
@@ -36,8 +32,6 @@ type TestimonialVideoCardProps = {
   hasImageError: boolean;
   onImageError: () => void;
   onPlay: () => void;
-  playTreasure?: { kind: "decoy" | "win"; slot?: number };
-  badgeTreasure?: "decoy";
 };
 
 function TestimonialVideoCard({
@@ -47,11 +41,8 @@ function TestimonialVideoCard({
   hasImageError,
   onImageError,
   onPlay,
-  playTreasure,
-  badgeTreasure,
 }: TestimonialVideoCardProps) {
   const { containerRef, isFullscreen, toggleFullscreen } = useVideoFullscreen();
-  const { isHuntActive } = useTreasureHunt();
 
   if (isPlaying) {
     return (
@@ -123,39 +114,14 @@ function TestimonialVideoCard({
           </div>
         )}
 
-        <div className="absolute top-4 left-4">
-          {isHuntActive && badgeTreasure ? (
-            <TreasureSpot kind="decoy" className="inline-flex">
-              {youtubeBadge}
-            </TreasureSpot>
-          ) : (
-            youtubeBadge
-          )}
-        </div>
+        <div className="absolute top-4 left-4">{youtubeBadge}</div>
 
         <div className="absolute inset-0 flex items-center justify-center">
-          {isHuntActive && playTreasure ? (
-            <TreasureSpot
-              kind={playTreasure.kind}
-              treasureSlotIndex={playTreasure.slot}
-              className="inline-flex"
-            >
-              {centerPlay}
-            </TreasureSpot>
-          ) : (
-            centerPlay
-          )}
+          {centerPlay}
         </div>
       </div>
     </div>
   );
-}
-
-function cardPlayTreasure(index: number): TestimonialVideoCardProps["playTreasure"] {
-  if (index <= 4) {
-    return { kind: "win", slot: index + 1 };
-  }
-  return { kind: "decoy" };
 }
 
 function CarouselPrevious({
@@ -166,7 +132,6 @@ function CarouselPrevious({
   className?: string;
 }) {
   const [canScrollPrev, setCanScrollPrev] = useState(false);
-  const { isHuntActive } = useTreasureHunt();
 
   useEffect(() => {
     if (!api) return;
@@ -184,20 +149,6 @@ function CarouselPrevious({
   }, [api]);
 
   const buttonClassName = cn("h-10 w-10 rounded-full", className);
-
-  if (isHuntActive) {
-    return (
-      <TreasureSpot
-        kind="decoy"
-        className={cn(
-          buttonClassName,
-          "inline-flex items-center justify-center border-0",
-        )}
-      >
-        <ArrowLeftCurve />
-      </TreasureSpot>
-    );
-  }
 
   return (
     <Button
@@ -221,7 +172,6 @@ function CarouselNext({
   className?: string;
 }) {
   const [canScrollNext, setCanScrollNext] = useState(false);
-  const { isHuntActive } = useTreasureHunt();
 
   useEffect(() => {
     if (!api) return;
@@ -239,21 +189,6 @@ function CarouselNext({
   }, [api]);
 
   const buttonClassName = cn("h-10 w-10 rounded-full", className);
-
-  if (isHuntActive) {
-    return (
-      <TreasureSpot
-        kind="win"
-        treasureSlotIndex={6}
-        className={cn(
-          buttonClassName,
-          "inline-flex items-center justify-center border-0",
-        )}
-      >
-        <ArrowRightCurve />
-      </TreasureSpot>
-    );
-  }
 
   return (
     <Button
@@ -296,35 +231,11 @@ const TestimonialsSection = () => {
       <div className="app-width">
         <div className="mx-auto max-w-3xl text-center">
           <h1 className="text-3xl font-semibold text-[#092A31] sm:text-4xl lg:text-5xl">
-            What Our{" "}
-            <TreasureSpot
-              kind="win"
-              treasureSlotIndex={0}
-              className="text-inherit"
-            >
-              Interns
-            </TreasureSpot>{" "}
-            <TreasureSpot kind="decoy" className="text-inherit">
-              Say
-            </TreasureSpot>
+            What Our Interns Say
           </h1>
           <p className="mt-4 text-base text-[#092A31]/70 sm:text-lg">
-            Our interns have gone on to secure roles across the{" "}
-            <TreasureSpot kind="decoy" className="text-inherit">
-              UK
-            </TreasureSpot>
-            ,{" "}
-            <TreasureSpot kind="decoy" className="text-inherit">
-              US
-            </TreasureSpot>
-            ,{" "}
-            <TreasureSpot kind="decoy" className="text-inherit">
-              Canada
-            </TreasureSpot>
-            , and{" "}
-            <TreasureSpot kind="decoy" className="text-inherit">
-              Africa
-            </TreasureSpot>
+            Our interns have gone on to secure roles across the UK, US, Canada,
+            and Africa
           </p>
         </div>
       </div>
@@ -339,7 +250,7 @@ const TestimonialsSection = () => {
           className="w-full"
         >
           <CarouselContent className="ml-0">
-            {TESTIMONIAL_VIDEOS.map((testimonial, index) => (
+            {TESTIMONIAL_VIDEOS.map((testimonial) => (
               <CarouselItem
                 key={testimonial.id}
                 className="min-w-0 shrink-0 grow-0 basis-[90vw] pr-4"
@@ -356,8 +267,6 @@ const TestimonialsSection = () => {
                     }));
                   }}
                   onPlay={() => setPlayingId(testimonial.id)}
-                  playTreasure={cardPlayTreasure(index)}
-                  badgeTreasure={index <= 2 ? "decoy" : undefined}
                 />
               </CarouselItem>
             ))}
@@ -378,7 +287,7 @@ const TestimonialsSection = () => {
         </div>
       </div>
       <div className="mt-12">
-        <SuccessStories enableTreasureHunt />
+        <SuccessStories />
       </div>
     </section>
   );

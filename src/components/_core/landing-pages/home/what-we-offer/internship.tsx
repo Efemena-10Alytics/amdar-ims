@@ -8,10 +8,6 @@ import Link from "next/link";
 import { useGetInternshipPrograms } from "@/features/internship/use-get-all-internship-programs";
 import { getImageUrl, pickRandomTwo } from "@/lib/utils";
 import type { InternshipProgram } from "@/types/internship-program";
-import {
-  TreasureSpot,
-  useTreasureHunt,
-} from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const FALLBACK_ITEMS = [
   {
@@ -27,7 +23,6 @@ const FALLBACK_ITEMS = [
 ];
 
 const Internship = () => {
-  const { isHuntActive } = useTreasureHunt();
   const { data: programs } = useGetInternshipPrograms() as unknown as {
     data: InternshipProgram[] | undefined;
   };
@@ -71,64 +66,38 @@ const Internship = () => {
 
         {/* Right Section - Career Cards */}
         <div className="flex-1 lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {careerItems.map((item) => {
-            const cardClassName =
-              "group bg-white hover:bg-primary p-5 rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow block";
-            const cardInner = (
-              <>
-                <div className="relative w-full h-48 bg-gray-200 rounded-md">
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    fill
-                    className="object-cover rounded-md"
-                  />
-                </div>
-                <div className="mt-4">
-                  <h3 className="text-xl font-bold text-[#092A31] group-hover:text-white mb-3">
-                    {item.title}
-                  </h3>
-                  <p className="text-[#64748B] group-hover:text-white text-sm mb-4 leading-relaxed line-clamp-2">
-                    {item.desc}
-                  </p>
-                  <span className="flex text-[#092A31] group-hover:text-white items-center gap-2 text-sm font-medium">
-                    <TreasureSpot
-                      kind="win"
-                      treasureSlotIndex={5}
-                      className="text-inherit"
-                    >
-                      Explore course
-                    </TreasureSpot>
-                    <div className="flex h-6 w-6 rounded-full justify-center items-center bg-primary">
-                      <ArrowUpRight className="w-4 h-4 text-white" />
-                    </div>
-                  </span>
-                </div>
-              </>
-            );
-
-            if (isHuntActive) {
-              return (
-                <div key={item.id} className={cardClassName}>
-                  {cardInner}
-                </div>
-              );
-            }
-
-            return (
-              <Link
-                key={item.id}
-                href={
-                  programs?.length
-                    ? `/internship/${item.id}`
-                    : "/internship"
-                }
-                className={cardClassName}
-              >
-                {cardInner}
-              </Link>
-            );
-          })}
+          {careerItems.map((item) => (
+            <Link
+              key={item.id}
+              href={
+                programs?.length ? `/internship/${item.id}` : "/internship"
+              }
+              className="group bg-white hover:bg-primary p-5 rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow block"
+            >
+              <div className="relative w-full h-48 bg-gray-200 rounded-md">
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  fill
+                  className="object-cover rounded-md"
+                />
+              </div>
+              <div className="mt-4">
+                <h3 className="text-xl font-bold text-[#092A31] group-hover:text-white mb-3">
+                  {item.title}
+                </h3>
+                <p className="text-[#64748B] group-hover:text-white text-sm mb-4 leading-relaxed line-clamp-2">
+                  {item.desc}
+                </p>
+                <span className="flex text-[#092A31] group-hover:text-white items-center gap-2 text-sm font-medium">
+                  Explore course
+                  <div className="flex h-6 w-6 rounded-full justify-center items-center bg-primary">
+                    <ArrowUpRight className="w-4 h-4 text-white" />
+                  </div>
+                </span>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </div>

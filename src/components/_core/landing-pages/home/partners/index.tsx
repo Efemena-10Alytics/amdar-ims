@@ -3,7 +3,6 @@
 import React from "react";
 import LogoSlider from "./logo-slider";
 import Aos from "aos";
-import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const Partners = () => {
   React.useEffect(() => {
@@ -28,28 +27,16 @@ const Partners = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
           <div>
             <h2 className="text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#092A31] leading-tight mb-6">
-              Businesses We Have{" "}
-              <TreasureSpot kind="decoy" className="text-inherit">
-                Partnered
-              </TreasureSpot>{" "}
-              With
+              Businesses We Have Partnered With
             </h2>
           </div>
 
           <div className="flex items-start">
             <p className="text-[#092A31]/80 text-base lg:text-lg leading-relaxed">
               Amdari collaborates with a growing network of forward-thinking
-              businesses, SMEs, and digital-first organizations in the UK, US
-              and{" "}
-              <TreasureSpot
-                kind="win"
-                treasureSlotIndex={6}
-                className="font-semibold text-inherit"
-              >
-                Canada
-              </TreasureSpot>{" "}
-              to source real business challenges that power our internship
-              projects.
+              businesses, SMEs, and digital-first organizations in the UK, US and{" "}
+              <span className="font-semibold">Canada</span> to source real
+              business challenges that power our internship projects.
             </p>
           </div>
         </div>

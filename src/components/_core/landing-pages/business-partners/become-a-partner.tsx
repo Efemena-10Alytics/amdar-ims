@@ -17,22 +17,12 @@ import type { BecomeAPartnerPayload } from "@/features/business-partners/types";
 import { scrollToHash } from "@/lib/scroll-to-hash";
 import { cn } from "@/lib/utils";
 import SuccessModal from "./success-modal";
-import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const TRUST_NOTES = [
-  {
-    note: "No sensitive data required",
-    treasure: "decoy" as const,
-  },
-  {
-    note: "We'll respond within 2 business days",
-  },
-  {
-    note: "No contracts or commitments at this stage",
-  },
-  {
-    note: "We shape the brief, you just point us in the right direction",
-  },
+  "No sensitive data required",
+  "We'll respond within 2 business days",
+  "No contracts or commitments at this stage",
+  "We shape the brief, you just point us in the right direction",
 ] as const;
 
 const INDUSTRIES = [
@@ -159,13 +149,7 @@ export default function BecomeAPartner() {
               id="become-partner-heading"
               className="font-clash-display text-balance text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-[2.75rem]"
             >
-              <TreasureSpot
-                kind="win"
-                treasureSlotIndex={10}
-                className="text-inherit"
-              >
-                Become a partner
-              </TreasureSpot>
+              Become a partner
             </h2>
             <p className="mt-4 max-w-md text-base font-medium leading-relaxed text-[#64748B] sm:text-lg">
               Fill in the form below and we&apos;ll be in touch within 2 business
@@ -173,23 +157,15 @@ export default function BecomeAPartner() {
             </p>
 
             <ul className="mt-12 space-y-3">
-              {TRUST_NOTES.map((item) => (
+              {TRUST_NOTES.map((note) => (
                 <li
-                  key={item.note}
+                  key={note}
                   className="flex items-center gap-3 text-sm font-medium text-[#64748B]"
                 >
                   <span className="flex size-4 shrink-0 items-center justify-center rounded-sm bg-[#C9F5D7] text-[#22A957]">
                     <Check className="size-3" strokeWidth={3} />
                   </span>
-                  <span>
-                    {"treasure" in item && item.treasure === "decoy" ? (
-                      <TreasureSpot kind="decoy" className="text-inherit">
-                        {item.note}
-                      </TreasureSpot>
-                    ) : (
-                      item.note
-                    )}
-                  </span>
+                  <span>{note}</span>
                 </li>
               ))}
             </ul>

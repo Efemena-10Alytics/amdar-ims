@@ -1,10 +1,6 @@
 "use client";
 
 import type { NormalizedJob } from "@/features/jobs/types";
-import {
-  JobTreasureWrap,
-  type JobCardTreasureConfig,
-} from "./job-board-treasure";
 
 const JobIcon = () => (
   <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -60,13 +56,7 @@ export type Job = NormalizedJob;
 const applyClassName =
   "ml-4 shrink-0 rounded-xl bg-[#0C3640] px-5 py-3 font-sora text-sm font-semibold text-white transition-opacity hover:opacity-90";
 
-const JobCard = ({
-  job,
-  treasure,
-}: {
-  job: Job;
-  treasure?: JobCardTreasureConfig;
-}) => {
+const JobCard = ({ job }: { job: Job }) => {
   const metaLine = [job.remoteMode, job.jobType, job.salary].filter(Boolean).join(" · ");
 
   const dateLabel = job.datePosted && job.closingDate
@@ -81,57 +71,25 @@ const JobCard = ({
     <div className="flex flex-col justify-between rounded-xl border border-transparent bg-[#F8FAFC] p-6 transition-all duration-200 hover:-translate-y-1 hover:border-[#CBD5E1] hover:bg-[#E8EFF1] hover:shadow-lg">
       <div className="flex items-start gap-3">
         <div className="shrink-0">
-          <JobTreasureWrap kind={treasure?.icon} slot={treasure?.iconSlot} className="inline-flex">
-            <JobIcon />
-          </JobTreasureWrap>
+          <JobIcon />
         </div>
         <div className="min-w-0 pt-1">
           <p className="line-clamp-2 font-sora text-sm font-bold uppercase text-[#0C3640]">
-            <JobTreasureWrap
-              kind={treasure?.employer}
-              slot={treasure?.employerSlot}
-              className="text-inherit uppercase"
-            >
-              {job.employer || "Company"}
-            </JobTreasureWrap>
+            {job.employer || "Company"}
           </p>
           {job.location && (
             <div className="mt-1 flex items-center gap-1.5">
               <img src="/uk-flag.png" alt="flag" className="h-4 w-4 shrink-0 object-contain" />
-              <span className="font-sora text-sm text-[#64748B]">
-                <JobTreasureWrap
-                  kind={treasure?.location}
-                  slot={treasure?.locationSlot}
-                  className="text-inherit"
-                >
-                  {job.location}
-                </JobTreasureWrap>
-              </span>
+              <span className="font-sora text-sm text-[#64748B]">{job.location}</span>
             </div>
           )}
         </div>
       </div>
 
       <div className="mt-4">
-        <h3 className="font-sora text-xl font-semibold text-[#0C3640]">
-          <JobTreasureWrap
-            kind={treasure?.title}
-            slot={treasure?.titleSlot}
-            className="text-inherit"
-          >
-            {job.title}
-          </JobTreasureWrap>
-        </h3>
+        <h3 className="font-sora text-xl font-semibold text-[#0C3640]">{job.title}</h3>
         {metaLine && (
-          <p className="mt-1 font-sora text-sm text-[#64748B]">
-            <JobTreasureWrap
-              kind={treasure?.meta}
-              slot={treasure?.metaSlot}
-              className="text-inherit"
-            >
-              {metaLine}
-            </JobTreasureWrap>
-          </p>
+          <p className="mt-1 font-sora text-sm text-[#64748B]">{metaLine}</p>
         )}
       </div>
 
@@ -139,36 +97,18 @@ const JobCard = ({
 
       <div className="mt-4 flex items-end justify-between border-t border-[#E2E8F0] pt-4">
         {dateLabel ? (
-          <p className="whitespace-pre-line font-sora text-xs text-[#64748B]">
-            <JobTreasureWrap
-              kind={treasure?.date}
-              slot={treasure?.dateSlot}
-              className="text-inherit whitespace-pre-line"
-            >
-              {dateLabel}
-            </JobTreasureWrap>
-          </p>
+          <p className="whitespace-pre-line font-sora text-xs text-[#64748B]">{dateLabel}</p>
         ) : (
           <span />
         )}
-        {treasure?.apply ? (
-          <JobTreasureWrap
-            kind={treasure.apply}
-            slot={treasure.applySlot}
-            className={applyClassName}
-          >
-            {applyLabel}
-          </JobTreasureWrap>
-        ) : (
-          <a
-            href={job.applyUrl || "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={applyClassName}
-          >
-            {applyLabel}
-          </a>
-        )}
+        <a
+          href={job.applyUrl || "#"}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={applyClassName}
+        >
+          {applyLabel}
+        </a>
       </div>
     </div>
   );

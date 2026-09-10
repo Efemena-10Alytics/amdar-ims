@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const JobReady = () => {
   const benefits = [
@@ -44,11 +43,7 @@ const JobReady = () => {
 
           <div className="lg:mt-16">
             <h2 className="text-3xl lg:text-4xl font-semibold text-[#092A31] mb-4">
-              Are You{" "}
-              <TreasureSpot kind="decoy" className="text-inherit">
-                Job Ready
-              </TreasureSpot>
-              ?
+              Are You Job Ready?
             </h2>
             <p className="text-base lg:text-lg text-gray-600 mb-8 leading-relaxed">
               At Amdari we help you discover what&apos;s stopping you from getting
@@ -73,31 +68,17 @@ const JobReady = () => {
                 }
                 // Fourth item (index 3): no border (borderless)
 
-                const icon = (
-                  <Image
-                    src={benefit.icon}
-                    height={82}
-                    width={66}
-                    alt=""
-                  />
-                );
-
                 return (
                   <div key={benefit.id} className={borderClasses}>
                     <div>
                       <p className="text-sm text-gray-700">{benefit.title}</p>
                       <div className="mt-4 flex justify-end">
-                        {index === 0 ? (
-                          <TreasureSpot
-                            kind="win"
-                            treasureSlotIndex={8}
-                            className="inline-flex"
-                          >
-                            {icon}
-                          </TreasureSpot>
-                        ) : (
-                          icon
-                        )}
+                        <Image
+                          src={benefit.icon}
+                          height={82}
+                          width={66}
+                          alt=""
+                        />
                       </div>
                     </div>
                   </div>

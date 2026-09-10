@@ -10,7 +10,6 @@ import {
   UserCheck,
   UserSquare,
 } from "lucide-react";
-import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const BODY_PARAGRAPHS = [
   "Our interns are talented, trained, and ready to work. What they're missing isn't skill. It's the feel of a real business problem. The messiness of actual stakeholder needs. The weight of working for a company that exists.",
@@ -21,13 +20,10 @@ const BODY_PARAGRAPHS = [
 const BRIEF_FLOW_STEPS: {
   title: string;
   icon: React.ElementType;
-  treasure?: "decoy" | "win";
-  treasureSlotIndex?: number;
 }[] = [
   {
     title: "You submit a brief, scenario, or challenge",
     icon: FileText,
-    treasure: "decoy",
   },
   {
     title: "Amdari matches it to a qualified candidate",
@@ -64,15 +60,7 @@ export default function OutsourcingWork() {
           className="max-w-4xl text-left text-2xl font-bold leading-tight tracking-tight sm:text-3xl md:text-4xl lg:text-[2.25rem] lg:leading-snug"
         >
           You&apos;re not outsourcing work. You&apos;re providing context based
-          on{" "}
-          <TreasureSpot
-            kind="win"
-            treasureSlotIndex={3}
-            className="text-inherit"
-          >
-            real experience
-          </TreasureSpot>
-          .
+          on real experience.
         </h2>
 
         <div
@@ -91,24 +79,14 @@ export default function OutsourcingWork() {
                   "sm:text-left",
                 )}
               >
-                <span className="text-white">
-                  <TreasureSpot
-                    kind="win"
-                    treasureSlotIndex={4}
-                    className="text-inherit"
-                  >
-                    That&apos;s it.
-                  </TreasureSpot>
-                </span>{" "}
-                <br />  And it changes everything for them.
+                <span className="text-white">That&apos;s it.</span> <br /> And it
+                changes everything for them.
               </p>
             </div>
 
             <div>
               <h3 className="mb-6 text-lg font-bold text-white sm:text-xl">
-                <TreasureSpot kind="decoy" className="text-inherit">
-                  How a brief flows
-                </TreasureSpot>
+                How a brief flows
               </h3>
               <ol className="flex flex-col">
                 {BRIEF_FLOW_STEPS.map((step, index) => {
@@ -145,13 +123,7 @@ export default function OutsourcingWork() {
                           <Icon className="size-5 sm:size-5" strokeWidth={2} />
                         </div>
                         <p className="flex flex-1 items-center text-sm font-medium leading-snug text-white/95 sm:text-base">
-                          {step.treasure === "decoy" ? (
-                            <TreasureSpot kind="decoy" className="text-inherit">
-                              {step.title}
-                            </TreasureSpot>
-                          ) : (
-                            step.title
-                          )}
+                          {step.title}
                         </p>
                       </div>
                     </li>

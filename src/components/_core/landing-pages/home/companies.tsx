@@ -6,14 +6,8 @@ import Aos from "aos";
 import { cn } from "@/lib/utils";
 import CustomButton from "../shared/custom-button";
 import { COMPANY_LOGOS } from "@/constants/company-logos";
-import {
-  TreasureSpot,
-  useTreasureHunt,
-} from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 export default function Companies() {
-  const { isHuntActive } = useTreasureHunt();
-
   useEffect(() => {
     Aos.init({
       duration: 650,
@@ -39,27 +33,13 @@ export default function Companies() {
               id="companies-heading"
               className="text-3xl font-semibold leading-tight text-[#092A31] lg:text-4xl"
             >
-              Companies who have{" "}
-              <TreasureSpot kind="decoy" className="text-inherit">
-                hired
-              </TreasureSpot>{" "}
-              our interns
+              Companies who have hired our interns
             </h2>
             <div data-aos="fade-up" data-aos-delay="140" className="mt-4">
-              {isHuntActive ? (
-                <TreasureSpot
-                  kind="win"
-                  treasureSlotIndex={4}
-                  className="inline-flex"
-                >
-                  <CustomButton btnText="Be a business partner" />
-                </TreasureSpot>
-              ) : (
-                <CustomButton
-                  btnText="Be a business partner"
-                  href="/business-partners"
-                />
-              )}
+              <CustomButton
+                btnText="Be a business partner"
+                href="/business-partners"
+              />
             </div>
           </div>
 

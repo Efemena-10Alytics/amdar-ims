@@ -2,10 +2,6 @@
 
 import { useState, type ReactNode } from "react";
 import { axiosInstance } from "@/lib/axios-instance";
-import {
-  TreasureSpot,
-  useTreasureHunt,
-} from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 // ─── SVG Components ───────────────────────────────────────────────────────────
 
@@ -125,7 +121,6 @@ const InputField = ({
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 const ContactContent = () => {
-  const { isHuntActive } = useTreasureHunt();
   const [focused, setFocused] = useState<string | null>(null);
 
   const [name, setName] = useState("");
@@ -162,28 +157,10 @@ const ContactContent = () => {
       {/* ── Hero ── */}
       <section className="bg-white text-center pt-15 pb-12">
         <h1 className="text-[#092A31] font-clash-display text-[40px] font-bold tracking-tight mb-3">
-          <TreasureSpot kind="win" treasureSlotIndex={0} className="text-inherit">
-            Contact Us
-          </TreasureSpot>
+          Contact Us
         </h1>
         <p className="text-[#5C6777] font-sora text-base">
-          Have{" "}
-          <TreasureSpot kind="decoy" className="text-inherit">
-            questions
-          </TreasureSpot>{" "}
-          or{" "}
-          <TreasureSpot kind="decoy" className="text-inherit">
-            feedback
-          </TreasureSpot>
-          ? We&apos;re{" "}
-          <TreasureSpot kind="decoy" className="text-inherit">
-            here
-          </TreasureSpot>{" "}
-          to{" "}
-          <TreasureSpot kind="decoy" className="text-inherit">
-            help
-          </TreasureSpot>
-          .
+          Have questions or feedback? We&apos;re here to help.
         </p>
       </section>
 
@@ -194,76 +171,34 @@ const ContactContent = () => {
           {/* ── Left Panel ── */}
           <div className="lg:w-[50%] shrink-0 w-85 flex flex-col gap-6">
             <h2 className="text-[#092A31] font-clash-display text-xl font-semibold">
-              Get in{" "}
-              <TreasureSpot kind="decoy" className="text-inherit">
-                touch
-              </TreasureSpot>{" "}
-              with us
+              Get in touch with us
             </h2>
 
             {/* Calls */}
             <div className="flex flex-col gap-1.25">
               <div className="flex items-center gap-1.5 mb-1">
-                <TreasureSpot
-                  kind="win"
-                  treasureSlotIndex={1}
-                  className="inline-flex"
-                >
-                  <PhoneIcon />
-                </TreasureSpot>
-                <TreasureSpot
-                  kind="decoy"
-                  className="text-[#156374] font-sora text-sm font-medium"
-                >
+                <PhoneIcon />
+                <span className="text-[#156374] font-sora text-sm font-medium">
                   Calls
-                </TreasureSpot>
+                </span>
               </div>
-              {callContacts.map((item, index) => {
-                const content = (
-                  <p className="text-[#0C3640] font-clash-display text-sm m-0">
-                    {item}
-                  </p>
-                );
-                if (index === 0) {
-                  return (
-                    <TreasureSpot
-                      key={`call-${item}`}
-                      kind="win"
-                      treasureSlotIndex={2}
-                      className="text-inherit"
-                    >
-                      {content}
-                    </TreasureSpot>
-                  );
-                }
-                return (
-                  <TreasureSpot
-                    key={`call-${item}`}
-                    kind="decoy"
-                    className="text-inherit"
-                  >
-                    {content}
-                  </TreasureSpot>
-                );
-              })}
+              {callContacts.map((item) => (
+                <p
+                  key={`call-${item}`}
+                  className="text-[#0C3640] font-clash-display text-sm m-0"
+                >
+                  {item}
+                </p>
+              ))}
             </div>
 
             {/* WhatsApp */}
             <div className="flex flex-col gap-1.25">
               <div className="flex items-center gap-1.5 mb-1">
-                <TreasureSpot
-                  kind="win"
-                  treasureSlotIndex={3}
-                  className="inline-flex"
-                >
-                  <WhatsAppIcon />
-                </TreasureSpot>
-                <TreasureSpot
-                  kind="decoy"
-                  className="text-[#156374] font-sora text-sm font-medium"
-                >
+                <WhatsAppIcon />
+                <span className="text-[#156374] font-sora text-sm font-medium">
                   WhatsApp
-                </TreasureSpot>
+                </span>
               </div>
               {whatsappContacts.map((item) => (
                 <p
@@ -277,69 +212,31 @@ const ContactContent = () => {
 
             {/* Email */}
             <p className="text-[#092A31] font-clash-display text-sm font-medium m-0">
-              <TreasureSpot
-                kind="win"
-                treasureSlotIndex={4}
-                className="text-inherit"
-              >
-                info@amdari.io
-              </TreasureSpot>
+              info@amdari.io
             </p>
 
             {/* Social Icons */}
             <div className="flex items-center gap-2">
-              {isHuntActive ? (
-                <TreasureSpot
-                  kind="win"
-                  treasureSlotIndex={5}
-                  className="inline-flex"
-                >
-                  <TwitterXSocialIcon />
-                </TreasureSpot>
-              ) : (
-                <a
-                  href="https://x.com/amdari_io?s=21"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <TwitterXSocialIcon />
-                </a>
-              )}
-              {isHuntActive ? (
-                <TreasureSpot
-                  kind="win"
-                  treasureSlotIndex={6}
-                  className="inline-flex"
-                >
-                  <LinkedInSocialIcon />
-                </TreasureSpot>
-              ) : (
-                <a
-                  href="https://www.linkedin.com/company/amdari/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <LinkedInSocialIcon />
-                </a>
-              )}
-              {isHuntActive ? (
-                <TreasureSpot kind="decoy" className="inline-flex">
-                  <PhoneSocialIcon />
-                </TreasureSpot>
-              ) : (
-                <a href="#" target="_blank" rel="noreferrer">
-                  <PhoneSocialIcon />
-                </a>
-              )}
-              {isHuntActive ? (
-                <TreasureSpot kind="decoy" className="inline-flex">
-                  <EmailSocialIcon />
-                </TreasureSpot>
-              ) : (
-                <a href="mailto:info@amdari.io">
-                  <EmailSocialIcon />
-                </a>
-              )}
+              <a
+                href="https://x.com/amdari_io?s=21"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <TwitterXSocialIcon />
+              </a>
+              <a
+                href="https://www.linkedin.com/company/amdari/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <LinkedInSocialIcon />
+              </a>
+              <a href="#" target="_blank" rel="noreferrer">
+                <PhoneSocialIcon />
+              </a>
+              <a href="mailto:info@amdari.io">
+                <EmailSocialIcon />
+              </a>
             </div>
           </div>
 
@@ -347,30 +244,11 @@ const ContactContent = () => {
           <div className="lg:w-[50%] lg:flex lg:justify-end lg:pr-12">
             <div className="lg:max-w-lg flex flex-col gap-5">
               <h3 className="text-[#0C3640] font-clash-display text-base font-semibold m-0 lg:mt-7">
-                <TreasureSpot kind="decoy" className="text-inherit">
-                  Send
-                </TreasureSpot>{" "}
-                us a{" "}
-                <TreasureSpot kind="decoy" className="text-inherit">
-                  message
-                </TreasureSpot>{" "}
-                and we&apos;ll respond within 24hour
+                Send us a message and we&apos;ll respond within 24hour
               </h3>
 
               <InputField
-                label={
-                  isHuntActive ? (
-                    <TreasureSpot
-                      kind="win"
-                      treasureSlotIndex={7}
-                      className="text-inherit"
-                    >
-                      Full name
-                    </TreasureSpot>
-                  ) : (
-                    "Full name"
-                  )
-                }
+                label="Full name"
                 name="name"
                 placeholder="Your full name"
                 value={name}
@@ -382,19 +260,7 @@ const ContactContent = () => {
               />
 
               <InputField
-                label={
-                  isHuntActive ? (
-                    <TreasureSpot
-                      kind="win"
-                      treasureSlotIndex={8}
-                      className="text-inherit"
-                    >
-                      Email
-                    </TreasureSpot>
-                  ) : (
-                    "Email"
-                  )
-                }
+                label="Email"
                 name="email"
                 type="email"
                 placeholder="Your email address"
@@ -409,17 +275,7 @@ const ContactContent = () => {
               {/* Message Textarea */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-[#071A27] font-sora text-sm">
-                  {isHuntActive ? (
-                    <TreasureSpot
-                      kind="win"
-                      treasureSlotIndex={9}
-                      className="text-inherit"
-                    >
-                      Message
-                    </TreasureSpot>
-                  ) : (
-                    "Message"
-                  )}
+                  Message
                 </label>
                 <textarea
                   placeholder="Leave us a message"
@@ -445,23 +301,13 @@ const ContactContent = () => {
               )}
 
               {/* Submit */}
-              {isHuntActive ? (
-                <TreasureSpot
-                  kind="win"
-                  treasureSlotIndex={10}
-                  className="w-full py-4 bg-[#156374] border border-[#448290] rounded-2xl text-[#FFE082] font-sora text-base font-normal hover:bg-[#0e4f5e] transition-colors duration-150 cursor-pointer text-center block"
-                >
-                  Send your message
-                </TreasureSpot>
-              ) : (
-                <button
-                  onClick={handleSubmit}
-                  disabled={loading}
-                  className="w-full py-4 bg-[#156374] border border-[#448290] rounded-2xl text-[#FFE082] font-sora text-base font-normal hover:bg-[#0e4f5e] transition-colors duration-150 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  {loading ? "Sending..." : "Send your message"}
-                </button>
-              )}
+              <button
+                onClick={handleSubmit}
+                disabled={loading}
+                className="w-full py-4 bg-[#156374] border border-[#448290] rounded-2xl text-[#FFE082] font-sora text-base font-normal hover:bg-[#0e4f5e] transition-colors duration-150 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {loading ? "Sending..." : "Send your message"}
+              </button>
             </div>
           </div>
 

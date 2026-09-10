@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import Aos from "aos";
-import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const Mission = () => {
   useEffect(() => {
@@ -21,17 +20,7 @@ const Mission = () => {
             data-aos="fade-right"
             className="max-w-105 text-4xl leading-tight font-semibold text-[#EAF2F4] md:text-5xl"
           >
-            <TreasureSpot kind="decoy" className="text-inherit">
-              Why Did We
-            </TreasureSpot>{" "}
-            <br /> Start{" "}
-            <TreasureSpot
-              kind="win"
-              treasureSlotIndex={3}
-              className="text-inherit"
-            >
-              Amdari?
-            </TreasureSpot>
+            Why Did We <br /> Start Amdari?
           </h2>
 
           <p
@@ -61,11 +50,9 @@ const Mission = () => {
               className="absolute top-1/2 left-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/30 backdrop-blur-sm transition hover:bg-white/40"
               aria-label="Play mission video"
             >
-              <TreasureSpot kind="decoy" className="inline-flex">
-                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0A778E]">
-                  <span className="ml-0.5 h-0 w-0 border-t-[7px] border-b-[7px] border-l-11 border-t-transparent border-b-transparent border-l-white" />
-                </span>
-              </TreasureSpot>
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0A778E]">
+                <span className="ml-0.5 h-0 w-0 border-t-[7px] border-b-[7px] border-l-11 border-t-transparent border-b-transparent border-l-white" />
+              </span>
             </div>
           </div>
         </div>

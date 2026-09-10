@@ -8,21 +8,16 @@ import { PlayIcon } from "lucide-react";
 import Aos from "aos";
 import LearnMoreVideo from "../home/learn-more-video";
 import CustomButton from "../shared/custom-button";
-import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const HERO_PATTERN_SRC =
     "/images/svgs/become-partners/become-partnes-patterns.svg";
 
 const HIGH_IMPACT_TAGS = [
-    { label: "No hiring involved", kind: "decoy" as const },
-    { label: "No data shared", kind: "decoy" as const },
-    { label: "No contracts", kind: "decoy" as const },
-    { label: "100% remote", kind: "decoy" as const },
-    {
-        label: "Real social impact",
-        kind: "win" as const,
-        treasureSlotIndex: 2,
-    },
+    "No hiring involved",
+    "No data shared",
+    "No contracts",
+    "100% remote",
+    "Real social impact",
 ] as const;
 
 const FLOATING_AVATARS: {
@@ -144,20 +139,8 @@ export default function BusinessPartnersHero() {
                             data-aos="fade-up"
                             className="font-clash-display relative z-10 text-balance text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl lg:text-[3.25rem] lg:leading-[1.12]"
                         >
-                            They have the{" "}
-                            <TreasureSpot kind="decoy" className="text-inherit">
-                                skills
-                            </TreasureSpot>
-                            . They just need{" "}
-                            <span className="text-[#A67C00]">
-                                <TreasureSpot
-                                    kind="win"
-                                    treasureSlotIndex={0}
-                                    className="text-inherit"
-                                >
-                                    Experience.
-                                </TreasureSpot>
-                            </span>
+                            They have the skills. They just need{" "}
+                            <span className="text-[#A67C00]">Experience.</span>
                         </h1>
 
                         <p
@@ -165,11 +148,7 @@ export default function BusinessPartnersHero() {
                             data-aos-delay="80"
                             className="relative z-10 mt-5 text-base font-medium text-[#092A31]/85 sm:text-lg md:text-xl"
                         >
-                            Be the reason why a{" "}
-                            <TreasureSpot kind="decoy" className="text-inherit">
-                                struggling
-                            </TreasureSpot>{" "}
-                            professional gets ahead in their desired career.
+                            Be the reason why a struggling professional gets ahead in their desired career.
                         </p>
 
                         <p
@@ -209,13 +188,7 @@ export default function BusinessPartnersHero() {
                             data-aos-delay="200"
                             className="relative z-10 mt-10 flex flex-wrap items-center justify-center gap-3 text-sm text-[#475467] sm:text-base"
                         >
-                            <TreasureSpot
-                                kind="win"
-                                treasureSlotIndex={1}
-                                className="inline-flex"
-                            >
-                                <PartnerFlags />
-                            </TreasureSpot>
+                            <PartnerFlags />
                             <span className="text-center font-medium text-[#092A31]/80">
                                 + 30K interns Across the world Got hired
                             </span>
@@ -244,29 +217,14 @@ export default function BusinessPartnersHero() {
                         className="mt-4 flex flex-wrap items-center gap-2 sm:gap-2.5 md:gap-3"
                     >
                         {HIGH_IMPACT_TAGS.map((tag) => (
-                            <li key={tag.label}>
+                            <li key={tag}>
                                 <span
                                     className={cn(
                                         "inline-flex items-center justify-center rounded-full border border-[#6B5E37]",
                                         "bg-[#E8CC76] px-3 py-1.5 text-sm font-bold text-[#6B5E37] sm:px-4 sm:py-2",
                                     )}
                                 >
-                                    {tag.kind === "win" ? (
-                                        <TreasureSpot
-                                            kind="win"
-                                            treasureSlotIndex={tag.treasureSlotIndex}
-                                            className="text-inherit"
-                                        >
-                                            {tag.label}
-                                        </TreasureSpot>
-                                    ) : (
-                                        <TreasureSpot
-                                            kind="decoy"
-                                            className="text-inherit"
-                                        >
-                                            {tag.label}
-                                        </TreasureSpot>
-                                    )}
+                                    {tag}
                                 </span>
                             </li>
                         ))}

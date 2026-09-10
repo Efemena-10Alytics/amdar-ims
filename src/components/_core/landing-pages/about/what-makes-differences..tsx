@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { BriefcaseBusiness } from "lucide-react";
 import Aos from "aos";
-import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 type DifferenceItem = {
   title: string;
@@ -56,16 +55,7 @@ const WhatMakesDifferences = () => {
           data-aos="fade-up"
           className="text-center font-clash-display text-4xl font-semibold text-[#123640] lg:text-5xl"
         >
-          <TreasureSpot kind="decoy" className="text-inherit">
-            What Makes Us
-          </TreasureSpot>{" "}
-          <TreasureSpot
-            kind="win"
-            treasureSlotIndex={8}
-            className="text-inherit"
-          >
-            Different?
-          </TreasureSpot>
+          What Makes Us Different?
         </h2>
 
         <div className="mx-auto mt-12 grid max-w-292 gap-5 md:grid-cols-3">

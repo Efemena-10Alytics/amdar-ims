@@ -5,10 +5,6 @@ import BlogCard, { type BlogCardData } from "./blog-card";
 import { useGetAllBlog, type BlogItem } from "@/features/blog/use-get-all-blog";
 import { useBlogCategory } from "@/hooks/use-blog-category";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import {
-  TreasureSpot,
-  useTreasureHunt,
-} from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const FALLBACK_BLOG_IMAGE = "/images/pngs/template/classic.png";
 
@@ -59,38 +55,12 @@ function getPageFromNextUrl(
   }
 }
 
-function cardTreasure(index: number) {
-  if (index === 0) {
-    return {
-      category: "decoy" as const,
-      read: "win" as const,
-      readSlot: 1,
-      arrow: "decoy" as const,
-    };
-  }
-  if (index === 1) {
-    return {
-      date: "decoy" as const,
-      read: "win" as const,
-      readSlot: 2,
-    };
-  }
-  if (index === 2) {
-    return {
-      arrow: "win" as const,
-      arrowSlot: 3,
-    };
-  }
-  return undefined;
-}
-
 export default function BlogContent() {
   const [page, setPage] = useState(1);
   const [posts, setPosts] = useState<BlogCardData[]>([]);
   const [openGroup, setOpenGroup] = useState<string | null>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchTerm] = useState("");
-  const { isHuntActive } = useTreasureHunt();
   const { categoryGroups } = useBlogCategory();
   const { data: blogsResponse, isLoading, isFetching } = useGetAllBlog({
     page,
@@ -136,12 +106,10 @@ export default function BlogContent() {
       <section className="space-y-5">
         <div className="flex flex-wrap justify-between items-center gap-2">
           <h1 className="mr-4 text-[28px] font-semibold leading-none text-[#092A31]">
-            <TreasureSpot kind="decoy" className="text-inherit">
-              Blog
-            </TreasureSpot>
+            Blog
           </h1>
           <div className="flex gap-2 overflow-x-auto pb-2">
-            {categoryGroups.map((group, groupIndex) => (
+            {categoryGroups.map((group) => (
               <Popover
                 key={group.title}
                 open={openGroup === group.title}
@@ -150,28 +118,17 @@ export default function BlogContent() {
                 }
               >
                 <PopoverTrigger asChild>
-                  {isHuntActive && groupIndex === 0 ? (
-                    <TreasureSpot
-                      kind="win"
-                      treasureSlotIndex={0}
-                      className="inline-flex shrink-0 items-center gap-1 rounded-md bg-[#E8EFF1] px-3 py-1.5 text-xs font-medium text-[#4C6A70]"
-                    >
-                      <span>{group.title}</span>
-                      <ChevronDown className="size-3.5" />
-                    </TreasureSpot>
-                  ) : (
-                    <button
-                      type="button"
-                      className="inline-flex shrink-0 items-center gap-1 rounded-md bg-[#E8EFF1] px-3 py-1.5 text-xs font-medium text-[#4C6A70]"
-                    >
-                      <span>{group.title}</span>
-                      <ChevronDown
-                        className={`size-3.5 transition-transform ${
-                          openGroup === group.title ? "rotate-180" : ""
-                        }`}
-                      />
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    className="inline-flex shrink-0 items-center gap-1 rounded-md bg-[#E8EFF1] px-3 py-1.5 text-xs font-medium text-[#4C6A70]"
+                  >
+                    <span>{group.title}</span>
+                    <ChevronDown
+                      className={`size-3.5 transition-transform ${
+                        openGroup === group.title ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
                 </PopoverTrigger>
                 <PopoverContent
                   align="start"
@@ -215,12 +172,8 @@ export default function BlogContent() {
               </div>
             ))
           ) : (
-            posts.map((post, index) => (
-              <BlogCard
-                key={post.id}
-                post={post}
-                treasure={cardTreasure(index)}
-              />
+            posts.map((post) => (
+              <BlogCard key={post.id} post={post} />
             ))
           )}
         </div>
@@ -233,29 +186,16 @@ export default function BlogContent() {
 
         <div className="flex items-center justify-between pt-2 text-[#7D8F98]">
           <p>
-            {blogsResponse?.current_page ?? 1}{" "}
-            <TreasureSpot kind="decoy" className="text-inherit">
-              of
-            </TreasureSpot>{" "}
-            {blogsResponse?.last_page ?? 1}
+            {blogsResponse?.current_page ?? 1} of {blogsResponse?.last_page ?? 1}
           </p>
-          {isHuntActive ? (
-            <TreasureSpot
-              kind="decoy"
-              className="font-medium text-[#092A31] underline underline-offset-4"
-            >
-              Load more
-            </TreasureSpot>
-          ) : (
-            <button
-              type="button"
-              className="font-medium text-[#092A31] underline underline-offset-4"
-              onClick={handleLoadMore}
-              disabled={!canLoadMore || isFetching}
-            >
-              {isFetching ? "Loading..." : "Load more"}
-            </button>
-          )}
+          <button
+            type="button"
+            className="font-medium text-[#092A31] underline underline-offset-4"
+            onClick={handleLoadMore}
+            disabled={!canLoadMore || isFetching}
+          >
+            {isFetching ? "Loading..." : "Load more"}
+          </button>
         </div>
       </section>
     </main>

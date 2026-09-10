@@ -2,7 +2,6 @@
 
 import React from "react";
 import RoadMapBottom from "./road-map-bottom";
-import { TreasureSpot } from "@/components/_core/treasure-hunt/treasure-hunt-provider";
 
 const RoadMap = () => {
   const steps = [
@@ -108,17 +107,7 @@ const RoadMap = () => {
                           {/* Step Text */}
                           <div className="flex-1">
                             <p className="text-white text-base lg:text-lg font-medium">
-                              {step.number === 8 ? (
-                                <TreasureSpot
-                                  kind="win"
-                                  treasureSlotIndex={10}
-                                  className="text-inherit"
-                                >
-                                  {step.text}
-                                </TreasureSpot>
-                              ) : (
-                                step.text
-                              )}
+                              {step.text}
                             </p>
                           </div>
                         </div>
