@@ -7,8 +7,8 @@ import { Menu, LogOut } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import MobileDrawer from "../navbar/mobile-drawer";
-import { ConfirmLogout } from "../navbar/confirm-logout";
+import MobileDrawer from "./mobile-drawer";
+import { ConfirmLogout } from "./confirm-logout";
 import { useAuthStore } from "@/store/auth-store";
 import {
   useGetUserInfo,
@@ -20,7 +20,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { UserAvatar } from "../../internship-program/svg";
-import { MoreDropdown } from "../navbar/more-dropdown";
+import { MoreDropdown } from "./more-dropdown";
 import { AnniversaryBanner } from "@/components/_core/two-years-aniversary-offer/banner";
 import {
   getSpecialOfferDismissed,
@@ -99,8 +99,6 @@ const Navbar = () => {
     pathname.startsWith("/talent-loop") ||
     pathname.startsWith("/contact");
 
-  const showAnniversaryBannerRoute = !pathname.startsWith("/payment");
-
   const specialOfferDismissed = useSyncExternalStore(
     subscribeSpecialOfferVisibility,
     getSpecialOfferDismissed,
@@ -114,7 +112,6 @@ const Navbar = () => {
 
   // Home: banner only after the modal is dismissed. Elsewhere: hide while modal is open.
   const showAnniversaryBanner =
-    showAnniversaryBannerRoute &&
     !specialOfferModalOpen &&
     (specialOfferDismissed || !isHomePageRoute);
 

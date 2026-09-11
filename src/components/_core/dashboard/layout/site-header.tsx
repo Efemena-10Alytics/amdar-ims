@@ -16,7 +16,7 @@ import {
 import { useGetUserInfo, getAvatarUrlFromUser } from "@/features/auth/use-get-user-info";
 import type { AuthUser } from "@/store/auth-store";
 import { UserAvatar } from "../../landing-pages/internship-program/svg";
-import { ConfirmLogout } from "../../landing-pages/shared/navbar/confirm-logout";
+import { ConfirmLogout } from "../../landing-pages/shared/new-navbar/confirm-logout";
 import { useAuthStore } from "@/store/auth-store";
 import { useEnrollmentSelectionStore } from "@/store/enrollment-selection-store";
 import { EnrollmentSwitcher } from "./enrollment-switcher";

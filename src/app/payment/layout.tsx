@@ -1,5 +1,5 @@
 // import OffersStrip from "@/components/_core/landing-pages/shared/iwd-banner/offers-strip";
-import Navbr from "@/components/_core/landing-pages/shared/navbar";
+import Navbar from "@/components/_core/landing-pages/shared/new-navbar";
 import React from "react";
 
 const LandingPageLayout = ({
@@ -7,7 +7,7 @@ const LandingPageLayout = ({
 }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <div>
-      <Navbr />
+      <Navbar />
       {/* <OffersStrip /> */}
       <div className="pt-10">{children}</div>
     </div>
