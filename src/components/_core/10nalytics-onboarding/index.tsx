@@ -107,9 +107,9 @@ export default function TenAnalyticsOnboarding({
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden text-[#092A31]">
-      <div className="app-width relative z-10 px-4 py-8 sm:px-6 sm:py-10 lg:py-12">
-        <div className="mx-auto flex max-w-7xl justify-center">
+    <main className="relative min-h-screen text-[#092A31]">
+      <div className="app-width relative z-10 py-8 sm:py-10 lg:py-12">
+        <div className="mx-auto flex max-w-7xl justify-center px-0">
           <Image
             src="/10alytics-x-amdari-logo.svg"
             alt="10Alytics and Amdari"
@@ -121,7 +121,7 @@ export default function TenAnalyticsOnboarding({
         </div>
 
         <div className="mx-auto mt-10 grid max-w-7xl items-center gap-10 lg:mt-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)] lg:gap-12 xl:gap-16">
-          <div className="max-w-xl">
+          <div className="min-w-0 max-w-xl">
             <h1 className="font-clash-display text-4xl font-semibold leading-[1.08] text-[#092A31] sm:text-5xl lg:text-[3.25rem]">
               You&apos;ve Built the{" "}
               <span className="text-[#E87722]">Skills</span>
@@ -140,7 +140,7 @@ export default function TenAnalyticsOnboarding({
               type="button"
               onClick={handleProceed}
               disabled={!canProceed}
-              className="mt-8 inline-flex h-14 items-center gap-3 rounded-full bg-[#156374] px-6 text-base font-semibold text-white transition hover:bg-[#124F5D] disabled:pointer-events-none disabled:opacity-60 sm:px-8 sm:text-lg"
+              className="mt-8 inline-flex h-14 max-w-full items-center gap-3 rounded-full bg-[#156374] px-6 text-base font-semibold text-white transition hover:bg-[#124F5D] disabled:pointer-events-none disabled:opacity-60 sm:px-8 sm:text-lg"
             >
               {isStartingReset ? "Sending code…" : "Proceed to internship"}
               {!isStartingReset ? <ProceedArrowIcon /> : null}
@@ -211,7 +211,7 @@ export default function TenAnalyticsOnboarding({
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-115 lg:mx-0 lg:justify-self-end">
+          <div className="relative mx-auto w-full min-w-0 max-w-full sm:max-w-115 lg:mx-0 lg:justify-self-end">
             {FLOATING_AVATARS.map((avatar) => (
               <div
                 key={avatar.src}
