@@ -13,11 +13,10 @@ import {
 /**
  * The (program, cohort) pairs a specialist may switch between.
  *
- * Primary source is `v3/specialist/assignments`, which is scoped by the API and
- * is not limited to cohorts the specialist personally enrolled in. If that call
- * fails — most importantly a 403 for a specialist with no assignment row — this
- * falls back to their own enrollments, which is what the switcher used before
- * assignments existed. A degraded switcher beats an empty one.
+ * Primary source is programs the user is actually enrolled in
+ * (`internships/user-programs`). Specialist assignments are only a fallback
+ * when they have no enrollment rows — e.g. a pure specialist preview account —
+ * so the switcher is not empty.
  */
 export function useEnrollmentOptions(): {
   options: EnrollmentOption[];
@@ -26,42 +25,59 @@ export function useEnrollmentOptions(): {
 } {
   const { isInternshipSpecialist, isRoleReady } = useIsInternshipSpecialist();
 
-  const assignments = useGetSpecialistAssignments();
-
-  // Only pay for the fallback request once assignments have actually failed.
-  const needsFallback = isInternshipSpecialist && assignments.isError;
   const userPrograms = useGetUserInternshipPrograms({
-    enabled: needsFallback,
+    enabled: isInternshipSpecialist,
+  });
+
+  const enrollmentOptions = useMemo(
+    () => optionsFromUserCohorts(userPrograms.data?.userCohorts ?? []),
+    [userPrograms.data],
+  );
+
+  // Assignments only when enrollments loaded empty (or failed) — avoid the
+  // full team-lead catalog when the user already has programs they're on.
+  const needsAssignmentFallback =
+    isInternshipSpecialist &&
+    !userPrograms.isLoading &&
+    (userPrograms.isError || enrollmentOptions.length === 0);
+
+  const assignments = useGetSpecialistAssignments({
+    enabled: needsAssignmentFallback,
   });
 
   const options = useMemo<EnrollmentOption[]>(() => {
     if (!isInternshipSpecialist) return [];
 
-    if (!assignments.isError && assignments.data) {
-      return optionsFromAssignments(assignments.data);
+    if (enrollmentOptions.length > 0) {
+      return enrollmentOptions;
     }
 
-    if (needsFallback && userPrograms.data) {
-      return optionsFromUserCohorts(userPrograms.data.userCohorts ?? []);
+    if (needsAssignmentFallback && !assignments.isError && assignments.data) {
+      return optionsFromAssignments(assignments.data);
     }
 
     return [];
   }, [
     assignments.data,
     assignments.isError,
+    enrollmentOptions,
     isInternshipSpecialist,
-    needsFallback,
-    userPrograms.data,
+    needsAssignmentFallback,
   ]);
 
   const isLoading =
     !isRoleReady ||
     (isInternshipSpecialist &&
-      (assignments.isLoading || (needsFallback && userPrograms.isLoading)));
+      (userPrograms.isLoading ||
+        (needsAssignmentFallback && assignments.isLoading)));
 
   return {
     options,
     isLoading,
-    usedFallback: needsFallback && !!userPrograms.data,
+    usedFallback:
+      needsAssignmentFallback &&
+      enrollmentOptions.length === 0 &&
+      !!assignments.data &&
+      !assignments.isError,
   };
 }

@@ -43,7 +43,7 @@ export function isSpecialistAssignmentsForbidden(error: unknown): boolean {
   return axios.isAxiosError(error) && error.response?.status === 403;
 }
 
-export function useGetSpecialistAssignments() {
+export function useGetSpecialistAssignments(options?: { enabled?: boolean }) {
   const { userId, isAuthReady } = useRequireUserId();
   const { isInternshipSpecialist, isRoleReady } = useIsInternshipSpecialist();
 
@@ -51,6 +51,7 @@ export function useGetSpecialistAssignments() {
     queryKey: SPECIALIST_ASSIGNMENTS_QUERY_KEY,
     queryFn: getSpecialistAssignments,
     enabled:
+      options?.enabled !== false &&
       !!apiBaseURL &&
       isAuthReady &&
       isRoleReady &&
