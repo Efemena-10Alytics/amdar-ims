@@ -80,8 +80,7 @@ const Navbr = () => {
   const isMoreProgramRoute =
     pathname.startsWith("/blog") || pathname.startsWith("/testimonial") || pathname.startsWith("/job-board");
 
-  const showSalesBanner =
-    !pathname.startsWith("/internship/") && !pathname.startsWith("/payment");
+
   const showAnniversaryBanner = pathname.startsWith("/payment");
   const showWhiteNav = isScrolled || !isHomePageRoute;
 
@@ -217,7 +216,7 @@ const Navbr = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Link
-                          href="https://www.amdari.io/dashboard"
+                          href="/dashboard/internship-program"
                           className={cn(
                             "flex size-10 xl:size-11 items-center justify-center rounded-full overflow-hidden transition-colors",
                             "bg-[#156374] hover:bg-[#156374]/80",

@@ -148,7 +148,7 @@ const MobileDrawer = ({
               {isLoggedIn ? (
                 <>
                   <Link
-                    href="/dashboard"
+                    href="/dashboard/internship-program"
                     onClick={onClose}
                     className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-lg bg-pink-100 text-primary hover:bg-pink-200 transition-colors"
                   >

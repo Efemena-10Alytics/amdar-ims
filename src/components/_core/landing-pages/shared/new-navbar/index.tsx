@@ -269,7 +269,7 @@ const Navbar = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Link
-                          href="https://www.amdari.io/dashboard/internship"
+                          href="/dashboard/internship-program"
                           className={cn(
                             "flex size-11 items-center justify-center overflow-hidden rounded-full transition-colors xl:size-12",
                             shouldUseScrolledNavStyles
