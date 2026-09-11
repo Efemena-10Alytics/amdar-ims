@@ -93,12 +93,13 @@ function DayStatusBadge({ status }: { status: DayStatus }) {
     );
   }
 
-  return (
-    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#94A3B8]">
-      <span className="size-1.5 rounded-full bg-[#94A3B8]" aria-hidden />
-      Not started
-    </span>
-  );
+  // return (
+  //   <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#94A3B8]">
+  //     <span className="size-1.5 rounded-full bg-[#94A3B8]" aria-hidden />
+  //     Not started
+  //   </span>
+  // );
+  return null;
 }
 
 function TaskStatusIcon({ status }: { status: TaskStatus }) {
