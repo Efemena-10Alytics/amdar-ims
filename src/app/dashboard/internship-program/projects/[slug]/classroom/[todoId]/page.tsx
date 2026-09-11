@@ -102,17 +102,67 @@ function ExpandableRichText({
   );
 }
 
-function TodoTypeMedia({ type }: { type: InternProjectTodoType }) {
+function TodoTypeMedia({
+  type,
+  nextHref,
+}: {
+  type: InternProjectTodoType;
+  nextHref?: string | null;
+}) {
+  const [hasVideoEnded, setHasVideoEnded] = useState(false);
+  const [forcePlaying, setForcePlaying] = useState<boolean | null>(null);
+  const [replayKey, setReplayKey] = useState(0);
+
+  useEffect(() => {
+    setHasVideoEnded(false);
+    setForcePlaying(null);
+    setReplayKey(0);
+  }, [type.id, type.videoUrl]);
+
   if (type.contentType === "video" && type.videoUrl) {
     return (
       <div className="relative aspect-video min-h-72 overflow-hidden rounded-xl bg-[#142A2F]">
         <ReactPlayer
+          key={`${type.id}-${replayKey}`}
           src={type.videoUrl}
-          controls
+          {...(forcePlaying !== null ? { playing: forcePlaying } : {})}
+          controls={!hasVideoEnded}
           width="100%"
           height="100%"
           style={{ position: "absolute", inset: 0 }}
+          onEnded={() => {
+            setForcePlaying(false);
+            setHasVideoEnded(true);
+          }}
         />
+
+        {hasVideoEnded ? (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/55 px-4">
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setHasVideoEnded(false);
+                  setReplayKey((current) => current + 1);
+                  setForcePlaying(true);
+                }}
+                className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-full bg-white/95 px-5 text-sm font-semibold text-[#173740] hover:bg-white"
+              >
+                <Play className="size-4 fill-current" />
+                Replay
+              </button>
+
+              {nextHref ? (
+                <Link
+                  href={nextHref}
+                  className="inline-flex h-11 items-center rounded-full bg-[#156374] px-5 text-sm font-semibold text-white hover:bg-[#124F5D]"
+                >
+                  Continue
+                </Link>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
       </div>
     );
   }
@@ -173,7 +223,13 @@ function TodoTypeMedia({ type }: { type: InternProjectTodoType }) {
   return null;
 }
 
-function TodoTypeSection({ type }: { type: InternProjectTodoType }) {
+function TodoTypeSection({
+  type,
+  nextHref,
+}: {
+  type: InternProjectTodoType;
+  nextHref?: string | null;
+}) {
   const description = type.description?.trim();
 
   return (
@@ -186,7 +242,7 @@ function TodoTypeSection({ type }: { type: InternProjectTodoType }) {
         <ExpandableRichText value={description} className="mb-4" />
       ) : null}
 
-      <TodoTypeMedia type={type} />
+      <TodoTypeMedia type={type} nextHref={nextHref} />
     </section>
   );
 }
@@ -262,11 +318,13 @@ function LessonPanel({
   careerStage,
   projectId,
   activeTypeId,
+  nextHref,
 }: {
   todo: InternProjectTodo;
   careerStage?: string | null;
   projectId: number;
   activeTypeId: number | null;
+  nextHref?: string | null;
 }) {
   const [isOverviewOpen, setIsOverviewOpen] = useState(true);
   const [isSubmitOpen, setIsSubmitOpen] = useState(false);
@@ -341,7 +399,9 @@ function LessonPanel({
         ) : null}
       </section>
 
-      {activeType ? <TodoTypeSection type={activeType} /> : null}
+      {activeType ? (
+        <TodoTypeSection type={activeType} nextHref={nextHref} />
+      ) : null}
 
       {canSubmitActiveType ? (
         <SubmitTodoDrawer
@@ -593,6 +653,54 @@ function ClassroomPageContent() {
     [todoQuery.data],
   );
 
+  const sortedProjectTodos = useMemo(
+    () =>
+      [...(todosQuery.data ?? [])].sort(
+        (a, b) => a.week - b.week || a.sortOrder - b.sortOrder || a.id - b.id,
+      ),
+    [todosQuery.data],
+  );
+
+  const nextHref = useMemo(() => {
+    if (!slug || !todoId) return null;
+
+    const classroomBase = `/dashboard/internship-program/projects/${encodeURIComponent(slug)}/classroom`;
+
+    if (activeTypeId != null && sortedActiveTypes.length) {
+      const activeTypeIndex = sortedActiveTypes.findIndex(
+        (type) => type.id === activeTypeId,
+      );
+      const nextType =
+        activeTypeIndex >= 0
+          ? sortedActiveTypes[activeTypeIndex + 1]
+          : undefined;
+      if (nextType) {
+        return `${classroomBase}/${todoId}?type=${nextType.id}`;
+      }
+    }
+
+    const activeTodoIndex = sortedProjectTodos.findIndex(
+      (todo) => String(todo.id) === todoId,
+    );
+    const nextTodo =
+      activeTodoIndex >= 0
+        ? sortedProjectTodos[activeTodoIndex + 1]
+        : undefined;
+    if (!nextTodo) return null;
+
+    const nextTodoTypes = getSortedTodoTypes(nextTodo);
+    const firstTypeId = nextTodoTypes[0]?.id;
+    return firstTypeId != null
+      ? `${classroomBase}/${nextTodo.id}?type=${firstTypeId}`
+      : `${classroomBase}/${nextTodo.id}`;
+  }, [
+    activeTypeId,
+    slug,
+    sortedActiveTypes,
+    sortedProjectTodos,
+    todoId,
+  ]);
+
   useEffect(() => {
     if (!sortedActiveTypes.length) {
       setActiveTypeId(null);
@@ -660,6 +768,7 @@ function ClassroomPageContent() {
           careerStage={project.careerStage}
           projectId={project.id}
           activeTypeId={activeTypeId}
+          nextHref={nextHref}
         />
         <ProjectTodoPanel
           slug={slug}
