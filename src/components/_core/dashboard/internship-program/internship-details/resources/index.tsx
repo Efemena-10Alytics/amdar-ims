@@ -32,7 +32,7 @@ const RESOURCE_CATEGORIES = [
 const RESOURCE_FILTERS = [
   { label: "All", value: "all" },
   { label: "Links", value: "link" },
-  { label: "Materials", value: "material" },
+  { label: "Files", value: "material" },
 ] as const;
 
 type ResourceFilterValue = (typeof RESOURCE_FILTERS)[number]["value"];
@@ -69,15 +69,20 @@ function ResourceTypeIcon({ format }: { format: "link" | "material" }) {
 const Resources = ({
   excludeCategories = [],
   projectId = null,
+  title = "Resources",
 }: {
   excludeCategories?: readonly ResourceCategoryValue[];
   /** When set, resources are scoped to this project instead of the globally-selected program/cohort. */
   projectId?: number | string | null;
+  title?: string;
 } = {}) => {
   const isProjectScoped = projectId != null && String(projectId).trim() !== "";
 
-  const { cohortId, programId, isLoading: isEnrollmentLoading } =
-    useEnrollmentCohortProgramIds();
+  const {
+    cohortId,
+    programId,
+    isLoading: isEnrollmentLoading,
+  } = useEnrollmentCohortProgramIds();
 
   const categories = useMemo(
     () =>
@@ -91,7 +96,8 @@ const Resources = ({
     useState<ResourceCategoryValue>("onboarding");
   const [activeFilter, setActiveFilter] = useState<ResourceFilterValue>("all");
 
-  const canFetchGeneral = !isProjectScoped && programId != null && cohortId != null;
+  const canFetchGeneral =
+    !isProjectScoped && programId != null && cohortId != null;
 
   const generalQuery = useGetResources(
     {
@@ -147,7 +153,7 @@ const Resources = ({
     <section className="rounded-2xl border border-[#E2E8F0] bg-white p-3 sm:p-4">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,20rem)_1fr]">
         <aside className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-3">
-          <h2 className="text-base font-semibold text-[#092A31]">Resources</h2>
+          <h2 className="text-base font-semibold text-[#092A31]">{title}</h2>
 
           <ul className="mt-3 space-y-1">
             {categories.map((category) => {
@@ -198,7 +204,9 @@ const Resources = ({
           </div>
 
           {isLoading ? (
-            <p className="px-1 py-6 text-sm text-[#94A3B8]">Loading resources...</p>
+            <p className="px-1 py-6 text-sm text-[#94A3B8]">
+              Loading resources...
+            </p>
           ) : isError ? (
             <div className="space-y-2 px-1 py-6">
               <p className="text-sm text-[#C0392B]">

@@ -26,7 +26,7 @@ const PROJECT_TABS = [
   { id: "project-details", label: "Project details" },
   { id: "assessment", label: "Assessment" },
   { id: "todo", label: "Todo" },
-  { id: "resources", label: "Resources" },
+  { id: "material", label: "Material" },
   // { id: "leader-board", label: "Leader board" },
 ] as const;
 
@@ -79,7 +79,12 @@ export default function ProjectDetailsContent() {
   const queryTab = searchParams.get("tab");
   const activeTab = isProjectTabId(queryTab) ? queryTab : DEFAULT_TAB;
 
-  const { data: project, isLoading, isError, refetch } = useGetProjectBySlug(slug);
+  const {
+    data: project,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetProjectBySlug(slug);
 
   useEffect(() => {
     if (isProjectTabId(queryTab)) return;
@@ -123,8 +128,8 @@ export default function ProjectDetailsContent() {
       <Assessment project={project} />
     ) : activeTab === "todo" ? (
       <Todo project={project} />
-    ) : activeTab === "resources" ? (
-      <ResourcesDetails project={project} />
+    ) : activeTab === "material" ? (
+      <ResourcesDetails title="Material" project={project} />
     ) : null;
   // Leader board temporarily disabled
   // : activeTab === "leader-board" ? (
@@ -152,7 +157,10 @@ export default function ProjectDetailsContent() {
             </span>
             {project.duration ? (
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#CFF6DA] px-3 py-2 text-sm font-semibold text-[#1F7A4A]">
-                <span className="size-1.5 rounded-full bg-[#238A50]" aria-hidden />
+                <span
+                  className="size-1.5 rounded-full bg-[#238A50]"
+                  aria-hidden
+                />
                 {project.duration} weeks
               </span>
             ) : null}
@@ -160,7 +168,9 @@ export default function ProjectDetailsContent() {
         </div>
 
         <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-semibold text-[#092A31]">Project view</h1>
+          <h1 className="text-2xl font-semibold text-[#092A31]">
+            Project view
+          </h1>
           <span
             className={[
               "mt-1 inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold",
