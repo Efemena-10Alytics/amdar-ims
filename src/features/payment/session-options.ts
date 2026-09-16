@@ -39,6 +39,11 @@ export const SESSION_OPTIONS = [
   },
   { value: "Hackathon", label: "Hackathon", key: "hackathon" },
   {
+    value: "Wednesday Job Session",
+    label: "Wednesday Job Session",
+    key: "Wednesday-job-session",
+  },
+  {
     value: "Clarity Session",
     label: "Clarity Session",
     key: "clarity-session",
