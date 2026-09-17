@@ -31,7 +31,10 @@ import type {
   WeeklySurveySection,
 } from "@/features/weekly-survey/types";
 
-const SECTION_ICON_MAP: Record<number, { type: "emoji" | "img"; value: string; bg: string }> = {
+const SECTION_ICON_MAP: Record<
+  number,
+  { type: "emoji" | "img"; value: string; bg: string }
+> = {
   2: { type: "emoji", value: "👨🏽‍💻", bg: "bg-[#86E9AA]" },
   3: { type: "emoji", value: "🧑🏽‍🏫", bg: "bg-white" },
   4: { type: "emoji", value: "✏️", bg: "bg-[#FFE082]" },
@@ -51,8 +54,20 @@ function ProgressRing({ current, total }: { current: number; total: number }) {
       aria-label="Survey section progress"
       className="relative flex size-12 shrink-0 items-center justify-center"
     >
-      <svg className="absolute inset-0 -rotate-90" width="48" height="48" aria-hidden>
-        <circle cx="24" cy="24" r={r} stroke="#C7F5D8" strokeWidth="3" fill="none" />
+      <svg
+        className="absolute inset-0 -rotate-90"
+        width="48"
+        height="48"
+        aria-hidden
+      >
+        <circle
+          cx="24"
+          cy="24"
+          r={r}
+          stroke="#C7F5D8"
+          strokeWidth="3"
+          fill="none"
+        />
         <circle
           cx="24"
           cy="24"
@@ -91,7 +106,11 @@ function SectionHeader({
         >
           {icon?.type === "img" ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={icon.value} alt="" className="h-full w-full object-cover" />
+            <img
+              src={icon.value}
+              alt=""
+              className="h-full w-full object-cover"
+            />
           ) : (
             <span className="text-xl">{icon?.value ?? "📋"}</span>
           )}
@@ -100,7 +119,9 @@ function SectionHeader({
           <p className="font-clash-display text-xl font-semibold text-[#156374] xs:text-2xl">
             {section.title}
           </p>
-          <p className="font-sora text-base text-[#6296A2]">Your Weekly Survey Questions</p>
+          <p className="font-sora text-base text-[#6296A2]">
+            Your Weekly Survey Questions
+          </p>
         </div>
       </div>
       <ProgressRing current={sectionIndex + 1} total={totalSections} />
@@ -132,7 +153,9 @@ function QuestionField({
   const fu = question.follow_up;
   const followVal = fu ? getByPath(answers, fu.key) : undefined;
   const mainErr = showErrors ? getMainFieldError(question, answers) : null;
-  const followErr = showErrors ? getFollowUpFieldError(question, answers) : null;
+  const followErr = showErrors
+    ? getFollowUpFieldError(question, answers)
+    : null;
 
   if (question.type === "single_choice") {
     return (
@@ -149,7 +172,9 @@ function QuestionField({
                   : "border-[#E8EFF1] bg-[#E8EFF1] text-[#5C6777] hover:border-[#156374]"
               }`}
             >
-              <CircleIcon className={`size-3 ${val !== opt.value ? "" : "fill-green-500"}`} />{" "}
+              <CircleIcon
+                className={`size-3 ${val !== opt.value ? "" : "fill-green-500"}`}
+              />{" "}
               {opt.label}
             </button>
           ))}
@@ -187,7 +212,10 @@ function QuestionField({
                   : "border-[#E4E7EC] bg-white text-[#101828] hover:border-[#156374]"
               }`}
             >
-              <CircleIcon className={`size-3 ${val !== v ? "" : "fill-green-500"}`} /> {v}
+              <CircleIcon
+                className={`size-3 ${val !== v ? "" : "fill-green-500"}`}
+              />{" "}
+              {v}
             </button>
           ))}
         </div>
@@ -214,12 +242,15 @@ function QuestionField({
     const max = question.max ?? 5;
     const nums: number[] = [];
     for (let i = min; i <= max; i++) nums.push(i);
-    const FOLLOW_UP_MIN = 150;
+    const FOLLOW_UP_MIN = 10;
     const followLen = String(followVal ?? "").length;
-    const showFollowUp = fu?.type === "text" && followUpRequired(question, answers);
+    const showFollowUp =
+      fu?.type === "text" && followUpRequired(question, answers);
     return (
       <div className="flex w-full flex-col gap-3">
-        {question.hint && <p className="text-xs text-[#667085]">{question.hint}</p>}
+        {question.hint && (
+          <p className="text-xs text-[#667085]">{question.hint}</p>
+        )}
         <div className="flex flex-wrap gap-2">
           {nums.map((n) => (
             <button
@@ -232,7 +263,9 @@ function QuestionField({
                   : "border-[#E8EFF1] bg-[#E8EFF1] text-[#5C6777] hover:border-[#156374]"
               }`}
             >
-              <CircleIcon className={`size-3 ${val !== n ? "" : "fill-green-500"}`} />{" "}
+              <CircleIcon
+                className={`size-3 ${val !== n ? "" : "fill-green-500"}`}
+              />{" "}
               {getScaleLabel(n, min, max)}
             </button>
           ))}
@@ -243,7 +276,10 @@ function QuestionField({
             <textarea
               value={(followVal as string) ?? ""}
               onChange={(e) => onChange(fu!.key, e.target.value)}
-              placeholder={fu!.placeholder || "Briefly explain why you are giving this rating"}
+              placeholder={
+                fu!.placeholder ||
+                "Briefly explain why you are giving this rating"
+              }
               rows={3}
               aria-invalid={followErr ? true : undefined}
               className={`w-full rounded-lg border px-3 py-2 text-sm text-[#101828] placeholder:text-[#98A2B3] focus:ring-2 focus:outline-none ${followErr ? "border-red-500 bg-red-50 focus:ring-red-300" : "border-[#E4E7EC] bg-[#F9FAFB] focus:ring-[#156374]"}`}
@@ -265,7 +301,7 @@ function QuestionField({
 
   if (question.type === "multi_select") {
     const selected = Array.isArray(val) ? (val as string[]) : [];
-    const FOLLOW_UP_MIN = 150;
+    const FOLLOW_UP_MIN = 10;
 
     // Key for the "others" text field — from backend follow_up config,
     // or derived from the question's section prefix as a fallback.
@@ -276,10 +312,14 @@ function QuestionField({
           "employability_help_others_text"
         : null);
 
-    const showFollowUp = fu?.type === "text" && followUpRequired(question, answers);
-    const showOthersTextarea = selected.includes("others") && !showFollowUp && !!othersKey;
+    const showFollowUp =
+      fu?.type === "text" && followUpRequired(question, answers);
+    const showOthersTextarea =
+      selected.includes("others") && !showFollowUp && !!othersKey;
 
-    const othersTextVal = othersKey ? ((getByPath(answers, othersKey) as string) ?? "") : "";
+    const othersTextVal = othersKey
+      ? ((getByPath(answers, othersKey) as string) ?? "")
+      : "";
     const followLen = String(followVal ?? "").length;
 
     const toggle = (optVal: string) => {
@@ -310,7 +350,9 @@ function QuestionField({
                     : "border-[#E8EFF1] bg-[#E8EFF1] text-[#5C6777] hover:border-[#156374]"
                 }`}
               >
-                <CircleIcon className={`size-3 ${active ? "fill-green-500" : ""}`} />
+                <CircleIcon
+                  className={`size-3 ${active ? "fill-green-500" : ""}`}
+                />
                 {opt.label}
               </button>
             );
@@ -381,8 +423,12 @@ export default function WeeklySurveyModal() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [showSectionFieldErrors, setShowSectionFieldErrors] = useState(false);
 
-  const { shouldRenderOverlay, cohortId, internshipCourseId, questionsEnabled } =
-    useWeeklySurveyEligibility({ phase, flowComplete });
+  const {
+    shouldRenderOverlay,
+    cohortId,
+    internshipCourseId,
+    questionsEnabled,
+  } = useWeeklySurveyEligibility({ phase, flowComplete });
 
   const questionsQuery = useGetWeeklySurveyQuestions(questionsEnabled);
 
@@ -429,7 +475,8 @@ export default function WeeklySurveyModal() {
 
   useEffect(() => {
     if (phase !== "success") return;
-    const burst = () => confetti({ particleCount: 70, spread: 68, origin: { y: 0.6 } });
+    const burst = () =>
+      confetti({ particleCount: 70, spread: 68, origin: { y: 0.6 } });
     burst();
     const t1 = setTimeout(burst, 250);
     const t2 = setTimeout(burst, 500);
@@ -447,7 +494,11 @@ export default function WeeklySurveyModal() {
         next = setByPath(next, "section_2.blockers_description", undefined);
       }
       if (dottedKey === "section_2.drop_in_session_rating" && value === 5) {
-        next = setByPath(next, "section_2.drop_in_session_rating_reason", undefined);
+        next = setByPath(
+          next,
+          "section_2.drop_in_session_rating_reason",
+          undefined,
+        );
       }
       if (dottedKey === "section_3.mentor_support_rating" && value === 5) {
         next = setByPath(next, "section_3.mentor_rating_reason", undefined);
@@ -457,7 +508,11 @@ export default function WeeklySurveyModal() {
       }
       if (dottedKey === "section_4.employability_help_needed") {
         if (!Array.isArray(value) || !value.includes("others")) {
-          next = setByPath(next, "section_4.employability_help_others_text", undefined);
+          next = setByPath(
+            next,
+            "section_4.employability_help_others_text",
+            undefined,
+          );
         }
       }
       if (dottedKey === "section_5.lms_technical_issues") {
@@ -482,7 +537,8 @@ export default function WeeklySurveyModal() {
       setPhase("success");
     },
     onError: (err: unknown) => {
-      const { message, isAlreadySubmitted } = getWeeklySurveySubmitErrorMessage(err);
+      const { message, isAlreadySubmitted } =
+        getWeeklySurveySubmitErrorMessage(err);
       setSubmitError(message);
       if (isAlreadySubmitted) {
         setFlowComplete(true);
@@ -568,8 +624,8 @@ export default function WeeklySurveyModal() {
                   Thank you so much for your feedback!
                 </h2>
                 <p className="text-base text-[#64748B]">
-                  We&apos;re going to look into all of your response and make your Amdari
-                  experience better. Cheers!
+                  We&apos;re going to look into all of your response and make
+                  your Amdari experience better. Cheers!
                 </p>
               </div>
               <button
@@ -600,8 +656,8 @@ export default function WeeklySurveyModal() {
                   id="weekly-survey-title"
                   className="font-sora text-xl font-semibold text-[#5C6777]"
                 >
-                  Your honesty helps us help you. Share what&apos;s really going on so we can see
-                  it, fix it, and be there when it matters.
+                  Your honesty helps us help you. Share what&apos;s really going
+                  on so we can see it, fix it, and be there when it matters.
                 </h2>
               </div>
               <button
@@ -644,69 +700,74 @@ export default function WeeklySurveyModal() {
             </div>
           )}
 
-        {phase === "questions" && !questionsQuery.isLoading && !questionsQuery.isError && currentSection && (
-          <div className="flex min-h-0 flex-1 flex-col px-5 py-3">
-            <div className="mb-3 shrink-0">
-              <SectionHeader
-                section={currentSection}
-                sectionIndex={clampedSectionIndex}
-                totalSections={surveySections.length}
-              />
-            </div>
-            <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain py-3 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#C7F5D8] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-1">
-              <div className="flex flex-col gap-8">
-                {visibleQuestionsInSection.map((question) => (
-                  <div key={question.key} className="flex flex-col gap-2">
-                    <h3 className="font-sora text-base font-semibold text-[#092A31]">
-                      {question.text}
-                    </h3>
-                    <QuestionField
-                      question={question}
-                      answers={answers}
-                      onChange={setAnswer}
-                      showErrors={showSectionFieldErrors}
-                    />
-                  </div>
-                ))}
-                {submitError && (
-                  <p className="text-center text-sm text-red-600">{submitError}</p>
-                )}
+        {phase === "questions" &&
+          !questionsQuery.isLoading &&
+          !questionsQuery.isError &&
+          currentSection && (
+            <div className="flex min-h-0 flex-1 flex-col px-5 py-3">
+              <div className="mb-3 shrink-0">
+                <SectionHeader
+                  section={currentSection}
+                  sectionIndex={clampedSectionIndex}
+                  totalSections={surveySections.length}
+                />
               </div>
-            </div>
-            <div className="shrink-0 pt-4">
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={handleBack}
-                  className="h-12 flex-1 rounded-full bg-[#F2F4F7] text-sm font-semibold text-[#101828] transition hover:bg-[#E4E7EC]"
-                >
-                  Back
-                </button>
-                <button
-                  type="button"
-                  disabled={submitMutation.isPending}
-                  onClick={handleNext}
-                  className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-[#156374] text-sm font-semibold text-white transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isLastSection ? (
-                    submitMutation.isPending ? (
-                      "Submitting…"
-                    ) : (
-                      <>
-                        Submit
-                        <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[#FFE082]">
-                          <ArrowUpRightIcon className="size-4 text-[#156374]" />
-                        </span>
-                      </>
-                    )
-                  ) : (
-                    "Next"
+              <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain py-3 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#C7F5D8] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-1">
+                <div className="flex flex-col gap-8">
+                  {visibleQuestionsInSection.map((question) => (
+                    <div key={question.key} className="flex flex-col gap-2">
+                      <h3 className="font-sora text-base font-semibold text-[#092A31]">
+                        {question.text}
+                      </h3>
+                      <QuestionField
+                        question={question}
+                        answers={answers}
+                        onChange={setAnswer}
+                        showErrors={showSectionFieldErrors}
+                      />
+                    </div>
+                  ))}
+                  {submitError && (
+                    <p className="text-center text-sm text-red-600">
+                      {submitError}
+                    </p>
                   )}
-                </button>
+                </div>
+              </div>
+              <div className="shrink-0 pt-4">
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={handleBack}
+                    className="h-12 flex-1 rounded-full bg-[#F2F4F7] text-sm font-semibold text-[#101828] transition hover:bg-[#E4E7EC]"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    disabled={submitMutation.isPending}
+                    onClick={handleNext}
+                    className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-[#156374] text-sm font-semibold text-white transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {isLastSection ? (
+                      submitMutation.isPending ? (
+                        "Submitting…"
+                      ) : (
+                        <>
+                          Submit
+                          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[#FFE082]">
+                            <ArrowUpRightIcon className="size-4 text-[#156374]" />
+                          </span>
+                        </>
+                      )
+                    ) : (
+                      "Next"
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
     </div>
   );
