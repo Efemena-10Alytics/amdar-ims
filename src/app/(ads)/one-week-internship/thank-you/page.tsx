@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-const WHATSAPP_LINK = "https://chat.whatsapp.com/GpaLJx0joAN9hFkCjXdzxy";
+const WHATSAPP_LINK = "https://chat.whatsapp.com/F9hlOgl2jyWGy2WcsoAlJE";
 
 export default function ThankYouPage() {
   return (
@@ -28,8 +28,8 @@ export default function ThankYouPage() {
 
           <p className="mb-8 text-[15px] leading-[1.65] text-[#C7D5D6]">
             Check your inbox — we&apos;ll be in touch shortly to confirm your
-            internship week and share everything you need to get started on
-            day one. Don&apos;t forget to join the community.
+            internship week and share everything you need to get started on day
+            one. Don&apos;t forget to join the community.
           </p>
 
           <a
