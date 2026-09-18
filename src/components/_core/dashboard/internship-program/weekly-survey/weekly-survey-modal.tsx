@@ -30,6 +30,7 @@ import type {
   WeeklySurveyQuestion,
   WeeklySurveySection,
 } from "@/features/weekly-survey/types";
+import ReferralModal from "../referral-modal";
 
 const SECTION_ICON_MAP: Record<
   number,
@@ -584,7 +585,7 @@ export default function WeeklySurveyModal() {
     else setPhase("intro");
   };
 
-  if (!shouldRenderOverlay) return null;
+  if (!shouldRenderOverlay) return <ReferralModal />;
 
   const isLastSection = clampedSectionIndex >= surveySections.length - 1;
 
@@ -595,180 +596,183 @@ export default function WeeklySurveyModal() {
     Boolean(currentSection);
 
   return (
-    <div
-      className="fixed inset-0 z-100 flex h-screen w-full items-center justify-center bg-[#0B0D0F]/85 font-sora"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="weekly-survey-title"
-      onClick={(e) => e.stopPropagation()}
-    >
+    <>
       <div
-        className={`pointer-events-auto flex w-[95%] max-w-[560px] flex-col overflow-hidden rounded-[10px] border border-white bg-white shadow-xl ${
-          isQuestionStep
-            ? "max-h-[min(94dvh,940px)] py-2 sm:py-3"
-            : "max-h-[min(94dvh,940px)] p-5 pb-10 sm:p-10"
-        }`}
+        className="fixed inset-0 z-100 flex h-screen w-full items-center justify-center bg-[#0B0D0F]/85 font-sora"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="weekly-survey-title"
         onClick={(e) => e.stopPropagation()}
       >
-        {phase === "success" && (
-          <div className="max-h-[min(85dvh,820px)] min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
-            <div className="flex flex-col items-center justify-center gap-8 py-1 text-center">
-              <div
-                className="flex size-44 items-center justify-center rounded-full bg-[#FFF4C8] sm:size-52"
-                aria-hidden
-              >
-                <span className="text-7xl sm:text-8xl">🎉</span>
-              </div>
-              <div className="flex flex-col gap-2">
-                <h2 className="text-xl font-bold text-[#092A31] sm:text-2xl">
-                  Thank you so much for your feedback!
-                </h2>
-                <p className="text-base text-[#64748B]">
-                  We&apos;re going to look into all of your response and make
-                  your Amdari experience better. Cheers!
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={handleDismissSuccess}
-                className="h-14 w-full max-w-xs rounded-[40px] bg-[#156374] text-lg font-semibold text-[#F2F4F7] transition hover:opacity-95"
-              >
-                Done
-              </button>
-            </div>
-          </div>
-        )}
-
-        {phase === "intro" && (
-          <div className="max-h-[min(85dvh,820px)] min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
-            <div className="flex flex-col items-center justify-center gap-10 py-1">
-              <div
-                className="flex size-20 items-center justify-center rounded-full bg-[#C7F5D8]"
-                aria-hidden
-              >
-                <span className="text-5xl">🤭</span>
-              </div>
-              <div className="flex flex-col items-center gap-4 text-center">
-                <p className="font-sora text-base text-[#092A31]">
-                  Hi 👋, this is your weekly survey check-in
-                </p>
-                <h2
-                  id="weekly-survey-title"
-                  className="font-sora text-xl font-semibold text-[#5C6777]"
+        <div
+          className={`pointer-events-auto flex w-[95%] max-w-[560px] flex-col overflow-hidden rounded-[10px] border border-white bg-white shadow-xl ${
+            isQuestionStep
+              ? "max-h-[min(94dvh,940px)] py-2 sm:py-3"
+              : "max-h-[min(94dvh,940px)] p-5 pb-10 sm:p-10"
+          }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {phase === "success" && (
+            <div className="max-h-[min(85dvh,820px)] min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
+              <div className="flex flex-col items-center justify-center gap-8 py-1 text-center">
+                <div
+                  className="flex size-44 items-center justify-center rounded-full bg-[#FFF4C8] sm:size-52"
+                  aria-hidden
                 >
-                  Your honesty helps us help you. Share what&apos;s really going
-                  on so we can see it, fix it, and be there when it matters.
-                </h2>
+                  <span className="text-7xl sm:text-8xl">🎉</span>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <h2 className="text-xl font-bold text-[#092A31] sm:text-2xl">
+                    Thank you so much for your feedback!
+                  </h2>
+                  <p className="text-base text-[#64748B]">
+                    We&apos;re going to look into all of your response and make
+                    your Amdari experience better. Cheers!
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleDismissSuccess}
+                  className="h-14 w-full max-w-xs rounded-[40px] bg-[#156374] text-lg font-semibold text-[#F2F4F7] transition hover:opacity-95"
+                >
+                  Done
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowSectionFieldErrors(false);
-                  setPhase("questions");
-                  setSectionIndex(0);
-                }}
-                className="flex h-14 w-full items-center justify-center gap-4 rounded-[40px] bg-[#156374] text-lg text-white transition duration-300 hover:opacity-95"
-              >
-                Start Survey
-                <span className="flex size-6 items-center justify-center rounded-full bg-[#FFE082]">
-                  <ArrowUpRightIcon className="size-4 text-[#156374]" />
-                </span>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {phase === "questions" && questionsQuery.isLoading && (
-          <div className="flex min-h-[200px] items-center justify-center text-[#667085]">
-            Loading questions…
-          </div>
-        )}
-
-        {phase === "questions" && questionsQuery.isError && (
-          <div className="text-center text-red-600">
-            Could not load survey questions. Please refresh the page.
-          </div>
-        )}
-
-        {phase === "questions" &&
-          !questionsQuery.isLoading &&
-          !questionsQuery.isError &&
-          !currentSection &&
-          surveySections.length === 0 && (
-            <div className="text-center text-amber-700">
-              No survey questions are available. Please try again later.
             </div>
           )}
 
-        {phase === "questions" &&
-          !questionsQuery.isLoading &&
-          !questionsQuery.isError &&
-          currentSection && (
-            <div className="flex min-h-0 flex-1 flex-col px-5 py-3">
-              <div className="mb-3 shrink-0">
-                <SectionHeader
-                  section={currentSection}
-                  sectionIndex={clampedSectionIndex}
-                  totalSections={surveySections.length}
-                />
-              </div>
-              <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain py-3 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#C7F5D8] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-1">
-                <div className="flex flex-col gap-8">
-                  {visibleQuestionsInSection.map((question) => (
-                    <div key={question.key} className="flex flex-col gap-2">
-                      <h3 className="font-sora text-base font-semibold text-[#092A31]">
-                        {question.text}
-                      </h3>
-                      <QuestionField
-                        question={question}
-                        answers={answers}
-                        onChange={setAnswer}
-                        showErrors={showSectionFieldErrors}
-                      />
-                    </div>
-                  ))}
-                  {submitError && (
-                    <p className="text-center text-sm text-red-600">
-                      {submitError}
-                    </p>
-                  )}
+          {phase === "intro" && (
+            <div className="max-h-[min(85dvh,820px)] min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
+              <div className="flex flex-col items-center justify-center gap-10 py-1">
+                <div
+                  className="flex size-20 items-center justify-center rounded-full bg-[#C7F5D8]"
+                  aria-hidden
+                >
+                  <span className="text-5xl">🤭</span>
                 </div>
+                <div className="flex flex-col items-center gap-4 text-center">
+                  <p className="font-sora text-base text-[#092A31]">
+                    Hi 👋, this is your weekly survey check-in
+                  </p>
+                  <h2
+                    id="weekly-survey-title"
+                    className="font-sora text-xl font-semibold text-[#5C6777]"
+                  >
+                    Your honesty helps us help you. Share what&apos;s really
+                    going on so we can see it, fix it, and be there when it
+                    matters.
+                  </h2>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowSectionFieldErrors(false);
+                    setPhase("questions");
+                    setSectionIndex(0);
+                  }}
+                  className="flex h-14 w-full items-center justify-center gap-4 rounded-[40px] bg-[#156374] text-lg text-white transition duration-300 hover:opacity-95"
+                >
+                  Start Survey
+                  <span className="flex size-6 items-center justify-center rounded-full bg-[#FFE082]">
+                    <ArrowUpRightIcon className="size-4 text-[#156374]" />
+                  </span>
+                </button>
               </div>
-              <div className="shrink-0 pt-4">
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={handleBack}
-                    className="h-12 flex-1 rounded-full bg-[#F2F4F7] text-sm font-semibold text-[#101828] transition hover:bg-[#E4E7EC]"
-                  >
-                    Back
-                  </button>
-                  <button
-                    type="button"
-                    disabled={submitMutation.isPending}
-                    onClick={handleNext}
-                    className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-[#156374] text-sm font-semibold text-white transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {isLastSection ? (
-                      submitMutation.isPending ? (
-                        "Submitting…"
-                      ) : (
-                        <>
-                          Submit
-                          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[#FFE082]">
-                            <ArrowUpRightIcon className="size-4 text-[#156374]" />
-                          </span>
-                        </>
-                      )
-                    ) : (
-                      "Next"
+            </div>
+          )}
+
+          {phase === "questions" && questionsQuery.isLoading && (
+            <div className="flex min-h-[200px] items-center justify-center text-[#667085]">
+              Loading questions…
+            </div>
+          )}
+
+          {phase === "questions" && questionsQuery.isError && (
+            <div className="text-center text-red-600">
+              Could not load survey questions. Please refresh the page.
+            </div>
+          )}
+
+          {phase === "questions" &&
+            !questionsQuery.isLoading &&
+            !questionsQuery.isError &&
+            !currentSection &&
+            surveySections.length === 0 && (
+              <div className="text-center text-amber-700">
+                No survey questions are available. Please try again later.
+              </div>
+            )}
+
+          {phase === "questions" &&
+            !questionsQuery.isLoading &&
+            !questionsQuery.isError &&
+            currentSection && (
+              <div className="flex min-h-0 flex-1 flex-col px-5 py-3">
+                <div className="mb-3 shrink-0">
+                  <SectionHeader
+                    section={currentSection}
+                    sectionIndex={clampedSectionIndex}
+                    totalSections={surveySections.length}
+                  />
+                </div>
+                <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain py-3 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#C7F5D8] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-1">
+                  <div className="flex flex-col gap-8">
+                    {visibleQuestionsInSection.map((question) => (
+                      <div key={question.key} className="flex flex-col gap-2">
+                        <h3 className="font-sora text-base font-semibold text-[#092A31]">
+                          {question.text}
+                        </h3>
+                        <QuestionField
+                          question={question}
+                          answers={answers}
+                          onChange={setAnswer}
+                          showErrors={showSectionFieldErrors}
+                        />
+                      </div>
+                    ))}
+                    {submitError && (
+                      <p className="text-center text-sm text-red-600">
+                        {submitError}
+                      </p>
                     )}
-                  </button>
+                  </div>
+                </div>
+                <div className="shrink-0 pt-4">
+                  <div className="flex gap-3">
+                    <button
+                      type="button"
+                      onClick={handleBack}
+                      className="h-12 flex-1 rounded-full bg-[#F2F4F7] text-sm font-semibold text-[#101828] transition hover:bg-[#E4E7EC]"
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="button"
+                      disabled={submitMutation.isPending}
+                      onClick={handleNext}
+                      className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-[#156374] text-sm font-semibold text-white transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {isLastSection ? (
+                        submitMutation.isPending ? (
+                          "Submitting…"
+                        ) : (
+                          <>
+                            Submit
+                            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[#FFE082]">
+                              <ArrowUpRightIcon className="size-4 text-[#156374]" />
+                            </span>
+                          </>
+                        )
+                      ) : (
+                        "Next"
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
