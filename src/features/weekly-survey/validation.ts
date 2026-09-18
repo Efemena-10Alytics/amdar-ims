@@ -1,10 +1,23 @@
-import type { WeeklySurveyAnswers, WeeklySurveyPeriod, WeeklySurveyQuestion, WeeklySurveySection } from "./types";
+import type {
+  WeeklySurveyAnswers,
+  WeeklySurveyPeriod,
+  WeeklySurveyQuestion,
+  WeeklySurveySection,
+} from "./types";
 
-const SCALE_RATING_LABELS = ["Very poor", "Poor", "Average", "Good", "Excellent"];
+const SCALE_RATING_LABELS = [
+  "Very poor",
+  "Poor",
+  "Average",
+  "Good",
+  "Excellent",
+];
 
 export function getScaleLabel(n: number, min: number, max: number): string {
   if (max === min) return SCALE_RATING_LABELS[0];
-  const idx = Math.round(((n - min) / (max - min)) * (SCALE_RATING_LABELS.length - 1));
+  const idx = Math.round(
+    ((n - min) / (max - min)) * (SCALE_RATING_LABELS.length - 1),
+  );
   return SCALE_RATING_LABELS[idx] ?? String(n);
 }
 
@@ -44,7 +57,9 @@ export function matchesShowWhen(
   answers: WeeklySurveyAnswers,
 ): boolean {
   if (!showWhen) return true;
-  return Object.entries(showWhen).every(([k, v]) => getByPath(answers, k) === v);
+  return Object.entries(showWhen).every(
+    ([k, v]) => getByPath(answers, k) === v,
+  );
 }
 
 export function getVisibleQuestions(
@@ -95,7 +110,7 @@ export function validateStep(
     if (!Array.isArray(val) || val.length === 0) return false;
     if (followUpRequired(question, answers)) {
       const t = getByPath(answers, question.follow_up!.key);
-      if (String(t ?? "").trim().length < 150) return false;
+      if (String(t ?? "").trim().length < 10) return false;
     }
     return true;
   }
@@ -107,7 +122,7 @@ export function validateStep(
     if (!(n >= min && n <= max)) return false;
     if (followUpRequired(question, answers)) {
       const t = getByPath(answers, question.follow_up!.key);
-      if (String(t ?? "").trim().length < 150) return false;
+      if (String(t ?? "").trim().length < 10) return false;
     }
     return true;
   }
@@ -122,7 +137,9 @@ export function validateSectionQuestions(
   section: WeeklySurveySection,
   answers: WeeklySurveyAnswers,
 ): boolean {
-  return getVisibleQuestions(section, answers).every((q) => validateStep(q, answers));
+  return getVisibleQuestions(section, answers).every((q) =>
+    validateStep(q, answers),
+  );
 }
 
 export function getMainFieldError(
@@ -169,14 +186,16 @@ export function getFollowUpFieldError(
   if (question.type === "scale" || question.type === "multi_select") {
     const len = String(t ?? "").trim().length;
     if (len === 0) return "This field is required";
-    return `Please enter at least 150 characters (${150 - len} more needed)`;
+    return `Please enter at least 10 characters (${10 - len} more needed)`;
   }
   if (!t || !String(t).trim()) return "This field is required";
   return null;
 }
 
 /** Prunes conditional follow-up fields that shouldn't apply and shapes the final submit payload. */
-export function buildSubmitAnswers(answers: WeeklySurveyAnswers): Record<string, unknown> {
+export function buildSubmitAnswers(
+  answers: WeeklySurveyAnswers,
+): Record<string, unknown> {
   const s2 = (answers.section_2 as Record<string, unknown>) || {};
   const s3 = (answers.section_3 as Record<string, unknown>) || {};
   const s4 = (answers.section_4 as Record<string, unknown>) || {};
@@ -190,7 +209,9 @@ export function buildSubmitAnswers(answers: WeeklySurveyAnswers): Record<string,
       project_work: s2.project_work,
       blockers_encountered: s2.blockers_encountered,
       blockers_description:
-        s2.blockers_encountered === "yes" ? (s2.blockers_description ?? null) : null,
+        s2.blockers_encountered === "yes"
+          ? (s2.blockers_description ?? null)
+          : null,
       task_clarity: s2.task_clarity,
       drop_in_session_rating: s2.drop_in_session_rating,
       drop_in_session_rating_reason: scaleReason(
@@ -200,12 +221,17 @@ export function buildSubmitAnswers(answers: WeeklySurveyAnswers): Record<string,
     },
     section_3: {
       mentor_support_rating: s3.mentor_support_rating,
-      mentor_rating_reason: scaleReason(s3.mentor_support_rating, s3.mentor_rating_reason),
+      mentor_rating_reason: scaleReason(
+        s3.mentor_support_rating,
+        s3.mentor_rating_reason,
+      ),
     },
     section_4: {
       mentorship_attended: s4.mentorship_attended,
       session_usefulness:
-        s4.mentorship_attended === "yes" ? (s4.session_usefulness ?? null) : null,
+        s4.mentorship_attended === "yes"
+          ? (s4.session_usefulness ?? null)
+          : null,
       employability_help_needed: s4.employability_help_needed ?? [],
       employability_help_others_text:
         Array.isArray(s4.employability_help_needed) &&
@@ -216,7 +242,8 @@ export function buildSubmitAnswers(answers: WeeklySurveyAnswers): Record<string,
     section_5: {
       lms_technical_issues: s5.lms_technical_issues,
       lms_issue_description:
-        s5.lms_technical_issues === "frequently" || s5.lms_technical_issues === "occasionally"
+        s5.lms_technical_issues === "frequently" ||
+        s5.lms_technical_issues === "occasionally"
           ? (s5.lms_issue_description ?? null)
           : null,
       communication_effectiveness: s5.communication_effectiveness,
@@ -232,7 +259,9 @@ export function buildSubmitAnswers(answers: WeeklySurveyAnswers): Record<string,
   return out;
 }
 
-export function formatPeriodRange(period: WeeklySurveyPeriod | null | undefined): string | null {
+export function formatPeriodRange(
+  period: WeeklySurveyPeriod | null | undefined,
+): string | null {
   if (!period?.period_start || !period?.period_ends_at) return null;
   try {
     const a = new Date(period.period_start);
