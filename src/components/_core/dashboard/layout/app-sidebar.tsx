@@ -21,7 +21,7 @@ import {
   LearnIcon,
   PortfolioIcon,
 } from "../svg";
-import { ReferralsSidebarIcon } from "../referrals/icons";
+// import { ReferralsSidebarIcon } from "../referrals/icons";
 import { NavMain } from "./nav-main";
 
 const navMain = [
@@ -35,7 +35,7 @@ const navMain = [
   { title: "Learn", url: "/learn", icon: LearnIcon },
   { title: "Blog", url: "/dashboard-blog", icon: BlogIcon },
   { title: "Billings", url: "/dashboard/billing", icon: BillingIcon },
-  { title: "Referrals", url: "/dashboard/referrals", icon: ReferralsSidebarIcon },
+  // { title: "Referrals", url: "/dashboard/referrals", icon: ReferralsSidebarIcon },
 ];
 
 
