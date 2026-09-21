@@ -11,7 +11,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import {
   CV_ACCEPT_ATTRIBUTE,
@@ -53,7 +58,7 @@ const ISSUE_OPTIONS = [
  * has to be kept in sync with `sidebar.jsx` by hand if it ever changes.
  */
 const EMPLOYABILITY_CALENDAR_URL =
-  "https://calendar.app.google/6m9tQUHHsr5GfYVy6";
+  "https://calendly.com/employability-amdari/employability-meeting";
 
 const BOOKED_MESSAGE = "Employability session booked.";
 
@@ -106,9 +111,8 @@ const EmployabilitySessionDrawer = ({
   const cvInputId = useId();
   const cvInputRef = useRef<HTMLInputElement>(null);
 
-  const [form, setForm] = useState<EmployabilitySessionFormState>(
-    INITIAL_FORM_STATE,
-  );
+  const [form, setForm] =
+    useState<EmployabilitySessionFormState>(INITIAL_FORM_STATE);
   const [cvError, setCvError] = useState("");
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -424,7 +428,10 @@ const EmployabilitySessionDrawer = ({
                     cvError && "border-red-300 bg-red-50/50",
                   )}
                 >
-                  <Upload className="size-8 text-[#1A6B8A]" strokeWidth={1.75} />
+                  <Upload
+                    className="size-8 text-[#1A6B8A]"
+                    strokeWidth={1.75}
+                  />
                   <p className="text-sm font-semibold text-[#1A6B8A]">
                     {form.cvFile ? form.cvFile.name : "Click to upload CV"}
                   </p>
