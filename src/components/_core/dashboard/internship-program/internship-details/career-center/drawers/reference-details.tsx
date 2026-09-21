@@ -13,7 +13,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import UserDetails from "./user-details";
 
@@ -25,8 +30,8 @@ const LETTER_REASONS = [
 
 const REFERENCE_DETAIL_ITEMS = [
   { label: "Referee", value: "Efemena Ikpro" },
-  { label: "Email", value: "efemana@amdari.io" },
-  { label: "Phone number", value: "+44 7414613215" },
+  { label: "Email", value: "hr@amdari.io" },
+  { label: "Phone number", value: "+353834021793" },
   {
     label: "Address",
     value: "Amdari Limited UK 128, City Road, London, EC1V 2NX, UNITED KINGDOM",
@@ -76,7 +81,9 @@ function ReferenceDetailsBlock() {
 
   return (
     <div className="mt-6">
-      <p className="text-base font-semibold text-[#475467]">Reference details</p>
+      <p className="text-base font-semibold text-[#475467]">
+        Reference details
+      </p>
 
       <div className="relative mt-3 rounded-xl border border-[#D6C8B4] bg-[#F7F1E8] p-4">
         <button
@@ -109,7 +116,8 @@ const ReferenceDetailsDrawer = ({
   open,
   onOpenChange,
 }: ReferenceDetailsDrawerProps) => {
-  const [form, setForm] = useState<ReferenceDetailsFormState>(INITIAL_FORM_STATE);
+  const [form, setForm] =
+    useState<ReferenceDetailsFormState>(INITIAL_FORM_STATE);
   const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
