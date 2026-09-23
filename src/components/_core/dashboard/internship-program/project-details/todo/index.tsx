@@ -81,11 +81,13 @@ function mapTodoToRow(todo: InternProjectTodo): TodoRow {
   );
   const primaryType = sortedTypes[0];
   const category: TodoCategory =
-    todo.category === "Task" || todo.category === "Activity"
-      ? todo.category
-      : primaryType?.submissionRequired
-        ? "Task"
-        : "Activity";
+    todo.category === "Task"
+      ? "Task"
+      : todo.category === "Activity"
+        ? "Activity"
+        : primaryType?.submissionRequired
+          ? "Task"
+          : "Activity";
 
   return {
     id: todo.id,
