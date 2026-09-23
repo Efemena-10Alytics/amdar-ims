@@ -7,7 +7,7 @@ import type {
   TaskStatus,
   WeekSchedule,
 } from "@/components/_core/dashboard/internship-program/internship-details/career-stage/stage-project-schedule";
-import type { InternProject, InternProjectTodo } from "@/features/interns-project/internship-project.types";
+import type { InternProject, InternProjectTodo, InternProjectTodoTypeStatus } from "@/features/interns-project/internship-project.types";
 import { useGetTodosByProjectId } from "@/features/interns-project/use-get-todos-by-project-id";
 import { useSelectedEnrollmentIds } from "@/store/enrollment-selection-store";
 
@@ -47,10 +47,32 @@ function normalizeDayLabel(dayOfWeek: string): string {
   return match ?? capitalizeDayLabel(trimmed);
 }
 
-function deriveDayStatus(tasks: { status: TaskStatus }[]): DayStatus {
-  if (!tasks.length) return "not-started";
-  if (tasks.every((task) => task.status === "done")) return "completed";
-  if (tasks.some((task) => task.status === "active" || task.status === "done")) {
+/**
+ * Maps API type statuses onto a todo-level task status.
+ * `null` types are ignored (legacy / never touched). If every type is null,
+ * the schedule badge stays hidden.
+ */
+function deriveTaskStatus(todo: InternProjectTodo): TaskStatus | null {
+  const statuses = (todo.types ?? [])
+    .map((type) => type.status)
+    .filter(
+      (status): status is InternProjectTodoTypeStatus =>
+        status === "pending" || status === "completed",
+    );
+
+  if (statuses.length === 0) return null;
+  if (statuses.every((status) => status === "completed")) return "done";
+  return "todo";
+}
+
+function deriveDayStatus(tasks: { status: TaskStatus | null }[]): DayStatus | null {
+  const known = tasks
+    .map((task) => task.status)
+    .filter((status): status is TaskStatus => status != null);
+
+  if (!known.length) return null;
+  if (known.every((status) => status === "done")) return "completed";
+  if (tasks.length >= 2 && known.some((status) => status === "done")) {
     return "in-progress";
   }
   return "not-started";
@@ -97,7 +119,7 @@ function mapTodosToWeekSchedules(
         const tasks = dayTodos.map((todo) => ({
           id: String(todo.id),
           label: todo.title,
-          status: "todo" as TaskStatus,
+          status: deriveTaskStatus(todo),
           href: slug
             ? `/dashboard/internship-program/projects/${encodeURIComponent(slug)}/classroom/${todo.id}`
             : undefined,

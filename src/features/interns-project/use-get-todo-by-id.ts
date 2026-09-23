@@ -23,7 +23,12 @@ export async function getInternProjectTodoById({
     `v3/intern-projects/${projectId}/todos/${todoId}`,
   );
 
-  if (data.success === false || !data.data) {
+  const failed =
+    data.success === false ||
+    (typeof data.status === "string" &&
+      data.status.toLowerCase() !== "success");
+
+  if (failed || !data.data) {
     throw new Error(data.message?.trim() || "Failed to load internship project todo.");
   }
 
