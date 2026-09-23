@@ -392,6 +392,22 @@ function getSortedTodoTypes(todo?: InternProjectTodo | null) {
   return [...(todo?.types ?? [])].sort((a, b) => a.sortOrder - b.sortOrder);
 }
 
+function getTodoSidebarStatus(
+  todo: InternProjectTodo,
+  isActive: boolean,
+): TaskStatus {
+  const types = todo.types ?? [];
+  if (
+    types.length > 0 &&
+    types.every((type) => type.status === "completed")
+  ) {
+    return "done";
+  }
+
+  if (isActive) return "active";
+  return "todo";
+}
+
 function TaskIcon({ status }: { status: TaskStatus }) {
   if (status === "done") {
     return <Check className="size-3.5 text-[#24875B]" strokeWidth={2.5} />;
@@ -708,7 +724,7 @@ function ProjectTodoPanel({
                               className="flex items-start gap-2 text-[11px] leading-4 text-[#667B8C]"
                             >
                               <TaskIcon
-                                status={isTodoActive ? "active" : "todo"}
+                                status={getTodoSidebarStatus(item, isTodoActive)}
                               />
                               <span
                                 className={cn(
