@@ -175,6 +175,16 @@ export type InternProjectTodoContentType = "text" | "document" | "video";
 
 export type InternProjectTodoSolutionFormat = "text" | "url" | "file";
 
+/**
+ * Per-type progress from the API:
+ * - `null` — no row yet (legacy / never touched); do not show a badge
+ * - `"pending"` — explicitly pending → "Not started yet"
+ * - `"completed"` — marked done or submitted → "Completed"
+ */
+export type InternProjectTodoTypeStatus = "pending" | "completed";
+
+export type InternProjectTodoCategory = "Task" | "Activity" | (string & {});
+
 export type CreateInternProjectTodoTypeInput = {
   contentType: InternProjectTodoContentType;
   description?: string;
@@ -210,19 +220,17 @@ export type InternProjectTodoType = {
   docUrl: string | null;
   videoUrl: string | null;
   submissionRequired: boolean;
-  solutionFormat:
-    | InternProjectTodoSolutionFormat[]
-    | InternProjectTodoSolutionFormat
-    | null;
+  solutionFormat: InternProjectTodoSolutionFormat[];
   sortOrder: number;
+  status: InternProjectTodoTypeStatus | null;
   created_at: string;
   updated_at: string;
 };
 
 export type InternProjectTodo = {
   id: number;
-  intern_project_id: number;
-  created_by: number | null;
+  internProjectId: number;
+  createdBy: number | null;
   week: number;
   title: string;
   description: string;
@@ -230,6 +238,8 @@ export type InternProjectTodo = {
   deadlineDate: string | null;
   deadlineTime: string | null;
   sortOrder: number;
+  actionType: number;
+  category: InternProjectTodoCategory;
   types: InternProjectTodoType[];
   submissionId?: number | null;
   submission?: { id: number } | null;
@@ -240,21 +250,24 @@ export type InternProjectTodo = {
 };
 
 export type CreateInternProjectTodoResponse = {
-  success: boolean;
+  success?: boolean;
+  status?: string;
   message: string;
   data: InternProjectTodo | null;
 };
 
 /** GET /intern-projects/:id/todos */
 export type InternProjectTodosResponse = {
-  success: boolean;
+  success?: boolean;
+  status?: string;
   message: string;
   data: InternProjectTodo[];
 };
 
 /** GET /intern-projects/:id/todos/:todoId */
 export type InternProjectTodoResponse = {
-  success: boolean;
+  success?: boolean;
+  status?: string;
   message: string;
   data: InternProjectTodo | null;
 };
@@ -371,6 +384,20 @@ export type DeleteInternProjectTodoSubmissionItemResponse = {
   success: boolean;
   message: string;
   data?: MyInternProjectTodoSubmission | null;
+};
+
+/** PATCH /intern-projects/:id/todos/:todoId/types/:typeId/status */
+export type CompleteInternProjectTodoTypeStatus = InternProjectTodoTypeStatus;
+
+export type CompleteInternProjectTodoTypePayload = {
+  status: Extract<InternProjectTodoTypeStatus, "completed">;
+};
+
+export type CompleteInternProjectTodoTypeResponse = {
+  success?: boolean;
+  status?: string;
+  message: string;
+  data?: InternProjectTodoType | InternProjectTodo | null;
 };
 
 /** GET /intern-projects/:id/assessments/me */

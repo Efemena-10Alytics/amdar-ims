@@ -2,24 +2,25 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Check, Folder, Loader } from "lucide-react";
+import { Check, Folder } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CustmDropdownIcon } from "@/components/_core/dashboard/internship-program/svg";
 
 export type DayStatus = "completed" | "in-progress" | "not-started";
-export type TaskStatus = "done" | "active" | "todo";
+export type TaskStatus = "done" | "todo";
 
 export type DayTask = {
   id: string;
   label: string;
-  status: TaskStatus;
+  status: TaskStatus | null;
   href?: string;
 };
 
 export type DaySchedule = {
   id: string;
   label: string;
-  status: DayStatus;
+  /** Null when every type status is null (legacy / never touched). */
+  status: DayStatus | null;
   tasks: DayTask[];
 };
 
@@ -74,7 +75,11 @@ const TONE_STYLES: Record<
   },
 };
 
-function DayStatusBadge({ status }: { status: DayStatus }) {
+function DayStatusBadge({ status }: { status: DayStatus | null }) {
+  if (status == null) {
+    return null;
+  }
+
   if (status === "completed") {
     return (
       <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1F7A4A]">
@@ -93,28 +98,19 @@ function DayStatusBadge({ status }: { status: DayStatus }) {
     );
   }
 
-  // return (
-  //   <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#94A3B8]">
-  //     <span className="size-1.5 rounded-full bg-[#94A3B8]" aria-hidden />
-  //     Not started
-  //   </span>
-  // );
-  return null;
+  return (
+    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#94A3B8]">
+      <span className="size-1.5 rounded-full bg-[#94A3B8]" aria-hidden />
+      Not started yet
+    </span>
+  );
 }
 
-function TaskStatusIcon({ status }: { status: TaskStatus }) {
+function TaskStatusIcon({ status }: { status: TaskStatus | null }) {
   if (status === "done") {
     return (
       <span className="relative z-10 flex size-5 shrink-0 items-center justify-center rounded-full bg-transparent text-[#1F7A4A]">
         <Check className="size-3" strokeWidth={3} aria-hidden />
-      </span>
-    );
-  }
-
-  if (status === "active") {
-    return (
-      <span className="relative z-10 flex size-5 shrink-0 items-center justify-center rounded-full bg-transparent text-[#C47A1B]">
-        <Loader className="size-3.5 animate-spin" strokeWidth={2.5} aria-hidden />
       </span>
     );
   }
@@ -180,7 +176,9 @@ function DaySection({
                 <span
                   className={cn(
                     "text-sm font-medium",
-                    task.status === "todo" ? "text-[#94A3B8]" : "text-[#173740]",
+                    task.status === "todo" || task.status == null
+                      ? "text-[#94A3B8]"
+                      : "text-[#173740]",
                   )}
                 >
                   {task.label}

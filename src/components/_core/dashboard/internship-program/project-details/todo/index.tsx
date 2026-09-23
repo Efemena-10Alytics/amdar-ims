@@ -80,6 +80,14 @@ function mapTodoToRow(todo: InternProjectTodo): TodoRow {
     (a, b) => a.sortOrder - b.sortOrder,
   );
   const primaryType = sortedTypes[0];
+  const category: TodoCategory =
+    todo.category === "Task"
+      ? "Task"
+      : todo.category === "Activity"
+        ? "Activity"
+        : primaryType?.submissionRequired
+          ? "Task"
+          : "Activity";
 
   return {
     id: todo.id,
@@ -89,7 +97,7 @@ function mapTodoToRow(todo: InternProjectTodo): TodoRow {
     day: mapDayOfWeek(todo.dayOfWeek),
     dayLabel: DAY_LABELS[mapDayOfWeek(todo.dayOfWeek)],
     typeCount: sortedTypes.length,
-    category: primaryType?.submissionRequired ? "Task" : "Activity",
+    category,
   };
 }
 

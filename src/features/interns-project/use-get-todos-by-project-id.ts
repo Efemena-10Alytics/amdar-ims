@@ -15,7 +15,12 @@ export async function getInternProjectTodosByProjectId(
     `v3/intern-projects/${projectId}/todos`,
   );
 
-  if (data.success === false) {
+  const failed =
+    data.success === false ||
+    (typeof data.status === "string" &&
+      data.status.toLowerCase() !== "success");
+
+  if (failed) {
     throw new Error(data.message?.trim() || "Failed to load internship project todos.");
   }
 

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, Suspense } from "react";
 import {
   ArrowLeft,
@@ -25,6 +25,7 @@ import type {
   InternProjectTodoContentType,
   InternProjectTodoType,
 } from "@/features/interns-project/internship-project.types";
+import { useCompleteTodo } from "@/features/interns-project/use-complete-todo";
 import { useGetMyTodoSubmission } from "@/features/interns-project/use-get-my-todo-submission";
 import { useGetProjectBySlug } from "@/features/interns-project/use-get-project-by-slug";
 import { useGetTodoById } from "@/features/interns-project/use-get-todo-by-id";
@@ -102,16 +103,111 @@ function ExpandableRichText({
   );
 }
 
-function TodoTypeMedia({
+function useTypeContinue({
   type,
+  projectId,
+  todoId,
   nextHref,
 }: {
   type: InternProjectTodoType;
+  projectId: number;
+  todoId: number;
+  nextHref?: string | null;
+}) {
+  const router = useRouter();
+  const { completeTodo, isCompleting, errorMessage } = useCompleteTodo();
+
+  const handleContinue = async () => {
+    if (!nextHref || isCompleting) return;
+
+    try {
+      if (type.status !== "completed") {
+        await completeTodo({
+          projectId,
+          todoId,
+          typeId: type.id,
+        });
+      }
+      router.push(nextHref);
+    } catch {
+      // errorMessage is set by the hook
+    }
+  };
+
+  return {
+    canContinue: Boolean(nextHref),
+    isCompleting,
+    errorMessage,
+    handleContinue,
+  };
+}
+
+function TypeContinueButton({
+  isCompleting,
+  onContinue,
+}: {
+  isCompleting: boolean;
+  onContinue: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onContinue}
+      disabled={isCompleting}
+      className="inline-flex h-11 items-center rounded-full bg-[#156374] px-5 text-sm font-semibold text-white hover:bg-[#124F5D] disabled:cursor-not-allowed disabled:opacity-70"
+    >
+      {isCompleting ? "Saving…" : "Continue"}
+    </button>
+  );
+}
+
+function TypeContinueFooter({
+  type,
+  projectId,
+  todoId,
+  nextHref,
+}: {
+  type: InternProjectTodoType;
+  projectId: number;
+  todoId: number;
+  nextHref?: string | null;
+}) {
+  const { canContinue, isCompleting, errorMessage, handleContinue } =
+    useTypeContinue({ type, projectId, todoId, nextHref });
+
+  if (!canContinue) return null;
+
+  return (
+    <div className="flex flex-col items-end gap-2">
+      <TypeContinueButton
+        isCompleting={isCompleting}
+        onContinue={handleContinue}
+      />
+      {errorMessage ? (
+        <p className="max-w-sm text-right text-xs text-[#B42318]" role="alert">
+          {errorMessage}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function TodoTypeMedia({
+  type,
+  projectId,
+  todoId,
+  nextHref,
+}: {
+  type: InternProjectTodoType;
+  projectId: number;
+  todoId: number;
   nextHref?: string | null;
 }) {
   const [hasVideoEnded, setHasVideoEnded] = useState(false);
   const [forcePlaying, setForcePlaying] = useState<boolean | null>(null);
   const [replayKey, setReplayKey] = useState(0);
+  const { canContinue, isCompleting, errorMessage, handleContinue } =
+    useTypeContinue({ type, projectId, todoId, nextHref });
 
   useEffect(() => {
     setHasVideoEnded(false);
@@ -120,13 +216,17 @@ function TodoTypeMedia({
   }, [type.id, type.videoUrl]);
 
   if (type.contentType === "video" && type.videoUrl) {
+    const isCompleted = type.status === "completed";
+    const showOverlay =
+      hasVideoEnded || (isCompleted && forcePlaying !== true);
+
     return (
       <div className="relative aspect-video min-h-72 overflow-hidden rounded-xl bg-[#142A2F]">
         <ReactPlayer
           key={`${type.id}-${replayKey}`}
           src={type.videoUrl}
           {...(forcePlaying !== null ? { playing: forcePlaying } : {})}
-          controls={!hasVideoEnded}
+          controls={!showOverlay}
           width="100%"
           height="100%"
           style={{ position: "absolute", inset: 0 }}
@@ -136,8 +236,8 @@ function TodoTypeMedia({
           }}
         />
 
-        {hasVideoEnded ? (
-          <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/55 px-4">
+        {showOverlay ? (
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-black/55 px-4">
             <div className="flex flex-wrap items-center justify-center gap-3">
               <button
                 type="button"
@@ -152,15 +252,18 @@ function TodoTypeMedia({
                 Replay
               </button>
 
-              {nextHref ? (
-                <Link
-                  href={nextHref}
-                  className="inline-flex h-11 items-center rounded-full bg-[#156374] px-5 text-sm font-semibold text-white hover:bg-[#124F5D]"
-                >
-                  Continue
-                </Link>
+              {canContinue ? (
+                <TypeContinueButton
+                  isCompleting={isCompleting}
+                  onContinue={handleContinue}
+                />
               ) : null}
             </div>
+            {errorMessage ? (
+              <p className="max-w-sm text-center text-xs text-[#FECACA]" role="alert">
+                {errorMessage}
+              </p>
+            ) : null}
           </div>
         ) : null}
       </div>
@@ -169,23 +272,32 @@ function TodoTypeMedia({
 
   if (type.contentType === "document" && type.docUrl) {
     return (
-      <a
-        href={type.docUrl}
-        target="_blank"
-        rel="noreferrer"
-        className="flex items-center gap-3 rounded-xl border border-[#DCE6E9] bg-white px-4 py-3 transition hover:border-[#9DB8C0]"
-      >
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#E8F0F3] text-[#156374]">
-          <FileText className="size-5" aria-hidden />
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-[#173740]">
-            {type.docName?.trim() || "Open document"}
-          </p>
-          <p className="mt-0.5 text-xs text-[#64748B]">View or download</p>
-        </div>
-        <ExternalLink className="size-4 shrink-0 text-[#94A3B8]" aria-hidden />
-      </a>
+      <div className="space-y-4">
+        <a
+          href={type.docUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center gap-3 rounded-xl border border-[#DCE6E9] bg-white px-4 py-3 transition hover:border-[#9DB8C0]"
+        >
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#E8F0F3] text-[#156374]">
+            <FileText className="size-5" aria-hidden />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold text-[#173740]">
+              {type.docName?.trim() || "Open document"}
+            </p>
+            <p className="mt-0.5 text-xs text-[#64748B]">View or download</p>
+          </div>
+          <ExternalLink className="size-4 shrink-0 text-[#94A3B8]" aria-hidden />
+        </a>
+
+        <TypeContinueFooter
+          type={type}
+          projectId={projectId}
+          todoId={todoId}
+          nextHref={nextHref}
+        />
+      </div>
     );
   }
 
@@ -211,12 +323,32 @@ function TodoTypeMedia({
 
   if (type.contentType === "document") {
     return (
-      <div className="flex items-center gap-3 rounded-xl border border-dashed border-[#DCE6E9] bg-white px-4 py-3">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#E8F0F3] text-[#94A3B8]">
-          <FileText className="size-5" aria-hidden />
-        </span>
-        <p className="text-sm text-[#94A3B8]">No document available</p>
+      <div className="space-y-4">
+        <div className="flex items-center gap-3 rounded-xl border border-dashed border-[#DCE6E9] bg-white px-4 py-3">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#E8F0F3] text-[#94A3B8]">
+            <FileText className="size-5" aria-hidden />
+          </span>
+          <p className="text-sm text-[#94A3B8]">No document available</p>
+        </div>
+
+        <TypeContinueFooter
+          type={type}
+          projectId={projectId}
+          todoId={todoId}
+          nextHref={nextHref}
+        />
       </div>
+    );
+  }
+
+  if (type.contentType === "text") {
+    return (
+      <TypeContinueFooter
+        type={type}
+        projectId={projectId}
+        todoId={todoId}
+        nextHref={nextHref}
+      />
     );
   }
 
@@ -225,9 +357,13 @@ function TodoTypeMedia({
 
 function TodoTypeSection({
   type,
+  projectId,
+  todoId,
   nextHref,
 }: {
   type: InternProjectTodoType;
+  projectId: number;
+  todoId: number;
   nextHref?: string | null;
 }) {
   const description = type.description?.trim();
@@ -242,7 +378,12 @@ function TodoTypeSection({
         <ExpandableRichText value={description} className="mb-4" />
       ) : null}
 
-      <TodoTypeMedia type={type} nextHref={nextHref} />
+      <TodoTypeMedia
+        type={type}
+        projectId={projectId}
+        todoId={todoId}
+        nextHref={nextHref}
+      />
     </section>
   );
 }
@@ -400,7 +541,12 @@ function LessonPanel({
       </section>
 
       {activeType ? (
-        <TodoTypeSection type={activeType} nextHref={nextHref} />
+        <TodoTypeSection
+          type={activeType}
+          projectId={projectId}
+          todoId={todo.id}
+          nextHref={nextHref}
+        />
       ) : null}
 
       {canSubmitActiveType ? (
