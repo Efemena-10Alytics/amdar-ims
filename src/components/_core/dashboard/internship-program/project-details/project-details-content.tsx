@@ -25,7 +25,7 @@ import Todo from "./todo";
 const PROJECT_TABS = [
   { id: "project-details", label: "Project details" },
   { id: "assessment", label: "Assessment" },
-  { id: "todo", label: "Todo" },
+  { id: "todo", label: "Task" },
   { id: "material", label: "Material" },
   // { id: "leader-board", label: "Leader board" },
 ] as const;
