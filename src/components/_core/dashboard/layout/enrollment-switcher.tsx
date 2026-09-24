@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { useIsInternshipSpecialist } from "@/features/auth/staff-roles";
 import { useEnrollmentOptions } from "@/features/internship/use-enrollment-options";
@@ -21,6 +22,8 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+const INTERNSHIP_PROGRAM_PATH = "/dashboard/internship-program";
 
 function SwitcherDropdown({
   label,
@@ -67,6 +70,8 @@ function SwitcherDropdown({
 }
 
 export function EnrollmentSwitcher() {
+  const router = useRouter();
+  const pathname = usePathname();
   const { isInternshipSpecialist } = useIsInternshipSpecialist();
   const { options, isLoading } = useEnrollmentOptions();
 
@@ -130,12 +135,21 @@ export function EnrollmentSwitcher() {
     return null;
   }
 
+  const goToInternshipProgram = () => {
+    if (pathname !== INTERNSHIP_PROGRAM_PATH) {
+      router.push(INTERNSHIP_PROGRAM_PATH);
+    }
+  };
+
   const selectPair = (nextProgramId: number, nextCohortId: number) => {
     const option = options.find(
       (item) =>
         item.programId === nextProgramId && item.cohortId === nextCohortId,
     );
-    if (option) setSelection(toSelection(option));
+    if (!option) return;
+
+    setSelection(toSelection(option));
+    goToInternshipProgram();
   };
 
   return (
@@ -160,7 +174,10 @@ export function EnrollmentSwitcher() {
             forCohort.find((item) => item.programId === selectedProgramId) ??
             forCohort[0];
 
-          if (next) setSelection(toSelection(next));
+          if (!next) return;
+
+          setSelection(toSelection(next));
+          goToInternshipProgram();
         }}
       />
       <SwitcherDropdown
