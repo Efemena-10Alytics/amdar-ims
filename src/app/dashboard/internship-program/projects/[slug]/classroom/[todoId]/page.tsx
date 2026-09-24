@@ -681,7 +681,7 @@ function ProjectTodoPanel({
 
       <div className="rounded-xl bg-white p-3 shadow-[0_6px_24px_rgba(15,70,82,0.04)]">
         <h2 className="mb-3 text-sm font-medium text-[#34445E]">
-          Project Todo
+          Project Task
         </h2>
 
         <div className="space-y-2">
@@ -769,7 +769,7 @@ function ProjectTodoPanel({
             })
           ) : (
             <p className="px-2 py-3 text-xs text-[#94A3B8]">
-              No todos for this week.
+              No tasks for this week.
             </p>
           )}
         </div>
@@ -905,7 +905,7 @@ function ClassroomPageContent() {
     return (
       <main className="flex min-h-[40vh] flex-col items-center justify-center gap-3 px-4 text-center lg:px-6">
         <p className="text-sm text-[#64748B]">
-          Something went wrong while loading this classroom todo.
+          Something went wrong while loading this classroom task.
         </p>
         <Link
           href={backHref}
