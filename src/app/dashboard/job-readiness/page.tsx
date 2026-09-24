@@ -152,7 +152,10 @@ const TabSkeleton = ({ tab }: { tab: "job-prep" | "job-opening" }) => {
           <Bone className="h-8.5 w-28 rounded-lg" />
           <Bone className="h-8.5 w-36 rounded-lg" />
         </div>
-        <Bone className="h-8.5 w-28 rounded-lg" />
+        <div className="flex items-center gap-3">
+          <Bone className="h-8.5 w-full rounded-lg sm:w-96" />
+          <Bone className="h-8.5 w-28 shrink-0 rounded-lg" />
+        </div>
       </div>
       {/* Job grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

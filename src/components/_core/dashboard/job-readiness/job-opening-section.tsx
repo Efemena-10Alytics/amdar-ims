@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { Search } from "lucide-react";
 import JobCard from "@/components/_core/landing-pages/job-board/job-card";
 import JobCardSkeleton from "@/components/_core/landing-pages/job-board/job-card-skeleton";
 import { useJobs } from "@/features/jobs/use-jobs";
 import { useMinDurationLoading } from "@/hooks/use-min-duration-loading";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -26,19 +28,33 @@ const FILTER_DEFAULT = "";
 const PAGE_SIZE = 9;
 const MIN_LOADING_MS = 3000;
 
+const SEARCH_DEBOUNCE_MS = 400;
+
 const JobOpeningSection = () => {
   const [location, setLocation] = useState(FILTER_DEFAULT);
   const [jobTitle, setJobTitle] = useState(FILTER_DEFAULT);
   const [sponsorship, setSponsorship] = useState(FILTER_DEFAULT);
+  const [searchInput, setSearchInput] = useState(FILTER_DEFAULT);
+  const [search, setSearch] = useState(FILTER_DEFAULT);
   const [page, setPage] = useState(1);
   const sectionRef = useRef<HTMLElement>(null);
 
   const sponsorshipOptions = ["Yes", "No"];
 
+  // Debounce the free-text search box before it drives the API call.
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setSearch(searchInput.trim());
+      setPage(1);
+    }, SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(timeout);
+  }, [searchInput]);
+
   const { data, isLoading, isError } = useJobs({
     location: location || undefined,
-    q: jobTitle || undefined,
+    role: jobTitle || undefined,
     sponsorship: sponsorship || undefined,
+    q: search || undefined,
     page,
     pageSize: PAGE_SIZE,
   });
@@ -52,6 +68,8 @@ const JobOpeningSection = () => {
     setLocation(FILTER_DEFAULT);
     setJobTitle(FILTER_DEFAULT);
     setSponsorship(FILTER_DEFAULT);
+    setSearchInput(FILTER_DEFAULT);
+    setSearch(FILTER_DEFAULT);
     setPage(1);
   };
 
@@ -110,15 +128,31 @@ const JobOpeningSection = () => {
           </Select>
         </div>
 
-        {/* Right: reset button */}
-        <button
-          type="button"
-          onClick={resetFilters}
-          className="flex h-8.5 items-center gap-1 rounded-lg bg-[#B6CFD4] px-2 font-sora text-sm text-[#0C3640] transition-opacity hover:opacity-90"
-        >
-          <ResetFilterIcon />
-          Reset filter
-        </button>
+        {/* Right: search + reset */}
+        <div className="flex items-center gap-3">
+          <div className="relative w-full sm:w-96">
+            <Search
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-[#94A3B8]"
+              aria-hidden
+            />
+            <Input
+              type="search"
+              value={searchInput}
+              onChange={(event) => setSearchInput(event.target.value)}
+              placeholder="Search"
+              className="h-8.5 rounded-lg border-[#DCE5E9] bg-white pl-9 font-sora text-sm text-[#0C3640] placeholder:text-[#94A3B8]"
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={resetFilters}
+            className="flex h-8.5 shrink-0 items-center gap-1 rounded-lg bg-[#B6CFD4] px-2 font-sora text-sm text-[#0C3640] transition-opacity hover:opacity-90"
+          >
+            <ResetFilterIcon />
+            Reset filter
+          </button>
+        </div>
       </div>
 
       {/* Skeleton */}
