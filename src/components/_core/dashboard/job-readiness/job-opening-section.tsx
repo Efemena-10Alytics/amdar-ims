@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { JOB_TITLE_OPTIONS, LOCATION_OPTIONS, SPONSORSHIP_OPTIONS } from "@/features/jobs/constants";
 
 const ResetFilterIcon = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -38,8 +39,6 @@ const JobOpeningSection = () => {
   const [search, setSearch] = useState(FILTER_DEFAULT);
   const [page, setPage] = useState(1);
   const sectionRef = useRef<HTMLElement>(null);
-
-  const sponsorshipOptions = ["Yes", "No"];
 
   // Debounce the free-text search box before it drives the API call.
   useEffect(() => {
@@ -96,9 +95,11 @@ const JobOpeningSection = () => {
               <SelectValue placeholder="Location" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Dublin, Ireland">Dublin, Ireland</SelectItem>
-              <SelectItem value="London, UK">London, UK</SelectItem>
-              <SelectItem value="Remote">Remote</SelectItem>
+              {LOCATION_OPTIONS.map((opt) => (
+                <SelectItem key={opt} value={opt}>
+                  {opt}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 
@@ -107,10 +108,11 @@ const JobOpeningSection = () => {
               <SelectValue placeholder="Job Title" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Engineer">Engineer</SelectItem>
-              <SelectItem value="Manager">Manager</SelectItem>
-              <SelectItem value="Analyst">Analyst</SelectItem>
-              <SelectItem value="Designer">Designer</SelectItem>
+              {JOB_TITLE_OPTIONS.map((opt) => (
+                <SelectItem key={opt} value={opt}>
+                  {opt}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 
@@ -119,7 +121,7 @@ const JobOpeningSection = () => {
               <SelectValue placeholder="Visa Sponsorship" />
             </SelectTrigger>
             <SelectContent>
-              {sponsorshipOptions.map((opt) => (
+              {SPONSORSHIP_OPTIONS.map((opt) => (
                 <SelectItem key={opt} value={opt}>
                   {opt}
                 </SelectItem>

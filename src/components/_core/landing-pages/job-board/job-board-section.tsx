@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { Search } from "lucide-react";
 import JobCard from "./job-card";
 import JobCardSkeleton from "./job-card-skeleton";
 import { useJobs } from "@/features/jobs/use-jobs";
 import { useMinDurationLoading } from "@/hooks/use-min-duration-loading";
 import { Reveal } from "../shared/reveal";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -13,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { JOB_TITLE_OPTIONS, LOCATION_OPTIONS, SPONSORSHIP_OPTIONS } from "@/features/jobs/constants";
 
 const ResetFilterIcon = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -26,6 +29,7 @@ const ResetFilterIcon = () => (
 const FILTER_DEFAULT = "";
 const PAGE_SIZE = 9;
 const MIN_LOADING_MS = 3000;
+const SEARCH_DEBOUNCE_MS = 400;
 
 /* ------------------------------------------------------------------ */
 /* Section                                                              */
@@ -35,15 +39,25 @@ const JobBoardSection = () => {
   const [location, setLocation] = useState(FILTER_DEFAULT);
   const [jobTitle, setJobTitle] = useState(FILTER_DEFAULT);
   const [sponsorship, setSponsorship] = useState(FILTER_DEFAULT);
+  const [searchInput, setSearchInput] = useState(FILTER_DEFAULT);
+  const [search, setSearch] = useState(FILTER_DEFAULT);
   const [page, setPage] = useState(1);
   const sectionRef = useRef<HTMLElement>(null);
 
-  const sponsorshipOptions = ["Yes", "No"];
+  // Debounce the free-text search box before it drives the API call.
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setSearch(searchInput.trim());
+      setPage(1);
+    }, SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(timeout);
+  }, [searchInput]);
 
   const { data, isLoading, isError } = useJobs({
     location: location || undefined,
-    q: jobTitle || undefined,
+    role: jobTitle || undefined,
     sponsorship: sponsorship || undefined,
+    q: search || undefined,
     page,
     pageSize: PAGE_SIZE,
   });
@@ -57,6 +71,8 @@ const JobBoardSection = () => {
     setLocation(FILTER_DEFAULT);
     setJobTitle(FILTER_DEFAULT);
     setSponsorship(FILTER_DEFAULT);
+    setSearchInput(FILTER_DEFAULT);
+    setSearch(FILTER_DEFAULT);
     setPage(1);
   };
 
@@ -102,30 +118,43 @@ const JobBoardSection = () => {
         </Reveal>
 
         {/* Filters row */}
-        <Reveal delay={150} className="mt-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-          <h3 className="font-sora text-xl font-semibold leading-none text-[#092A31]">All Jobs</h3>
-
+        <Reveal delay={150} className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          {/* Left: heading + filters */}
           <div className="flex flex-wrap items-center gap-3">
-            <input
-              type="text"
-              value={location}
-              onChange={(e) => updateFilter(setLocation)(e.target.value)}
-              placeholder="Location"
-              className="h-[34px] rounded-lg bg-[#E8EFF1] px-3 font-sora text-sm text-[#0C3640] outline-none placeholder:text-[#0C3640]"
-            />
-            <input
-              type="text"
-              value={jobTitle}
-              onChange={(e) => updateFilter(setJobTitle)(e.target.value)}
-              placeholder="Job Title"
-              className="h-[34px] rounded-lg bg-[#E8EFF1] px-3 font-sora text-sm text-[#0C3640] outline-none placeholder:text-[#0C3640]"
-            />
+            <h3 className="font-sora text-xl font-semibold leading-none text-[#092A31]">All Jobs</h3>
+
+            <Select value={location || undefined} onValueChange={updateFilter(setLocation)}>
+              <SelectTrigger className="h-[34px] w-auto min-w-[120px] rounded-lg bg-[#E8EFF1] px-3 py-0 font-sora text-sm text-[#0C3640]">
+                <SelectValue placeholder="Location" />
+              </SelectTrigger>
+              <SelectContent>
+                {LOCATION_OPTIONS.map((opt) => (
+                  <SelectItem key={opt} value={opt}>
+                    {opt}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={jobTitle || undefined} onValueChange={updateFilter(setJobTitle)}>
+              <SelectTrigger className="h-[34px] w-auto min-w-[120px] rounded-lg bg-[#E8EFF1] px-3 py-0 font-sora text-sm text-[#0C3640]">
+                <SelectValue placeholder="Job Title" />
+              </SelectTrigger>
+              <SelectContent>
+                {JOB_TITLE_OPTIONS.map((opt) => (
+                  <SelectItem key={opt} value={opt}>
+                    {opt}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
             <Select value={sponsorship || undefined} onValueChange={updateFilter(setSponsorship)}>
               <SelectTrigger className="h-[34px] w-auto min-w-[160px] rounded-lg bg-[#E8EFF1] px-3 py-0 font-sora text-sm text-[#0C3640]">
                 <SelectValue placeholder="Visa Sponsorship" />
               </SelectTrigger>
               <SelectContent>
-                {sponsorshipOptions.map((opt) => (
+                {SPONSORSHIP_OPTIONS.map((opt) => (
                   <SelectItem key={opt} value={opt}>
                     {opt}
                   </SelectItem>
@@ -134,14 +163,31 @@ const JobBoardSection = () => {
             </Select>
           </div>
 
-          <button
-            type="button"
-            onClick={resetFilters}
-            className="flex h-[34px] items-center gap-1 rounded-lg bg-[#B6CFD4] px-2 font-sora text-sm text-[#0C3640] transition-opacity hover:opacity-90"
-          >
-            <ResetFilterIcon />
-            Reset filter
-          </button>
+          {/* Right: search + reset */}
+          <div className="flex items-center gap-3">
+            <div className="relative w-full sm:w-96">
+              <Search
+                className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-[#94A3B8]"
+                aria-hidden
+              />
+              <Input
+                type="search"
+                value={searchInput}
+                onChange={(event) => setSearchInput(event.target.value)}
+                placeholder="Search"
+                className="h-8.5 rounded-lg border-[#DCE5E9] bg-white pl-9 font-sora text-sm text-[#0C3640] placeholder:text-[#94A3B8]"
+              />
+            </div>
+
+            <button
+              type="button"
+              onClick={resetFilters}
+              className="flex h-8.5 shrink-0 items-center gap-1 rounded-lg bg-[#B6CFD4] px-2 font-sora text-sm text-[#0C3640] transition-opacity hover:opacity-90"
+            >
+              <ResetFilterIcon />
+              Reset filter
+            </button>
+          </div>
         </Reveal>
 
         {/* Loading skeleton */}
