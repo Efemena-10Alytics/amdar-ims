@@ -19,14 +19,18 @@ type ResourceListItem = Pick<
   "id" | "title" | "category" | "format" | "url" | "fileUrl" | "createdAt"
 >;
 
-const RESOURCE_CATEGORIES = [
+const INTERNSHIP_RESOURCE_CATEGORIES = [
+  { label: "Onboarding", value: "onboarding" },
+  { label: "Mentorship", value: "mentorship" },
+  { label: "Employability session", value: "employability-session" },
+  { label: "Others", value: "others" },
+] as const;
+
+const PROJECT_RESOURCE_CATEGORIES = [
   { label: "Drop-In Session", value: "drop-in-session" },
   { label: "Project Hub", value: "project-hub" },
   { label: "Others", value: "others" },
 ] as const;
-
-/** Categories that keep their own tab; everything else is shown under Others. */
-const PRIMARY_RESOURCE_CATEGORIES = ["drop-in-session", "project-hub"] as const;
 
 const RESOURCE_FILTERS = [
   { label: "All", value: "all" },
@@ -35,7 +39,18 @@ const RESOURCE_FILTERS = [
 ] as const;
 
 type ResourceFilterValue = (typeof RESOURCE_FILTERS)[number]["value"];
-type ResourceCategoryValue = (typeof RESOURCE_CATEGORIES)[number]["value"];
+type InternshipResourceCategoryValue =
+  (typeof INTERNSHIP_RESOURCE_CATEGORIES)[number]["value"];
+type ProjectResourceCategoryValue =
+  (typeof PROJECT_RESOURCE_CATEGORIES)[number]["value"];
+export type ResourceCategoryValue =
+  | InternshipResourceCategoryValue
+  | ProjectResourceCategoryValue;
+
+type ResourceCategoryOption = {
+  label: string;
+  value: ResourceCategoryValue;
+};
 
 function normalizeResourceFormat(format?: string | null): "link" | "material" {
   const value = format?.trim().toLowerCase();
@@ -47,11 +62,6 @@ function normalizeResourceFormat(format?: string | null): "link" | "material" {
 
 function normalizeResourceCategory(category?: string | null): string {
   return category?.trim().toLowerCase() || "others";
-}
-
-function isPrimaryResourceCategory(category?: string | null): boolean {
-  const value = normalizeResourceCategory(category);
-  return (PRIMARY_RESOURCE_CATEGORIES as readonly string[]).includes(value);
 }
 
 function getResourceHref(resource: ResourceListItem) {
@@ -78,13 +88,20 @@ const Resources = ({
   excludeCategories = [],
   projectId = null,
   title = "Resources",
+  categoryPreset = "internship",
 }: {
   excludeCategories?: readonly ResourceCategoryValue[];
   /** When set, resources are scoped to this project instead of the globally-selected program/cohort. */
   projectId?: number | string | null;
   title?: string;
+  /** Internship Resources vs project Material category sets. */
+  categoryPreset?: "internship" | "project";
 } = {}) => {
   const isProjectScoped = projectId != null && String(projectId).trim() !== "";
+  const categoryOptions: readonly ResourceCategoryOption[] =
+    categoryPreset === "project"
+      ? PROJECT_RESOURCE_CATEGORIES
+      : INTERNSHIP_RESOURCE_CATEGORIES;
 
   const {
     cohortId,
@@ -94,14 +111,22 @@ const Resources = ({
 
   const categories = useMemo(
     () =>
-      RESOURCE_CATEGORIES.filter(
+      categoryOptions.filter(
         (category) => !excludeCategories.includes(category.value),
       ),
-    [excludeCategories],
+    [categoryOptions, excludeCategories],
+  );
+
+  const primaryCategoryValues = useMemo(
+    () =>
+      categories
+        .map((category) => category.value)
+        .filter((value) => value !== "others"),
+    [categories],
   );
 
   const [activeCategory, setActiveCategory] = useState<ResourceCategoryValue>(
-    () => categories[0]?.value ?? "drop-in-session",
+    () => categories[0]?.value ?? "onboarding",
   );
   const [activeFilter, setActiveFilter] = useState<ResourceFilterValue>("all");
 
@@ -150,13 +175,17 @@ const Resources = ({
       const format = item.format?.trim().toLowerCase();
       if (format === "video") return false;
 
+      const category = normalizeResourceCategory(item.category);
+
       if (activeCategory === "others") {
-        return !isPrimaryResourceCategory(item.category);
+        return !primaryCategoryValues.includes(
+          category as ResourceCategoryValue,
+        );
       }
 
-      return normalizeResourceCategory(item.category) === activeCategory;
+      return category === activeCategory;
     });
-  }, [activeCategory, resourcesQuery.data?.resources]);
+  }, [activeCategory, primaryCategoryValues, resourcesQuery.data?.resources]);
 
   const isLoading = isProjectScoped
     ? resourcesQuery.isLoading
