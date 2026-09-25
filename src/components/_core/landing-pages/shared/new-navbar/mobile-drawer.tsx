@@ -84,7 +84,7 @@ const MobileDrawer = ({
                   Resources
                 </h1>
                 <div className="pl-2 space-y-3 mt-2">
-                  <div>
+                  {/* <div>
                     <Link
                       className={cn(
                         "text-base font-medium transition-colors py-2 relative",
@@ -94,7 +94,7 @@ const MobileDrawer = ({
                     >
                       <h2>Hackathon</h2>
                     </Link>
-                  </div>
+                  </div> */}
                   <div>
                     <Link
                       className={cn(

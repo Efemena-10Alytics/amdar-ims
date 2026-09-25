@@ -17,12 +17,12 @@ export type MoreGridItem = {
 };
 
 const DEFAULT_GRID_ITEMS: MoreGridItem[] = [
-  {
-    title: "Hackaton",
-    description:
-      "Show your skills, collaborate with top talents & solve problems by top organizations.",
-    href: "/hackathon",
-  },
+  // {
+  //   title: "Hackaton",
+  //   description:
+  //     "Show your skills, collaborate with top talents & solve problems by top organizations.",
+  //   href: "/hackathon",
+  // },
   {
     title: "Blog",
     description: "Get more resources and knowledge from Amdari",
