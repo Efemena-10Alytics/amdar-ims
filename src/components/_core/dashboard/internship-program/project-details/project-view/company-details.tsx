@@ -6,6 +6,10 @@ type CompanyDetailsProps = {
 };
 
 export default function CompanyDetails({ project }: CompanyDetailsProps) {
+  const customSections = (project.customType ?? []).filter(
+    (section) => section.title?.trim() || section.description?.trim(),
+  );
+
   return (
     <section className="space-y-6 pt-1">
       <div className="space-y-2">
@@ -29,6 +33,20 @@ export default function CompanyDetails({ project }: CompanyDetailsProps) {
         </h4>
         <RichTextContent value={project.rationale} />
       </div>
+
+      {customSections.map((section, index) => (
+        <div
+          key={`${section.title.trim() || "custom"}-${index}`}
+          className="space-y-2"
+        >
+          {section.title?.trim() ? (
+            <h4 className="text-xl font-semibold text-[#173740]">
+              {section.title.trim()}
+            </h4>
+          ) : null}
+          <RichTextContent value={section.description} />
+        </div>
+      ))}
     </section>
   );
 }
