@@ -13,6 +13,7 @@ export default function ResourcesDetails({
   return (
     <Resources
       projectId={project.id}
+      categoryPreset="project"
       title={title ?? "Resources"}
     />
   );
