@@ -13,7 +13,6 @@ export default function ResourcesDetails({
   return (
     <Resources
       projectId={project.id}
-      excludeCategories={["meeting-link"]}
       title={title ?? "Resources"}
     />
   );
