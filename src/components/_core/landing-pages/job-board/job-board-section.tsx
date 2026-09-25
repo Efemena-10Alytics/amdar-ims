@@ -42,6 +42,10 @@ const JobBoardSection = () => {
   const [searchInput, setSearchInput] = useState(FILTER_DEFAULT);
   const [search, setSearch] = useState(FILTER_DEFAULT);
   const [page, setPage] = useState(1);
+  // Bumped on reset to force the Select triggers to remount — Radix Select's
+  // controlled `value` doesn't reliably fall back to the placeholder when it
+  // flips between a real value and undefined, so we can't rely on state alone.
+  const [filterResetKey, setFilterResetKey] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
 
   // Debounce the free-text search box before it drives the API call.
@@ -74,6 +78,7 @@ const JobBoardSection = () => {
     setSearchInput(FILTER_DEFAULT);
     setSearch(FILTER_DEFAULT);
     setPage(1);
+    setFilterResetKey((key) => key + 1);
   };
 
   const updateFilter = (setter: (v: string) => void) => (value: string) => {
@@ -123,7 +128,11 @@ const JobBoardSection = () => {
           <div className="flex flex-wrap items-center gap-3">
             <h3 className="font-sora text-xl font-semibold leading-none text-[#092A31]">All Jobs</h3>
 
-            <Select value={location || undefined} onValueChange={updateFilter(setLocation)}>
+            <Select
+              key={`location-${filterResetKey}`}
+              value={location || undefined}
+              onValueChange={updateFilter(setLocation)}
+            >
               <SelectTrigger className="h-[34px] w-auto min-w-[120px] rounded-lg bg-[#E8EFF1] px-3 py-0 font-sora text-sm text-[#0C3640]">
                 <SelectValue placeholder="Location" />
               </SelectTrigger>
@@ -136,7 +145,11 @@ const JobBoardSection = () => {
               </SelectContent>
             </Select>
 
-            <Select value={jobTitle || undefined} onValueChange={updateFilter(setJobTitle)}>
+            <Select
+              key={`job-title-${filterResetKey}`}
+              value={jobTitle || undefined}
+              onValueChange={updateFilter(setJobTitle)}
+            >
               <SelectTrigger className="h-[34px] w-auto min-w-[120px] rounded-lg bg-[#E8EFF1] px-3 py-0 font-sora text-sm text-[#0C3640]">
                 <SelectValue placeholder="Job Title" />
               </SelectTrigger>
@@ -149,7 +162,11 @@ const JobBoardSection = () => {
               </SelectContent>
             </Select>
 
-            <Select value={sponsorship || undefined} onValueChange={updateFilter(setSponsorship)}>
+            <Select
+              key={`sponsorship-${filterResetKey}`}
+              value={sponsorship || undefined}
+              onValueChange={updateFilter(setSponsorship)}
+            >
               <SelectTrigger className="h-[34px] w-auto min-w-[160px] rounded-lg bg-[#E8EFF1] px-3 py-0 font-sora text-sm text-[#0C3640]">
                 <SelectValue placeholder="Visa Sponsorship" />
               </SelectTrigger>
