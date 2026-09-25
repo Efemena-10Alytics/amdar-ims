@@ -16,18 +16,17 @@ import { cn } from "@/lib/utils";
  *  (program/cohort-scoped) and project-scoped `Resource` API response shapes. */
 type ResourceListItem = Pick<
   Resource,
-  "id" | "title" | "format" | "url" | "fileUrl" | "createdAt"
+  "id" | "title" | "category" | "format" | "url" | "fileUrl" | "createdAt"
 >;
 
 const RESOURCE_CATEGORIES = [
-  { label: "Onboarding", value: "onboarding" },
-  { label: "Mentorship Session", value: "mentorship" },
   { label: "Drop-In Session", value: "drop-in-session" },
-  { label: "Employability Hub", value: "employability-session" },
-  { label: "Meeting Link", value: "meeting-link" },
-  { label: "FAQs", value: "faqs" },
+  { label: "Project Hub", value: "project-hub" },
   { label: "Others", value: "others" },
 ] as const;
+
+/** Categories that keep their own tab; everything else is shown under Others. */
+const PRIMARY_RESOURCE_CATEGORIES = ["drop-in-session", "project-hub"] as const;
 
 const RESOURCE_FILTERS = [
   { label: "All", value: "all" },
@@ -44,6 +43,15 @@ function normalizeResourceFormat(format?: string | null): "link" | "material" {
     return "material";
   }
   return "link";
+}
+
+function normalizeResourceCategory(category?: string | null): string {
+  return category?.trim().toLowerCase() || "others";
+}
+
+function isPrimaryResourceCategory(category?: string | null): boolean {
+  const value = normalizeResourceCategory(category);
+  return (PRIMARY_RESOURCE_CATEGORIES as readonly string[]).includes(value);
 }
 
 function getResourceHref(resource: ResourceListItem) {
@@ -92,18 +100,25 @@ const Resources = ({
     [excludeCategories],
   );
 
-  const [activeCategory, setActiveCategory] =
-    useState<ResourceCategoryValue>("onboarding");
+  const [activeCategory, setActiveCategory] = useState<ResourceCategoryValue>(
+    () => categories[0]?.value ?? "drop-in-session",
+  );
   const [activeFilter, setActiveFilter] = useState<ResourceFilterValue>("all");
 
   const canFetchGeneral =
     !isProjectScoped && programId != null && cohortId != null;
 
+  // "Others" pulls every non-primary category, so omit the API category filter.
+  const requestCategory =
+    activeCategory === "others"
+      ? undefined
+      : (activeCategory as ResourceCategory | string);
+
   const generalQuery = useGetResources(
     {
       program_id: programId ?? undefined,
       cohort_id: cohortId ?? undefined,
-      category: activeCategory as ResourceCategory | string,
+      category: requestCategory,
       format: activeFilter === "all" ? undefined : activeFilter,
       per_page: 50,
       page: 1,
@@ -116,7 +131,7 @@ const Resources = ({
   const projectQuery = useGetProjectResources(
     {
       project_id: projectId ?? undefined,
-      category: activeCategory as ResourceCategory | string,
+      category: requestCategory,
       format: activeFilter === "all" ? undefined : activeFilter,
       per_page: 50,
       page: 1,
@@ -133,9 +148,15 @@ const Resources = ({
     const items = resourcesQuery.data?.resources ?? [];
     return items.filter((item) => {
       const format = item.format?.trim().toLowerCase();
-      return format !== "video";
+      if (format === "video") return false;
+
+      if (activeCategory === "others") {
+        return !isPrimaryResourceCategory(item.category);
+      }
+
+      return normalizeResourceCategory(item.category) === activeCategory;
     });
-  }, [resourcesQuery.data?.resources]);
+  }, [activeCategory, resourcesQuery.data?.resources]);
 
   const isLoading = isProjectScoped
     ? resourcesQuery.isLoading

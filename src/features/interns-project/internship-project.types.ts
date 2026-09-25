@@ -11,6 +11,11 @@ export type InternProjectTool = {
   videoLink: string;
 };
 
+export type InternProjectCustomSection = {
+  title: string;
+  description: string;
+};
+
 export enum InternProjectCareerStage {
   Uniformity = "uniformity",
   Formative = "formative",
@@ -89,6 +94,8 @@ export type InternProject = {
   projectPhases?: string | null;
   expectedDeliverables?: string | null;
   skills?: string[] | null;
+  /** Extra CMS-defined sections (title + rich-text description). */
+  customType?: InternProjectCustomSection[] | null;
   status?: InternProjectStatus | null;
   isCurrent?: boolean;
   created_at: string;
