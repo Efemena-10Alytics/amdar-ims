@@ -121,7 +121,9 @@ const Resources = ({
     () =>
       categories
         .map((category) => category.value)
-        .filter((value) => value !== "others"),
+        .filter((value): value is Exclude<ResourceCategoryValue, "others"> =>
+          value !== "others",
+        ),
     [categories],
   );
 
@@ -178,9 +180,9 @@ const Resources = ({
       const category = normalizeResourceCategory(item.category);
 
       if (activeCategory === "others") {
-        return !primaryCategoryValues.includes(
-          category as ResourceCategoryValue,
-        );
+        return !(
+          primaryCategoryValues as readonly string[]
+        ).includes(category);
       }
 
       return category === activeCategory;
