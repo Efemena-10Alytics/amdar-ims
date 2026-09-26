@@ -8,19 +8,24 @@ import {
   useRouter,
   useSearchParams,
 } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import {
   InternProjectStatus,
   type InternProject,
 } from "@/features/interns-project/internship-project.types";
 import { useGetProjectBySlug } from "@/features/interns-project/use-get-project-by-slug";
+import {
+  PRE_ASSESSMENT_REQUIRED_MESSAGE,
+  PRE_ASSESSMENT_REQUIRED_STORAGE_KEY,
+} from "@/features/interns-project/use-get-internship-progress";
 import { formatCareerStageLabel } from "./project-content";
 import ProjectViews from "./project-view";
 import Assessment from "./assessment";
 // import LeaderBoard from "./leader-board";
 import ResourcesDetails from "./resources";
 import Todo from "./todo";
+import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 
 const PROJECT_TABS = [
   { id: "project-details", label: "Project details" },
@@ -78,6 +83,7 @@ export default function ProjectDetailsContent() {
   const searchParams = useSearchParams();
   const queryTab = searchParams.get("tab");
   const activeTab = isProjectTabId(queryTab) ? queryTab : DEFAULT_TAB;
+  const [toastMessage, setToastMessage] = useState("");
 
   const {
     data: project,
@@ -85,6 +91,16 @@ export default function ProjectDetailsContent() {
     isError,
     refetch,
   } = useGetProjectBySlug(slug);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const stored = window.sessionStorage.getItem(
+      PRE_ASSESSMENT_REQUIRED_STORAGE_KEY,
+    );
+    if (!stored) return;
+    window.sessionStorage.removeItem(PRE_ASSESSMENT_REQUIRED_STORAGE_KEY);
+    setToastMessage(stored || PRE_ASSESSMENT_REQUIRED_MESSAGE);
+  }, []);
 
   useEffect(() => {
     if (isProjectTabId(queryTab)) return;
@@ -214,6 +230,13 @@ export default function ProjectDetailsContent() {
 
         {activeTabContent}
       </section>
+
+      {toastMessage ? (
+        <InfoToastBanner
+          message={toastMessage}
+          onDismiss={() => setToastMessage("")}
+        />
+      ) : null}
     </div>
   );
 }

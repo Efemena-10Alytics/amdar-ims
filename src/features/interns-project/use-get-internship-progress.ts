@@ -22,6 +22,21 @@ export type EnrollmentCareerStageProgress = {
   isComplete: boolean;
 };
 
+export type EnrollmentAssessmentProgress = {
+  isComplete: boolean;
+};
+
+export type EnrollmentAssessmentsProgress = {
+  pre: EnrollmentAssessmentProgress;
+  post: EnrollmentAssessmentProgress;
+};
+
+export const PRE_ASSESSMENT_REQUIRED_MESSAGE =
+  "Please complete the pre-assessment first before continuing to the classroom.";
+
+export const PRE_ASSESSMENT_REQUIRED_STORAGE_KEY =
+  "ims:pre-assessment-required";
+
 export type EnrollmentProgress = {
   enrollmentId: number;
   cohortId: number;
@@ -31,6 +46,7 @@ export type EnrollmentProgress = {
   careerStages: EnrollmentCareerStageProgress[];
   stagesCompleted: number;
   stagesTotal: number;
+  assessments?: EnrollmentAssessmentsProgress | null;
 };
 
 export type EnrollmentProgressApiResponse = {

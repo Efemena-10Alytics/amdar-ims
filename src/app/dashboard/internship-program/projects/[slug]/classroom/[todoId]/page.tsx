@@ -26,6 +26,11 @@ import type {
   InternProjectTodoType,
 } from "@/features/interns-project/internship-project.types";
 import { useCompleteTodo } from "@/features/interns-project/use-complete-todo";
+import {
+  PRE_ASSESSMENT_REQUIRED_MESSAGE,
+  PRE_ASSESSMENT_REQUIRED_STORAGE_KEY,
+  useGetInternshipProgress,
+} from "@/features/interns-project/use-get-internship-progress";
 import { useGetMyTodoSubmission } from "@/features/interns-project/use-get-my-todo-submission";
 import { useGetProjectBySlug } from "@/features/interns-project/use-get-project-by-slug";
 import { useGetTodoById } from "@/features/interns-project/use-get-todo-by-id";
@@ -797,6 +802,7 @@ function ClassroomPageContent() {
     slug?: string | string[];
     todoId?: string | string[];
   }>();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const slugParam = params?.slug;
   const todoIdParam = params?.todoId;
@@ -808,7 +814,48 @@ function ClassroomPageContent() {
   const project = projectQuery.data;
   const todosQuery = useGetTodosByProjectId(project?.id);
   const todoQuery = useGetTodoById(project?.id, todoId);
+  const progressQuery = useGetInternshipProgress();
   const [activeTypeId, setActiveTypeId] = useState<number | null>(null);
+  const hasBlockedPreAssessment = useRef(false);
+
+  const isPreAssessmentComplete =
+    progressQuery.data?.assessments?.pre?.isComplete === true;
+  const isProgressReady =
+    !progressQuery.isLoading || progressQuery.data != null;
+
+  useEffect(() => {
+    if (!slug || hasBlockedPreAssessment.current) return;
+    if (!isProgressReady || progressQuery.isError) return;
+    if (isPreAssessmentComplete) return;
+
+    hasBlockedPreAssessment.current = true;
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem(
+        PRE_ASSESSMENT_REQUIRED_STORAGE_KEY,
+        PRE_ASSESSMENT_REQUIRED_MESSAGE,
+      );
+    }
+    router.replace(
+      `/dashboard/internship-program/projects/${encodeURIComponent(slug)}?tab=assessment`,
+    );
+  }, [
+    isPreAssessmentComplete,
+    isProgressReady,
+    progressQuery.isError,
+    router,
+    slug,
+  ]);
+
+  if (
+    !isProgressReady ||
+    (!isPreAssessmentComplete && !progressQuery.isError)
+  ) {
+    return (
+      <main className="px-4 py-10 text-center text-sm text-[#64748B] lg:px-6">
+        Loading classroom...
+      </main>
+    );
+  }
 
   const sortedActiveTypes = useMemo(
     () => getSortedTodoTypes(todoQuery.data),

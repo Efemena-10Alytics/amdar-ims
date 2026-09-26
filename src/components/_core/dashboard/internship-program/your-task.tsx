@@ -8,6 +8,7 @@ import {
   formatDurationLabel,
 } from "@/components/_core/dashboard/internship-program/project-details/project-content";
 import { useGetCurrentProject } from "@/features/interns-project/use-get-current-project";
+import { useGetInternshipProgress } from "@/features/interns-project/use-get-internship-progress";
 
 type YourTaskProps = {
   imageSrc?: string;
@@ -17,9 +18,13 @@ const YourTask = ({
   imageSrc = "/images/svgs/illustration/Smug 2.svg",
 }: YourTaskProps) => {
   const currentProjectQuery = useGetCurrentProject();
+  const progressQuery = useGetInternshipProgress();
   const current = currentProjectQuery.data;
   const project = current?.project;
   const isLoading = currentProjectQuery.isLoading;
+  const isPreAssessmentComplete =
+    progressQuery.data?.assessments?.pre?.isComplete === true;
+  const actionLabel = isPreAssessmentComplete ? "Continue Task" : "Start Task";
 
   if (!isLoading && !project) {
     return null;
@@ -33,7 +38,9 @@ const YourTask = ({
       : `${rawDuration} duration`
     : "—";
   const projectHref = project?.slug
-    ? `/dashboard/internship-program/projects/${encodeURIComponent(project.slug)}`
+    ? `/dashboard/internship-program/projects/${encodeURIComponent(project.slug)}${
+        isPreAssessmentComplete ? "" : "?tab=assessment"
+      }`
     : null;
   const logoSrc =
     project?.logoPreview || "/favicon.svg";
@@ -77,7 +84,7 @@ const YourTask = ({
               href={projectHref}
               className="mt-4 inline-flex h-10 cursor-pointer items-center justify-center rounded-full bg-[#0F6371] px-5 text-sm font-semibold text-white transition hover:bg-[#0C5662]"
             >
-              Continue project
+              {actionLabel}
             </Link>
           ) : (
             <button
@@ -85,7 +92,7 @@ const YourTask = ({
               disabled
               className="mt-4 inline-flex h-10 cursor-not-allowed items-center justify-center rounded-full bg-[#0F6371] px-5 text-sm font-semibold text-white opacity-70"
             >
-              Continue project
+              {actionLabel}
             </button>
           )}
         </div>

@@ -150,7 +150,7 @@ const InternshipProgramOverview = () => {
           }
         />
         <StatCard
-          label="Activities done"
+          label="Todo done"
           value={
             isLoading
               ? "—"

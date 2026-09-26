@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
   Building2,
@@ -16,7 +16,12 @@ import type {
   InternProject,
   InternProjectTodo,
 } from "@/features/interns-project/internship-project.types";
+import {
+  PRE_ASSESSMENT_REQUIRED_MESSAGE,
+  useGetInternshipProgress,
+} from "@/features/interns-project/use-get-internship-progress";
 import { useGetTodosByProjectId } from "@/features/interns-project/use-get-todos-by-project-id";
+import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import { formatDurationLabel } from "../project-content";
 import {
   DropdownMenu,
@@ -183,8 +188,13 @@ type TodoProps = {
 };
 
 const Todo = ({ project }: TodoProps) => {
+  const router = useRouter();
   const { data: todos = [], isLoading, isError, refetch } =
     useGetTodosByProjectId(project.id);
+  const progressQuery = useGetInternshipProgress();
+  const isPreAssessmentComplete =
+    progressQuery.data?.assessments?.pre?.isComplete === true;
+  const [toastMessage, setToastMessage] = useState("");
 
   const rows = useMemo(() => todos.map(mapTodoToRow), [todos]);
   const weekOptions = useMemo(() => {
@@ -200,6 +210,19 @@ const Todo = ({ project }: TodoProps) => {
   const [categoryFilter, setCategoryFilter] =
     useState<"All" | TodoCategory>("All");
   const [showFilters, setShowFilters] = useState(false);
+
+  const openClassroom = (todoId: number) => {
+    if (!project.slug) return;
+
+    if (!isPreAssessmentComplete) {
+      setToastMessage(PRE_ASSESSMENT_REQUIRED_MESSAGE);
+      return;
+    }
+
+    router.push(
+      `/dashboard/internship-program/projects/${encodeURIComponent(project.slug)}/classroom/${todoId}`,
+    );
+  };
 
   useEffect(() => {
     if (!weekOptions.length) {
@@ -261,6 +284,7 @@ const Todo = ({ project }: TodoProps) => {
   }
 
   return (
+    <>
     <section className="space-y-6">
       <ProjectSummary project={project} />
 
@@ -420,14 +444,15 @@ const Todo = ({ project }: TodoProps) => {
                             align="end"
                             className="w-full max-w-64 rounded-xl border-[#E2E8F0] p-1.5"
                           >
-                            <DropdownMenuItem asChild>
-                              <Link
-                                href={`/dashboard/internship-program/projects/${encodeURIComponent(project.slug)}/classroom/${item.id}`}
-                                className="cursor-pointer font-medium text-[#173740] focus:bg-[#E8F0F3] focus:text-[#156374]"
-                              >
-                                <Eye className="size-4" aria-hidden />
-                                View in classroom
-                              </Link>
+                            <DropdownMenuItem
+                              onSelect={(event) => {
+                                event.preventDefault();
+                                openClassroom(item.id);
+                              }}
+                              className="cursor-pointer font-medium text-[#173740] focus:bg-[#E8F0F3] focus:text-[#156374]"
+                            >
+                              <Eye className="size-4" aria-hidden />
+                              View in classroom
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -450,6 +475,13 @@ const Todo = ({ project }: TodoProps) => {
         </div>
       </div>
     </section>
+      {toastMessage ? (
+        <InfoToastBanner
+          message={toastMessage}
+          onDismiss={() => setToastMessage("")}
+        />
+      ) : null}
+    </>
   );
 };
 
