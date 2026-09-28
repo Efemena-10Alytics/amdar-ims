@@ -87,7 +87,9 @@ const JobCard = ({ job }: { job: Job }) => {
       </div>
 
       <div className="mt-4">
-        <h3 className="font-sora text-xl font-semibold text-[#0C3640]">{job.title}</h3>
+        <h3 className="line-clamp-2 font-sora text-xl font-semibold text-[#0C3640]" title={job.title}>
+          {job.title}
+        </h3>
         {metaLine && (
           <p className="mt-1 font-sora text-sm text-[#64748B]">{metaLine}</p>
         )}

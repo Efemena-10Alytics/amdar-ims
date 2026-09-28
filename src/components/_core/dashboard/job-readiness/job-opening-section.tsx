@@ -100,7 +100,7 @@ const JobOpeningSection = () => {
             value={location || undefined}
             onValueChange={updateFilter(setLocation)}
           >
-            <SelectTrigger className="h-[34px] w-auto min-w-[120px] rounded-lg bg-[#E8EFF1] px-3 py-0 font-sora text-sm text-[#0C3640]">
+            <SelectTrigger className="h-8.5 w-auto min-w-44 rounded-lg bg-[#E8EFF1] px-3 py-0 font-sora text-sm text-[#0C3640]">
               <SelectValue placeholder="Location" />
             </SelectTrigger>
             <SelectContent>
@@ -117,7 +117,7 @@ const JobOpeningSection = () => {
             value={jobTitle || undefined}
             onValueChange={updateFilter(setJobTitle)}
           >
-            <SelectTrigger className="h-[34px] w-auto min-w-[120px] rounded-lg bg-[#E8EFF1] px-3 py-0 font-sora text-sm text-[#0C3640]">
+            <SelectTrigger className="h-8.5 w-auto min-w-56 rounded-lg bg-[#E8EFF1] px-3 py-0 font-sora text-sm text-[#0C3640]">
               <SelectValue placeholder="Job Title" />
             </SelectTrigger>
             <SelectContent>
@@ -134,7 +134,7 @@ const JobOpeningSection = () => {
             value={sponsorship || undefined}
             onValueChange={updateFilter(setSponsorship)}
           >
-            <SelectTrigger className="h-[34px] w-auto min-w-[160px] rounded-lg bg-[#E8EFF1] px-3 py-0 font-sora text-sm text-[#0C3640]">
+            <SelectTrigger className="h-8.5 w-auto min-w-44 rounded-lg bg-[#E8EFF1] px-3 py-0 font-sora text-sm text-[#0C3640]">
               <SelectValue placeholder="Visa Sponsorship" />
             </SelectTrigger>
             <SelectContent>
