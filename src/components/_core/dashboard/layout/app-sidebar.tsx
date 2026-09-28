@@ -33,7 +33,7 @@ const navMain = [
   { title: "Portfolio", url: "/dashboard/portfolio", icon: PortfolioIcon },
   // { title: "Hackathons", url: "/live-hackathon", icon: HackathonIcon },
   { title: "Learn", url: "/learn", icon: LearnIcon },
-  { title: "Blog", url: "/dashboard-blog", icon: BlogIcon },
+  { title: "Blog", url: "/dashboard/blog", icon: BlogIcon },
   { title: "Billings", url: "/dashboard/billing", icon: BillingIcon },
   // { title: "Referrals", url: "/dashboard/referrals", icon: ReferralsSidebarIcon },
 ];
