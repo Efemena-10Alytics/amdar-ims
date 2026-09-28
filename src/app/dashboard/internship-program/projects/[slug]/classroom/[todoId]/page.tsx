@@ -823,40 +823,6 @@ function ClassroomPageContent() {
   const isProgressReady =
     !progressQuery.isLoading || progressQuery.data != null;
 
-  useEffect(() => {
-    if (!slug || hasBlockedPreAssessment.current) return;
-    if (!isProgressReady || progressQuery.isError) return;
-    if (isPreAssessmentComplete) return;
-
-    hasBlockedPreAssessment.current = true;
-    if (typeof window !== "undefined") {
-      window.sessionStorage.setItem(
-        PRE_ASSESSMENT_REQUIRED_STORAGE_KEY,
-        PRE_ASSESSMENT_REQUIRED_MESSAGE,
-      );
-    }
-    router.replace(
-      `/dashboard/internship-program/projects/${encodeURIComponent(slug)}?tab=assessment`,
-    );
-  }, [
-    isPreAssessmentComplete,
-    isProgressReady,
-    progressQuery.isError,
-    router,
-    slug,
-  ]);
-
-  if (
-    !isProgressReady ||
-    (!isPreAssessmentComplete && !progressQuery.isError)
-  ) {
-    return (
-      <main className="px-4 py-10 text-center text-sm text-[#64748B] lg:px-6">
-        Loading classroom...
-      </main>
-    );
-  }
-
   const sortedActiveTypes = useMemo(
     () => getSortedTodoTypes(todoQuery.data),
     [todoQuery.data],
@@ -911,6 +877,29 @@ function ClassroomPageContent() {
   ]);
 
   useEffect(() => {
+    if (!slug || hasBlockedPreAssessment.current) return;
+    if (!isProgressReady || progressQuery.isError) return;
+    if (isPreAssessmentComplete) return;
+
+    hasBlockedPreAssessment.current = true;
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem(
+        PRE_ASSESSMENT_REQUIRED_STORAGE_KEY,
+        PRE_ASSESSMENT_REQUIRED_MESSAGE,
+      );
+    }
+    router.replace(
+      `/dashboard/internship-program/projects/${encodeURIComponent(slug)}?tab=assessment`,
+    );
+  }, [
+    isPreAssessmentComplete,
+    isProgressReady,
+    progressQuery.isError,
+    router,
+    slug,
+  ]);
+
+  useEffect(() => {
     if (!sortedActiveTypes.length) {
       setActiveTypeId(null);
       return;
@@ -931,6 +920,17 @@ function ClassroomPageContent() {
   const backHref = slug
     ? `/dashboard/internship-program/projects/${encodeURIComponent(slug)}`
     : "/dashboard/internship-program";
+
+  if (
+    !isProgressReady ||
+    (!isPreAssessmentComplete && !progressQuery.isError)
+  ) {
+    return (
+      <main className="px-4 py-10 text-center text-sm text-[#64748B] lg:px-6">
+        Loading classroom...
+      </main>
+    );
+  }
 
   if (projectQuery.isLoading || todosQuery.isLoading || todoQuery.isLoading) {
     return (
