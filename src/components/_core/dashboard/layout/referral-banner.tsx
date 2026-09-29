@@ -43,8 +43,10 @@ export function ReferralBanner() {
           className="flex h-10 items-center gap-2 bg-[#156374] hover:bg-[#0F4A57] text-white px-3 md:px-5 py-1.5 md:py-2 rounded-md font-medium text-xs xl:text-sm transition-colors font-display shadow-md whitespace-nowrap"
         >
           <WhatsAppIcon />
-          <span className="hidden sm:inline">Start Earning &rarr; </span>
-          WhatsApp Us
+          <span className="hidden sm:inline">Start Earning
+             {/* &rarr;  */}
+             </span>
+          {/* WhatsApp Us */}
         </Link>
       </div>
     </div>
