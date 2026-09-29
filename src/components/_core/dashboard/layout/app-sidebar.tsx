@@ -22,6 +22,7 @@ import {
 } from "../svg";
 // import { ReferralsSidebarIcon } from "../referrals/icons";
 import { NavMain } from "./nav-main";
+import { SidebarCollapseToggle } from "./sidebar-collapse-toggle";
 import { SidebarSupportFooter } from "./sidebar-footer";
 
 const navMain = [
@@ -38,19 +39,32 @@ const navMain = [
   // { title: "Referrals", url: "/dashboard/referrals", icon: ReferralsSidebarIcon },
 ];
 
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:p-1.5!"
+              tooltip="AMDARI"
+              className="data-[slot=sidebar-menu-button]:p-1.5! group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-1!"
             >
               <Link href="/home" className="flex items-center gap-2">
-                <Image src="/logo.svg" height={22} width={170} alt="AAMDARI" />
+                <Image
+                  src="/favicon.svg"
+                  height={28}
+                  width={28}
+                  alt="AMDARI"
+                  className="hidden size-7 group-data-[collapsible=icon]:block"
+                />
+                <Image
+                  src="/logo.svg"
+                  height={22}
+                  width={170}
+                  alt="AMDARI"
+                  className="group-data-[collapsible=icon]:hidden"
+                />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -60,6 +74,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={navMain} />
       </SidebarContent>
       <SidebarSupportFooter />
+      <SidebarCollapseToggle />
     </Sidebar>
   );
 }

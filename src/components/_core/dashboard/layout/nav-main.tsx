@@ -45,14 +45,19 @@ export function NavMain({
                   tooltip={item.title}
                   isActive={isActive}
                   className={cn(
-                    "h-[52px]! px-4 text-[#A1A8B1] font-normal",
+                    "h-[52px]! px-4 font-normal text-[#A1A8B1] group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-2!",
                     isActive &&
-                      "bg-primary! text-white! hover:bg-primary hover:text-white"
+                      "bg-primary! text-white! hover:bg-primary hover:text-white",
                   )}
                 >
-                  <Link href={item.url} className="flex h-full items-center gap-2">
+                  <Link
+                    href={item.url}
+                    className="flex h-full items-center gap-2 group-data-[collapsible=icon]:justify-center"
+                  >
                     {Icon && <Icon />}
-                    <span>{item.title}</span>
+                    <span className="group-data-[collapsible=icon]:hidden">
+                      {item.title}
+                    </span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
