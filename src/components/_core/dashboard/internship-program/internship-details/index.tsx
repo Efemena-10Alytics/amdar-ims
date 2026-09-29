@@ -1,14 +1,15 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { MessageCircleMore } from "lucide-react";
 import { cn } from "@/lib/utils";
 import InternshipInfo from "@/components/_core/dashboard/internship-program/internship-details/internship-info";
 import CareerStage from "@/components/_core/dashboard/internship-program/internship-details/career-stage";
 import CareerCenter from "@/components/_core/dashboard/internship-program/internship-details/career-center";
 import Resources from "@/components/_core/dashboard/internship-program/internship-details/resources";
-import Performance from "@/components/_core/dashboard/internship-program/internship-details/performance";
+import { useGetCurrentProject } from "@/features/interns-project/use-get-current-project";
+import { useGetInternshipProgress } from "@/features/interns-project/use-get-internship-progress";
 
 const TABS = [
   { id: "career-stage", label: "Career Stage" },
@@ -31,24 +32,76 @@ type InternshipDetailsProps = {
   onWhoIsOnlineClick?: () => void;
 };
 
-// function WhoIsOnlineButton({ onClick }: { onClick?: () => void }) {
-//   return (
-//     <button
-//       type="button"
-//       onClick={onClick}
-//       className="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-full bg-linear-to-r from-[#EDE4FF] to-[#F4EEFF] px-4 py-2.5 text-sm font-semibold text-[#5B4B8A] transition hover:from-[#E4D8FF] hover:to-[#EDE4FF]"
-//     >
-//       Who is online?
-//       <span className="flex size-7 items-center justify-center rounded-full bg-[#5B4B8A] text-white">
-//         <MessageCircleMore className="size-4" strokeWidth={2.25} aria-hidden />
-//       </span>
-//     </button>
-//   );
-// }
+function buildCurrentTaskHref({
+  projectSlug,
+  todoId,
+  typeId,
+}: {
+  projectSlug: string;
+  todoId: number;
+  typeId?: number | null;
+}) {
+  const base = `/dashboard/internship-program/projects/${encodeURIComponent(projectSlug)}/classroom/${todoId}`;
+  return typeId != null ? `${base}?type=${typeId}` : base;
+}
+
+function ContinueTaskButton() {
+  const progressQuery = useGetInternshipProgress();
+  const currentProjectQuery = useGetCurrentProject();
+
+  const taskTracker = progressQuery.data?.taskTracker;
+  const currentTask = taskTracker?.currentTask ?? null;
+  const preAssessmentDone = taskTracker?.preAssessmentDone === true;
+  const projectSlug = currentProjectQuery.data?.project?.slug?.trim() || null;
+  const isLoading =
+    progressQuery.isLoading ||
+    progressQuery.isEnrollmentLoading ||
+    currentProjectQuery.isLoading;
+
+  const label = preAssessmentDone ? "Continue Task" : "Start Task";
+
+  const href = (() => {
+    if (!projectSlug) return null;
+
+    if (!preAssessmentDone) {
+      return `/dashboard/internship-program/projects/${encodeURIComponent(projectSlug)}?tab=assessment`;
+    }
+
+    if (!currentTask) return null;
+
+    return buildCurrentTaskHref({
+      projectSlug,
+      todoId: currentTask.todoId,
+      typeId: currentTask.type?.id,
+    });
+  })();
+
+  if (isLoading) {
+    return (
+      <button
+        type="button"
+        disabled
+        className="inline-flex h-10 shrink-0 cursor-not-allowed items-center justify-center rounded-full bg-[#0F6371] px-5 text-sm font-semibold text-white opacity-70"
+      >
+        {label}
+      </button>
+    );
+  }
+
+  if (!href) return null;
+
+  return (
+    <Link
+      href={href}
+      className="inline-flex h-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#0F6371] px-5 text-sm font-semibold text-white transition hover:bg-[#0C5662]"
+    >
+      {label}
+    </Link>
+  );
+}
 
 const InternshipDetails = ({
   defaultTab = "career-stage",
-  // onWhoIsOnlineClick,
 }: InternshipDetailsProps) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -76,8 +129,6 @@ const InternshipDetails = ({
         return <InternshipInfo />;
       case "career-stage":
         return <CareerStage />;
-      // case "performance":
-      //   return <Performance />;
       case "career-center":
         return <CareerCenter />;
       case "resources":
@@ -120,7 +171,7 @@ const InternshipDetails = ({
           </div>
         </div>
 
-        {/* <WhoIsOnlineButton onClick={onWhoIsOnlineClick} /> */}
+        <ContinueTaskButton />
       </div>
 
       <div role="tabpanel">{renderTabContent()}</div>

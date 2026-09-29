@@ -24,6 +24,7 @@ export type EnrollmentCareerStageProgress = {
 
 export type EnrollmentAssessmentProgress = {
   isComplete: boolean;
+  isAvailable: boolean;
 };
 
 export type EnrollmentAssessmentsProgress = {
@@ -31,26 +32,52 @@ export type EnrollmentAssessmentsProgress = {
   post: EnrollmentAssessmentProgress;
 };
 
-export const PRE_ASSESSMENT_REQUIRED_MESSAGE =
-  "Please complete the pre-assessment first before continuing to the classroom.";
+export type EnrollmentTaskTrackerType = {
+  id: number;
+  contentType: string;
+  description: string | null;
+  docName: string | null;
+  docUrl: string | null;
+  videoUrl: string | null;
+  submissionRequired: boolean;
+  solutionFormat: string[];
+  sortOrder: number;
+  status: string | null;
+  created_at: string;
+  updated_at: string;
+};
 
-export const PRE_ASSESSMENT_REQUIRED_STORAGE_KEY =
-  "ims:pre-assessment-required";
+export type EnrollmentTaskTrackerCurrentTask = {
+  projectId: number;
+  todoId: number;
+  todoTitle: string;
+  week: number;
+  dayOfWeek: string;
+  type: EnrollmentTaskTrackerType | null;
+};
+
+export type EnrollmentTaskTracker = {
+  currentTask: EnrollmentTaskTrackerCurrentTask | null;
+  preAssessmentDone: boolean;
+};
 
 export type EnrollmentProgress = {
   enrollmentId: number;
   cohortId: number;
   programId: number;
+  isSpecialistPreview?: boolean;
   onboarding: EnrollmentProgressSection;
   preDiagnostic: EnrollmentProgressSection;
+  assessments?: EnrollmentAssessmentsProgress | null;
+  taskTracker?: EnrollmentTaskTracker | null;
   careerStages: EnrollmentCareerStageProgress[];
   stagesCompleted: number;
   stagesTotal: number;
-  assessments?: EnrollmentAssessmentsProgress | null;
 };
 
 export type EnrollmentProgressApiResponse = {
-  success: boolean;
+  success?: boolean;
+  status?: string;
   message: string;
   data: EnrollmentProgress | null;
 };
@@ -123,7 +150,12 @@ export async function getEnrollmentProgress({
       },
     );
 
-    if (data.success === false || !data.data) {
+    if (
+      data.success === false ||
+      (typeof data.status === "string" &&
+        data.status.toLowerCase() !== "success") ||
+      !data.data
+    ) {
       throw new EnrollmentProgressApiError(
         extractApiMessage(data) ?? "Unable to load enrollment progress.",
       );
