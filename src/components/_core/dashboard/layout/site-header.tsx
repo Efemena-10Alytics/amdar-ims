@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Bell, ChevronRight, LogOut, ArrowLeftRight } from "lucide-react";
+import { Bell, ChevronRight, LogOut, ArrowLeftRight, UserRound } from "lucide-react";
 import { usePathname } from "next/navigation";
 import {
   DropdownMenu,
@@ -26,6 +27,7 @@ import { DefermentDialog } from "./deferment-dialog";
 const pathToTitle: Record<string, string> = {
   "/dashboard": "Dashboard",
   "/dashboard/internship-program": "Internship Program",
+  "/dashboard/internship-program/profile": "Profile",
   "/dashboard/portfolio": "Portfolio",
   "/dashboard/billing": "Billings",
   "/dashboard/job-readiness": "Job Readiness",
@@ -105,10 +107,10 @@ export function SiteHeader() {
           <span className="h-px w-5 bg-zinc-400" aria-hidden />
         </button>
         <div className="flex gap-2 bg-[#F8FAFC] p-1 border  rounded-lg">
-          <button
-            type="button"
+          <Link
+            href="/dashboard/internship-program/profile"
             aria-label="Profile"
-            className="relative flex size-10 items-center justify-center rounded-xl bg-primary text-zinc-600 overflow-hidden hover:bg-rose-200 transition-colors"
+            className="relative flex size-10 items-center justify-center overflow-hidden rounded-xl bg-primary text-zinc-600 transition-colors hover:bg-rose-200"
           >
             {avatarUrl ? (
               <Image
@@ -126,7 +128,7 @@ export function SiteHeader() {
               className="absolute top-1.5 right-1.5 size-2 rounded-full bg-red-500"
               aria-hidden
             />
-          </button>
+          </Link>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
@@ -151,6 +153,12 @@ export function SiteHeader() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/internship-program/profile">
+                  <UserRound className="size-4" />
+                  Profile
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem onSelect={() => setDefermentOpen(true)}>
                 <ArrowLeftRight className="size-4" />
                 Defer internship
