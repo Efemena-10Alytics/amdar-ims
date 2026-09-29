@@ -16,12 +16,7 @@ import type {
   InternProject,
   InternProjectTodo,
 } from "@/features/interns-project/internship-project.types";
-import {
-  PRE_ASSESSMENT_REQUIRED_MESSAGE,
-  useGetInternshipProgress,
-} from "@/features/interns-project/use-get-internship-progress";
 import { useGetTodosByProjectId } from "@/features/interns-project/use-get-todos-by-project-id";
-import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import { formatDurationLabel } from "../project-content";
 import {
   DropdownMenu,
@@ -191,10 +186,6 @@ const Todo = ({ project }: TodoProps) => {
   const router = useRouter();
   const { data: todos = [], isLoading, isError, refetch } =
     useGetTodosByProjectId(project.id);
-  const progressQuery = useGetInternshipProgress();
-  const isPreAssessmentComplete =
-    progressQuery.data?.assessments?.pre?.isComplete === true;
-  const [toastMessage, setToastMessage] = useState("");
 
   const rows = useMemo(() => todos.map(mapTodoToRow), [todos]);
   const weekOptions = useMemo(() => {
@@ -213,11 +204,6 @@ const Todo = ({ project }: TodoProps) => {
 
   const openClassroom = (todoId: number) => {
     if (!project.slug) return;
-
-    if (!isPreAssessmentComplete) {
-      setToastMessage(PRE_ASSESSMENT_REQUIRED_MESSAGE);
-      return;
-    }
 
     router.push(
       `/dashboard/internship-program/projects/${encodeURIComponent(project.slug)}/classroom/${todoId}`,
@@ -477,12 +463,6 @@ const Todo = ({ project }: TodoProps) => {
           </div>
         </div>
       </section>
-      {toastMessage ? (
-        <InfoToastBanner
-          message={toastMessage}
-          onDismiss={() => setToastMessage("")}
-        />
-      ) : null}
     </>
   );
 };
