@@ -132,29 +132,31 @@ const ProjectViews = ({ project }: ProjectViewsProps) => {
         </div>
       </div>
 
-      <div className="mt-10 flex flex-wrap items-end gap-6 px-1">
-        {PROJECT_SECTIONS.map((section) => {
-          const active = section === activeSection;
+      <div className="sticky pt-5 top-0 z-10 mt-5 -mx-4 mb-10 bg-background px-5 lg:-mx-6 lg:px-7">
+        <div className="flex flex-wrap items-end gap-6 px-1">
+          {PROJECT_SECTIONS.map((section) => {
+            const active = section === activeSection;
 
-          return (
-            <button
-              key={section}
-              type="button"
-              onClick={() => setActiveSection(section)}
-              className={[
-                "relative mb-10 pb-2 text-base font-medium transition-colors",
-                active
-                  ? "text-[#156374]"
-                  : "text-[#B6CFD4] hover:text-[#8FA3AF]",
-              ].join(" ")}
-            >
-              {section}
-              {active ? (
-                <span className="absolute inset-x-0 -bottom-px h-1 rounded-full bg-[#156374]" />
-              ) : null}
-            </button>
-          );
-        })}
+            return (
+              <button
+                key={section}
+                type="button"
+                onClick={() => setActiveSection(section)}
+                className={[
+                  "relative pb-2 text-base font-medium transition-colors",
+                  active
+                    ? "text-[#156374]"
+                    : "text-[#B6CFD4] hover:text-[#8FA3AF]",
+                ].join(" ")}
+              >
+                {section}
+                {active ? (
+                  <span className="absolute inset-x-0 -bottom-px h-1 rounded-full bg-[#156374]" />
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {activeSectionContent}

@@ -16,13 +16,13 @@ import {
   BillingIcon,
   BlogIcon,
   InternshipProgramIcon,
-  InterviewPrepIcon,
   JobReadinessIcon,
   LearnIcon,
   PortfolioIcon,
 } from "../svg";
 // import { ReferralsSidebarIcon } from "../referrals/icons";
 import { NavMain } from "./nav-main";
+import { SidebarSupportFooter } from "./sidebar-footer";
 
 const navMain = [
   // { title: "Dashboard", url: "/dashboard", icon: DashboardFilledIcon },
@@ -59,6 +59,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={navMain} />
       </SidebarContent>
+      <SidebarSupportFooter />
     </Sidebar>
   );
 }
