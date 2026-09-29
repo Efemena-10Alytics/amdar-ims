@@ -22,7 +22,6 @@ type ResourceListItem = Pick<
 const INTERNSHIP_RESOURCE_CATEGORIES = [
   { label: "Onboarding", value: "onboarding" },
   { label: "Mentorship", value: "mentorship" },
-  { label: "Employability session", value: "employability-session" },
   { label: "Others", value: "others" },
 ] as const;
 
