@@ -8,9 +8,9 @@ const SUPPORT_AVATAR = "/images/svgs/illustration/Super Excited 3.svg";
 
 export function SidebarSupportFooter() {
   return (
-    <SidebarFooterSlot className="mt-auto p-3 group-data-[collapsible=icon]:hidden">
+    <SidebarFooterSlot className="mt-auto p-3">
       <div
-        className="flex flex-col gap-4 rounded-2xl p-4"
+        className="flex flex-col gap-4 rounded-2xl p-4 group-data-[collapsible=icon]:hidden"
         style={{
           background:
             "linear-gradient(290.83deg, #FFE082 -25.01%, #156374 19.22%, #156374 51.69%, #022027 91.44%)",
@@ -46,6 +46,25 @@ export function SidebarSupportFooter() {
           Contact support
         </a>
       </div>
+
+      <a
+        href={WHATSAPP_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Contact support"
+        title="Contact support"
+        className="mx-auto hidden size-10 items-center justify-center overflow-hidden rounded-xl bg-[#156374] transition-opacity hover:opacity-90 group-data-[collapsible=icon]:flex"
+      >
+        <span className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-[#ACF0C5]">
+          <Image
+            src={SUPPORT_AVATAR}
+            alt=""
+            width={32}
+            height={32}
+            className="size-8 object-cover object-[center_20%]"
+          />
+        </span>
+      </a>
     </SidebarFooterSlot>
   );
 }

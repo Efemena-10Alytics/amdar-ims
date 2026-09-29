@@ -2,7 +2,8 @@ import ExternalAuthBootstrap from "@/components/_core/auth/external-auth-bootstr
 import { AppSidebar } from "@/components/_core/dashboard/layout/app-sidebar";
 import { SiteHeader } from "@/components/_core/dashboard/layout/site-header";
 import DashboardEnrollmentGuard from "@/components/_core/dashboard/layout/dashboard-enrollment-guard";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { DashboardSidebarProvider } from "@/components/_core/dashboard/layout/dashboard-sidebar-provider";
+import { SidebarInset } from "@/components/ui/sidebar";
 import { ReferralBanner } from "@/components/_core/dashboard/layout/referral-banner";
 import React from "react";
 
@@ -16,10 +17,11 @@ const DashboardLayout = ({
     // auth-gated queries of their own, and an inbound handoff has to be applied
     // before any of them mount.
     <ExternalAuthBootstrap>
-      <SidebarProvider
+      <DashboardSidebarProvider
         style={
           {
             "--sidebar-width": "calc(var(--spacing) * 72)",
+            "--sidebar-width-icon": "3.5rem",
             "--header-height": "calc(var(--spacing) * 12)",
             "--sidebar": "#fff",
           } as React.CSSProperties
@@ -33,7 +35,7 @@ const DashboardLayout = ({
             <DashboardEnrollmentGuard>{children}</DashboardEnrollmentGuard>
           </div>
         </SidebarInset>
-      </SidebarProvider>
+      </DashboardSidebarProvider>
     </ExternalAuthBootstrap>
   );
 };
