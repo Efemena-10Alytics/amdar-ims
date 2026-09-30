@@ -17,14 +17,12 @@ import {
 import { useGetProjectBySlug } from "@/features/interns-project/use-get-project-by-slug";
 import { formatCareerStageLabel } from "./project-content";
 import ProjectViews from "./project-view";
-import Assessment from "./assessment";
 // import LeaderBoard from "./leader-board";
 import ResourcesDetails from "./resources";
 import Todo from "./todo";
 
 const PROJECT_TABS = [
   { id: "project-details", label: "Project details" },
-  { id: "assessment", label: "Assessment" },
   { id: "todo", label: "Task" },
   { id: "material", label: "Material" },
   // { id: "leader-board", label: "Leader board" },
@@ -124,8 +122,6 @@ export default function ProjectDetailsContent() {
   const activeTabContent =
     activeTab === "project-details" ? (
       <ProjectViews project={project} />
-    ) : activeTab === "assessment" ? (
-      <Assessment project={project} />
     ) : activeTab === "todo" ? (
       <Todo project={project} />
     ) : activeTab === "material" ? (

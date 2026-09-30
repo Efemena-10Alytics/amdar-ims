@@ -224,12 +224,6 @@ function buildProjectHref(project: InternProject): string | undefined {
   return `/dashboard/internship-program/projects/${encodeURIComponent(slug)}`;
 }
 
-function buildAssessmentHref(project: InternProject): string | undefined {
-  const base = buildProjectHref(project);
-  if (!base) return undefined;
-  return `${base}?tab=assessment`;
-}
-
 /** Builds week/day schedule UI data from a published stage project + its todos. */
 export function useStageProjectScheduleData(project: InternProject | null) {
   const todosQuery = useGetTodosByProjectId(project?.id);
@@ -296,7 +290,6 @@ export function useStageProjectScheduleData(project: InternProject | null) {
     weekRange: buildWeekRange(weeks),
     projectTitle: project?.title ?? "",
     projectHref: project ? buildProjectHref(project) : undefined,
-    assessmentHref: project ? buildAssessmentHref(project) : undefined,
     preAssessmentDone,
     isLoading,
     isError,
