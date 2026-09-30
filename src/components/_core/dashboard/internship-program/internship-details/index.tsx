@@ -65,8 +65,8 @@ const InternshipDetails = ({
   };
 
   return (
-    <section className="space-y-4">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+    <section className="min-w-0 space-y-4">
+      <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0 overflow-x-auto">
           <div
             className="inline-flex min-w-max rounded-full bg-[#EEF2F6] p-2"
@@ -100,7 +100,9 @@ const InternshipDetails = ({
         <ContinueTaskButton />
       </div>
 
-      <div role="tabpanel">{renderTabContent()}</div>
+      <div role="tabpanel" className="min-w-0">
+        {renderTabContent()}
+      </div>
     </section>
   );
 };

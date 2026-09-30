@@ -201,9 +201,9 @@ const Resources = ({
   };
 
   return (
-    <section className="rounded-2xl border border-[#E2E8F0] bg-white p-3 sm:p-4">
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,20rem)_1fr]">
-        <aside className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-3">
+    <section className="min-w-0 overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white p-3 sm:p-4">
+      <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)]">
+        <aside className="min-w-0 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-3">
           <h2 className="text-base font-semibold text-[#092A31]">{title}</h2>
 
           <ul className="mt-3 space-y-1">
@@ -231,7 +231,7 @@ const Resources = ({
           </ul>
         </aside>
 
-        <div className="space-y-3">
+        <div className="min-w-0 space-y-3 overflow-hidden">
           <div className="flex flex-wrap items-center gap-4 pb-1">
             {RESOURCE_FILTERS.map((filter) => {
               const isActive = activeFilter === filter.value;
@@ -280,7 +280,7 @@ const Resources = ({
                 : "Enrollment details are required to view resources."}
             </p>
           ) : resources.length ? (
-            <div className="space-y-2.5">
+            <div className="min-w-0 space-y-2.5">
               {resources.map((item) => {
                 const format = normalizeResourceFormat(item.format);
                 const href = getResourceHref(item);
@@ -288,13 +288,13 @@ const Resources = ({
                 return (
                   <article
                     key={item.id}
-                    className="flex items-center justify-between gap-3 rounded-xl bg-[#F8FAFC] px-3 py-3"
+                    className="flex min-w-0 items-center justify-between gap-3 rounded-xl bg-[#F8FAFC] px-3 py-3"
                   >
-                    <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex min-w-0 flex-1 items-center gap-3">
                       <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#156374] text-white">
                         <ResourceTypeIcon format={format} />
                       </span>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <p className="truncate text-base font-medium text-[#173740]">
                           {item.title}
                         </p>
@@ -308,7 +308,7 @@ const Resources = ({
                       type="button"
                       onClick={() => handleOpenResource(item)}
                       disabled={!href}
-                      className="cursor-pointer text-[#1A6B8A] transition hover:text-[#0E6174] disabled:cursor-not-allowed disabled:opacity-40"
+                      className="shrink-0 cursor-pointer text-[#1A6B8A] transition hover:text-[#0E6174] disabled:cursor-not-allowed disabled:opacity-40"
                       aria-label={`Open ${item.title}`}
                     >
                       <ExternalLink className="size-4" aria-hidden />

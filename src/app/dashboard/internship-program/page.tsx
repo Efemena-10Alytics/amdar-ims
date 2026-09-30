@@ -6,7 +6,7 @@ import YourTask from "@/components/_core/dashboard/internship-program/your-task"
 
 const InternshipProgramPage = () => {
   return (
-    <div className="space-y-6 px-4 py-6 lg:px-6">
+    <div className="min-w-0 space-y-6 px-4 py-6 lg:px-6">
       <PlatformSwitchHint />
       <SpecialistPreviewBanner />
       <InternshipProgramOverview />
