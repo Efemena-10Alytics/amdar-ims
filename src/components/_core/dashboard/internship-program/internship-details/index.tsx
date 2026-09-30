@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
-import InternshipInfo from "@/components/_core/dashboard/internship-program/internship-details/internship-info";
 import CareerStage from "@/components/_core/dashboard/internship-program/internship-details/career-stage";
 import CareerCenter from "@/components/_core/dashboard/internship-program/internship-details/career-center";
 import Resources from "@/components/_core/dashboard/internship-program/internship-details/resources";
@@ -13,7 +12,6 @@ import { useGetInternshipProgress } from "@/features/interns-project/use-get-int
 
 const TABS = [
   { id: "career-stage", label: "Career Stage" },
-  { id: "internship-info", label: "Internship info" },
   // { id: "performance", label: "Performance" },
   { id: "career-center", label: "Career center" },
   { id: "resources", label: "Resources" },
@@ -125,8 +123,6 @@ const InternshipDetails = ({
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case "internship-info":
-        return <InternshipInfo />;
       case "career-stage":
         return <CareerStage />;
       case "career-center":
