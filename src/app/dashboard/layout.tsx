@@ -31,7 +31,7 @@ const DashboardLayout = ({
         <SidebarInset>
           <SiteHeader />
           <ReferralBanner />
-          <div className="flex flex-1 flex-col rounded-2xl shadow">
+          <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden rounded-2xl shadow">
             <DashboardEnrollmentGuard>{children}</DashboardEnrollmentGuard>
           </div>
         </SidebarInset>
