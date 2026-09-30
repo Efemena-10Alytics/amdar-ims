@@ -47,6 +47,8 @@ function SingleProjectSchedule({
     weekRange,
     weeks,
     projectHref,
+    assessmentHref,
+    preAssessmentDone,
     isLoading,
     isError,
     isEmpty,
@@ -82,6 +84,10 @@ function SingleProjectSchedule({
       weeks={weeks}
       tone={tone}
       projectHref={projectHref}
+      continueHref={
+        preAssessmentDone ? projectHref : assessmentHref ?? projectHref
+      }
+      continueLabel={preAssessmentDone ? "Continue project" : "Start assessment"}
       defaultOpen={defaultOpen}
     />
   );
