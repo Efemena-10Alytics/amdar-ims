@@ -49,6 +49,7 @@ export type EnrollmentTaskTrackerType = {
 
 export type EnrollmentTaskTrackerCurrentTask = {
   projectId: number;
+  projectSlug: string;
   todoId: number;
   todoTitle: string;
   week: number;
@@ -189,6 +190,10 @@ export function useGetInternshipProgress() {
     enrollment: enrollmentQuery.data,
     cohortId,
     programId,
+    taskTracker: progressQuery.data?.taskTracker ?? null,
+    currentTask: progressQuery.data?.taskTracker?.currentTask ?? null,
+    preAssessmentDone:
+      progressQuery.data?.taskTracker?.preAssessmentDone === true,
     isEnrollmentLoading:
       !enrollmentQuery.isAuthReady ||
       enrollmentQuery.isLoading ||
