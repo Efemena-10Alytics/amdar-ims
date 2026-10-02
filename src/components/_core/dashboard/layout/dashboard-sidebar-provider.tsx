@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import {
   SidebarProvider,
@@ -15,11 +15,14 @@ function ClassroomSidebarSync() {
   const pathname = usePathname();
   const { setOpen } = useSidebar();
   const isClassroom = isClassroomPath(pathname);
+  const wasClassroomRef = useRef(isClassroom);
 
   useEffect(() => {
-    if (isClassroom) {
+    // Collapse only when entering classroom so the yellow toggle still works.
+    if (isClassroom && !wasClassroomRef.current) {
       setOpen(false);
     }
+    wasClassroomRef.current = isClassroom;
   }, [isClassroom, setOpen]);
 
   return null;

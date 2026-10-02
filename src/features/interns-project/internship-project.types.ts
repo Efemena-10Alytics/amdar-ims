@@ -9,6 +9,7 @@ export type InternProjectTool = {
   name: string;
   link: string;
   videoLink: string;
+  description?: string;
 };
 
 export type InternProjectCustomSection = {
@@ -178,7 +179,11 @@ export type CurrentInternProjectResponse = {
   data: CurrentInternProject | null;
 };
 
-export type InternProjectTodoContentType = "text" | "document" | "video";
+export type InternProjectTodoContentType =
+  | "text"
+  | "document"
+  | "video"
+  | "url";
 
 export type InternProjectTodoSolutionFormat = "text" | "url" | "file";
 

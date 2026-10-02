@@ -59,7 +59,7 @@ export function SidebarCollapseToggle({
       aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
       title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
       className={cn(
-        "absolute top-24 -right-3.5 z-20 hidden size-7 items-center justify-center rounded-full bg-[#FFE082] text-[#092A31] shadow-[0_2px_8px_rgba(9,42,49,0.18)] transition-colors hover:bg-[#FFD54F] lg:flex",
+        "absolute top-10 -right-3.5 z-20 hidden size-7 items-center justify-center rounded-full bg-[#FFE082] text-[#092A31] shadow-[0_2px_8px_rgba(9,42,49,0.18)] transition-colors hover:bg-[#FFD54F] lg:flex",
         className,
       )}
     >
