@@ -10,9 +10,9 @@ import Resources from "@/components/_core/dashboard/internship-program/internshi
 import ContinueTaskButton from "@/components/_core/dashboard/internship-program/internship-details/continue-task-button";
 
 const TABS = [
+  { id: "live-session", label: "Live session" },
   { id: "career-stage", label: "Career Stage" },
   // { id: "performance", label: "Performance" },
-  { id: "live-session", label: "Live session" },
   { id: "career-center", label: "Career center" },
   { id: "resources", label: "Resources" },
 ] as const;
@@ -31,7 +31,7 @@ type InternshipDetailsProps = {
 };
 
 const InternshipDetails = ({
-  defaultTab = "career-stage",
+  defaultTab = "live-session",
 }: InternshipDetailsProps) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -64,7 +64,7 @@ const InternshipDetails = ({
       case "resources":
         return <Resources />;
       default:
-        return <CareerStage />;
+        return <LiveSession />;
     }
   };
 

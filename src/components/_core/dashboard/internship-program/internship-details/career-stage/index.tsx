@@ -379,7 +379,7 @@ function CareerStageCard({
         "overflow-hidden rounded-xl border transition",
         isCompleted && !isExpanded && "border-primary bg-primary text-white",
         isExpandedCompleted && "border-[#E2E8F0] bg-white",
-        isActive && "border-[#9FD4B0] bg-[#E8F7EC]",
+        isActive && "border-[#86E9AA] bg-[#EDFCF2]",
         isUpcoming && "border-[#F0D9C4] bg-[#FFF4EA]",
         isLocked && "border-[#E2E8F0] bg-[#F8FAFC]",
       )}

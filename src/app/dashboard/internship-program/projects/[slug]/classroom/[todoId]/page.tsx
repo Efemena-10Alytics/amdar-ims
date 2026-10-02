@@ -14,6 +14,7 @@ import {
   ExternalLink,
   FileText,
   Lightbulb,
+  Link2,
   LoaderCircle,
   Play,
 } from "lucide-react";
@@ -43,7 +44,12 @@ function capitalizeDay(day?: string | null) {
 function getContentTypeLabel(contentType: InternProjectTodoContentType) {
   if (contentType === "video") return "Video";
   if (contentType === "document") return "Document";
+  if (contentType === "url") return "URL";
   return "Text";
+}
+
+function getTypeLinkUrl(type: InternProjectTodoType) {
+  return type.docUrl?.trim() || type.videoUrl?.trim() || null;
 }
 
 function ExpandableRichText({
@@ -108,17 +114,20 @@ function useTypeContinue({
   projectId,
   todoId,
   nextHref,
+  fallbackHref,
 }: {
   type: InternProjectTodoType;
   projectId: number;
   todoId: number;
   nextHref?: string | null;
+  fallbackHref?: string | null;
 }) {
   const router = useRouter();
   const { completeTodo, isCompleting, errorMessage } = useCompleteTodo();
+  const destination = nextHref || fallbackHref || null;
 
   const handleContinue = async () => {
-    if (!nextHref || isCompleting) return;
+    if (!destination || isCompleting) return;
 
     try {
       if (type.status !== "completed") {
@@ -128,14 +137,14 @@ function useTypeContinue({
           typeId: type.id,
         });
       }
-      router.push(nextHref);
+      router.push(destination);
     } catch {
       // errorMessage is set by the hook
     }
   };
 
   return {
-    canContinue: Boolean(nextHref),
+    canContinue: Boolean(destination),
     isCompleting,
     errorMessage,
     handleContinue,
@@ -166,14 +175,16 @@ function TypeContinueFooter({
   projectId,
   todoId,
   nextHref,
+  fallbackHref,
 }: {
   type: InternProjectTodoType;
   projectId: number;
   todoId: number;
   nextHref?: string | null;
+  fallbackHref?: string | null;
 }) {
   const { canContinue, isCompleting, errorMessage, handleContinue } =
-    useTypeContinue({ type, projectId, todoId, nextHref });
+    useTypeContinue({ type, projectId, todoId, nextHref, fallbackHref });
 
   if (!canContinue) return null;
 
@@ -197,17 +208,19 @@ function TodoTypeMedia({
   projectId,
   todoId,
   nextHref,
+  fallbackHref,
 }: {
   type: InternProjectTodoType;
   projectId: number;
   todoId: number;
   nextHref?: string | null;
+  fallbackHref?: string | null;
 }) {
   const [hasVideoEnded, setHasVideoEnded] = useState(false);
   const [forcePlaying, setForcePlaying] = useState<boolean | null>(null);
   const [replayKey, setReplayKey] = useState(0);
   const { canContinue, isCompleting, errorMessage, handleContinue } =
-    useTypeContinue({ type, projectId, todoId, nextHref });
+    useTypeContinue({ type, projectId, todoId, nextHref, fallbackHref });
 
   useEffect(() => {
     setHasVideoEnded(false);
@@ -296,6 +309,7 @@ function TodoTypeMedia({
           projectId={projectId}
           todoId={todoId}
           nextHref={nextHref}
+          fallbackHref={fallbackHref}
         />
       </div>
     );
@@ -336,6 +350,7 @@ function TodoTypeMedia({
           projectId={projectId}
           todoId={todoId}
           nextHref={nextHref}
+          fallbackHref={fallbackHref}
         />
       </div>
     );
@@ -348,7 +363,51 @@ function TodoTypeMedia({
         projectId={projectId}
         todoId={todoId}
         nextHref={nextHref}
+        fallbackHref={fallbackHref}
       />
+    );
+  }
+
+  if (type.contentType === "url") {
+    const linkUrl = getTypeLinkUrl(type);
+
+    return (
+      <div className="space-y-4">
+        {linkUrl ? (
+          <a
+            href={linkUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-3 rounded-xl border border-[#DCE6E9] bg-white px-4 py-3 transition hover:border-[#9DB8C0]"
+          >
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#E8F0F3] text-[#156374]">
+              <Link2 className="size-5" aria-hidden />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold text-[#173740]">
+                {type.docName?.trim() || "Open link"}
+              </p>
+              <p className="mt-0.5 truncate text-xs text-[#64748B]">{linkUrl}</p>
+            </div>
+            <ExternalLink className="size-4 shrink-0 text-[#94A3B8]" aria-hidden />
+          </a>
+        ) : (
+          <div className="flex items-center gap-3 rounded-xl border border-dashed border-[#DCE6E9] bg-white px-4 py-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#E8F0F3] text-[#94A3B8]">
+              <Link2 className="size-5" aria-hidden />
+            </span>
+            <p className="text-sm text-[#94A3B8]">No link available</p>
+          </div>
+        )}
+
+        <TypeContinueFooter
+          type={type}
+          projectId={projectId}
+          todoId={todoId}
+          nextHref={nextHref}
+          fallbackHref={fallbackHref}
+        />
+      </div>
     );
   }
 
@@ -360,11 +419,13 @@ function TodoTypeSection({
   projectId,
   todoId,
   nextHref,
+  fallbackHref,
 }: {
   type: InternProjectTodoType;
   projectId: number;
   todoId: number;
   nextHref?: string | null;
+  fallbackHref?: string | null;
 }) {
   const description = type.description?.trim();
 
@@ -383,6 +444,7 @@ function TodoTypeSection({
         projectId={projectId}
         todoId={todoId}
         nextHref={nextHref}
+        fallbackHref={fallbackHref}
       />
     </section>
   );
@@ -476,12 +538,14 @@ function LessonPanel({
   projectId,
   activeTypeId,
   nextHref,
+  fallbackHref,
 }: {
   todo: InternProjectTodo;
   careerStage?: string | null;
   projectId: number;
   activeTypeId: number | null;
   nextHref?: string | null;
+  fallbackHref?: string | null;
 }) {
   const [isOverviewOpen, setIsOverviewOpen] = useState(true);
   const [isSubmitOpen, setIsSubmitOpen] = useState(false);
@@ -562,6 +626,7 @@ function LessonPanel({
           projectId={projectId}
           todoId={todo.id}
           nextHref={nextHref}
+          fallbackHref={fallbackHref}
         />
       ) : null}
 
@@ -931,6 +996,7 @@ function ClassroomPageContent() {
           projectId={project.id}
           activeTypeId={activeTypeId}
           nextHref={nextHref}
+          fallbackHref={backHref}
         />
         <ProjectTodoPanel
           slug={slug}

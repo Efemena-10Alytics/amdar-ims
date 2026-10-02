@@ -81,6 +81,8 @@ type StageProjectScheduleProps = {
   continueHref?: string;
   continueLabel?: string;
   defaultOpen?: boolean;
+  /** When true, omit the stage-card top border wrapper (project Task tab). */
+  standalone?: boolean;
 };
 
 const TONE_STYLES: Record<
@@ -95,23 +97,23 @@ const TONE_STYLES: Record<
 > = {
   active: {
     sectionBorder: "border-[#C8E6D0]",
-    cardBorder: "border-[#9FD4B0]",
-    cardBg: "bg-[#DDF3E4]",
-    bodyBg: "bg-[#E8F7EC]",
-    divider: "border-[#C8E6D0]",
+    cardBorder: "border-[#86E9AA]",
+    cardBg: "bg-[#EDFCF2]",
+    bodyBg: "bg-white",
+    divider: "border-[#D1FAE5]",
   },
   upcoming: {
     sectionBorder: "border-[#F0D9C4]",
     cardBorder: "border-[#F0D9C4]",
     cardBg: "bg-[#FFEFD9]",
-    bodyBg: "bg-[#FFF4EA]",
-    divider: "border-[#F0D9C4]",
+    bodyBg: "bg-white",
+    divider: "border-[#F5E6D8]",
   },
   locked: {
     sectionBorder: "border-[#E2E8F0]",
     cardBorder: "border-[#E2E8F0]",
     cardBg: "bg-[#F1F5F9]",
-    bodyBg: "bg-[#F8FAFC]",
+    bodyBg: "bg-white",
     divider: "border-[#E2E8F0]",
   },
 };
@@ -344,6 +346,7 @@ export default function StageProjectSchedule({
   continueHref,
   continueLabel = "Continue project",
   defaultOpen = true,
+  standalone = false,
 }: StageProjectScheduleProps) {
   const [activeWeekId, setActiveWeekId] = useState(weeks[0]?.id ?? "");
   const [isProjectOpen, setIsProjectOpen] = useState(defaultOpen);
@@ -368,15 +371,20 @@ export default function StageProjectSchedule({
   if (!activeWeek) return null;
 
   return (
-    <div className={cn("border-t px-3 pb-4 pt-3 sm:px-4", styles.sectionBorder)}>
+    <div
+      className={cn(
+        !standalone && "border-t px-3 pb-4 pt-3 sm:px-4",
+        !standalone && styles.sectionBorder,
+      )}
+    >
       {description?.trim() ? (
         <p className="text-sm leading-relaxed text-[#64748B]">{description}</p>
       ) : null}
 
       <div
         className={cn(
-          "mt-4 overflow-hidden rounded-xl border",
-          !description?.trim() && "mt-0",
+          "overflow-hidden rounded-xl border",
+          description?.trim() ? "mt-4" : !standalone && "mt-0",
           styles.cardBorder,
           styles.cardBg,
         )}
@@ -469,10 +477,10 @@ export default function StageProjectSchedule({
                     className={cn(
                       "relative flex shrink-0 items-center gap-1.5 pb-2 text-sm font-semibold transition-colors",
                       isDisabled
-                        ? "cursor-not-allowed text-[#BCD0D5]"
+                        ? "cursor-not-allowed text-[#94A3B8]"
                         : isActive
                           ? "cursor-pointer text-[#156374]"
-                          : "cursor-pointer text-[#94A3B8] hover:text-[#64748B]",
+                          : "cursor-pointer text-[#64748B] hover:text-[#334155]",
                     )}
                   >
                     {week.label}

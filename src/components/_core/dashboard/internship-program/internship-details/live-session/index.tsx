@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Video } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SpekerIcon } from "@/components/_core/dashboard/internship-program/svg";
@@ -10,17 +10,6 @@ import {
   type LiveSessionDayCategory,
 } from "@/features/live-session/live-session.types";
 import { useGetLiveSessions } from "@/features/live-session/use-get-live-session";
-
-const DAY_FILTERS = [
-  { label: "Everyday", value: "everyday" },
-  { label: "Mon", value: "mon" },
-  { label: "Tue", value: "tue" },
-  { label: "Wed", value: "wed" },
-  { label: "Thur", value: "thu" },
-  { label: "Fri", value: "fri" },
-] as const;
-
-type DayFilterValue = (typeof DAY_FILTERS)[number]["value"];
 
 const DAY_LABEL: Record<LiveSessionDayCategory, string> = {
   mon: "Mon",
@@ -216,26 +205,13 @@ function LiveSessionCard({
 }
 
 export default function LiveSession() {
-  const [dayFilter, setDayFilter] = useState<DayFilterValue>("everyday");
   const todayCategory = getTodayCategory();
 
-  const requestCategory =
-    dayFilter === "everyday" ? undefined : dayFilter;
-
   const { sessions, isLoading, isError, errorMessage, refetch } =
-    useGetLiveSessions({
-      category: requestCategory,
-    });
+    useGetLiveSessions();
 
   const visibleSessions = useMemo(() => {
-    const filtered =
-      dayFilter === "everyday"
-        ? sessions
-        : sessions.filter(
-            (session) => normalizeDay(session.category) === dayFilter,
-          );
-
-    return [...filtered].sort((a, b) => {
+    return [...sessions].sort((a, b) => {
       const dayA = normalizeDay(a.category);
       const dayB = normalizeDay(b.category);
       const orderA = dayA != null ? (DAY_ORDER[dayA] ?? 99) : 99;
@@ -243,31 +219,10 @@ export default function LiveSession() {
       if (orderA !== orderB) return orderA - orderB;
       return a.startTime.localeCompare(b.startTime);
     });
-  }, [dayFilter, sessions]);
+  }, [sessions]);
 
   return (
     <section className="min-w-0 space-y-4">
-      <div className="grid w-full grid-cols-3 gap-2 sm:grid-cols-6">
-        {DAY_FILTERS.map((filter) => {
-          const isActive = dayFilter === filter.value;
-          return (
-            <button
-              key={filter.value}
-              type="button"
-              onClick={() => setDayFilter(filter.value)}
-              className={cn(
-                "h-10 w-full cursor-pointer rounded-md border text-sm font-medium transition",
-                isActive
-                  ? "border-[#4E93A0] bg-[#4E93A0] text-white"
-                  : "border-[#DCE5E9] bg-[#F8FAFC] text-[#78909C] hover:border-[#9DB8C0]",
-              )}
-            >
-              {filter.label}
-            </button>
-          );
-        })}
-      </div>
-
       {isLoading ? (
         <p className="py-8 text-sm text-[#94A3B8]">Loading live sessions...</p>
       ) : isError ? (
@@ -304,9 +259,7 @@ export default function LiveSession() {
           })}
         </div>
       ) : (
-        <p className="py-8 text-sm text-[#94A3B8]">
-          No live sessions found for this day.
-        </p>
+        <p className="py-8 text-sm text-[#94A3B8]">No live sessions found.</p>
       )}
     </section>
   );
