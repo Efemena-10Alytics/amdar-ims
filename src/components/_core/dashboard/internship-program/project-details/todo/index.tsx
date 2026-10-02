@@ -31,51 +31,53 @@ function ProjectSummary({
   const durationLabel = formatDurationLabel(project.duration);
 
   return (
-    <>
-      <div className="rounded-xl bg-[#F7F9FA] px-5 py-4 sm:px-7">
+    <div className="space-y-4">
+      <div className="rounded-2xl bg-[#F7F9FA] px-5 py-5 sm:px-6">
         <div className="flex items-start gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={project.logoPreview || "/favicon.svg"}
             alt={project.companyName || project.title}
-            className="mt-0.5 size-5 shrink-0 rounded-full object-cover"
+            className="mt-1 size-5 shrink-0 rounded-full object-cover"
           />
-          <h2 className="max-w-3xl text-xl leading-tight font-semibold text-[#34445E] sm:text-2xl">
-            {project.title}
-          </h2>
+          <div className="min-w-0 space-y-3">
+            <h2 className="text-xl leading-snug font-semibold text-[#34445E] sm:text-2xl">
+              {project.title}
+            </h2>
+
+            <div className="flex flex-wrap items-center gap-2">
+              {project.industry ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-xs font-medium text-[#78909C]">
+                  <Building2 className="size-3.5" aria-hidden />
+                  {project.industry}
+                </span>
+              ) : null}
+              {durationLabel ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-xs font-medium text-[#78909C]">
+                  <CalendarDays className="size-3.5" aria-hidden />
+                  {durationLabel}
+                </span>
+              ) : null}
+              {project.companyName ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-xs font-medium text-[#78909C]">
+                  <User className="size-3.5" aria-hidden />
+                  {project.companyName} contributor
+                </span>
+              ) : null}
+            </div>
+          </div>
         </div>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2">
-        {project.industry ? (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-2.5 py-1 text-xs font-medium text-[#78909C]">
-            <Building2 className="size-3.5" aria-hidden />
-            {project.industry}
-          </span>
-        ) : null}
-        {durationLabel ? (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-2.5 py-1 text-xs font-medium text-[#78909C]">
-            <CalendarDays className="size-3.5" aria-hidden />
-            {durationLabel}
-          </span>
-        ) : null}
-        {project.companyName ? (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-2.5 py-1 text-xs font-medium text-[#78909C]">
-            <User className="size-3.5" aria-hidden />
-            {project.companyName}
-          </span>
+        {continueHref ? (
+          <Link
+            href={continueHref}
+            className="inline-flex mt-5 h-11 w-full max-w-[14.5rem] cursor-pointer items-center justify-center rounded-full bg-[#0F6371] px-6 text-sm font-semibold text-white transition hover:bg-[#0C5662]"
+          >
+            Continue task
+          </Link>
         ) : null}
       </div>
 
-      {continueHref ? (
-        <Link
-          href={continueHref}
-          className="inline-flex h-11 w-full max-w-56 cursor-pointer items-center justify-center rounded-full bg-[#0F6371] px-6 text-sm font-semibold text-white transition hover:bg-[#0C5662]"
-        >
-          Continue task
-        </Link>
-      ) : null}
-    </>
+    </div>
   );
 }
 
@@ -101,14 +103,14 @@ const Todo = ({ project }: TodoProps) => {
   const projectSlug = project.slug?.trim() || currentTask?.projectSlug?.trim() || null;
   const continueHref =
     (preAssessmentDone || progressPreDone) &&
-    currentTask &&
-    currentTask.projectId === project.id &&
-    projectSlug
+      currentTask &&
+      currentTask.projectId === project.id &&
+      projectSlug
       ? buildCurrentTaskHref({
-          projectSlug,
-          todoId: currentTask.todoId,
-          typeId: currentTask.type?.id,
-        })
+        projectSlug,
+        todoId: currentTask.todoId,
+        typeId: currentTask.type?.id,
+      })
       : projectHref ?? null;
 
   return (
@@ -148,6 +150,7 @@ const Todo = ({ project }: TodoProps) => {
           continueHref={undefined}
           defaultOpen
           standalone
+          showProgress
         />
       )}
     </section>
