@@ -4,10 +4,11 @@ import { useEffect } from "react";
 import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
 
 export function LegacyCohortRedirect() {
-  const { data: enrollment, isAuthReady, isLoading } = useGetUserEnrollment();
+  const { data: enrollment, isAuthReady, isLoading, isFetching } =
+    useGetUserEnrollment();
 
   useEffect(() => {
-    if (!isAuthReady || isLoading || !enrollment) return;
+    if (!isAuthReady || isLoading || isFetching || !enrollment) return;
 
     if (enrollment.is_specialist_preview) return;
 
@@ -17,7 +18,7 @@ export function LegacyCohortRedirect() {
     if (startDate < cutoffDate) {
       window.location.replace("https://app.amdari.io/dashboard/internship");
     }
-  }, [isAuthReady, isLoading, enrollment]);
+  }, [isAuthReady, isLoading, isFetching, enrollment]);
 
   return null;
 }
