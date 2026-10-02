@@ -91,7 +91,6 @@ const TONE_STYLES: Record<
     sectionBorder: string;
     cardBorder: string;
     cardBg: string;
-    bodyBg: string;
     divider: string;
   }
 > = {
@@ -99,21 +98,18 @@ const TONE_STYLES: Record<
     sectionBorder: "border-[#C8E6D0]",
     cardBorder: "border-[#86E9AA]",
     cardBg: "bg-[#EDFCF2]",
-    bodyBg: "bg-white",
     divider: "border-[#D1FAE5]",
   },
   upcoming: {
     sectionBorder: "border-[#F0D9C4]",
     cardBorder: "border-[#F0D9C4]",
     cardBg: "bg-[#FFEFD9]",
-    bodyBg: "bg-white",
     divider: "border-[#F5E6D8]",
   },
   locked: {
     sectionBorder: "border-[#E2E8F0]",
     cardBorder: "border-[#E2E8F0]",
     cardBg: "bg-[#F1F5F9]",
-    bodyBg: "bg-white",
     divider: "border-[#E2E8F0]",
   },
 };
@@ -271,7 +267,7 @@ function AssessmentPanel({ assessment }: { assessment: AssessmentTabMeta }) {
   };
 
   return (
-    <div className="mt-3 rounded-xl bg-white/70 px-4 py-4">
+    <div className="mt-3">
       <div className="min-w-0">
         <p className="text-sm font-semibold text-[#173740]">
           {assessment.title}
@@ -448,7 +444,6 @@ export default function StageProjectSchedule({
             className={cn(
               "border-t px-3 pb-3 pt-2 sm:px-4",
               styles.cardBorder,
-              styles.bodyBg,
             )}
           >
             <div
