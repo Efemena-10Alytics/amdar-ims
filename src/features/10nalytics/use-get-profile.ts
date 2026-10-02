@@ -17,6 +17,8 @@ export type TenAnalyticsOnboardingStudent = {
   pod_id: string;
   pod_name: string;
   pod_whatsapp_link: string;
+  "10alytics_cohort": string;
+  "10alytics_program": string;
 };
 
 export type TenAnalyticsOnboardingProgram = {
@@ -76,9 +78,7 @@ export async function getTenAnalyticsOnboardingProfile(
     );
 
   if (data.success === false || !data.data) {
-    throw new Error(
-      data.message?.trim() || "No user found with this email",
-    );
+    throw new Error(data.message?.trim() || "No user found with this email");
   }
 
   return data.data;
