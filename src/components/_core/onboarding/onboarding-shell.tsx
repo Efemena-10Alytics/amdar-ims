@@ -16,16 +16,15 @@ import {
 import { useSkipEntrySetup } from "@/features/internship/use-skip-entry-setup";
 import { useRequireUserId } from "@/hooks/use-require-user-id";
 
-function OnboardingShellContent({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function OnboardingShellContent({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { isAuthReady } = useRequireUserId();
   const { isStaff } = useIsStaff();
-  const { skipEntrySetup, isSkipping, errorMessage: skipErrorMessage } =
-    useSkipEntrySetup();
+  const {
+    skipEntrySetup,
+    isSkipping,
+    errorMessage: skipErrorMessage,
+  } = useSkipEntrySetup();
   const isSkipRedirectingRef = useRef(false);
   const showSkipFab = isStaff;
 
@@ -70,7 +69,7 @@ function OnboardingShellContent({
     isSkipRedirectingRef.current = true;
     try {
       await skipEntrySetup();
-      window.location.assign("/dashboard/internship");
+      window.location.assign("/dashboard/internship-program");
     } catch {
       isSkipRedirectingRef.current = false;
     }
@@ -110,8 +109,8 @@ function OnboardingShellContent({
     if (cohortId == null || programId == null) {
       return (
         <p className="px-4 text-sm text-[#64748B] sm:px-0">
-          Unable to load onboarding. Program and cohort information is missing from
-          your enrollment.
+          Unable to load onboarding. Program and cohort information is missing
+          from your enrollment.
         </p>
       );
     }
@@ -192,7 +191,9 @@ function OnboardingShellContent({
         showSettingUpExperience || showOnboardingLoadingExperience
           ? "auth"
           : "onboarding",
-      showStepper: !(showSettingUpExperience || showOnboardingLoadingExperience),
+      showStepper: !(
+        showSettingUpExperience || showOnboardingLoadingExperience
+      ),
     });
   }
 
@@ -221,5 +222,3 @@ export default function OnboardingShell({
 }) {
   return <OnboardingShellContent>{children}</OnboardingShellContent>;
 }
-
-

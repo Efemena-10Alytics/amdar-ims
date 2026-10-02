@@ -59,7 +59,7 @@ const ImsDiagnostics = () => {
   const diagnosticTitle = diagnosticForm?.title ?? "IMS Diagnostics";
 
   const handleProceed = async () => {
-    router.push("/dashboard/internship");
+    router.push("/dashboard/internship-program");
   };
 
   return (
@@ -67,7 +67,9 @@ const ImsDiagnostics = () => {
       <h1 className="text-2xl font-semibold text-[#173740]">IMS Diagnostics</h1>
 
       <article className="mt-5 rounded-2xl border border-[#DCE5E9] bg-white p-4 shadow-[0_8px_18px_rgba(18,57,67,0.06)] sm:p-6">
-        <h2 className="text-lg font-semibold text-[#2F6A78]">Your diagnostics</h2>
+        <h2 className="text-lg font-semibold text-[#2F6A78]">
+          Your diagnostics
+        </h2>
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <span className="inline-flex items-center gap-2 rounded-full bg-[#F4D98D] px-4 py-2 text-sm font-semibold text-[#6E5A1F]">
@@ -90,24 +92,31 @@ const ImsDiagnostics = () => {
         </div>
 
         <div className="mt-4 rounded-xl bg-[#E0E8EC] p-4">
-          <h3 className="text-lg font-semibold text-[#2D6A78]">Assessment guidelines</h3>
+          <h3 className="text-lg font-semibold text-[#2D6A78]">
+            Assessment guidelines
+          </h3>
           <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm font-medium text-[#3F5E68]">
-            {getReadinessTestGuidelines(diagnosticForm?.guidelines, GUIDELINES).map(
-              (item) => (
+            {getReadinessTestGuidelines(
+              diagnosticForm?.guidelines,
+              GUIDELINES,
+            ).map((item) => (
               <li key={item}>{item}</li>
-            ),
-            )}
+            ))}
           </ul>
         </div>
 
         <div className="mt-3 flex items-center justify-center gap-10 rounded-lg bg-[#EFF3F6] px-6 py-3 text-center">
           <div>
-            <p className="text-lg font-semibold text-[#173740]">{questionCount}</p>
+            <p className="text-lg font-semibold text-[#173740]">
+              {questionCount}
+            </p>
             <p className="text-sm font-medium text-[#6C7D88]">Question</p>
           </div>
           <span className="h-10 w-px bg-[#D0DAE0]" aria-hidden />
           <div>
-            <p className="text-lg font-semibold text-[#173740]">{durationMinutes}</p>
+            <p className="text-lg font-semibold text-[#173740]">
+              {durationMinutes}
+            </p>
             <p className="text-sm font-medium text-[#6C7D88]">Minutes</p>
           </div>
         </div>
