@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, Folder, Loader, Lock, Settings2 } from "lucide-react";
@@ -85,6 +85,8 @@ type StageProjectScheduleProps = {
   standalone?: boolean;
   /** Show circular progress in the card header (Task tab). */
   showProgress?: boolean;
+  /** Enrollment progress API `stage.percent` (0–100). */
+  progress?: number;
 };
 
 const TONE_STYLES: Record<
@@ -123,34 +125,6 @@ const TONE_STYLES: Record<
     iconText: "text-white",
   },
 };
-
-function computeScheduleProgress(weeks: ProjectScheduleTab[]): number {
-  let total = 0;
-  let done = 0;
-
-  for (const week of weeks) {
-    if (week.kind === "week") {
-      for (const day of week.days) {
-        for (const task of day.tasks) {
-          if (task.status == null) continue;
-          total += 1;
-          if (task.status === "done") done += 1;
-          else if (task.status === "in-progress") done += 0.5;
-        }
-      }
-      continue;
-    }
-
-    if (week.assessment?.status != null) {
-      total += 1;
-      if (week.assessment.status === "completed") done += 1;
-      else if (week.assessment.status === "in-progress") done += 0.5;
-    }
-  }
-
-  if (!total) return 0;
-  return Math.min(100, Math.round((done / total) * 100));
-}
 
 function ScheduleProgressRing({ progress }: { progress: number }) {
   const radius = 16;
@@ -436,13 +410,17 @@ export default function StageProjectSchedule({
   defaultOpen = true,
   standalone = false,
   showProgress = false,
+  progress = 0,
 }: StageProjectScheduleProps) {
   const [activeWeekId, setActiveWeekId] = useState(weeks[0]?.id ?? "");
   const [isProjectOpen, setIsProjectOpen] = useState(defaultOpen);
   const styles = TONE_STYLES[tone];
   const activeWeek = weeks.find((week) => week.id === activeWeekId) ?? weeks[0];
   const actionHref = continueHref ?? projectHref;
-  const progress = useMemo(() => computeScheduleProgress(weeks), [weeks]);
+  const clampedProgress = Math.min(
+    100,
+    Math.max(0, Math.round(Number.isFinite(progress) ? progress : 0)),
+  );
 
   useEffect(() => {
     if (!weeks.length) {
@@ -514,7 +492,7 @@ export default function StageProjectSchedule({
           <div className="flex shrink-0 flex-col items-end gap-2">
             <div className="flex items-center gap-2">
               {showProgress ? (
-                <ScheduleProgressRing progress={progress} />
+                <ScheduleProgressRing progress={clampedProgress} />
               ) : null}
 
               <button

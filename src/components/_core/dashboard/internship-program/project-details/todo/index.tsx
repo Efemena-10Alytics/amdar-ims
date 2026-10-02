@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import { Building2, CalendarDays, User } from "lucide-react";
 import StageProjectSchedule from "@/components/_core/dashboard/internship-program/internship-details/career-stage/stage-project-schedule";
@@ -70,13 +71,12 @@ function ProjectSummary({
         {continueHref ? (
           <Link
             href={continueHref}
-            className="inline-flex mt-5 h-11 w-full max-w-[14.5rem] cursor-pointer items-center justify-center rounded-full bg-[#0F6371] px-6 text-sm font-semibold text-white transition hover:bg-[#0C5662]"
+            className="mt-5 inline-flex h-11 w-full max-w-[14.5rem] cursor-pointer items-center justify-center rounded-full bg-[#0F6371] px-6 text-sm font-semibold text-white transition hover:bg-[#0C5662]"
           >
             Continue task
           </Link>
         ) : null}
       </div>
-
     </div>
   );
 }
@@ -97,21 +97,38 @@ const Todo = ({ project }: TodoProps) => {
     refetch,
   } = useStageProjectScheduleData(project);
 
-  const { currentTask, preAssessmentDone: progressPreDone } =
-    useGetInternshipProgress();
+  const {
+    data: enrollmentProgress,
+    currentTask,
+    preAssessmentDone: progressPreDone,
+  } = useGetInternshipProgress();
 
-  const projectSlug = project.slug?.trim() || currentTask?.projectSlug?.trim() || null;
+  const stageProgress = useMemo(() => {
+    const careerStage = project.careerStage?.trim().toLowerCase();
+    if (!careerStage) return 0;
+
+    const match = enrollmentProgress?.careerStages?.find(
+      (stage) => stage.stage?.trim().toLowerCase() === careerStage,
+    );
+
+    const percent = match?.percent;
+    if (typeof percent !== "number" || Number.isNaN(percent)) return 0;
+    return Math.min(100, Math.max(0, Math.round(percent)));
+  }, [enrollmentProgress?.careerStages, project.careerStage]);
+
+  const projectSlug =
+    project.slug?.trim() || currentTask?.projectSlug?.trim() || null;
   const continueHref =
     (preAssessmentDone || progressPreDone) &&
-      currentTask &&
-      currentTask.projectId === project.id &&
-      projectSlug
+    currentTask &&
+    currentTask.projectId === project.id &&
+    projectSlug
       ? buildCurrentTaskHref({
-        projectSlug,
-        todoId: currentTask.todoId,
-        typeId: currentTask.type?.id,
-      })
-      : projectHref ?? null;
+          projectSlug,
+          todoId: currentTask.todoId,
+          typeId: currentTask.type?.id,
+        })
+      : (projectHref ?? null);
 
   return (
     <section className="space-y-6">
@@ -151,6 +168,7 @@ const Todo = ({ project }: TodoProps) => {
           defaultOpen
           standalone
           showProgress
+          progress={stageProgress}
         />
       )}
     </section>
