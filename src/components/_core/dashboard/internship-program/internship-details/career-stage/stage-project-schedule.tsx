@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, Folder, Lock } from "lucide-react";
+import { Check, Folder, Loader, Lock, Settings2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CustmDropdownIcon } from "@/components/_core/dashboard/internship-program/svg";
 import { RichTextContent } from "@/components/_core/dashboard/internship-program/project-details/project-content";
@@ -20,7 +20,7 @@ import type {
 import type { ReadinessTestQuizForm } from "@/features/readiness-test/types";
 
 export type DayStatus = "completed" | "in-progress" | "not-started";
-export type TaskStatus = "done" | "todo";
+export type TaskStatus = "done" | "in-progress" | "todo";
 
 export type DayTask = {
   id: string;
@@ -83,6 +83,10 @@ type StageProjectScheduleProps = {
   defaultOpen?: boolean;
   /** When true, omit the stage-card top border wrapper (project Task tab). */
   standalone?: boolean;
+  /** Show circular progress in the card header (Task tab). */
+  showProgress?: boolean;
+  /** Enrollment progress API `stage.percent` (0–100). */
+  progress?: number;
 };
 
 const TONE_STYLES: Record<
@@ -91,32 +95,74 @@ const TONE_STYLES: Record<
     sectionBorder: string;
     cardBorder: string;
     cardBg: string;
-    bodyBg: string;
     divider: string;
+    iconBg: string;
+    iconText: string;
   }
 > = {
   active: {
     sectionBorder: "border-[#C8E6D0]",
     cardBorder: "border-[#86E9AA]",
     cardBg: "bg-[#EDFCF2]",
-    bodyBg: "bg-white",
-    divider: "border-[#D1FAE5]",
+    divider: "border-[#C8E6D0]",
+    iconBg: "bg-[#34C759]",
+    iconText: "text-white",
   },
   upcoming: {
     sectionBorder: "border-[#F0D9C4]",
     cardBorder: "border-[#F0D9C4]",
     cardBg: "bg-[#FFEFD9]",
-    bodyBg: "bg-white",
     divider: "border-[#F5E6D8]",
+    iconBg: "bg-[#2B6CB0]",
+    iconText: "text-white",
   },
   locked: {
     sectionBorder: "border-[#E2E8F0]",
     cardBorder: "border-[#E2E8F0]",
     cardBg: "bg-[#F1F5F9]",
-    bodyBg: "bg-white",
     divider: "border-[#E2E8F0]",
+    iconBg: "bg-[#94A3B8]",
+    iconText: "text-white",
   },
 };
+
+function ScheduleProgressRing({ progress }: { progress: number }) {
+  const radius = 16;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (progress / 100) * circumference;
+
+  return (
+    <div
+      className="relative flex size-10 shrink-0 items-center justify-center"
+      aria-label={`${progress}% complete`}
+    >
+      <svg className="size-10 -rotate-90" viewBox="0 0 40 40" aria-hidden>
+        <circle
+          cx="20"
+          cy="20"
+          r={radius}
+          fill="none"
+          stroke="#C8E6D0"
+          strokeWidth="3"
+        />
+        <circle
+          cx="20"
+          cy="20"
+          r={radius}
+          fill="none"
+          stroke="#34C759"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+        />
+      </svg>
+      <span className="absolute text-[10px] font-semibold text-[#34C759]">
+        {progress === 100 ? "100" : `${progress}%`}
+      </span>
+    </div>
+  );
+}
 
 function DayStatusBadge({ status }: { status: DayStatus | null }) {
   if (status == null) {
@@ -152,8 +198,16 @@ function DayStatusBadge({ status }: { status: DayStatus | null }) {
 function TaskStatusIcon({ status }: { status: TaskStatus | null }) {
   if (status === "done") {
     return (
-      <span className="relative z-10 flex size-5 shrink-0 items-center justify-center rounded-full bg-transparent text-[#1F7A4A]">
-        <Check className="size-3" strokeWidth={3} aria-hidden />
+      <span className="relative z-10 flex size-5 shrink-0 items-center justify-center text-[#1F7A4A]">
+        <Check className="size-3.5" strokeWidth={3} aria-hidden />
+      </span>
+    );
+  }
+
+  if (status === "in-progress") {
+    return (
+      <span className="relative z-10 flex size-5 shrink-0 items-center justify-center text-[#C47A1B]">
+        <Loader className="size-3.5 animate-spin" strokeWidth={2.5} aria-hidden />
       </span>
     );
   }
@@ -199,36 +253,44 @@ function DaySection({
 
       {isOpen ? (
         <ul className="relative mb-3 ml-6 space-y-3 pb-1">
-          {day.tasks.map((task, taskIndex) => (
-            <li key={task.id} className="relative flex items-start gap-3">
-              {taskIndex < day.tasks.length - 1 ? (
-                <span
-                  className="absolute top-5 -bottom-3 left-2.5 w-px -translate-x-1/2 bg-[#B7E0C4]"
-                  aria-hidden
-                />
-              ) : null}
-              <TaskStatusIcon status={task.status} />
-              {task.href ? (
-                <a
-                  href={task.href}
-                  className="text-sm font-medium text-[#156374] underline-offset-2 hover:underline"
-                >
-                  {task.label}
-                </a>
-              ) : (
-                <span
-                  className={cn(
-                    "text-sm font-medium",
-                    task.status === "todo" || task.status == null
-                      ? "text-[#94A3B8]"
-                      : "text-[#173740]",
-                  )}
-                >
-                  {task.label}
-                </span>
-              )}
-            </li>
-          ))}
+          {day.tasks.map((task, taskIndex) => {
+            const isActiveTask =
+              task.status === "done" || task.status === "in-progress";
+
+            return (
+              <li key={task.id} className="relative flex items-start gap-3">
+                {taskIndex < day.tasks.length - 1 ? (
+                  <span
+                    className="absolute top-5 -bottom-3 left-2.5 w-px -translate-x-1/2 bg-[#B7E0C4]"
+                    aria-hidden
+                  />
+                ) : null}
+                <TaskStatusIcon status={task.status} />
+                {task.href ? (
+                  <a
+                    href={task.href}
+                    className={cn(
+                      "text-sm font-medium underline-offset-2",
+                      isActiveTask
+                        ? "text-[#156374] underline"
+                        : "text-[#94A3B8] hover:underline",
+                    )}
+                  >
+                    {task.label}
+                  </a>
+                ) : (
+                  <span
+                    className={cn(
+                      "text-sm font-medium",
+                      isActiveTask ? "text-[#173740]" : "text-[#94A3B8]",
+                    )}
+                  >
+                    {task.label}
+                  </span>
+                )}
+              </li>
+            );
+          })}
         </ul>
       ) : null}
     </div>
@@ -271,7 +333,7 @@ function AssessmentPanel({ assessment }: { assessment: AssessmentTabMeta }) {
   };
 
   return (
-    <div className="mt-3 rounded-xl bg-white/70 px-4 py-4">
+    <div className="mt-3">
       <div className="min-w-0">
         <p className="text-sm font-semibold text-[#173740]">
           {assessment.title}
@@ -347,12 +409,18 @@ export default function StageProjectSchedule({
   continueLabel = "Continue project",
   defaultOpen = true,
   standalone = false,
+  showProgress = false,
+  progress = 0,
 }: StageProjectScheduleProps) {
   const [activeWeekId, setActiveWeekId] = useState(weeks[0]?.id ?? "");
   const [isProjectOpen, setIsProjectOpen] = useState(defaultOpen);
   const styles = TONE_STYLES[tone];
   const activeWeek = weeks.find((week) => week.id === activeWeekId) ?? weeks[0];
   const actionHref = continueHref ?? projectHref;
+  const clampedProgress = Math.min(
+    100,
+    Math.max(0, Math.round(Number.isFinite(progress) ? progress : 0)),
+  );
 
   useEffect(() => {
     if (!weeks.length) {
@@ -389,53 +457,71 @@ export default function StageProjectSchedule({
           styles.cardBg,
         )}
       >
-        <div className="flex items-start gap-3 px-3 py-3 sm:px-4">
+        <div className="flex items-start gap-3 px-4 py-3.5 sm:px-5">
           <button
             type="button"
             onClick={() => setIsProjectOpen((value) => !value)}
             className="flex min-w-0 flex-1 cursor-pointer items-start gap-3 text-left"
             aria-expanded={isProjectOpen}
           >
-            <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#2B6CB0] text-white">
-              <Folder className="size-4" aria-hidden />
+            <span
+              className={cn(
+                "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg",
+                styles.iconBg,
+                styles.iconText,
+              )}
+            >
+              {tone === "active" ? (
+                <Settings2 className="size-4" aria-hidden />
+              ) : (
+                <Folder className="size-4" aria-hidden />
+              )}
             </span>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold text-[#173740] sm:text-base">
                 {projectTitle}
               </p>
-              <p className="mt-0.5 text-xs text-[#64748B] sm:text-sm">
-                {weekRange}
-              </p>
+              {weekRange ? (
+                <p className="mt-0.5 text-xs text-[#64748B] sm:text-sm">
+                  {weekRange}
+                </p>
+              ) : null}
             </div>
           </button>
 
           <div className="flex shrink-0 flex-col items-end gap-2">
-            <button
-              type="button"
-              onClick={() => setIsProjectOpen((value) => !value)}
-              className="flex size-6 cursor-pointer items-center justify-center rounded text-[#64748B]"
-              aria-label={
-                isProjectOpen
-                  ? "Collapse project schedule"
-                  : "Expand project schedule"
-              }
-              aria-expanded={isProjectOpen}
-            >
-              <span
-                className={cn(
-                  "flex size-4 items-center justify-center transition-transform",
-                  isProjectOpen && "rotate-90",
-                )}
-                aria-hidden
-              >
-                <CustmDropdownIcon />
-              </span>
-            </button>
+            <div className="flex items-center gap-2">
+              {showProgress ? (
+                <ScheduleProgressRing progress={clampedProgress} />
+              ) : null}
 
-            {actionHref ? (
+              <button
+                type="button"
+                onClick={() => setIsProjectOpen((value) => !value)}
+                className="flex size-6 cursor-pointer items-center justify-center rounded text-[#64748B]"
+                aria-label={
+                  isProjectOpen
+                    ? "Collapse project schedule"
+                    : "Expand project schedule"
+                }
+                aria-expanded={isProjectOpen}
+              >
+                <span
+                  className={cn(
+                    "flex size-4 items-center justify-center transition-transform",
+                    isProjectOpen && "rotate-90",
+                  )}
+                  aria-hidden
+                >
+                  <CustmDropdownIcon />
+                </span>
+              </button>
+            </div>
+
+            {!showProgress && actionHref ? (
               <Link
                 href={actionHref}
-                className="mr-4 text-right text-sm font-semibold whitespace-nowrap text-[#156374] underline underline-offset-2 transition hover:text-[#124F5D]"
+                className="mr-1 text-right text-sm font-semibold whitespace-nowrap text-[#156374] underline underline-offset-2 transition hover:text-[#124F5D]"
               >
                 {continueLabel}
               </Link>
@@ -444,13 +530,7 @@ export default function StageProjectSchedule({
         </div>
 
         {isProjectOpen ? (
-          <div
-            className={cn(
-              "border-t px-3 pb-3 pt-2 sm:px-4",
-              styles.cardBorder,
-              styles.bodyBg,
-            )}
-          >
+          <div className={cn("border-t px-4 pt-2 pb-4 sm:px-5", styles.divider)}>
             <div
               className={cn(
                 "flex items-end gap-5 overflow-x-auto border-b",
@@ -475,12 +555,12 @@ export default function StageProjectSchedule({
                       setActiveWeekId(week.id);
                     }}
                     className={cn(
-                      "relative flex shrink-0 items-center gap-1.5 pb-2 text-sm font-semibold transition-colors",
+                      "relative flex shrink-0 items-center gap-1.5 pb-2.5 text-sm font-semibold transition-colors",
                       isDisabled
                         ? "cursor-not-allowed text-[#94A3B8]"
                         : isActive
                           ? "cursor-pointer text-[#156374]"
-                          : "cursor-pointer text-[#64748B] hover:text-[#334155]",
+                          : "cursor-pointer text-[#94A3B8] hover:text-[#64748B]",
                     )}
                   >
                     {week.label}
@@ -488,7 +568,7 @@ export default function StageProjectSchedule({
                       <Lock className="size-3 shrink-0" aria-hidden />
                     ) : null}
                     {isActive && !isDisabled ? (
-                      <span className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-[#156374]" />
+                      <span className="absolute inset-x-0 -bottom-px h-[3px] rounded-full bg-[#156374]" />
                     ) : null}
                   </button>
                 );

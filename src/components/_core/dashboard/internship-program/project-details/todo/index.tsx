@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import { Building2, CalendarDays, User } from "lucide-react";
 import StageProjectSchedule from "@/components/_core/dashboard/internship-program/internship-details/career-stage/stage-project-schedule";
@@ -31,51 +32,52 @@ function ProjectSummary({
   const durationLabel = formatDurationLabel(project.duration);
 
   return (
-    <>
-      <div className="rounded-xl bg-[#F7F9FA] px-5 py-4 sm:px-7">
+    <div className="space-y-4">
+      <div className="rounded-2xl bg-[#F7F9FA] px-5 py-5 sm:px-6">
         <div className="flex items-start gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={project.logoPreview || "/favicon.svg"}
             alt={project.companyName || project.title}
-            className="mt-0.5 size-5 shrink-0 rounded-full object-cover"
+            className="mt-1 size-5 shrink-0 rounded-full object-cover"
           />
-          <h2 className="max-w-3xl text-xl leading-tight font-semibold text-[#34445E] sm:text-2xl">
-            {project.title}
-          </h2>
+          <div className="min-w-0 space-y-3">
+            <h2 className="text-xl leading-snug font-semibold text-[#34445E] sm:text-2xl">
+              {project.title}
+            </h2>
+
+            <div className="flex flex-wrap items-center gap-2">
+              {project.industry ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-xs font-medium text-[#78909C]">
+                  <Building2 className="size-3.5" aria-hidden />
+                  {project.industry}
+                </span>
+              ) : null}
+              {durationLabel ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-xs font-medium text-[#78909C]">
+                  <CalendarDays className="size-3.5" aria-hidden />
+                  {durationLabel}
+                </span>
+              ) : null}
+              {project.companyName ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-xs font-medium text-[#78909C]">
+                  <User className="size-3.5" aria-hidden />
+                  {project.companyName} contributor
+                </span>
+              ) : null}
+            </div>
+          </div>
         </div>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2">
-        {project.industry ? (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-2.5 py-1 text-xs font-medium text-[#78909C]">
-            <Building2 className="size-3.5" aria-hidden />
-            {project.industry}
-          </span>
-        ) : null}
-        {durationLabel ? (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-2.5 py-1 text-xs font-medium text-[#78909C]">
-            <CalendarDays className="size-3.5" aria-hidden />
-            {durationLabel}
-          </span>
-        ) : null}
-        {project.companyName ? (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-2.5 py-1 text-xs font-medium text-[#78909C]">
-            <User className="size-3.5" aria-hidden />
-            {project.companyName}
-          </span>
+        {continueHref ? (
+          <Link
+            href={continueHref}
+            className="mt-5 inline-flex h-11 w-full max-w-[14.5rem] cursor-pointer items-center justify-center rounded-full bg-[#0F6371] px-6 text-sm font-semibold text-white transition hover:bg-[#0C5662]"
+          >
+            Continue task
+          </Link>
         ) : null}
       </div>
-
-      {continueHref ? (
-        <Link
-          href={continueHref}
-          className="inline-flex h-11 w-full max-w-56 cursor-pointer items-center justify-center rounded-full bg-[#0F6371] px-6 text-sm font-semibold text-white transition hover:bg-[#0C5662]"
-        >
-          Continue task
-        </Link>
-      ) : null}
-    </>
+    </div>
   );
 }
 
@@ -95,10 +97,27 @@ const Todo = ({ project }: TodoProps) => {
     refetch,
   } = useStageProjectScheduleData(project);
 
-  const { currentTask, preAssessmentDone: progressPreDone } =
-    useGetInternshipProgress();
+  const {
+    data: enrollmentProgress,
+    currentTask,
+    preAssessmentDone: progressPreDone,
+  } = useGetInternshipProgress();
 
-  const projectSlug = project.slug?.trim() || currentTask?.projectSlug?.trim() || null;
+  const stageProgress = useMemo(() => {
+    const careerStage = project.careerStage?.trim().toLowerCase();
+    if (!careerStage) return 0;
+
+    const match = enrollmentProgress?.careerStages?.find(
+      (stage) => stage.stage?.trim().toLowerCase() === careerStage,
+    );
+
+    const percent = match?.percent;
+    if (typeof percent !== "number" || Number.isNaN(percent)) return 0;
+    return Math.min(100, Math.max(0, Math.round(percent)));
+  }, [enrollmentProgress?.careerStages, project.careerStage]);
+
+  const projectSlug =
+    project.slug?.trim() || currentTask?.projectSlug?.trim() || null;
   const continueHref =
     (preAssessmentDone || progressPreDone) &&
     currentTask &&
@@ -109,7 +128,7 @@ const Todo = ({ project }: TodoProps) => {
           todoId: currentTask.todoId,
           typeId: currentTask.type?.id,
         })
-      : projectHref ?? null;
+      : (projectHref ?? null);
 
   return (
     <section className="space-y-6">
@@ -148,6 +167,8 @@ const Todo = ({ project }: TodoProps) => {
           continueHref={undefined}
           defaultOpen
           standalone
+          showProgress
+          progress={stageProgress}
         />
       )}
     </section>

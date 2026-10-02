@@ -69,6 +69,7 @@ function deriveTaskStatus(todo: InternProjectTodo): TaskStatus | null {
 
   if (statuses.length === 0) return null;
   if (statuses.every((status) => status === "completed")) return "done";
+  if (statuses.some((status) => status === "completed")) return "in-progress";
   return "todo";
 }
 
@@ -79,7 +80,9 @@ function deriveDayStatus(tasks: { status: TaskStatus | null }[]): DayStatus | nu
 
   if (!known.length) return null;
   if (known.every((status) => status === "done")) return "completed";
-  if (tasks.length >= 2 && known.some((status) => status === "done")) {
+  if (
+    known.some((status) => status === "done" || status === "in-progress")
+  ) {
     return "in-progress";
   }
   return "not-started";
