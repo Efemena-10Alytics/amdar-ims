@@ -5,12 +5,14 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import CareerStage from "@/components/_core/dashboard/internship-program/internship-details/career-stage";
 import CareerCenter from "@/components/_core/dashboard/internship-program/internship-details/career-center";
+import LiveSession from "@/components/_core/dashboard/internship-program/internship-details/live-session";
 import Resources from "@/components/_core/dashboard/internship-program/internship-details/resources";
 import ContinueTaskButton from "@/components/_core/dashboard/internship-program/internship-details/continue-task-button";
 
 const TABS = [
   { id: "career-stage", label: "Career Stage" },
   // { id: "performance", label: "Performance" },
+  { id: "live-session", label: "Live session" },
   { id: "career-center", label: "Career center" },
   { id: "resources", label: "Resources" },
 ] as const;
@@ -55,6 +57,8 @@ const InternshipDetails = ({
     switch (activeTab) {
       case "career-stage":
         return <CareerStage />;
+      case "live-session":
+        return <LiveSession />;
       case "career-center":
         return <CareerCenter />;
       case "resources":
