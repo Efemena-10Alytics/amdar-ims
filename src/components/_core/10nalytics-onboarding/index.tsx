@@ -37,13 +37,7 @@ const FLOATING_AVATARS = [
 function ProceedArrowIcon() {
   return (
     <span className="flex size-6 items-center justify-center rounded-full bg-[#FFE082]">
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        aria-hidden
-      >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
         <path
           d="M16.5 8V14.5C16.5 14.6326 16.4476 14.7598 16.3538 14.8536C16.26 14.9473 16.1329 15 16 15C15.8677 15 15.7405 14.9473 15.6467 14.8536C15.553 14.7598 15.5 14.6326 15.5 14.5V9.20687L8.35403 16.3538C8.26021 16.4476 8.13296 16.5003 8.00028 16.5003C7.8676 16.5003 7.74035 16.4476 7.64653 16.3538C7.55271 16.2599 7.5 16.1327 7.5 16C7.5 15.8673 7.55271 15.7401 7.64653 15.6462L14.7934 8.5H9.50028C9.36767 8.5 9.24049 8.44732 9.14672 8.35355C9.05296 8.25979 9.00028 8.13261 9.00028 8C9.00028 7.86739 9.05296 7.74021 9.14672 7.64645C9.24049 7.55268 9.36767 7.5 9.50028 7.5H16C16.1329 7.5 16.26 7.55268 16.3538 7.64645C16.4476 7.74021 16.5 7.86739 16.5 8Z"
           fill="#156374"
@@ -67,8 +61,8 @@ function mapProfileToCard(
   data: TenAnalyticsOnboardingProfileData,
 ): TenAnalyticsOnboardingProfile {
   return {
-    tenAnalyticsCohort: formatCohortLabel(data.cohort),
-    tenAnalyticsProgram: data.program.title || "—",
+    tenAnalyticsCohort: data.student["10alytics_cohort"] || "—",
+    tenAnalyticsProgram: data.student["10alytics_program"] || "—",
     podName: data.student.pod_name || "—",
     firstName: data.user.first_name || "—",
     lastName: data.user.last_name || "—",
@@ -126,14 +120,13 @@ export default function TenAnalyticsOnboarding({
               You&apos;ve Built the{" "}
               <span className="text-[#E87722]">Skills</span>
               <br />
-              Now Build the{" "}
-              <span className="text-[#E87722]">Experience.</span>
+              Now Build the <span className="text-[#E87722]">Experience.</span>
             </h1>
 
             <p className="mt-5 max-w-lg text-base leading-relaxed text-[#475467] sm:text-lg">
-              Take what you&apos;ve learned at 10alytics into real-world projects
-              with Amdari and gain the practical experience you need to move
-              confidently into your career.
+              Take what you&apos;ve learned at 10alytics into real-world
+              projects with Amdari and gain the practical experience you need to
+              move confidently into your career.
             </p>
 
             <button

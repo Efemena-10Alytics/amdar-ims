@@ -248,6 +248,11 @@ export function buildSubmitAnswers(
           : null,
       communication_effectiveness: s5.communication_effectiveness,
       overall_experience_rating: s5.overall_experience_rating,
+      positive_change_experience: s5.positive_change_experience,
+      no_change_description:
+        s5.positive_change_experience === "no"
+          ? (s5.no_change_description ?? null)
+          : null,
     },
   };
 
