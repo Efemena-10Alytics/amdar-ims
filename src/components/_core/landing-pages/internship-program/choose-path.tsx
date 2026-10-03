@@ -11,7 +11,7 @@ import {
   INTERNSHIP_ORIGINAL_PRICE_LABEL,
   INTERNSHIP_DISCOUNTED_PRICE_LABEL,
 } from "@/constants/internship-pricing";
-import { SpecialOfferBadge } from "@/components/_core/two-years-aniversary-offer/badge";
+// import { SpecialOfferBadge } from "@/components/_core/two-years-aniversary-offer/badge";
 
 const FALLBACK_IMAGE = "/images/pngs/internship.png";
 
@@ -48,7 +48,8 @@ const ChoosePath = ({ internshipPrograms }: ChoosePathProps) => {
 
         {internshipPrograms.length === 0 ? (
           <div className="rounded-xl border border-gray-200 bg-[#E8EFF1] p-6 text-center text-sm text-[#475467]">
-            No internship paths are available right now. Please check back shortly.
+            No internship paths are available right now. Please check back
+            shortly.
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -67,7 +68,7 @@ const ChoosePath = ({ internshipPrograms }: ChoosePathProps) => {
                       !!(career.image && !career.image.startsWith("/"))
                     }
                   />
-                  <SpecialOfferBadge className="absolute top-3 left-2.5 z-10" />
+                  {/* <SpecialOfferBadge className="absolute top-3 left-2.5 z-10" /> */}
                 </div>
                 <div className="mt-4">
                   <h3 className="text-xl font-semibold group-hover:text-white text-[#092A31] mb-3">
