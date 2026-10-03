@@ -521,6 +521,9 @@ export default function WeeklySurveyModal() {
           next = setByPath(next, "section_5.lms_issue_description", undefined);
         }
       }
+      if (dottedKey === "section_5.positive_change_experience" && value === "yes") {
+        next = setByPath(next, "section_5.no_change_description", undefined);
+      }
       return next;
     });
   }, []);

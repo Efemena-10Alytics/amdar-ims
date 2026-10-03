@@ -1,4 +1,5 @@
 import WeeklySurveyModal from "@/components/_core/dashboard/internship-program/weekly-survey/weekly-survey-modal";
+import { LegacyCohortRedirect } from "@/components/_core/dashboard/internship-program/legacy-cohort-redirect";
 import type React from "react";
 
 const InternshipProgramLayout = ({
@@ -8,6 +9,7 @@ const InternshipProgramLayout = ({
 }>) => {
   return (
     <>
+      <LegacyCohortRedirect />
       <WeeklySurveyModal />
       {children}
     </>

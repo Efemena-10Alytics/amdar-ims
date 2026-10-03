@@ -7,7 +7,10 @@ import Aside from "@/components/_core/pre-diagnostic-test/aside";
 import { JourneyLayoutHeader } from "@/components/_core/onboarding/journey-layout-header";
 import { PreDiagnosticProvider } from "@/components/_core/pre-diagnostic-test/pre-diagnostic-context";
 import { useIsStaff } from "@/features/auth/staff-roles";
-import { isEnrollmentWhatsappVerified, buildWhatsappRequiredOnboardingHref } from "@/features/internship/resolve-enrollment-journey";
+import {
+  isEnrollmentWhatsappVerified,
+  buildWhatsappRequiredOnboardingHref,
+} from "@/features/internship/resolve-enrollment-journey";
 import { useSkipEntrySetup } from "@/features/internship/use-skip-entry-setup";
 import { useGetPreDiagnostic } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 import { useRequireUserId } from "@/hooks/use-require-user-id";
@@ -20,8 +23,11 @@ function PreDiagnosticShellContent({
   const router = useRouter();
   const { isAuthReady } = useRequireUserId();
   const { isStaff } = useIsStaff();
-  const { skipEntrySetup, isSkipping, errorMessage: skipErrorMessage } =
-    useSkipEntrySetup();
+  const {
+    skipEntrySetup,
+    isSkipping,
+    errorMessage: skipErrorMessage,
+  } = useSkipEntrySetup();
   const isSkipRedirectingRef = useRef(false);
   const showSkipFab = isStaff;
 
@@ -53,7 +59,7 @@ function PreDiagnosticShellContent({
     isSkipRedirectingRef.current = true;
     try {
       await skipEntrySetup();
-      window.location.assign("/dashboard/internship");
+      window.location.assign("/dashboard/internship-program");
     } catch {
       isSkipRedirectingRef.current = false;
     }
@@ -91,8 +97,8 @@ function PreDiagnosticShellContent({
     if (cohortId == null || programId == null) {
       return (
         <p className="px-4 text-sm text-[#64748B] sm:px-0">
-          Unable to load pre-diagnostic. Program and cohort information is missing
-          from your enrollment.
+          Unable to load pre-diagnostic. Program and cohort information is
+          missing from your enrollment.
         </p>
       );
     }
@@ -125,7 +131,9 @@ function PreDiagnosticShellContent({
 
   const layout = (content: React.ReactNode) => (
     <div className="flex h-screen w-full overflow-hidden bg-white p-3 2xl:p-5">
-      <Suspense fallback={<div className="hidden lg:flex lg:w-[45%] xl:w-[42%]" />}>
+      <Suspense
+        fallback={<div className="hidden lg:flex lg:w-[45%] xl:w-[42%]" />}
+      >
         <Aside />
       </Suspense>
       <div
@@ -190,5 +198,3 @@ export default function PreDiagnosticShell({
 }) {
   return <PreDiagnosticShellContent>{children}</PreDiagnosticShellContent>;
 }
-
-
