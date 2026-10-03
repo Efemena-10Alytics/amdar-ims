@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
+import { useCarriedCheckoutQuery } from "@/features/payment/default-promo";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -20,8 +20,7 @@ type ChoosePathProps = {
 };
 
 const ChoosePath = ({ internshipPrograms }: ChoosePathProps) => {
-  const searchParams = useSearchParams();
-  const uniqueSuffix = searchParams.get("unique") === "1" ? "?unique=1" : "";
+  const { promoCode, querySuffix } = useCarriedCheckoutQuery();
 
   return (
     <div className="bg-white py-12">
@@ -78,15 +77,15 @@ const ChoosePath = ({ internshipPrograms }: ChoosePathProps) => {
                     {career.description}
                   </p>
                   <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-lg font-semibold group-hover:text-white text-[#092A31]">
-                        {/* <div className="text-[#64748B] group-hover:text-white line-through text-sm font-normal">
-                          {INTERNSHIP_ORIGINAL_PRICE_LABEL}
-                        </div> */}
-                        <div>{INTERNSHIP_DISCOUNTED_PRICE_LABEL}</div>
+                    <div className="flex flex-col justify-end">
+                      <span className="text-[#8492A6] group-hover:text-white/80 line-through text-[15px] font-medium leading-tight">
+                        {INTERNSHIP_ORIGINAL_PRICE_LABEL}
+                      </span>
+                      <span className="text-xl font-bold group-hover:text-white text-[#092A31] leading-tight">
+                        {INTERNSHIP_DISCOUNTED_PRICE_LABEL}
                       </span>
                     </div>
-                    <Link href={`/internship/${career.slug}${uniqueSuffix}`}>
+                    <Link href={`/internship/${career.slug}${querySuffix}`}>
                       <Button
                         className={cn(
                           "bg-primary cursor-pointer group-hover:bg-amdari-yellow group-hover:text-primary hover:text-primary hover:bg-amdari-yellow text-white rounded-full px-4 py-2 text-sm font-medium",

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useCarriedCheckoutQuery } from "@/features/payment/default-promo";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -25,8 +25,7 @@ interface LeftProps {
 
 const Left = ({ program }: LeftProps) => {
   const [activeTab, setActiveTab] = useState("Overview");
-  const searchParams = useSearchParams();
-  const uniqueSuffix = searchParams.get("unique") === "1" ? "?unique=1" : "";
+  const { promoCode, querySuffix } = useCarriedCheckoutQuery();
 
   console.log("program:", program);
 
@@ -117,7 +116,8 @@ const Left = ({ program }: LeftProps) => {
 
       {/* Pricing and Apply Bar */}
       <IWDPayment
-        applyHref={`/payment/${program?.slug}${uniqueSuffix}`}
+        applyHref={`/payment/${program?.slug}${querySuffix}`}
+        promoCode={promoCode}
         className="mb-8"
       />
 
@@ -162,7 +162,7 @@ const Left = ({ program }: LeftProps) => {
           Don't let the lack of real world experience hold you back. Join Amdari
           today and take a decisive step toward a successful career in tech.
         </p>
-        <Link href={`/payment/${program?.id}${uniqueSuffix}`}>
+        <Link href={`/payment/${program?.id}${querySuffix}`}>
           <Button
             className={cn(
               "bg-amdari-yellow text-[#092A31] hover:bg-amdari-yellow/90 rounded-full px-8 py-6 text-base font-medium",

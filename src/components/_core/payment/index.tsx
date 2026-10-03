@@ -12,6 +12,7 @@ import type { InternshipProgram } from "@/types/internship-program";
 import type { CheckoutData } from "@/features/payment/use-get-checkout-data";
 import { usePayNow } from "@/features/payment/use-pay-now";
 import { useCheckoutSelectionsStorage } from "@/features/payment/use-checkout-storage";
+import { resolvePromoCode } from "@/features/payment/default-promo";
 import { useAuthStore } from "@/store/auth-store";
 import { PaymentSuccessModal } from "./payment-success-modal";
 import { SignInModal } from "./auth/sign-in-modal";
@@ -54,7 +55,7 @@ const PaymentMain = ({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const promoCode = searchParams.get("promo_code") ?? "";
+  const promoCode = resolvePromoCode(searchParams.get("promo_code"));
   const isUnique = searchParams.get("unique") === "1";
   const activeStep = stepFromParam(searchParams.get("step"));
   const statusParam = searchParams.get("status") ?? "";
@@ -172,7 +173,7 @@ const PaymentMain = ({
     paymentPageId,
     nextPaymentDate: nextPaymentDateForApi,
     promoCode,
-    promoApplied: !!searchParams.get("promo_code"),
+    promoApplied: !!promoCode,
     onError: (message) => setPaymentError(message),
     onSuccess: (checkoutUrl) => {
       setPaymentError(null);

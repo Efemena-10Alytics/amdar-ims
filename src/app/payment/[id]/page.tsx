@@ -5,12 +5,13 @@ import { useParams, useSearchParams } from "next/navigation";
 import PaymentMain from "@/components/_core/payment";
 import { useGetInternshipProgram } from "@/features/internship/use-get-internship-program";
 import { useGetCheckoutData } from "@/features/payment/use-get-checkout-data";
+import { resolvePromoCode } from "@/features/payment/default-promo";
 
 export default function PaymentPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const id = params?.id as string | undefined;
-  const promoCode = searchParams.get("promo_code") ?? "";
+  const promoCode = resolvePromoCode(searchParams.get("promo_code"));
 
   useEffect(() => {
     if (typeof window === "undefined") return;

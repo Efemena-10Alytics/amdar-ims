@@ -4,8 +4,12 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import {
+  DEFAULT_PROMO_CODE,
+  resolvePromoCode,
+} from "@/features/payment/default-promo";
 
-export const DEFAULT_PROMO_CODE = "WELCOME30";
+export { DEFAULT_PROMO_CODE };
 
 const CHECKOUT_QUERY_KEY_PREFIX = ["payment", "checkout"] as const;
 interface IProps {
@@ -17,7 +21,7 @@ const Coupon = ({ discount }: IProps) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
-  const promoFromUrl = searchParams.get("promo_code") ?? "";
+  const promoFromUrl = resolvePromoCode(searchParams.get("promo_code"));
   const [inputValue, setInputValue] = useState(promoFromUrl);
 
   useEffect(() => {
