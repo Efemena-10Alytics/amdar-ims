@@ -158,9 +158,8 @@ export function resolveEnrollmentJourneyRedirect(
     practicalWalkthroughCount?: number;
   },
 ): string | null {
-  // A specialist has no onboarding of their own to finish in a cohort they are
-  // servicing. The preview reports every step complete, so this would return
-  // null anyway — but say it outright rather than rely on that.
+  // Previewing a serviced cohort: no personal onboarding/pre-diagnostic to finish.
+  // Specialists on their own enrollment are not preview and still get redirected.
   if (isSpecialistPreviewEnrollment(enrollment)) return null;
 
   if (!isEnrollmentJourneyCohortEligible(enrollment)) return null;
