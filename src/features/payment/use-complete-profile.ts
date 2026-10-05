@@ -10,6 +10,7 @@ export type UpdateUserPayload = {
   decision_influenced: string;
   ref: string;
   find_out: string;
+  main_challenge: string;
 };
 
 type UpdateUserResponse = {

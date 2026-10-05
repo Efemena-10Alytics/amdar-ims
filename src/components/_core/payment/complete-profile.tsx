@@ -53,15 +53,15 @@ const HOW_DID_YOU_HEAR_OPTIONS = [
     value: "Dike Uzo",
     label: "Dike Uzo",
   },
-   {
+  {
     value: "Kelvin Ossai",
     label: "Kelvin Ossai",
   },
-   {
+  {
     value: "fintech innovator society",
     label: "Fintech Innovator Society",
   },
-  { value: "LinkedIn challenge", label: "LinkedIn challenge",  },
+  { value: "LinkedIn challenge", label: "LinkedIn challenge", },
 ];
 
 const REASON_OPTIONS = [
@@ -69,6 +69,19 @@ const REASON_OPTIONS = [
   { value: "skills", label: "Learn new skills" },
   { value: "industry", label: "Industry exposure" },
   { value: "other", label: "Other" },
+];
+
+const HELP_NEEDED_OPTIONS = [
+  { value: "My CV isn't getting me interviews.", label: "My CV isn't getting me interviews." },
+  { value: "I don't know how to position myself for the UK market.", label: "I don't know how to position myself for the UK market." },
+  { value: "I don't know what roles I should actually be applying for.", label: "I don't know what roles I should actually be applying for." },
+  { value: "I'm applying but not getting interviews.", label: "I'm applying but not getting interviews." },
+  { value: "I struggle with interviews.", label: "I struggle with interviews." },
+  { value: "I need LinkedIn to actually represent me properly.", label: "I need LinkedIn to actually represent me properly." },
+  { value: "I want to become more competitive for sponsored roles.", label: "I want to become more competitive for sponsored roles." },
+  { value: "I want to explore Global Talent.", label: "I want to explore Global Talent." },
+  { value: "I want to explore Scale-up opportunities.", label: "I want to explore Scale-up opportunities." },
+  { value: "I don't know what's actually holding me back.", label: "I don't know what's actually holding me back." },
 ];
 
 const SKILL_LEVEL_OPTIONS = [
@@ -107,6 +120,7 @@ interface CompleteProfileFormData {
   reasonForDecision: string;
   sessionOfDecision: string;
   referralCode: string;
+  mainChallenge: string;
 }
 
 const initialFormData: CompleteProfileFormData = {
@@ -116,6 +130,7 @@ const initialFormData: CompleteProfileFormData = {
   reasonForDecision: "",
   sessionOfDecision: "",
   referralCode: "",
+  mainChallenge: "",
 };
 
 /** Get profile object from user info (nested user or top-level). */
@@ -159,6 +174,12 @@ function getPrefillFromProfile(
   const ref = profile.ref;
   if (ref != null && String(ref).trim() !== "")
     prefill.referralCode = String(ref).trim();
+  const mainChallenge = profile.main_challenge;
+  const normalizedMainChallenge = getNormalizedOptionValue(
+    mainChallenge,
+    HELP_NEEDED_OPTIONS,
+  );
+  if (normalizedMainChallenge != null) prefill.mainChallenge = normalizedMainChallenge;
   return prefill;
 }
 
@@ -200,6 +221,7 @@ const REQUIRED_FIELDS: (keyof Omit<CompleteProfileFormData, "referralCode">)[] =
     "howDidYouHear",
     "reasonForDecision",
     "sessionOfDecision",
+    "mainChallenge",
   ];
 
 function validateRequiredFields(
@@ -296,6 +318,7 @@ export default function CompleteProfile({
       reasonForDecision,
       sessionOfDecision,
       referralCode,
+      mainChallenge,
     } = formData;
     try {
       await updateUser({
@@ -306,6 +329,7 @@ export default function CompleteProfile({
         decision_influenced: reasonForDecision,
         ref: referralCode,
         find_out: howDidYouHear,
+        main_challenge: mainChallenge,
       });
       onProfileComplete?.();
     } catch {
@@ -543,7 +567,42 @@ export default function CompleteProfile({
                 className={inputBase}
               />
             </div>
+            <div>
+              <label
+                htmlFor="main-challenge"
+                className="block text-sm font-medium text-[#092A31] mb-1.5"
+              >
+                What do you need help with the most?
+              </label>
+              <Select
+                value={formData.mainChallenge || undefined}
+                onValueChange={(value) => updateField("mainChallenge", value)}
+              >
+                <SelectTrigger
+                  id="main-challenge"
+                  className={cn(
+                    "w-full",
+                    fieldErrors.mainChallenge && "border-[#AA3030]",
+                  )}
+                >
+                  <SelectValue placeholder="Select an option" />
+                </SelectTrigger>
+                <SelectContent>
+                  {HELP_NEEDED_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {fieldErrors.mainChallenge ? (
+                <p className="mt-1 text-xs text-[#AA3030]">
+                  {fieldErrors.mainChallenge}
+                </p>
+              ) : null}
+            </div>
           </div>
+
 
           <Button
             type="submit"
