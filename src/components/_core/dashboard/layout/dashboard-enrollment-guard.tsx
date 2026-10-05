@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
 import { useSyncEnrollmentSelection } from "@/features/internship/use-sync-enrollment-selection";
 import { resolveEnrollmentJourneyRedirect } from "@/features/internship/resolve-enrollment-journey";
+import { useEnrollmentSelectionStore } from "@/store/enrollment-selection-store";
 
 function DashboardEnrollmentGuard({
   children,
@@ -13,8 +14,17 @@ function DashboardEnrollmentGuard({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  // Prefer switcher selection; fall back to hook's existing resolution when empty.
+  const switcherProgramId = useEnrollmentSelectionStore((s) => s.programId);
+  const switcherCohortId = useEnrollmentSelectionStore((s) => s.cohortId);
+  const hasSwitcherSelection =
+    switcherProgramId != null && switcherCohortId != null;
   const { data: enrollment, isPending, isError, isAuthReady } =
-    useGetUserEnrollment();
+    useGetUserEnrollment(
+      hasSwitcherSelection
+        ? { programId: switcherProgramId, cohortId: switcherCohortId }
+        : undefined,
+    );
 
   useSyncEnrollmentSelection(enrollment);
 

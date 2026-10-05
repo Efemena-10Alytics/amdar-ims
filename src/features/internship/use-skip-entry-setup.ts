@@ -13,6 +13,11 @@ type CompleteAllEnrollmentResponse = {
   data: UserEnrollment | null;
 };
 
+export type CompleteAllEnrollmentParams = {
+  programId: number | string;
+  cohortId: number | string;
+};
+
 function getErrorMessage(error: unknown): string {
   if (axios.isAxiosError(error)) {
     const apiMessage = (error.response?.data as { message?: string } | undefined)
@@ -23,9 +28,21 @@ function getErrorMessage(error: unknown): string {
   return "Failed to complete entry setup.";
 }
 
-export async function completeAllEnrollmentSteps(): Promise<CompleteAllEnrollmentResponse> {
+/**
+ * PUT /api/v3/user/enrollment/complete-all?programId=&cohortId=
+ */
+export async function completeAllEnrollmentSteps(
+  params: CompleteAllEnrollmentParams,
+): Promise<CompleteAllEnrollmentResponse> {
   const { data } = await axiosInstance.put<CompleteAllEnrollmentResponse>(
     "v3/user/enrollment/complete-all",
+    undefined,
+    {
+      params: {
+        programId: params.programId,
+        cohortId: params.cohortId,
+      },
+    },
   );
 
   if (data.success === false) {
@@ -40,22 +57,27 @@ export function useSkipEntrySetup() {
   const [isSkipping, setIsSkipping] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const skipEntrySetup = useCallback(async () => {
-    setIsSkipping(true);
-    setErrorMessage("");
+  const skipEntrySetup = useCallback(
+    async (params: CompleteAllEnrollmentParams) => {
+      setIsSkipping(true);
+      setErrorMessage("");
 
-    try {
-      const result = await completeAllEnrollmentSteps();
-      await queryClient.invalidateQueries({ queryKey: USER_ENROLLMENT_QUERY_KEY });
-      return result;
-    } catch (error) {
-      const message = getErrorMessage(error);
-      setErrorMessage(message);
-      throw new Error(message);
-    } finally {
-      setIsSkipping(false);
-    }
-  }, [queryClient]);
+      try {
+        const result = await completeAllEnrollmentSteps(params);
+        await queryClient.invalidateQueries({
+          queryKey: USER_ENROLLMENT_QUERY_KEY,
+        });
+        return result;
+      } catch (error) {
+        const message = getErrorMessage(error);
+        setErrorMessage(message);
+        throw new Error(message);
+      } finally {
+        setIsSkipping(false);
+      }
+    },
+    [queryClient],
+  );
 
   return {
     skipEntrySetup,

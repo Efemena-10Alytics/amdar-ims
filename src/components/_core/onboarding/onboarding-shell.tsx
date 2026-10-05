@@ -123,14 +123,16 @@ function OnboardingShellContent({
     (onboardingNotFound || (!data && !isError && !isOnboardingLoading));
 
   const handleSkipOnboarding = useCallback(async () => {
+    if (programId == null || cohortId == null) return;
+
     isSkipRedirectingRef.current = true;
     try {
-      await skipEntrySetup();
+      await skipEntrySetup({ programId, cohortId });
       window.location.assign("/dashboard/internship-program");
     } catch {
       isSkipRedirectingRef.current = false;
     }
-  }, [skipEntrySetup]);
+  }, [cohortId, programId, skipEntrySetup]);
 
   const rightPanel = () => {
     if (showOnboardingLoadingExperience) {

@@ -18,6 +18,11 @@ export type GetUserEnrollmentParams = {
   cohort_id?: number | string;
 };
 
+export type UseGetUserEnrollmentOptions = {
+  programId?: number | string | null;
+  cohortId?: number | string | null;
+};
+
 export async function getUserEnrollment(
   params?: GetUserEnrollmentParams,
 ): Promise<UserEnrollment> {
@@ -38,15 +43,27 @@ export async function getUserEnrollment(
   return data.data;
 }
 
-export function useGetUserEnrollment() {
+export function useGetUserEnrollment(options?: UseGetUserEnrollmentOptions) {
   const { userId, isAuthReady } = useRequireUserId();
   const { isInternshipSpecialist } = useIsInternshipSpecialist();
-  const programId = useEnrollmentSelectionStore((s) => s.programId);
-  const cohortId = useEnrollmentSelectionStore((s) => s.cohortId);
-  // Only internship specialists can switch enrollment. Everyone else calls the
-  // endpoint without params so the API resolves their most recent assignment.
+  const storeProgramId = useEnrollmentSelectionStore((s) => s.programId);
+  const storeCohortId = useEnrollmentSelectionStore((s) => s.cohortId);
+
+  // Explicit caller IDs (e.g. switcher) win when both are present.
+  const hasExplicitSelection =
+    options?.programId != null && options?.cohortId != null;
+  const programId = hasExplicitSelection
+    ? options.programId
+    : storeProgramId;
+  const cohortId = hasExplicitSelection
+    ? options.cohortId
+    : storeCohortId;
+
+  // Fallback: specialists use the selection store; everyone else calls without
+  // params so the API resolves their most recent assignment.
   const hasSelection =
-    isInternshipSpecialist && programId != null && cohortId != null;
+    hasExplicitSelection ||
+    (isInternshipSpecialist && programId != null && cohortId != null);
   const isSelectionReady = useEnrollmentSelectionReady();
 
   const query = useQuery({
@@ -58,7 +75,7 @@ export function useGetUserEnrollment() {
     queryFn: () =>
       getUserEnrollment(
         hasSelection
-          ? { program_id: programId, cohort_id: cohortId }
+          ? { program_id: programId!, cohort_id: cohortId! }
           : undefined,
       ),
     enabled:
