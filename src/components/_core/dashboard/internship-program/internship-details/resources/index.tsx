@@ -8,8 +8,9 @@ import type {
   Resource,
   ResourceCategory,
 } from "@/features/resources/resources.types";
-import { useGetResources } from "@/features/resources/use-get-resources";
 import { useGetProjectResources } from "@/features/interns-project/resources/use-get-project-resources";
+import { useGetProjectResourcesByCategory } from "@/features/interns-project/resources/use-get-project-resources-by-cat";
+import { useGetResources } from "@/features/resources/use-get-resources";
 import { cn } from "@/lib/utils";
 
 /** Only the fields the list UI actually renders — satisfied by both the general
@@ -22,6 +23,8 @@ type ResourceListItem = Pick<
 const INTERNSHIP_RESOURCE_CATEGORIES = [
   { label: "Onboarding", value: "onboarding" },
   { label: "Mentorship", value: "mentorship" },
+  { label: "Employability", value: "employability-session" },
+  { label: "Project Hub", value: "project-hub" },
   { label: "Others", value: "others" },
 ] as const;
 
@@ -83,6 +86,173 @@ function ResourceTypeIcon({ format }: { format: "link" | "material" }) {
   return <FileText className="size-4" aria-hidden />;
 }
 
+function formatProjectWeekLabel(project: {
+  weeks?: string | null;
+  startWeek?: number | null;
+  endWeek?: number | null;
+}) {
+  const weeks = project.weeks?.trim();
+  if (weeks) {
+    return /^week\b/i.test(weeks) ? weeks : `Week ${weeks}`;
+  }
+
+  const start = project.startWeek;
+  const end = project.endWeek;
+  if (start != null && end != null) {
+    return start === end ? `Week ${start}` : `Week ${start}-${end}`;
+  }
+  if (start != null) return `Week ${start}`;
+  if (end != null) return `Week ${end}`;
+  return null;
+}
+
+function ResourceRow({
+  item,
+  onOpen,
+  variant = "default",
+}: {
+  item: ResourceListItem;
+  onOpen: (item: ResourceListItem) => void;
+  variant?: "default" | "project-hub";
+}) {
+  const format = normalizeResourceFormat(item.format);
+  const href = getResourceHref(item);
+  const isProjectHub = variant === "project-hub";
+
+  return (
+    <article
+      className={cn(
+        "flex min-w-0 items-center justify-between gap-3 rounded-xl px-3 py-3",
+        isProjectHub ? "bg-[#EDF2FF]" : "bg-[#F8FAFC]",
+      )}
+    >
+      <div className="flex min-w-0 flex-1 items-center gap-3">
+        <span
+          className={cn(
+            "flex size-8 shrink-0 items-center justify-center rounded-full",
+            isProjectHub
+              ? "bg-[#D6E4FF] text-[#3B82F6]"
+              : "bg-[#156374] text-white",
+          )}
+        >
+          <ResourceTypeIcon format={format} />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-base font-medium text-[#173740]">
+            {item.title}
+          </p>
+          <p className="text-sm text-[#64748B]">
+            {formatResourceDate(item.createdAt)}
+          </p>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => onOpen(item)}
+        disabled={!href}
+        className={cn(
+          "shrink-0 cursor-pointer transition disabled:cursor-not-allowed disabled:opacity-40",
+          isProjectHub
+            ? "text-[#3B82F6] hover:text-[#2563EB]"
+            : "text-[#1A6B8A] hover:text-[#0E6174]",
+        )}
+        aria-label={`Open ${item.title}`}
+      >
+        <ExternalLink className="size-4" aria-hidden />
+      </button>
+    </article>
+  );
+}
+
+function ProjectResourcesByCategoryList({
+  categoryLabel,
+  projects,
+  onOpen,
+}: {
+  categoryLabel: string;
+  projects: Array<{
+    projectId: number;
+    projectTitle: string;
+    weeks?: string | null;
+    startWeek?: number | null;
+    endWeek?: number | null;
+    materials: ResourceListItem[];
+  }>;
+  onOpen: (item: ResourceListItem) => void;
+}) {
+  const [openProjectId, setOpenProjectId] = useState<number | null>(
+    () => projects[0]?.projectId ?? null,
+  );
+
+  return (
+    <div className="min-w-0 space-y-3">
+      <h3 className="text-base font-semibold text-[#092A31]">{categoryLabel}</h3>
+
+      <div className="min-w-0 space-y-3">
+        {projects.map((project) => {
+          const materials = project.materials.filter((item) => {
+            const format = item.format?.trim().toLowerCase();
+            return format !== "video";
+          });
+          if (!materials.length) return null;
+
+          const isOpen = openProjectId === project.projectId;
+          const weekLabel = formatProjectWeekLabel(project);
+
+          return (
+            <section
+              key={project.projectId}
+              className="min-w-0 overflow-hidden rounded-xl bg-[#F8FAFC] px-3 py-3 shadow-[0px_1px_4px_0px_rgba(15,23,42,0.04)]"
+            >
+              <button
+                type="button"
+                onClick={() =>
+                  setOpenProjectId((current) =>
+                    current === project.projectId ? null : project.projectId,
+                  )
+                }
+                className="flex w-full cursor-pointer items-start justify-between gap-3 text-left"
+                aria-expanded={isOpen}
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-[#156374]">
+                    {project.projectTitle}
+                  </p>
+                  {weekLabel ? (
+                    <p className="mt-0.5 text-sm text-[#94A3B8]">{weekLabel}</p>
+                  ) : null}
+                </div>
+                <span
+                  className={cn(
+                    "mt-0.5 shrink-0 transition-transform",
+                    isOpen ? "rotate-90" : "rotate-0",
+                  )}
+                >
+                  <TrangleIcon />
+                </span>
+              </button>
+
+              {isOpen ? (
+                <div className="mt-3 min-w-0 space-y-2.5">
+                  {materials.map((item) => (
+                    <ResourceRow
+                      key={item.id}
+                      item={item}
+                      onOpen={onOpen}
+                      variant="project-hub"
+                    />
+                  ))}
+                </div>
+              ) : null}
+            </section>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 const Resources = ({
   excludeCategories = [],
   projectId = null,
@@ -133,6 +303,8 @@ const Resources = ({
 
   const canFetchGeneral =
     !isProjectScoped && programId != null && cohortId != null;
+  const isProjectHubCategory =
+    !isProjectScoped && activeCategory === "project-hub";
 
   // "Others" pulls every non-primary category, so omit the API category filter.
   const requestCategory =
@@ -150,7 +322,21 @@ const Resources = ({
       page: 1,
     },
     {
-      enabled: canFetchGeneral,
+      enabled: canFetchGeneral && !isProjectHubCategory,
+    },
+  );
+
+  const projectHubQuery = useGetProjectResourcesByCategory(
+    {
+      program_id: programId ?? undefined,
+      cohort_id: cohortId ?? undefined,
+      category: "project-hub",
+      format: activeFilter === "all" ? undefined : activeFilter,
+      per_page: 50,
+      page: 1,
+    },
+    {
+      enabled: canFetchGeneral && isProjectHubCategory,
     },
   );
 
@@ -167,11 +353,24 @@ const Resources = ({
     },
   );
 
-  const resourcesQuery = isProjectScoped ? projectQuery : generalQuery;
+  const listQuery = isProjectScoped ? projectQuery : generalQuery;
   const canFetch = isProjectScoped ? true : canFetchGeneral;
 
+  const projectHubProjects = useMemo(() => {
+    if (!isProjectHubCategory) return [];
+
+    return (projectHubQuery.data ?? []).flatMap((group) =>
+      group.projects.filter((project) =>
+        project.materials.some((item) => {
+          const format = item.format?.trim().toLowerCase();
+          return format !== "video";
+        }),
+      ),
+    );
+  }, [isProjectHubCategory, projectHubQuery.data]);
+
   const resources = useMemo<ResourceListItem[]>(() => {
-    const items = resourcesQuery.data?.resources ?? [];
+    const items = listQuery.data?.resources ?? [];
     return items.filter((item) => {
       const format = item.format?.trim().toLowerCase();
       if (format === "video") return false;
@@ -186,13 +385,17 @@ const Resources = ({
 
       return category === activeCategory;
     });
-  }, [activeCategory, primaryCategoryValues, resourcesQuery.data?.resources]);
+  }, [activeCategory, listQuery.data?.resources, primaryCategoryValues]);
 
   const isLoading = isProjectScoped
-    ? resourcesQuery.isLoading
-    : isEnrollmentLoading || (canFetch && resourcesQuery.isLoading);
+    ? listQuery.isLoading
+    : isProjectHubCategory
+      ? isEnrollmentLoading || (canFetch && projectHubQuery.isLoading)
+      : isEnrollmentLoading || (canFetch && listQuery.isLoading);
 
-  const isError = canFetch && resourcesQuery.isError;
+  const isError =
+    canFetch &&
+    (isProjectHubCategory ? projectHubQuery.isError : listQuery.isError);
 
   const handleOpenResource = (resource: ResourceListItem) => {
     const href = getResourceHref(resource);
@@ -266,7 +469,9 @@ const Resources = ({
               <button
                 type="button"
                 onClick={() => {
-                  void resourcesQuery.refetch();
+                  void (isProjectHubCategory
+                    ? projectHubQuery.refetch()
+                    : listQuery.refetch());
                 }}
                 className="text-xs font-medium text-[#156374] underline underline-offset-2"
               >
@@ -279,43 +484,24 @@ const Resources = ({
                 ? "Project details are required to view resources."
                 : "Enrollment details are required to view resources."}
             </p>
+          ) : isProjectHubCategory && projectHubProjects.length ? (
+            <ProjectResourcesByCategoryList
+              categoryLabel={
+                categories.find((category) => category.value === activeCategory)
+                  ?.label ?? "Project Hub"
+              }
+              projects={projectHubProjects}
+              onOpen={handleOpenResource}
+            />
           ) : resources.length ? (
             <div className="min-w-0 space-y-2.5">
-              {resources.map((item) => {
-                const format = normalizeResourceFormat(item.format);
-                const href = getResourceHref(item);
-
-                return (
-                  <article
-                    key={item.id}
-                    className="flex min-w-0 items-center justify-between gap-3 rounded-xl bg-[#F8FAFC] px-3 py-3"
-                  >
-                    <div className="flex min-w-0 flex-1 items-center gap-3">
-                      <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#156374] text-white">
-                        <ResourceTypeIcon format={format} />
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-base font-medium text-[#173740]">
-                          {item.title}
-                        </p>
-                        <p className="text-sm text-[#64748B]">
-                          {formatResourceDate(item.createdAt)}
-                        </p>
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => handleOpenResource(item)}
-                      disabled={!href}
-                      className="shrink-0 cursor-pointer text-[#1A6B8A] transition hover:text-[#0E6174] disabled:cursor-not-allowed disabled:opacity-40"
-                      aria-label={`Open ${item.title}`}
-                    >
-                      <ExternalLink className="size-4" aria-hidden />
-                    </button>
-                  </article>
-                );
-              })}
+              {resources.map((item) => (
+                <ResourceRow
+                  key={item.id}
+                  item={item}
+                  onOpen={handleOpenResource}
+                />
+              ))}
             </div>
           ) : (
             <p className="px-1 py-6 text-sm text-[#94A3B8]">

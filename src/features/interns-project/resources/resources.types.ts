@@ -123,3 +123,36 @@ export type GetResourcesQuery = {
   per_page?: number;
   page?: number;
 };
+
+/** GET /api/v3/intern-project-resources/by-category */
+export type GetProjectResourcesByCategoryQuery = {
+  program_id: number | string;
+  cohort_id: number | string;
+  category: ResourceCategory | string;
+  search?: string;
+  format?: ResourceFormat | string;
+  per_page?: number;
+  page?: number;
+};
+
+export type ProjectResourcesByCategoryProject = {
+  projectId: number;
+  projectTitle: string;
+  projectSlug: string;
+  /** Display label such as "Week 3-4" when provided by the API. */
+  weeks?: string | null;
+  startWeek?: number | null;
+  endWeek?: number | null;
+  materials: Resource[];
+};
+
+export type ProjectResourcesByCategoryGroup = {
+  category: ResourceCategory | string;
+  projects: ProjectResourcesByCategoryProject[];
+};
+
+export type GetProjectResourcesByCategoryResponse = {
+  success: boolean;
+  message: string;
+  data: ProjectResourcesByCategoryGroup[] | null;
+};
