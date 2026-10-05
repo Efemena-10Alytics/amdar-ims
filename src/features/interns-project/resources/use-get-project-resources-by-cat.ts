@@ -5,6 +5,7 @@ import type {
   GetProjectResourcesByCategoryQuery,
   GetProjectResourcesByCategoryResponse,
   ProjectResourcesByCategoryGroup,
+  ProjectResourcesByCategoryProject,
 } from "@/features/interns-project/resources/resources.types";
 import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
 import { useSelectedEnrollmentIds } from "@/store/enrollment-selection-store";
