@@ -7,7 +7,6 @@ import CareerStage from "@/components/_core/dashboard/internship-program/interns
 import CareerCenter from "@/components/_core/dashboard/internship-program/internship-details/career-center";
 import LiveSession from "@/components/_core/dashboard/internship-program/internship-details/live-session";
 import Resources from "@/components/_core/dashboard/internship-program/internship-details/resources";
-import ContinueTaskButton from "@/components/_core/dashboard/internship-program/internship-details/continue-task-button";
 
 const TABS = [
   { id: "live-session", label: "Live session" },
@@ -70,38 +69,34 @@ const InternshipDetails = ({
 
   return (
     <section className="min-w-0 space-y-4">
-      <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <div className="min-w-0 overflow-x-auto">
-          <div
-            className="inline-flex min-w-max rounded-full bg-[#EEF2F6] p-2"
-            role="tablist"
-            aria-label="Internship program sections"
-          >
-            {TABS.map((tab) => {
-              const isActive = activeTab === tab.id;
+      <div className="min-w-0 overflow-x-auto">
+        <div
+          className="inline-flex min-w-max rounded-full bg-[#EEF2F6] p-2"
+          role="tablist"
+          aria-label="Internship program sections"
+        >
+          {TABS.map((tab) => {
+            const isActive = activeTab === tab.id;
 
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={isActive}
-                  onClick={() => handleTabChange(tab.id)}
-                  className={cn(
-                    "cursor-pointer whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition",
-                    isActive
-                      ? "bg-[#C5D6DC] text-[#092A31] shadow-sm"
-                      : "text-[#98A2B3] hover:text-[#64748B]",
-                  )}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => handleTabChange(tab.id)}
+                className={cn(
+                  "cursor-pointer whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition",
+                  isActive
+                    ? "bg-[#C5D6DC] text-[#092A31] shadow-sm"
+                    : "text-[#98A2B3] hover:text-[#64748B]",
+                )}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
-
-        <ContinueTaskButton />
       </div>
 
       <div role="tabpanel" className="min-w-0">
