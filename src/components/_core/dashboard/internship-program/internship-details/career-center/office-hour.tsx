@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { CalendarCheck, Clock } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import { cn } from "@/lib/utils";
+import { SpekerIcon } from "@/components/_core/dashboard/internship-program/svg";
 import OfficeHourDrawer from "@/components/_core/dashboard/internship-program/internship-details/career-center/drawers/office-hour";
 
 const SERVICE_FLAGS = [
@@ -23,34 +24,22 @@ const OfficeHour = () => {
         <div className="flex items-start justify-between gap-3">
           <h3 className="text-lg font-semibold text-[#0B2B33]">Office Hour</h3>
           <span
-            className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#E8F4F8] text-[#1A6B8A]"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#E8F4F8] text-[#1A6B8A]"
             aria-hidden
           >
-            <Clock className="size-5" strokeWidth={2} />
+            <SpekerIcon className="size-[15px]" />
           </span>
         </div>
 
         <div className="mt-4 rounded-xl bg-[#E8F4F8] p-4">
           <p className="text-sm leading-relaxed text-[#475467]">
-            Schedule an office hour with your team lead.
+            Schedule an office hour with your team lead
           </p>
 
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            <span
-              className="flex size-9 shrink-0 items-center justify-center rounded-md bg-[#0E6174] text-white"
-              aria-hidden
-            >
-              <CalendarCheck className="size-5" strokeWidth={2.5} />
-            </span>
-            <div className="flex flex-wrap gap-2">
-              <span className="rounded-full bg-[#D4EBF1] px-3 py-1 text-sm font-medium text-[#0B2B33]">
-                Mon - Fri
-              </span>
-              <span className="rounded-full bg-[#D4EBF1] px-3 py-1 text-sm font-medium text-[#0B2B33]">
-                2pm - 11pm WAT
-              </span>
-            </div>
-          </div>
+          <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-[#D4EBF1] px-3 py-1.5 text-sm font-medium text-[#0B2B33]">
+            <CalendarDays className="size-4 shrink-0 text-[#1A6B8A]" aria-hidden />
+            Mon - Fri 2pm - 11pm WAT
+          </span>
         </div>
 
         <div className="mt-4 flex items-center">
@@ -80,7 +69,7 @@ const OfficeHour = () => {
             setSuccessMessage("");
             setIsDrawerOpen(true);
           }}
-          className="mt-5 h-11 w-full rounded-full border-[#134E5E] bg-transparent text-sm font-semibold text-[#134E5E] hover:bg-[#E8F4F8] hover:text-[#0E6174]"
+          className="mt-5 h-11 w-full rounded-full border-[#3B82F6] bg-[#C2D8FC] text-sm font-semibold text-[#3B82F6] hover:bg-[#B3CDFA] hover:text-[#2563EB]"
         >
           Book session
         </Button>
