@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { Video } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SpekerIcon } from "@/components/_core/dashboard/internship-program/svg";
+import OfficeHour from "@/components/_core/dashboard/internship-program/internship-details/career-center/office-hour";
 import {
   LIVE_SESSION_DAYS,
   type LiveSession,
@@ -204,6 +205,71 @@ function LiveSessionCard({
   );
 }
 
+function LiveSessionList({
+  todayCategory,
+  visibleSessions,
+  isLoading,
+  isError,
+  errorMessage,
+  onRetry,
+}: {
+  todayCategory: LiveSessionDayCategory | null;
+  visibleSessions: LiveSession[];
+  isLoading: boolean;
+  isError: boolean;
+  errorMessage?: string | null;
+  onRetry: () => void;
+}) {
+  if (isLoading) {
+    return (
+      <p className="py-8 text-sm text-[#94A3B8]">Loading live sessions...</p>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="space-y-2 py-8">
+        <p className="text-sm text-[#C0392B]">
+          {errorMessage || "Failed to load live sessions."}
+        </p>
+        <button
+          type="button"
+          onClick={onRetry}
+          className="cursor-pointer text-xs font-medium text-[#156374] underline underline-offset-2"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  if (!visibleSessions.length) {
+    return (
+      <p className="py-8 text-sm text-[#94A3B8]">No live sessions found.</p>
+    );
+  }
+
+  return (
+    <div className="min-w-0 space-y-3">
+      {visibleSessions.map((session) => {
+        const sessionDay = normalizeDay(session.category);
+        const isToday =
+          sessionDay != null &&
+          todayCategory != null &&
+          sessionDay === todayCategory;
+
+        return (
+          <LiveSessionCard
+            key={session.id}
+            session={session}
+            isToday={isToday}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
 export default function LiveSession() {
   const todayCategory = getTodayCategory();
 
@@ -222,45 +288,23 @@ export default function LiveSession() {
   }, [sessions]);
 
   return (
-    <section className="min-w-0 space-y-4">
-      {isLoading ? (
-        <p className="py-8 text-sm text-[#94A3B8]">Loading live sessions...</p>
-      ) : isError ? (
-        <div className="space-y-2 py-8">
-          <p className="text-sm text-[#C0392B]">
-            {errorMessage || "Failed to load live sessions."}
-          </p>
-          <button
-            type="button"
-            onClick={() => {
-              void refetch();
-            }}
-            className="cursor-pointer text-xs font-medium text-[#156374] underline underline-offset-2"
-          >
-            Retry
-          </button>
+    <section className="min-w-0">
+      <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:items-start">
+        <div className="min-w-0">
+          <OfficeHour />
         </div>
-      ) : visibleSessions.length ? (
-        <div className="space-y-3">
-          {visibleSessions.map((session) => {
-            const sessionDay = normalizeDay(session.category);
-            const isToday =
-              sessionDay != null &&
-              todayCategory != null &&
-              sessionDay === todayCategory;
 
-            return (
-              <LiveSessionCard
-                key={session.id}
-                session={session}
-                isToday={isToday}
-              />
-            );
-          })}
-        </div>
-      ) : (
-        <p className="py-8 text-sm text-[#94A3B8]">No live sessions found.</p>
-      )}
+        <LiveSessionList
+          todayCategory={todayCategory}
+          visibleSessions={visibleSessions}
+          isLoading={isLoading}
+          isError={isError}
+          errorMessage={errorMessage}
+          onRetry={() => {
+            void refetch();
+          }}
+        />
+      </div>
     </section>
   );
 }
