@@ -73,7 +73,7 @@ export default function HowTheImsWorksModal({
       }}
     >
       <DialogContent
-        className="gap-0 overflow-hidden rounded-2xl border-0 p-0 max-h-[90vh] w-[min(1280px,95vw)] max-w-[900px]"
+        className="flex max-h-[min(90vh,100dvh)] w-[min(1280px,95vw)] max-w-[900px] flex-col gap-0 overflow-hidden rounded-2xl border-0 p-0"
         style={{
           width: "min(1280px, 95vw)",
           maxWidth: "900px",
@@ -84,7 +84,7 @@ export default function HowTheImsWorksModal({
       >
         <DialogTitle className="sr-only">How the IMS works</DialogTitle>
 
-        <div className="relative aspect-video min-h-72 w-full overflow-hidden bg-black sm:min-h-90">
+        <div className="relative min-h-0 w-full flex-1 overflow-hidden bg-black aspect-video max-h-[calc(min(90vh,100dvh)-7.5rem)]">
           {loading ? (
             <div
               className="absolute inset-0 z-10 flex items-center justify-center bg-black/60"
@@ -106,7 +106,7 @@ export default function HowTheImsWorksModal({
           ) : null}
         </div>
 
-        <div className="flex flex-col gap-4 bg-white px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-5">
+        <div className="flex shrink-0 flex-col gap-4 bg-white px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-5">
           <label className="inline-flex cursor-pointer items-center gap-2">
             <input
               type="checkbox"
