@@ -21,12 +21,35 @@ type ResourceListItem = Pick<
 >;
 
 const INTERNSHIP_RESOURCE_CATEGORIES = [
+  { label: "Drop-In Session", value: "drop-in-session" },
+  { label: "Project Hub", value: "project-hub" },
+  { label: "More Materials", value: "more-materials" },
   { label: "Onboarding", value: "onboarding" },
   { label: "Mentorship", value: "mentorship" },
   { label: "Employability", value: "employability-session" },
-  { label: "Project Hub", value: "project-hub" },
   { label: "Others", value: "others" },
 ] as const;
+
+/** Internship categories that load via /intern-project-resources/by-category. */
+const PROJECT_BY_CATEGORY_VALUES = [
+  "drop-in-session",
+  "project-hub",
+  "more-materials",
+] as const;
+
+type ProjectByCategoryValue = (typeof PROJECT_BY_CATEGORY_VALUES)[number];
+
+function isProjectByCategoryValue(
+  value: string,
+): value is ProjectByCategoryValue {
+  return (PROJECT_BY_CATEGORY_VALUES as readonly string[]).includes(value);
+}
+
+/** Maps sidebar values to the API `category` query param. */
+function getByCategoryApiCategory(value: ProjectByCategoryValue): string {
+  if (value === "more-materials") return "others";
+  return value;
+}
 
 const PROJECT_RESOURCE_CATEGORIES = [
   { label: "Drop-In Session", value: "drop-in-session" },
@@ -113,24 +136,24 @@ function ResourceRow({
 }: {
   item: ResourceListItem;
   onOpen: (item: ResourceListItem) => void;
-  variant?: "default" | "project-hub";
+  variant?: "default" | "by-category";
 }) {
   const format = normalizeResourceFormat(item.format);
   const href = getResourceHref(item);
-  const isProjectHub = variant === "project-hub";
+  const isByCategory = variant === "by-category";
 
   return (
     <article
       className={cn(
         "flex min-w-0 items-center justify-between gap-3 rounded-xl px-3 py-3",
-        isProjectHub ? "bg-[#EDF2FF]" : "bg-[#F8FAFC]",
+        isByCategory ? "bg-[#EDF2FF]" : "bg-[#F8FAFC]",
       )}
     >
       <div className="flex min-w-0 flex-1 items-center gap-3">
         <span
           className={cn(
             "flex size-8 shrink-0 items-center justify-center rounded-full",
-            isProjectHub
+            isByCategory
               ? "bg-[#D6E4FF] text-[#3B82F6]"
               : "bg-[#156374] text-white",
           )}
@@ -153,7 +176,7 @@ function ResourceRow({
         disabled={!href}
         className={cn(
           "shrink-0 cursor-pointer transition disabled:cursor-not-allowed disabled:opacity-40",
-          isProjectHub
+          isByCategory
             ? "text-[#3B82F6] hover:text-[#2563EB]"
             : "text-[#1A6B8A] hover:text-[#0E6174]",
         )}
@@ -240,7 +263,7 @@ function ProjectResourcesByCategoryList({
                       key={item.id}
                       item={item}
                       onOpen={onOpen}
-                      variant="project-hub"
+                      variant="by-category"
                     />
                   ))}
                 </div>
@@ -303,8 +326,8 @@ const Resources = ({
 
   const canFetchGeneral =
     !isProjectScoped && programId != null && cohortId != null;
-  const isProjectHubCategory =
-    !isProjectScoped && activeCategory === "project-hub";
+  const isByCategoryView =
+    !isProjectScoped && isProjectByCategoryValue(activeCategory);
 
   // "Others" pulls every non-primary category, so omit the API category filter.
   const requestCategory =
@@ -322,21 +345,23 @@ const Resources = ({
       page: 1,
     },
     {
-      enabled: canFetchGeneral && !isProjectHubCategory,
+      enabled: canFetchGeneral && !isByCategoryView,
     },
   );
 
-  const projectHubQuery = useGetProjectResourcesByCategory(
+  const byCategoryQuery = useGetProjectResourcesByCategory(
     {
       program_id: programId ?? undefined,
       cohort_id: cohortId ?? undefined,
-      category: "project-hub",
+      category: isByCategoryView
+        ? getByCategoryApiCategory(activeCategory)
+        : "project-hub",
       format: activeFilter === "all" ? undefined : activeFilter,
       per_page: 50,
       page: 1,
     },
     {
-      enabled: canFetchGeneral && isProjectHubCategory,
+      enabled: canFetchGeneral && isByCategoryView,
     },
   );
 
@@ -356,10 +381,10 @@ const Resources = ({
   const listQuery = isProjectScoped ? projectQuery : generalQuery;
   const canFetch = isProjectScoped ? true : canFetchGeneral;
 
-  const projectHubProjects = useMemo(() => {
-    if (!isProjectHubCategory) return [];
+  const byCategoryProjects = useMemo(() => {
+    if (!isByCategoryView) return [];
 
-    return (projectHubQuery.data ?? []).flatMap((group) =>
+    return (byCategoryQuery.data ?? []).flatMap((group) =>
       group.projects.filter((project) =>
         project.materials.some((item) => {
           const format = item.format?.trim().toLowerCase();
@@ -367,7 +392,7 @@ const Resources = ({
         }),
       ),
     );
-  }, [isProjectHubCategory, projectHubQuery.data]);
+  }, [byCategoryQuery.data, isByCategoryView]);
 
   const resources = useMemo<ResourceListItem[]>(() => {
     const items = listQuery.data?.resources ?? [];
@@ -389,13 +414,13 @@ const Resources = ({
 
   const isLoading = isProjectScoped
     ? listQuery.isLoading
-    : isProjectHubCategory
-      ? isEnrollmentLoading || (canFetch && projectHubQuery.isLoading)
+    : isByCategoryView
+      ? isEnrollmentLoading || (canFetch && byCategoryQuery.isLoading)
       : isEnrollmentLoading || (canFetch && listQuery.isLoading);
 
   const isError =
     canFetch &&
-    (isProjectHubCategory ? projectHubQuery.isError : listQuery.isError);
+    (isByCategoryView ? byCategoryQuery.isError : listQuery.isError);
 
   const handleOpenResource = (resource: ResourceListItem) => {
     const href = getResourceHref(resource);
@@ -469,8 +494,8 @@ const Resources = ({
               <button
                 type="button"
                 onClick={() => {
-                  void (isProjectHubCategory
-                    ? projectHubQuery.refetch()
+                  void (isByCategoryView
+                    ? byCategoryQuery.refetch()
                     : listQuery.refetch());
                 }}
                 className="text-xs font-medium text-[#156374] underline underline-offset-2"
@@ -484,13 +509,13 @@ const Resources = ({
                 ? "Project details are required to view resources."
                 : "Enrollment details are required to view resources."}
             </p>
-          ) : isProjectHubCategory && projectHubProjects.length ? (
+          ) : isByCategoryView && byCategoryProjects.length ? (
             <ProjectResourcesByCategoryList
               categoryLabel={
                 categories.find((category) => category.value === activeCategory)
-                  ?.label ?? "Project Hub"
+                  ?.label ?? activeCategory
               }
-              projects={projectHubProjects}
+              projects={byCategoryProjects}
               onOpen={handleOpenResource}
             />
           ) : resources.length ? (
