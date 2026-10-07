@@ -60,10 +60,10 @@ const YourTask = ({
   const taskHref =
     currentTask && projectSlug
       ? buildCurrentTaskHref({
-          projectSlug,
-          todoId: currentTask.todoId,
-          typeId: currentTask.type?.id,
-        })
+        projectSlug,
+        todoId: currentTask.todoId,
+        typeId: currentTask.type?.id,
+      })
       : null;
 
   if (!isLoading && !project && !currentTask) {
@@ -83,8 +83,6 @@ const YourTask = ({
     project?.title?.trim() ||
     currentTask?.todoTitle?.trim() ||
     (isLoading ? "Loading..." : "Current task");
-  const contributor = project?.contributor?.trim() || null;
-  const contributorInitial = getInitial(contributor);
   const startLabel = preAssessmentDone ? "Continue task" : "Start task";
 
   return (
@@ -105,14 +103,7 @@ const YourTask = ({
                   <h3 className="min-w-0 flex-1 text-[22px] leading-tight font-semibold text-[#233A43] lg:text-[28px] lg:leading-9">
                     {displayTitle}
                   </h3>
-                  {contributor ? (
-                    <span
-                      className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-[#233A43] text-xs font-semibold text-white"
-                      aria-label={contributor}
-                    >
-                      {contributorInitial}
-                    </span>
-                  ) : null}
+
                 </div>
               </div>
             </div>
@@ -130,12 +121,7 @@ const YourTask = ({
                   {durationLabel}
                 </span>
               ) : null}
-              {contributor ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F4DEB5] px-3 py-1 text-xs font-medium text-[#5B5E67]">
-                  <User className="size-3.5" aria-hidden />
-                  {contributor} contributor
-                </span>
-              ) : null}
+
             </div>
 
             {taskHref ? (
@@ -163,7 +149,10 @@ const YourTask = ({
       {/* Current project — attached below, outside the amber card */}
       <div className="rounded-b-2xl border border-dashed border-[#3B82F6] bg-[#C2D8FC] px-5 py-4 sm:px-6">
         <div className="mb-3 flex items-center gap-2">
-          <span className="size-2 rounded-full bg-[#E11D48]" aria-hidden />
+          <span
+            className="size-2 animate-pulse rounded-full bg-[#E11D48]"
+            aria-hidden
+          />
           <p className="text-sm font-medium text-[#173740]">
             See where others are
           </p>
