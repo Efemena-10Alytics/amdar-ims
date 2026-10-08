@@ -18,28 +18,43 @@ const DAY_LABEL: Record<LiveSessionDayCategory, string> = {
   wed: "Wed",
   thu: "Thur",
   fri: "Fri",
+  sat: "Sat",
+  sun: "Sun",
 };
 
-const DAY_ORDER: Record<string, number> = {
+const DAY_ORDER: Record<LiveSessionDayCategory, number> = {
   mon: 0,
   tue: 1,
   wed: 2,
   thu: 3,
   fri: 4,
+  sat: 5,
+  sun: 6,
 };
 
-function getTodayCategory(): LiveSessionDayCategory | null {
+function getTodayCategory(): LiveSessionDayCategory {
   const day = new Date().getDay(); // 0 Sun … 6 Sat
-  const map: Record<number, LiveSessionDayCategory | null> = {
-    0: null,
+  const map: Record<number, LiveSessionDayCategory> = {
+    0: "sun",
     1: "mon",
     2: "tue",
     3: "wed",
     4: "thu",
     5: "fri",
-    6: null,
+    6: "sat",
   };
-  return map[day] ?? null;
+  return map[day] ?? "sun";
+}
+
+/** Sort key relative to today: active day first, then remaining days wrap around. */
+function daySortOffset(
+  day: LiveSessionDayCategory | null,
+  today: LiveSessionDayCategory,
+): number {
+  if (day == null) return 99;
+  const todayOrder = DAY_ORDER[today];
+  const dayOrder = DAY_ORDER[day];
+  return (dayOrder - todayOrder + LIVE_SESSION_DAYS.length) % LIVE_SESSION_DAYS.length;
 }
 
 function normalizeDay(category?: string | null): LiveSessionDayCategory | null {
@@ -213,7 +228,7 @@ function LiveSessionList({
   errorMessage,
   onRetry,
 }: {
-  todayCategory: LiveSessionDayCategory | null;
+  todayCategory: LiveSessionDayCategory;
   visibleSessions: LiveSession[];
   isLoading: boolean;
   isError: boolean;
@@ -253,10 +268,7 @@ function LiveSessionList({
     <div className="min-w-0 space-y-3">
       {visibleSessions.map((session) => {
         const sessionDay = normalizeDay(session.category);
-        const isToday =
-          sessionDay != null &&
-          todayCategory != null &&
-          sessionDay === todayCategory;
+        const isToday = sessionDay != null && sessionDay === todayCategory;
 
         return (
           <LiveSessionCard
@@ -278,14 +290,12 @@ export default function LiveSession() {
 
   const visibleSessions = useMemo(() => {
     return [...sessions].sort((a, b) => {
-      const dayA = normalizeDay(a.category);
-      const dayB = normalizeDay(b.category);
-      const orderA = dayA != null ? (DAY_ORDER[dayA] ?? 99) : 99;
-      const orderB = dayB != null ? (DAY_ORDER[dayB] ?? 99) : 99;
-      if (orderA !== orderB) return orderA - orderB;
+      const offsetA = daySortOffset(normalizeDay(a.category), todayCategory);
+      const offsetB = daySortOffset(normalizeDay(b.category), todayCategory);
+      if (offsetA !== offsetB) return offsetA - offsetB;
       return a.startTime.localeCompare(b.startTime);
     });
-  }, [sessions]);
+  }, [sessions, todayCategory]);
 
   return (
     <section className="min-w-0">
