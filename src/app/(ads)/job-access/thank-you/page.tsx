@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import WhatsAppRedirect from "@/components/_core/shared/whatsapp-redirect";
 
 const WHATSAPP_LINK = "https://chat.whatsapp.com/FYVmrUfwzpGA5XOAlVKW0d";
 
@@ -40,6 +41,8 @@ export default function ThankYouPage() {
           >
             Join Community
           </a>
+
+          <WhatsAppRedirect url={WHATSAPP_LINK} delayInSeconds={3} />
 
           <Link
             href="/job-access"

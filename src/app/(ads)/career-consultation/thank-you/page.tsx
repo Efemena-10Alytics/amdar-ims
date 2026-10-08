@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import WhatsAppRedirect from "@/components/_core/shared/whatsapp-redirect";
 
 const WHATSAPP_LINK = "https://chat.whatsapp.com/EM3wjWuucD1AD9HphClDKS";
 
@@ -39,6 +40,8 @@ export default function ThankYouPage() {
           >
             Join WhatsApp Community
           </a>
+
+          <WhatsAppRedirect url={WHATSAPP_LINK} delayInSeconds={3} />
         </div>
       </div>
     </div>
