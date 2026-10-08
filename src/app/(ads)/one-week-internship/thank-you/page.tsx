@@ -42,7 +42,7 @@ export default function ThankYouPage() {
             Join WhatsApp Community
           </a>
 
-          {/* <WhatsAppRedirect url={WHATSAPP_LINK} delayInSeconds={3} /> */}
+          <WhatsAppRedirect url={WHATSAPP_LINK} delayInSeconds={3} />
 
           <Link
             href="/one-week-internship"
