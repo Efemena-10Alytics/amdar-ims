@@ -30,6 +30,9 @@ const INTERNSHIP_RESOURCE_CATEGORIES = [
   { label: "Others", value: "others" },
 ] as const;
 
+/** Categories that surface under the Others tab. */
+const OTHERS_API_CATEGORIES = new Set(["others", "drop-in-session"]);
+
 /** Internship categories that load via /intern-project-resources/by-category. */
 const PROJECT_BY_CATEGORY_VALUES = [
   "drop-in-session",
@@ -309,16 +312,6 @@ const Resources = ({
     [categoryOptions, excludeCategories],
   );
 
-  const primaryCategoryValues = useMemo(
-    () =>
-      categories
-        .map((category) => category.value)
-        .filter((value): value is Exclude<ResourceCategoryValue, "others"> =>
-          value !== "others",
-        ),
-    [categories],
-  );
-
   const [activeCategory, setActiveCategory] = useState<ResourceCategoryValue>(
     () => categories[0]?.value ?? "onboarding",
   );
@@ -329,7 +322,7 @@ const Resources = ({
   const isByCategoryView =
     !isProjectScoped && isProjectByCategoryValue(activeCategory);
 
-  // "Others" pulls every non-primary category, so omit the API category filter.
+  // "Others" omits the API category filter and keeps others + drop-in-session client-side.
   const requestCategory =
     activeCategory === "others"
       ? undefined
@@ -403,14 +396,12 @@ const Resources = ({
       const category = normalizeResourceCategory(item.category);
 
       if (activeCategory === "others") {
-        return !(
-          primaryCategoryValues as readonly string[]
-        ).includes(category);
+        return OTHERS_API_CATEGORIES.has(category);
       }
 
       return category === activeCategory;
     });
-  }, [activeCategory, listQuery.data?.resources, primaryCategoryValues]);
+  }, [activeCategory, listQuery.data?.resources]);
 
   const isLoading = isProjectScoped
     ? listQuery.isLoading
