@@ -6,6 +6,8 @@ export const LIVE_SESSION_DAYS = [
   "wed",
   "thu",
   "fri",
+  "sat",
+  "sun",
 ] as const;
 
 export type LiveSessionDayCategory = (typeof LIVE_SESSION_DAYS)[number];
