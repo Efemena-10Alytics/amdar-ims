@@ -6,6 +6,7 @@ import { CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import { cn } from "@/lib/utils";
+import { formatGmtPlus1Range } from "@/lib/timezone";
 import { SpekerIcon } from "@/components/_core/dashboard/internship-program/svg";
 import OfficeHourDrawer from "@/components/_core/dashboard/internship-program/internship-details/career-center/drawers/office-hour";
 
@@ -17,6 +18,7 @@ const SERVICE_FLAGS = [
 const OfficeHour = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const availabilityHours = formatGmtPlus1Range("14:00", "23:00");
 
   return (
     <>
@@ -38,7 +40,7 @@ const OfficeHour = () => {
 
           <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-[#D4EBF1] px-3 py-1.5 text-sm font-medium text-[#0B2B33]">
             <CalendarDays className="size-4 shrink-0 text-[#1A6B8A]" aria-hidden />
-            Mon - Fri 2pm - 11pm WAT
+            Mon - Fri {availabilityHours}
           </span>
         </div>
 

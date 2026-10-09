@@ -6,6 +6,7 @@ import { CalendarCheck, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import { cn } from "@/lib/utils";
+import { formatGmtPlus1Range } from "@/lib/timezone";
 import InterviewPrepDrawer from "@/components/_core/dashboard/internship-program/internship-details/career-center/drawers/interview-prep";
 
 const PREP_FLAGS = [
@@ -16,6 +17,7 @@ const PREP_FLAGS = [
 const InterviewPrepRequestCard = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const availabilityHours = formatGmtPlus1Range("14:00", "23:00");
 
   return (
     <>
@@ -49,7 +51,7 @@ const InterviewPrepRequestCard = () => {
                 Mon - Fri
               </span>
               <span className="rounded-full bg-[#D4EBF1] px-3 py-1 text-sm font-medium text-[#0B2B33]">
-                2pm - 11pm WAT
+                {availabilityHours}
               </span>
             </div>
           </div>
