@@ -9,6 +9,7 @@ import {
 } from "@/components/_core/dashboard/internship-program/project-details/project-content";
 import { useGetCurrentProject } from "@/features/interns-project/use-get-current-project";
 import { useGetInternshipProgress } from "@/features/interns-project/use-get-internship-progress";
+import { stripHtml } from "@/lib/utils";
 
 type YourTaskProps = {
   imageSrc?: string;
@@ -33,11 +34,6 @@ function buildProjectHref(slug?: string | null) {
   return `/dashboard/internship-program/projects/${encodeURIComponent(trimmed)}`;
 }
 
-function getInitial(name?: string | null) {
-  const trimmed = name?.trim();
-  if (!trimmed) return "?";
-  return trimmed.charAt(0).toUpperCase();
-}
 
 const YourTask = ({
   imageSrc = "/images/svgs/illustration/Smug 2.svg",
@@ -80,9 +76,10 @@ const YourTask = ({
     : null;
   const logoSrc = project?.logoPreview || "/favicon.svg";
   const displayTitle =
-    project?.title?.trim() ||
     currentTask?.todoTitle?.trim() ||
+    project?.title?.trim() ||
     (isLoading ? "Loading..." : "Current task");
+  const taskDescription = stripHtml(currentTask?.type?.description);
   const startLabel = preAssessmentDone ? "Continue task" : "Start task";
 
   return (
@@ -99,11 +96,15 @@ const YourTask = ({
                 className="mt-1 size-5 shrink-0 rounded-full object-cover"
               />
               <div className="min-w-0 flex-1">
-                <div className="flex items-start gap-2">
-                  <h3 className="min-w-0 flex-1 text-[22px] leading-tight font-semibold text-[#233A43] lg:text-[28px] lg:leading-9">
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-[22px] leading-tight font-semibold text-[#233A43] lg:text-[28px] lg:leading-9">
                     {displayTitle}
                   </h3>
-
+                  {taskDescription ? (
+                    <p className="mt-1.5 line-clamp-2 text-sm leading-5 text-[#5B5E67]">
+                      {taskDescription}
+                    </p>
+                  ) : null}
                 </div>
               </div>
             </div>
