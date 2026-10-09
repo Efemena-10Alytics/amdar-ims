@@ -6,6 +6,7 @@ import type { BlogCardData } from "@/components/_core/landing-pages/blog/blog-ca
 import type { BlogDetail } from "@/features/blog/use-get-blog";
 import type { BlogItem } from "@/features/blog/use-get-all-blog";
 import { getBlogBySlug, getBlogsPage } from "@/features/blog/blog-server";
+import { stripHtml } from "@/lib/utils";
 
 type BlogDetailsPageProps = {
   params: Promise<{ slug: string }>;
@@ -55,10 +56,6 @@ function formatBlogDate(value: string | null | undefined): string {
     day: "2-digit",
     year: "numeric",
   });
-}
-
-function stripHtml(value: string): string {
-  return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
 /**

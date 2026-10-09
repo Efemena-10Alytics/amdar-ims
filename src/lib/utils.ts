@@ -28,3 +28,21 @@ export function pickRandomTwo<T>(array: T[]): T[] {
   }
   return shuffled.slice(0, 2);
 }
+
+/** Strip HTML tags / entities into a single-line plain-text string. */
+export function stripHtml(value?: string | null): string {
+  if (!value?.trim()) return "";
+
+  return value
+    .replace(/<br\s*\/?>/gi, " ")
+    .replace(/<\/(p|li|div|h[1-6])>/gi, " ")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}

@@ -6,6 +6,7 @@ import { CalendarCheck, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import { cn } from "@/lib/utils";
+import { formatGmtPlus1Range } from "@/lib/timezone";
 import EmployabilitySessionDrawer from "@/components/_core/dashboard/internship-program/internship-details/career-center/drawers/employability-session";
 
 const SERVICE_FLAGS = [
@@ -16,6 +17,7 @@ const SERVICE_FLAGS = [
 const EmployabilityExperts = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const availabilityHours = formatGmtPlus1Range("14:00", "23:00");
 
   return (
     <>
@@ -49,7 +51,7 @@ const EmployabilityExperts = () => {
                 Mon - Fri
               </span>
               <span className="rounded-full bg-[#D4EBF1] px-3 py-1 text-sm font-medium text-[#0B2B33]">
-                2pm - 11pm WAT
+                {availabilityHours}
               </span>
             </div>
           </div>

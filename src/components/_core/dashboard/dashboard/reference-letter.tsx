@@ -6,6 +6,7 @@ import { CalendarCheck, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import { cn } from "@/lib/utils";
+import { formatGmtPlus1Range } from "@/lib/timezone";
 import ReferenceLetterDrawer from "@/components/_core/dashboard/internship-program/internship-details/career-center/drawers/reference-letter";
 import ReferenceDetailsDrawer from "@/components/_core/dashboard/internship-program/internship-details/career-center/drawers/reference-details";
 
@@ -19,6 +20,7 @@ const ReferenceLetter = () => {
   const [isRequestDrawerOpen, setIsRequestDrawerOpen] = useState(false);
   const [isDetailsDrawerOpen, setIsDetailsDrawerOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const availabilityHours = formatGmtPlus1Range("14:00", "23:00");
 
   return (
     <>
@@ -52,7 +54,7 @@ const ReferenceLetter = () => {
                 Mon - Fri
               </span>
               <span className="rounded-full bg-[#E8E1FF] px-3 py-1 text-sm font-medium text-[#0B2B33]">
-                2pm - 11pm WAT
+                {availabilityHours}
               </span>
             </div>
           </div>
