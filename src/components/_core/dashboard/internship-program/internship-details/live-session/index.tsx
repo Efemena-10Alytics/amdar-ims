@@ -11,6 +11,7 @@ import {
   type LiveSessionDayCategory,
 } from "@/features/live-session/live-session.types";
 import { useGetLiveSessions } from "@/features/live-session/use-get-live-session";
+import { formatGmtPlus1Range } from "@/lib/timezone";
 
 const DAY_LABEL: Record<LiveSessionDayCategory, string> = {
   mon: "Mon",
@@ -66,44 +67,14 @@ function normalizeDay(category?: string | null): LiveSessionDayCategory | null {
   return null;
 }
 
-function formatClock(value: string): string {
-  const trimmed = value.trim();
-  if (!trimmed) return "";
-
-  if (/am|pm/i.test(trimmed)) {
-    return trimmed.replace(/\s+/g, " ");
-  }
-
-  const match = trimmed.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
-  if (match) {
-    let hours = Number(match[1]);
-    const minutes = match[2];
-    const suffix = hours >= 12 ? "pm" : "am";
-    hours = hours % 12 || 12;
-    return minutes === "00" ? `${hours}${suffix}` : `${hours}:${minutes}${suffix}`;
-  }
-
-  const date = new Date(trimmed);
-  if (!Number.isNaN(date.getTime())) {
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const suffix = hours >= 12 ? "pm" : "am";
-    const displayHour = hours % 12 || 12;
-    return minutes === 0
-      ? `${displayHour}${suffix}`
-      : `${displayHour}:${String(minutes).padStart(2, "0")}${suffix}`;
-  }
-
-  return trimmed;
-}
-
 function formatSessionSchedule(session: LiveSession): string {
   const day = normalizeDay(session.category);
   const dayLabel = day ? DAY_LABEL[day] : session.category;
-  const start = formatClock(session.startTime);
-  const end = formatClock(session.endTime);
+  const start = session.startTime?.trim() ?? "";
+  const end = session.endTime?.trim() ?? "";
   if (!start || !end) return dayLabel;
-  return `${dayLabel} ${start} - ${end} WAT`;
+  // TODO: remove hardcoded timezone after local-time QA
+  return `${dayLabel} ${formatGmtPlus1Range(start, end)}`;
 }
 
 function formatSessionType(sessionType?: string | null): string {
