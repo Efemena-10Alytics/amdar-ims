@@ -127,11 +127,7 @@ function StepProgress({ current }: { current: number }) {
                     : "border-[#CBD5E1] bg-white text-[#94A3B8]",
                 )}
               >
-                {isCompleted ? (
-                  <CheckCircle className="size-4" />
-                ) : (
-                  stepNum
-                )}
+                {isCompleted ? <CheckCircle className="size-4" /> : stepNum}
               </div>
               {/* Connector line */}
               {i < TOTAL_STEPS - 1 && (
@@ -278,9 +274,7 @@ function RadioOption({
           checked ? "border-[#156374]" : "border-[#CBD5E1]",
         )}
       >
-        {checked && (
-          <span className="size-2.5 rounded-full bg-[#156374]" />
-        )}
+        {checked && <span className="size-2.5 rounded-full bg-[#156374]" />}
       </span>
       <span className="text-sm text-[#092A31]">{value}</span>
     </label>
@@ -384,7 +378,9 @@ function FileUploadZone({
               <p className="truncate text-sm font-medium text-[#092A31]">
                 {file.name}
               </p>
-              <p className="text-xs text-[#64748B]">{formatFileSize(file.size)}</p>
+              <p className="text-xs text-[#64748B]">
+                {formatFileSize(file.size)}
+              </p>
             </div>
           </div>
           {!disabled && (
@@ -423,7 +419,7 @@ function FileUploadZone({
             dragOver && "border-[#156374] bg-[#F0F9FB]",
             error && "border-red-300 bg-red-50/50",
             !disabled &&
-            "cursor-pointer hover:border-[#156374] hover:bg-[#F0F9FB]",
+              "cursor-pointer hover:border-[#156374] hover:bg-[#F0F9FB]",
             disabled && "opacity-50 cursor-not-allowed",
           )}
         >
@@ -519,7 +515,7 @@ function SuccessScreen({
           className="border-[#156374] text-white bg-[#156374] hover:bg-[#0d4a56] hover:text-white"
         >
           <a
-            href="https://calendar.app.google/iVYemAEtUUMbkATf9"
+            href="https://calendly.com/employability-amdari/employability-meeting"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -586,7 +582,9 @@ function StepContent({
     value: CVReviewFormState[K],
   ) => void;
   errors: StepErrors;
-  config: { internships: string[]; cohorts: string[]; roles: string[] } | undefined;
+  config:
+    | { internships: string[]; cohorts: string[]; roles: string[] }
+    | undefined;
   isConfigLoading: boolean;
   isConfigError: boolean;
   isSubmitting: boolean;
@@ -752,8 +750,7 @@ function StepContent({
     return (
       <div className="flex flex-col gap-3">
         <p className="text-sm font-medium text-[#092A31]">
-          Which cohort are you in?{" "}
-          <span className="text-red-500">*</span>
+          Which cohort are you in? <span className="text-red-500">*</span>
         </p>
         {isConfigLoading ? (
           <div className="flex items-center gap-2 text-sm text-[#64748B]">
@@ -787,8 +784,7 @@ function StepContent({
       <div className="flex flex-col gap-6">
         <div>
           <p className="mb-3 text-sm font-medium text-[#092A31]">
-            What is your target role?{" "}
-            <span className="text-red-500">*</span>
+            What is your target role? <span className="text-red-500">*</span>
           </p>
           {isConfigLoading ? (
             <div className="flex items-center gap-2 text-sm text-[#64748B]">
@@ -920,7 +916,10 @@ export default function CVReviewForm() {
   const topRef = useRef<HTMLDivElement>(null);
 
   const setField = useCallback(
-    <K extends keyof CVReviewFormState>(key: K, value: CVReviewFormState[K]) => {
+    <K extends keyof CVReviewFormState>(
+      key: K,
+      value: CVReviewFormState[K],
+    ) => {
       setForm((prev) => ({ ...prev, [key]: value }));
       setStepErrors((prev) => {
         if (!(key in prev)) return prev;
