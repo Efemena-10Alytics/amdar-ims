@@ -91,8 +91,11 @@ async function encryptTokenForRedirect(token: string): Promise<string | null> {
 }
 
 function getFallbackRedirectUrl(): URL {
+  if (typeof window !== "undefined") {
+    return new URL("/dashboard", window.location.origin);
+  }
   const base = externalRedirect.replace(/\/+$/, "");
-  return new URL(`${base}/dashboard/internship`);
+  return new URL(`${base}/dashboard`);
 }
 
 function isSafePathname(pathname: string): boolean {

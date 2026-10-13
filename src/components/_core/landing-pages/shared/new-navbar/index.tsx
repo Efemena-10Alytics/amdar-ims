@@ -265,7 +265,7 @@ const Navbar = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Link
-                          href="/dashboard/internship-program"
+                          href="/dashboard"
                           className={cn(
                             "flex size-11 items-center justify-center overflow-hidden rounded-full transition-colors xl:size-12",
                             shouldUseScrolledNavStyles
