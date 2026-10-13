@@ -598,10 +598,10 @@ const PaymentDetails = ({
               I confirm that my information is correct.
             </span>
           </label>
-          <label className="flex cursor-pointer items-start gap-3 text-sm">
+          <div className="flex items-start gap-3 text-sm">
             <Checkbox
               checked={confirmTerms}
-              onCheckedChange={(v) => setConfirmTerms(v === true)}
+              onCheckedChange={() => setTermsDialogOpen(true)}
               className="mt-0.5"
             />
             <span className="text-[#4a5568]">
@@ -615,7 +615,7 @@ const PaymentDetails = ({
               </button>
               {" "} and I agree.
             </span>
-          </label>
+          </div>
         </div>
 
         {paymentError && (
