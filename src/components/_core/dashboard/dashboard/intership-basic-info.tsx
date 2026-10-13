@@ -45,13 +45,7 @@ function getDurationLabel(duration?: number | null) {
   return `${duration} ${duration === 1 ? "Month" : "Months"}`;
 }
 
-type InternshipBasicInfoProps = {
-  totalProjects?: number;
-};
-
-const InternshipBasicInfo = ({
-  totalProjects = 8,
-}: InternshipBasicInfoProps = {}) => {
+const InternshipBasicInfo = () => {
   const { data: enrollment } = useGetUserEnrollment();
 
   const cohortPeriod = useMemo(
@@ -63,6 +57,9 @@ const InternshipBasicInfo = ({
     () => getDurationLabel(enrollment?.cohort?.duration),
     [enrollment?.cohort?.duration],
   );
+
+  const totalProjects =
+    enrollment?.projectCount != null ? String(enrollment.projectCount) : "—";
 
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
@@ -78,7 +75,7 @@ const InternshipBasicInfo = ({
       />
       <StatCard
         label="Total Projects"
-        value={String(totalProjects)}
+        value={totalProjects}
         icon={<Pencil className="size-4" strokeWidth={2} />}
       />
     </div>
