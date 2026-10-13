@@ -27,7 +27,9 @@ export default function SignInContent() {
     const user = await login({ email, password }, undefined, true);
     if (!user) return;
 
-    const redirectUrl = await buildExternalAuthRedirectUrl(redirectParam);
+    const redirectUrl = await buildExternalAuthRedirectUrl(
+      redirectParam ?? "/dashboard",
+    );
     window.location.replace(redirectUrl);
   };
 

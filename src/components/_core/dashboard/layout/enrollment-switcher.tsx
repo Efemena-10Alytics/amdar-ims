@@ -23,7 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const INTERNSHIP_PROGRAM_PATH = "/dashboard/internship-program";
+const DASHBOARD_PATH = "/dashboard";
 
 function SwitcherDropdown({
   label,
@@ -135,9 +135,9 @@ export function EnrollmentSwitcher() {
     return null;
   }
 
-  const goToInternshipProgram = () => {
-    if (pathname !== INTERNSHIP_PROGRAM_PATH) {
-      router.push(INTERNSHIP_PROGRAM_PATH);
+  const goToDashboard = () => {
+    if (pathname !== DASHBOARD_PATH) {
+      router.push(DASHBOARD_PATH);
     }
   };
 
@@ -149,7 +149,7 @@ export function EnrollmentSwitcher() {
     if (!option) return;
 
     setSelection(toSelection(option));
-    goToInternshipProgram();
+    goToDashboard();
   };
 
   return (
@@ -177,7 +177,7 @@ export function EnrollmentSwitcher() {
           if (!next) return;
 
           setSelection(toSelection(next));
-          goToInternshipProgram();
+          goToDashboard();
         }}
       />
       <SwitcherDropdown
