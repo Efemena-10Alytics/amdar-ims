@@ -90,17 +90,6 @@ function formatHoursPerWeek(value?: string | null) {
   return `${trimmed} hours`;
 }
 
-function formatStatusLabel(status?: string | null) {
-  const value = status?.trim();
-  if (!value) return "Active";
-  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
-}
-
-function isActiveStatus(status?: string | null) {
-  const value = status?.trim().toLowerCase();
-  return !value || value === "active" || value === "enrolled";
-}
-
 function assessmentCaption(score: number | null) {
   if (score == null) return null;
   if (score >= 80) return "Excellent";
@@ -238,8 +227,6 @@ export default function ProfileContent() {
   const locationLabel = details?.location?.trim() || "—";
   const businessLabel = enrollment?.program?.company_name?.trim() || "—";
   const joinedLabel = formatJoinedDate(enrollment?.joined_at);
-  const statusLabel = formatStatusLabel(enrollment?.status);
-  const active = isActiveStatus(enrollment?.status);
 
   const metaItems = useMemo(
     () => [
@@ -310,7 +297,7 @@ export default function ProfileContent() {
 
       <section className="space-y-5">
         <div className="flex min-w-0 items-start gap-4">
-          <div className="relative shrink-0 pb-3">
+          <div className="relative shrink-0">
             <div className="flex size-16 items-center justify-center overflow-hidden rounded-full bg-[#156374] text-white sm:size-20">
               {avatarUrl ? (
                 <Image
@@ -327,23 +314,6 @@ export default function ProfileContent() {
                 </span>
               )}
             </div>
-            <span
-              className={cn(
-                "absolute -bottom-0.5 left-1/2 inline-flex -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-0.5 text-[11px] font-semibold",
-                active
-                  ? "bg-[#CFF6DA] text-[#1F7A4A]"
-                  : "bg-[#FEE2E2] text-[#B91C1C]",
-              )}
-            >
-              <span
-                className={cn(
-                  "size-1.5 rounded-full",
-                  active ? "bg-[#238A50]" : "bg-[#B91C1C]",
-                )}
-                aria-hidden
-              />
-              {statusLabel}
-            </span>
           </div>
 
           <div className="min-w-0 pt-1">

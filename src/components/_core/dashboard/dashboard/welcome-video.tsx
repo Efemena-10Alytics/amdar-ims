@@ -3,19 +3,19 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Play } from "lucide-react";
-import { getYoutubeThumbnail } from "@/components/_core/landing-pages/shared/youtube-video";
 import { VideoPlayerModal } from "@/components/_core/landing-pages/shared/video-player-modal";
+import { useGetPreDiagnostic } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 
 const DEFAULT_VIDEO_THUMBNAIL = "/images/pngs/video-thumbnail.jpeg";
-const PROGRAM_VIDEO_URL =
-  "https://www.youtube.com/watch?v=jY-j0xYXzpo&list=PLZNtzcTK9hBYzlV-VPg-JZjbRjl4PP52Z&index=12";
+const IMS_WORKS_FALLBACK_VIDEO = "https://vimeo.com/1123856639";
 
 const WelcomeVideo = () => {
   const [videoOpen, setVideoOpen] = useState(false);
-  const [thumbnailError, setThumbnailError] = useState(false);
+  const { data: preDiagnostic } = useGetPreDiagnostic();
 
-  const videoThumbnail =
-    getYoutubeThumbnail(PROGRAM_VIDEO_URL) || DEFAULT_VIDEO_THUMBNAIL;
+  const videoUrl =
+    preDiagnostic?.ims_readiness?.howTheImsWorks?.link?.trim() ||
+    IMS_WORKS_FALLBACK_VIDEO;
 
   return (
     <>
@@ -30,14 +30,13 @@ const WelcomeVideo = () => {
             setVideoOpen(true);
           }
         }}
-        aria-label="Play guide video"
+        aria-label="Play how the IMS works video"
       >
         <Image
-          src={thumbnailError ? DEFAULT_VIDEO_THUMBNAIL : videoThumbnail}
-          alt="Guide video thumbnail"
+          src={DEFAULT_VIDEO_THUMBNAIL}
+          alt="How the IMS works video thumbnail"
           fill
           className="object-cover"
-          onError={() => setThumbnailError(true)}
         />
         <div className="absolute inset-0 flex items-end bg-black/40 p-3">
           <div className="flex items-center gap-2">
@@ -52,8 +51,8 @@ const WelcomeVideo = () => {
       <VideoPlayerModal
         open={videoOpen}
         onOpenChange={setVideoOpen}
-        videoUrl={PROGRAM_VIDEO_URL}
-        title="Program video"
+        videoUrl={videoUrl}
+        title="How the IMS works"
       />
     </>
   );

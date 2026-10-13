@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { Pencil, Timer, Users } from "lucide-react";
-import { useGetNextCohort } from "@/features/internship/use-get-next-cohort";
+import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
 
 type StatCardProps = {
   label: string;
@@ -17,12 +17,21 @@ function StatCard({ label, value, icon }: StatCardProps) {
         {icon}
       </div>
       <p className="pr-12 text-sm text-[#64748B]">{label}</p>
-      <p className="mt-1 pr-12 text-lg font-semibold text-[#092A31] sm:text-xl">{value}</p>
+      <p className="mt-1 pr-12 text-lg font-semibold text-[#092A31] sm:text-xl">
+        {value}
+      </p>
     </div>
   );
 }
 
-function getCohortPeriodLabel(startDate: string | null | undefined) {
+function getCohortPeriodLabel(cohort?: {
+  month?: string | null;
+  start_date?: string | null;
+} | null) {
+  const monthName = cohort?.month?.trim();
+  if (monthName) return monthName;
+
+  const startDate = cohort?.start_date?.trim();
   if (!startDate) return "—";
 
   const date = new Date(`${startDate}T00:00:00`);
@@ -31,19 +40,28 @@ function getCohortPeriodLabel(startDate: string | null | undefined) {
   return date.toLocaleString("en-GB", { month: "long" });
 }
 
+function getDurationLabel(duration?: number | null) {
+  if (duration == null || duration <= 0) return "—";
+  return `${duration} ${duration === 1 ? "Month" : "Months"}`;
+}
+
 type InternshipBasicInfoProps = {
-  duration?: string;
   totalProjects?: number;
 };
 
 const InternshipBasicInfo = ({
-  duration = "4 Months",
   totalProjects = 8,
-}: InternshipBasicInfoProps) => {
-  const { data: startDate } = useGetNextCohort();
+}: InternshipBasicInfoProps = {}) => {
+  const { data: enrollment } = useGetUserEnrollment();
+
   const cohortPeriod = useMemo(
-    () => getCohortPeriodLabel(startDate ?? null),
-    [startDate],
+    () => getCohortPeriodLabel(enrollment?.cohort),
+    [enrollment?.cohort],
+  );
+
+  const duration = useMemo(
+    () => getDurationLabel(enrollment?.cohort?.duration),
+    [enrollment?.cohort?.duration],
   );
 
   return (
