@@ -62,7 +62,8 @@ export function TermsConditionDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="w-[92vw] max-w-4xl! gap-0 overflow-hidden rounded-lg border-0 p-0"
+        overlayClassName="z-[200]"
+        className="z-[200] w-[92vw] max-w-4xl! gap-0 overflow-hidden rounded-lg border-0 p-0"
       >
         <DialogHeader className="px-6 pt-6 pb-3">
           <DialogTitle className="font-clash-display text-2xl font-semibold text-[#092A31]">
