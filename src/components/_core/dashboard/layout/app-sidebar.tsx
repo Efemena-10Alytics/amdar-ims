@@ -15,6 +15,7 @@ import {
 import {
   BillingIcon,
   BlogIcon,
+  DashboardFilledIcon,
   InternshipProgramIcon,
   JobReadinessIcon,
   LearnIcon,
@@ -26,7 +27,7 @@ import { SidebarCollapseToggle } from "./sidebar-collapse-toggle";
 import { SidebarSupportFooter } from "./sidebar-footer";
 
 const navMain = [
-  // { title: "Dashboard", url: "/dashboard", icon: DashboardFilledIcon },
+  { title: "Dashboard", url: "/dashboard", icon: DashboardFilledIcon },
   { title: "Internship program", url: "/dashboard/internship-program", icon: InternshipProgramIcon },
   // { title: "Project vault", url: "/dashboard-projects/dashboard-project-paths/filter", icon: ProjectVaultIcon },
   // { title: "Interview prep", url: "/dashboard/portfolio", icon: InterviewPrepIcon },

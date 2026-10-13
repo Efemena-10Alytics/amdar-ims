@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { WHATSAPP_URL } from "@/components/_core/landing-pages/shared/whatsapp-widget";
 import { SidebarFooter as SidebarFooterSlot } from "@/components/ui/sidebar";
 
 const SUPPORT_AVATAR = "/images/svgs/illustration/Super Excited 3.svg";
+const SUPPORT_WHATSAPP_URL = "https://wa.me/447916690329";
 
 export function SidebarSupportFooter() {
   return (
@@ -38,7 +38,7 @@ export function SidebarSupportFooter() {
         </p>
 
         <a
-          href={WHATSAPP_URL}
+          href={SUPPORT_WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex h-11 w-full items-center justify-center rounded-full bg-[#FFF5D8] text-sm font-semibold text-[#5A431B] transition-colors hover:bg-[#FFE082]"
@@ -48,7 +48,7 @@ export function SidebarSupportFooter() {
       </div>
 
       <a
-        href={WHATSAPP_URL}
+        href={SUPPORT_WHATSAPP_URL}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Contact support"
