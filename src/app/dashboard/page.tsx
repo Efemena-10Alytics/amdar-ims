@@ -1,12 +1,9 @@
 "use client";
 
-import DashboardHeader from "@/components/_core/dashboard/dashboard/header";
 import DashboardWelcome from "@/components/_core/dashboard/dashboard/welcome";
 import WelcomeVideo from "@/components/_core/dashboard/dashboard/welcome-video";
-import InternshipHasStarted from "@/components/_core/dashboard/dashboard/internship-has-started";
 import InternshipHasNotStarted from "@/components/_core/dashboard/dashboard/internship-has-not-started";
-import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
-import { hasProgramStarted } from "@/components/_core/dashboard/dashboard/welcome/welcome-shared";
+import PageHeader from "@/components/_core/dashboard/dashboard/header";
 
 const DashboardPage = () => {
   // const { data: enrollment } = useGetUserEnrollment();
@@ -16,7 +13,7 @@ const DashboardPage = () => {
 
   return (
     <div className="space-y-6 px-4 py-6 lg:px-6">
-      <DashboardHeader />
+      <PageHeader />
 
       <div className="flex min-h-52 flex-col gap-4 xl:min-h-0 xl:flex-row xl:items-stretch">
         <div className="flex min-w-0 flex-1">

@@ -12,7 +12,7 @@ import {
 } from "@/features/blog/use-get-dashboard-blogs";
 import DashboardBlogCard, { type DashboardBlogCardData } from "./blog-card";
 import BlogComments, { ReactionPills } from "./comments";
-import { StageBadges } from "./stage-badges";
+import PageHeader from "../dashboard/header";
 
 // GET /blogs carries no like/dislike counts, so these two pills stay static
 // until an endpoint exists. `commentNo` below is real.
@@ -61,7 +61,7 @@ export default function DashboardBlogDetail({ slug }: { slug: string }) {
         >
           <ArrowLeft className="size-4" />
         </Link>
-        <StageBadges />
+        <PageHeader />
       </div>
 
       {isLoading ? (

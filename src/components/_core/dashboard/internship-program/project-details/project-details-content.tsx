@@ -20,6 +20,7 @@ import ProjectViews from "./project-view";
 // import LeaderBoard from "./leader-board";
 import ResourcesDetails from "./resources";
 import Todo from "./todo";
+import PageHeader from "@/components/_core/dashboard/dashboard/header";
 
 const PROJECT_TABS = [
   { id: "project-details", label: "Project details" },
@@ -144,23 +145,7 @@ export default function ProjectDetailsContent() {
             Back
           </Link>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#CFF6DA] py-1.5 pr-3 pl-1.5 text-sm font-semibold text-[#1F7A4A]">
-              <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[#238A50] text-white">
-                <FlagSvg />
-              </span>
-              {formatCareerStageLabel(project.careerStage)}
-            </span>
-            {project.duration ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#CFF6DA] px-3 py-2 text-sm font-semibold text-[#1F7A4A]">
-                <span
-                  className="size-1.5 rounded-full bg-[#238A50]"
-                  aria-hidden
-                />
-                {project.duration} weeks
-              </span>
-            ) : null}
-          </div>
+          <PageHeader />
         </div>
 
         <div className="flex items-center gap-2">
