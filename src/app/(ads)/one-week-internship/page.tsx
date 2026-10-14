@@ -21,19 +21,6 @@ const ZOHO_REFERRER = "one-week-internship";
 
 const OTHER = "Others";
 
-const WEEK_STRIP = [
-  { d: "Day 1", t: "Onboard & meet your team" },
-  { d: "Day 2–4", t: "Real project work" },
-  { d: "Day 5", t: "Ship it + certificate" },
-];
-
-const TRACKS_CHIPS = [
-  "Data Analytics",
-  "Data Science",
-  "Business Analysis",
-  "Project Management",
-  "Cybersecurity",
-];
 
 const TRACK_OPTIONS = [
   "Data Analytics",
@@ -233,9 +220,9 @@ const OneWeekInternshipPage = () => {
         <Image src="/logo-white.svg" width={140} height={20} alt="Amdari" />
         <a
           href="#apply"
-          className="rounded-full bg-[#FFE082] px-5 py-2.5 text-sm font-bold text-[#0C2730] transition-[background-color,transform] hover:scale-[1.02] hover:bg-[#FFD54F]"
+          className="rounded-lg border border-[#FFE082] px-4 py-2 text-sm font-semibold text-[#FFE082] transition-[background-color,color,transform] hover:scale-[1.02] hover:bg-[#FFE082] hover:text-[#0C2730]"
         >
-          Claim Your Week
+          Join the Free Internship
         </a>
       </nav>
 
@@ -243,47 +230,40 @@ const OneWeekInternshipPage = () => {
       <div className="mx-auto grid max-w-[1180px] grid-cols-1 items-start gap-14 px-[5%] pb-[70px] pt-[60px] lg:grid-cols-[1.05fr_0.95fr]">
         {/* LEFT */}
         <div>
-          <div className="mb-[22px] inline-flex items-center gap-2 rounded-full border border-[#156374]/60 bg-[#0C3640] px-3.5 py-[7px] text-[13px] font-semibold text-[#2B7F95]">
-            <span className="h-[7px] w-[7px] animate-[blink_1.6s_ease-in-out_infinite] rounded-full bg-[#FFE082]" />
-            Free · Spots close soon
+          <div className="mb-[22px] inline-flex items-center gap-2 rounded-full border border-[#FFE082] px-3.5 py-[6px] text-[11px] font-bold tracking-wider text-[#FFE082]">
+            FREE • ONE WEEK • PRACTICAL EXPERIENCE
           </div>
 
-          <h1 className="mb-[18px] text-[clamp(32px,4.2vw,50px)] font-black leading-[1.15] tracking-normal text-white">
-            Intern With a <em className="not-italic text-[#FFE082]">UK Company</em>.
-            Free. For One Week.
+          <h1 className="mb-[18px] text-[clamp(32px,4.5vw,52px)] font-black leading-[1.15] tracking-normal text-white">
+            Join a UK Internship <br />
+            for One Week. <span className="text-[#FFE082]">For Free.</span>
           </h1>
 
-          <p className="mb-[30px] max-w-[480px] text-[17px] leading-[1.6] text-[#C7D5D6]">
-            Real tasks. Real UK team. One deliverable for your CV — in 5
-            days, at zero cost.
+          <p className="mb-4 max-w-[500px] text-[16px] leading-[1.6] text-[#C7D5D6]">
+            Work on a practical project with a UK company, apply your skills to
+            a business task and experience how project work happens beyond the
+            classroom.
           </p>
 
-          {/* Week strip */}
-          <div className="mb-8 flex flex-wrap gap-2">
-            {WEEK_STRIP.map((day) => (
-              <div
-                key={day.d}
-                className="min-w-[88px] flex-1 rounded-[10px] border border-[#156374]/25 bg-[#0C3640] p-3 text-center"
-              >
-                <div className="text-[15px] font-bold text-[#FFE082]">{day.d}</div>
-                <div className="mt-[3px] text-[11px] leading-[1.3] text-[#C7D5D6]">
-                  {day.t}
-                </div>
-              </div>
-            ))}
-          </div>
+          <p className="mb-6 max-w-[500px] text-[15px] leading-[1.6] text-[#93B1B7]">
+            Hosted by Amdari, a platform helping people build practical work
+            experience through project-based internships.
+          </p>
 
-          {/* Track chips */}
-          <div className="flex flex-wrap gap-[9px]">
-            {TRACKS_CHIPS.map((chip) => (
-              <span
-                key={chip}
-                className="rounded-full border border-[#156374]/60 bg-[#0C3640] px-[13px] py-1.5 text-xs font-semibold text-[#2B7F95]"
-              >
-                {chip}
-              </span>
-            ))}
-          </div>
+          <ul className="space-y-3.5">
+            <li className="flex items-center gap-3 text-[15px] font-medium text-[#F2F7F7]">
+              <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#FFE082]" />
+              <span>Get hands-on with a practical project</span>
+            </li>
+            <li className="flex items-center gap-3 text-[15px] font-medium text-[#F2F7F7]">
+              <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#FFE082]" />
+              <span>Put your skills into practice</span>
+            </li>
+            <li className="flex items-center gap-3 text-[15px] font-medium text-[#F2F7F7]">
+              <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#FFE082]" />
+              <span>Experience working on a business task</span>
+            </li>
+          </ul>
         </div>
 
         {/* RIGHT — sticky form card */}
@@ -505,6 +485,45 @@ const OneWeekInternshipPage = () => {
                 Free · No credit card · Limited spots
               </p>
           </form>
+        </div>
+      </div>
+
+      {/* WHAT YOU'LL DO */}
+      <div className="mx-auto max-w-[1180px] px-[5%] pb-[70px] pt-4">
+        <h2 className="mb-8 text-[clamp(26px,3vw,36px)] font-black text-white">
+          What You&apos;ll Do During Your Free Week
+        </h2>
+
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+          <div className="rounded-[14px] border border-[#156374]/35 bg-[#0C3640]/50 p-6">
+            <div className="text-[22px] font-black text-[#FFE082]">01</div>
+            <h3 className="mt-3 text-[18px] font-bold text-white">
+              Understand the task
+            </h3>
+            <p className="mt-2 text-[14px] leading-[1.6] text-[#C7D5D6]">
+              Get familiar with a business problem and the project you&apos;ll work on.
+            </p>
+          </div>
+
+          <div className="rounded-[14px] border border-[#156374]/35 bg-[#0C3640]/50 p-6">
+            <div className="text-[22px] font-black text-[#FFE082]">02</div>
+            <h3 className="mt-3 text-[18px] font-bold text-white">
+              Apply your skills
+            </h3>
+            <p className="mt-2 text-[14px] leading-[1.6] text-[#C7D5D6]">
+              Use what you know to tackle practical project tasks.
+            </p>
+          </div>
+
+          <div className="rounded-[14px] border border-[#156374]/35 bg-[#0C3640]/50 p-6">
+            <div className="text-[22px] font-black text-[#FFE082]">03</div>
+            <h3 className="mt-3 text-[18px] font-bold text-white">
+              Learn by doing
+            </h3>
+            <p className="mt-2 text-[14px] leading-[1.6] text-[#C7D5D6]">
+              Build your understanding through hands-on participation.
+            </p>
+          </div>
         </div>
       </div>
 

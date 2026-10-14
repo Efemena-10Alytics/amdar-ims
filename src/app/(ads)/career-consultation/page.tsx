@@ -54,11 +54,6 @@ const HEARD_ABOUT_US_OPTIONS = [
   OTHER,
 ];
 
-const HERO_POINTS = [
-  "Get a personal roadmap for your track and visa status",
-  "Learn how to gain real UK work experience, fast",
-  "Understand exactly what UK hiring managers look for",
-];
 
 const inputCls =
   "w-full rounded-lg border border-[#156374]/50 bg-[#0F4652] px-3.5 py-[11px] text-[13.5px] text-[#F2F7F7] outline-none transition-colors placeholder:text-[#4A6A7A] focus:border-[#2B7F95] appearance-none";
@@ -224,12 +219,18 @@ const CareerConsultationPage = () => {
     <div className="min-h-screen bg-[#092A31] text-[#F2F7F7]">
       {/* NAV */}
       <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-[#156374]/22 bg-[#092A31]/85 px-[5%] py-4 backdrop-blur-[10px]">
-        <Image src="/logo-white.svg" width={140} height={20} alt="Amdari" />
+        <div className="flex items-center gap-3">
+          <Image src="/logo-white.svg" width={120} height={18} alt="Amdari" />
+          <div className="h-4 w-px bg-[#156374]/50" />
+          <span className="text-xs font-bold tracking-[0.2em] text-[#C7D5D6]">
+            UK JOB LAB
+          </span>
+        </div>
         <a
           href="#book"
-          className="rounded-full bg-[#FFE082] px-5 py-2.5 text-sm font-bold text-[#0C2730] transition-[background-color,transform] hover:scale-[1.02] hover:bg-[#FFD54F]"
+          className="rounded-lg border border-[#FFE082] px-4 py-2 text-sm font-semibold text-[#FFE082] transition-[background-color,color,transform] hover:scale-[1.02] hover:bg-[#FFE082] hover:text-[#0C2730]"
         >
-          Register Now
+          Save my seat
         </a>
       </nav>
 
@@ -237,35 +238,73 @@ const CareerConsultationPage = () => {
       <div className="mx-auto grid max-w-[1180px] grid-cols-1 items-start gap-14 px-[5%] pb-[70px] pt-[60px] lg:grid-cols-[1.05fr_0.95fr]">
         {/* LEFT */}
         <div>
-          <div className="mb-[22px] inline-flex items-center gap-2 rounded-full border border-[#156374]/60 bg-[#0C3640] px-3.5 py-[7px] text-[13px] font-semibold text-[#2B7F95]">
-            <span className="h-[7px] w-[7px] animate-[blink_1.6s_ease-in-out_infinite] rounded-full bg-[#FFE082]" />
-            Free consultation · Seats limited
+          <div className="mb-[22px] inline-flex items-center gap-2 rounded-full border border-[#FFE082] px-3.5 py-[6px] text-[11px] font-bold tracking-wider text-[#FFE082]">
+            FREE LIVE ONLINE SESSION
           </div>
 
-          <h1 className="mb-4 text-[clamp(30px,4vw,46px)] font-black leading-[1.15] tracking-normal text-white">
-            Talk to a UK Hiring Expert. Leave With a Plan to Get Hired in{" "}
-            <em className="not-italic text-[#FFE082]">4 Months</em>.
+          <h1 className="mb-4 text-[clamp(32px,4.5vw,50px)] font-black leading-[1.15] tracking-normal text-white">
+            Applying for UK Jobs but <br />
+            <span className="text-[#FFE082]">Not Getting Interviews?</span>
           </h1>
 
-          {/* Hero points */}
-          <ul className="flex flex-col gap-[11px]">
-            {HERO_POINTS.map((point) => (
-              <li key={point} className="flex items-start gap-[11px] text-[14.5px] text-[#C7D5D6]">
-                <span className="mt-0.5 flex h-[19px] w-[19px] shrink-0 items-center justify-center rounded-full bg-[#156374]">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
-                    <path
-                      d="M4 12l6 6L20 6"
-                      stroke="#092A31"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </span>
-                {point}
-              </li>
-            ))}
-          </ul>
+          <p className="mb-3 max-w-[500px] text-[17px] font-medium leading-[1.5] text-[#F2F7F7]">
+            Find out where your job search may be going wrong— and what to change
+            next.
+          </p>
+
+          <p className="mb-7 max-w-[500px] text-[15px] leading-[1.6] text-[#C7D5D6]">
+            Practical guidance on finding relevant opportunities, strengthening
+            your applications and showing employers what you can do.
+          </p>
+
+          <div className="flex flex-wrap items-center gap-6 text-[14px] text-[#C7D5D6]">
+            <div className="flex items-center gap-2">
+              <svg
+                className="h-4 w-4 text-[#FFE082]"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="3" y="4" width="18" height="12" rx="2" />
+                <line x1="2" y1="20" x2="22" y2="20" />
+              </svg>
+              <span>Live online</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <svg
+                className="h-4 w-4 text-[#FFE082]"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+              </svg>
+              <span>Practical examples</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <svg
+                className="h-4 w-4 text-[#FFE082]"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+              <span>Live Q&amp;A</span>
+            </div>
+          </div>
         </div>
 
         {/* RIGHT — sticky form card */}
@@ -274,10 +313,10 @@ const CareerConsultationPage = () => {
           className="w-full rounded-[18px] border border-[#156374]/45 bg-[#0C3640] p-7 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.6)] lg:sticky lg:top-24"
         >
           <h2 className="mb-1.5 text-[21px] font-bold text-white">
-            Register for Webinar
+            Save Your Free Seat
           </h2>
           <p className="mb-5 text-[13.5px] text-[#C7D5D6]">
-            Under a minute to reserve your slot.
+            Join the next UK Job Lab session.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-3">
@@ -479,14 +518,98 @@ const CareerConsultationPage = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="mt-1.5 w-full rounded-[10px] bg-[#FFE082] py-[15px] text-[15px] font-bold text-[#0C2730] transition-[background-color,transform] hover:scale-[1.01] hover:bg-[#FFD54F] disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-1.5 flex w-full items-center justify-center gap-2 rounded-[10px] bg-[#FFE082] py-[15px] text-[15px] font-bold text-[#0C2730] transition-[background-color,transform] hover:scale-[1.01] hover:bg-[#FFD54F] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isSubmitting ? "Registering…" : "Register Now"}
+                <span>{isSubmitting ? "Saving seat…" : "Save My Free Seat"}</span>
+                <span aria-hidden="true">&rarr;</span>
               </button>
               <p className="mt-3 text-center text-[11.5px] text-[#C7D5D6]">
-                Free · No credit card · Limited slots
+                Free to attend. Join online.
               </p>
           </form>
+        </div>
+      </div>
+
+      {/* GIVE YOUR JOB SEARCH A CLEARER DIRECTION */}
+      <div className="mx-auto max-w-[1180px] px-[5%] pb-[70px] pt-4">
+        <h2 className="mb-8 text-[clamp(26px,3vw,36px)] font-black text-white">
+          Give Your Job Search a Clearer Direction
+        </h2>
+
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+          <div className="flex items-start gap-4 rounded-[14px] border border-[#156374]/35 bg-[#0C3640]/50 p-6">
+            <svg
+              className="mt-0.5 h-7 w-7 shrink-0 text-[#FFE082]"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <div>
+              <h3 className="text-[17px] font-bold text-white">
+                Find the right opportunities
+              </h3>
+              <p className="mt-1.5 text-[14px] leading-[1.6] text-[#C7D5D6]">
+                Explore relevant job boards and employers.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4 rounded-[14px] border border-[#156374]/35 bg-[#0C3640]/50 p-6">
+            <svg
+              className="mt-0.5 h-7 w-7 shrink-0 text-[#FFE082]"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="4" y="2" width="16" height="20" rx="2" />
+              <line x1="8" y1="6" x2="16" y2="6" />
+              <line x1="8" y1="10" x2="16" y2="10" />
+              <line x1="8" y1="14" x2="16" y2="14" />
+              <line x1="8" y1="18" x2="12" y2="18" />
+            </svg>
+            <div>
+              <h3 className="text-[17px] font-bold text-white">
+                Strengthen your applications
+              </h3>
+              <p className="mt-1.5 text-[14px] leading-[1.6] text-[#C7D5D6]">
+                Present your skills and experience clearly.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4 rounded-[14px] border border-[#156374]/35 bg-[#0C3640]/50 p-6">
+            <svg
+              className="mt-0.5 h-7 w-7 shrink-0 text-[#FFE082]"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+            <div>
+              <h3 className="text-[17px] font-bold text-white">
+                Prepare for interviews
+              </h3>
+              <p className="mt-1.5 text-[14px] leading-[1.6] text-[#C7D5D6]">
+                Show employers the value you can bring.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -541,7 +664,7 @@ const CareerConsultationPage = () => {
             href="#book"
             className="whitespace-nowrap rounded-[10px] bg-[#FFE082] px-7 py-4 text-[15px] font-bold text-[#0C2730] transition-[background-color,transform] hover:scale-[1.02] hover:bg-[#FFD54F]"
           >
-            Register Now
+            Save My Free Seat
           </a>
         </div>
       </div>
