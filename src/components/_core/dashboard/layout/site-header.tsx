@@ -27,6 +27,7 @@ import { DefermentDialog } from "./deferment-dialog";
 const pathToTitle: Record<string, string> = {
   "/dashboard": "Dashboard",
   "/dashboard/internship-program": "Internship Program",
+  "/dashboard/internship-program/announcement": "Announcement",
   "/dashboard/internship-program/profile": "Profile",
   "/dashboard/portfolio": "Portfolio",
   "/dashboard/billing": "Billings",
