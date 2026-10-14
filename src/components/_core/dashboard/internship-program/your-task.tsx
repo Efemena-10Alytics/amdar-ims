@@ -87,7 +87,7 @@ const YourTask = ({
       {/* Current task */}
       <div className="rounded-t-2xl border border-[#F3D5A3] bg-[#F9E7C7] px-5 py-5 sm:px-6">
         <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 w-2/3">
             <div className="flex items-start gap-3">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img

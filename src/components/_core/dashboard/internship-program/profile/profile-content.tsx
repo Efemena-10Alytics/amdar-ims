@@ -26,11 +26,6 @@ import {
 } from "@/features/interns-project/use-get-internship-details";
 import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
 import { cn } from "@/lib/utils";
-import {
-  resolveUserEmail,
-  resolveUserFullName,
-  unwrapUser,
-} from "@/lib/user-profile";
 import { formatCohortLabel } from "@/types/internship-program/user-program";
 
 function FlagIcon() {
@@ -89,6 +84,15 @@ function formatHoursPerWeek(value?: string | null) {
   if (/hour/i.test(trimmed)) return trimmed;
   return `${trimmed} hours`;
 }
+
+// const ACTIVE_WINDOW_MS = 5 * 60 * 1000;
+//
+// function isActiveFromLastSeen(lastSeen?: string | null): boolean {
+//   if (!lastSeen?.trim()) return false;
+//   const seenAt = new Date(lastSeen).getTime();
+//   if (Number.isNaN(seenAt)) return false;
+//   return Date.now() - seenAt < ACTIVE_WINDOW_MS;
+// }
 
 function assessmentCaption(score: number | null) {
   if (score == null) return null;
@@ -200,10 +204,13 @@ export default function ProfileContent() {
   const detailsQuery = useGetInternshipDetails();
   const currentProjectQuery = useGetCurrentProject();
 
-  const userRecord = unwrapUser(userInfo ?? null);
-  const displayName = resolveUserFullName(userRecord) || "Intern";
-  const email = resolveUserEmail(userRecord);
-  const avatarUrl = getAvatarUrlFromUser(userInfo ?? null);
+  const displayName =
+    [userInfo?.firstName, userInfo?.lastName]
+      .filter((part): part is string => Boolean(part?.trim()))
+      .join(" ")
+      .trim() || "Intern";
+  const email = userInfo?.email?.trim() ?? "";
+  const avatarUrl = getAvatarUrlFromUser(userInfo);
 
   const enrollment = enrollmentQuery.data;
   const details = detailsQuery.data;
@@ -227,6 +234,10 @@ export default function ProfileContent() {
   const locationLabel = details?.location?.trim() || "—";
   const businessLabel = enrollment?.program?.company_name?.trim() || "—";
   const joinedLabel = formatJoinedDate(enrollment?.joined_at);
+  // const active = isActiveFromLastSeen(userInfo?.last_seen);
+  // const statusLabel = active ? "Active" : "Inactive";
+  const active = true;
+  const statusLabel = "Active";
 
   const metaItems = useMemo(
     () => [
@@ -277,13 +288,81 @@ export default function ProfileContent() {
                 aria-hidden
               />
               {currentProjectQuery.isLoading ||
-              currentWeek == null ||
-              !totalWeeks
+                currentWeek == null ||
+                !totalWeeks
                 ? "—"
                 : `Week ${currentWeek} of ${totalWeeks}`}
             </span>
           </div>
+        </div>
+      </div>
 
+      <section className="space-y-5 bg-[#F8FAFC] rounded-2xl p-4 sm:p-5">
+        <div className="flex justify-between">
+          <div className="flex min-w-0 items-start gap-4">
+            <div className="relative shrink-0 pb-3">
+              <div className="flex size-16 items-center justify-center overflow-hidden rounded-full bg-[#156374] text-white sm:size-20">
+                {avatarUrl ? (
+                  <Image
+                    src={avatarUrl}
+                    alt={displayName}
+                    width={80}
+                    height={80}
+                    className="size-full object-cover"
+                    unoptimized={avatarUrl.startsWith("http")}
+                  />
+                ) : (
+                  <span className="scale-150 text-white [&_path]:fill-white">
+                    <UserAvatar />
+                  </span>
+                )}
+              </div>
+              <span
+                className={cn(
+                  "absolute -bottom-0.5 left-1/2 inline-flex -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-0.5 text-[11px] font-semibold",
+                  active
+                    ? "bg-[#CFF6DA] text-[#1F7A4A]"
+                    : "bg-[#FEE2E2] text-[#B91C1C]",
+                  active
+                    ? "bg-[#CFF6DA] text-[#1F7A4A]"
+                    : "bg-[#FEE2E2] text-[#B91C1C]",
+                )}
+              >
+                <span
+                  className={cn(
+                    "size-1.5 rounded-full",
+                    // active ? "bg-[#238A50]" : "bg-[#B91C1C]",
+                    active ? "bg-[#238A50]" : "bg-[#238A50]",
+                  )}
+                  aria-hidden
+                />
+                {/* {statusLabel} */}
+                Active
+              </span>
+            </div>
+            <div className="min-w-0 pt-1">
+              <h1 className="truncate text-xl font-semibold text-[#092A31] sm:text-2xl">
+                {displayName}
+              </h1>
+              {email ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    void handleCopyEmail();
+                  }}
+                  className="mt-1 inline-flex max-w-full items-center gap-1.5 text-sm text-[#64748B] transition-colors hover:text-[#156374]"
+                  aria-label="Copy email"
+                >
+                  <span className="truncate">{email}</span>
+                  {copied ? (
+                    <Check className="size-3.5 shrink-0 text-[#1F7A4A]" />
+                  ) : (
+                    <Copy className="size-3.5 shrink-0 text-[#156374]" />
+                  )}
+                </button>
+              ) : null}
+            </div>
+          </div>
           <button
             type="button"
             onClick={() => setDeferOpen(true)}
@@ -293,54 +372,8 @@ export default function ProfileContent() {
             Defer internship
           </button>
         </div>
-      </div>
 
-      <section className="space-y-5">
-        <div className="flex min-w-0 items-start gap-4">
-          <div className="relative shrink-0">
-            <div className="flex size-16 items-center justify-center overflow-hidden rounded-full bg-[#156374] text-white sm:size-20">
-              {avatarUrl ? (
-                <Image
-                  src={avatarUrl}
-                  alt={displayName}
-                  width={80}
-                  height={80}
-                  className="size-full object-cover"
-                  unoptimized={avatarUrl.startsWith("http")}
-                />
-              ) : (
-                <span className="scale-150 text-white [&_path]:fill-white">
-                  <UserAvatar />
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div className="min-w-0 pt-1">
-            <h1 className="truncate text-xl font-semibold text-[#092A31] sm:text-2xl">
-              {displayName}
-            </h1>
-            {email ? (
-              <button
-                type="button"
-                onClick={() => {
-                  void handleCopyEmail();
-                }}
-                className="mt-1 inline-flex max-w-full items-center gap-1.5 text-sm text-[#64748B] transition-colors hover:text-[#156374]"
-                aria-label="Copy email"
-              >
-                <span className="truncate">{email}</span>
-                {copied ? (
-                  <Check className="size-3.5 shrink-0 text-[#1F7A4A]" />
-                ) : (
-                  <Copy className="size-3.5 shrink-0 text-[#156374]" />
-                )}
-              </button>
-            ) : null}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-y-4 border-y border-[#EEF2F6] py-4 sm:grid-cols-3 lg:grid-cols-5 lg:gap-0 lg:divide-x lg:divide-[#EEF2F6]">
+        <div className="grid grid-cols-2 gap-y-4 py-4 sm:grid-cols-3 lg:grid-cols-5 lg:gap-0 lg:divide-x lg:divide-[#EEF2F6]">
           {metaItems.map((item) => (
             <MetaCell key={item.label} label={item.label} value={item.value} />
           ))}
