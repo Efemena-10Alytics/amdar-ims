@@ -4,6 +4,7 @@ import { getUserId } from "@/lib/get-user-id";
 import { imageUrl } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
 import type { AuthUser } from "@/store/auth-store";
+import type { UserInfo, UserInfoApiResponse } from "@/types/user/user-info";
 
 const AVATAR_KEYS = [
   "avatar",
@@ -16,7 +17,7 @@ const AVATAR_KEYS = [
 
 /** Returns a displayable avatar URL from user info, or null if none. */
 export function getAvatarUrlFromUser(
-  user: AuthUser | null | undefined
+  user: UserInfo | AuthUser | null | undefined,
 ): string | null {
   if (!user || typeof user !== "object") return null;
   const u = user as Record<string, unknown>;
@@ -32,8 +33,15 @@ export function getAvatarUrlFromUser(
   return null;
 }
 
-const USER_INFO_QUERY_KEY = (userId: string | number) =>
+export const USER_INFO_QUERY_KEY = (userId: string | number) =>
   ["user-info", String(userId)] as const;
+
+export async function fetchUserInfo(userId: string | number): Promise<UserInfo> {
+  const { data } = await axiosInstance.get<UserInfoApiResponse>(
+    `get-user-info/${userId}`,
+  );
+  return data.data;
+}
 
 export function useGetUserInfo() {
   const user = useAuthStore((s) => s.user);
@@ -41,12 +49,7 @@ export function useGetUserInfo() {
 
   return useQuery({
     queryKey: USER_INFO_QUERY_KEY(userId ?? ""),
-    queryFn: async (): Promise<AuthUser> => {
-      const { data } = await axiosInstance.get<{ data: AuthUser }>(
-        `get-user-info/${userId}`,
-      );
-      return data.data;
-    },
+    queryFn: () => fetchUserInfo(userId!),
     enabled: !!apiBaseURL && userId != null && userId !== "",
   });
 }

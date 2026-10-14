@@ -18,7 +18,7 @@ import {
   useGetDashboardBlogs,
 } from "@/features/blog/use-get-dashboard-blogs";
 import DashboardBlogCard, { type DashboardBlogCardData } from "./blog-card";
-import { StageBadges } from "./stage-badges";
+import PageHeader from "../dashboard/header";
 
 // Order the filter chips the way the design lays them out; anything the hook
 // adds later still renders, just after these.
@@ -126,10 +126,7 @@ export default function DashboardBlogContent() {
   return (
     <div ref={sectionRef} className="flex flex-1 flex-col gap-6 px-4 py-6 lg:px-6">
       {/* Heading + stage badges */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-clash-display text-2xl font-semibold text-[#092A31]">Blog</h1>
-        <StageBadges />
-      </div>
+      <PageHeader />
 
       {/* Category filters — one scrollable row rather than wrapping on narrow screens */}
       <div className="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1">

@@ -6,6 +6,7 @@ import { PencilIcon } from "../svg";
 import { formatCareerStageLabel } from "@/components/_core/dashboard/internship-program/project-details/project-content";
 import { useGetCurrentProject } from "@/features/interns-project/use-get-current-project";
 import { useIsSpecialistPreview } from "@/features/internship/use-is-specialist-preview";
+import PageHeader from "../dashboard/header";
 
 /**
  * These three cards count one intern's completion. A specialist servicing the
@@ -106,29 +107,7 @@ const InternshipProgramOverview = () => {
 
   return (
     <section className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div></div>
-        {/* <button
-          type="button"
-          className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#D7EEF4] px-4 py-2.5 text-sm font-semibold text-[#156374] transition hover:bg-[#C8E6EE]"
-        >
-          <Volume2 className="size-4 shrink-0" strokeWidth={2.25} aria-hidden />
-          Announcement
-        </button> */}
-
-        <div className="inline-flex items-stretch overflow-hidden rounded-full bg-[#CFF6DA] text-sm font-semibold text-[#1F7A4A]">
-          <span className="inline-flex items-center gap-2 py-2 pr-3 pl-1.5">
-            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[#238A50] text-white">
-              <FlagIcon />
-            </span>
-            {isLoading ? "Loading..." : stageLabel}
-          </span>
-          <span className="inline-flex items-center gap-1.5 border-l border-[#B8E6C6] px-3 py-2">
-            <span className="size-1.5 shrink-0 rounded-full bg-[#238A50]" aria-hidden />
-            {isLoading ? "—" : `Week ${currentWeek} of ${totalWeeks}`}
-          </span>
-        </div>
-      </div>
+      <PageHeader />
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
