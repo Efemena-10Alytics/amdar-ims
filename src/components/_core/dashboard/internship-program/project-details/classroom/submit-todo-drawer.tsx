@@ -9,6 +9,7 @@ import {
   SheetContent,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import { formatCareerStageLabel } from "@/components/_core/dashboard/internship-program/project-details/project-content";
 import type {
   InternProjectTodoSolutionFormat,
@@ -198,6 +199,7 @@ export default function SubmitTodoDrawer({
   const [textSolution, setTextSolution] = useState("");
   const [urlSolution, setUrlSolution] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   // Keep submission warm so edit opens already prefilled.
   const {
@@ -502,6 +504,7 @@ export default function SubmitTodoDrawer({
           typeId,
           payload: { items },
         });
+        setSuccessMessage("Solution updated successfully.");
       } else {
         await submitTodo({
           projectId,
@@ -509,9 +512,11 @@ export default function SubmitTodoDrawer({
           typeId,
           payload: { items },
         });
+        setSuccessMessage("Solution submitted successfully.");
       }
       resetSolution();
       onOpenChange(false);
+      window.setTimeout(() => setSuccessMessage(""), 3500);
     } catch {
       // errorMessage is already set by the hook
     }
@@ -527,7 +532,15 @@ export default function SubmitTodoDrawer({
     submitErrorMessage || editErrorMessage || deleteErrorMessage;
 
   return (
-    <Sheet open={open} onOpenChange={handleOpenChange}>
+    <>
+      {successMessage ? (
+        <InfoToastBanner
+          message={successMessage}
+          onDismiss={() => setSuccessMessage("")}
+        />
+      ) : null}
+
+      <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent
         side="right"
         showCloseButton={false}
@@ -787,5 +800,6 @@ export default function SubmitTodoDrawer({
         </div>
       </SheetContent>
     </Sheet>
+    </>
   );
 }
