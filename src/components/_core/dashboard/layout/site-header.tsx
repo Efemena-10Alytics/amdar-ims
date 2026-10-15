@@ -84,7 +84,7 @@ export function SiteHeader() {
   const email = getUserEmail(userInfo);
 
   return (
-    <header className="grid h-22 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 rounded-b-2xl bg-white px-4 shadow-sm lg:px-6">
+    <header className="sticky top-0 z-30 grid h-22 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 rounded-b-2xl bg-white px-4 shadow-sm lg:px-6">
       <div className="flex min-w-0 items-center gap-3">
         <SidebarTrigger
           className="lg:hidden"

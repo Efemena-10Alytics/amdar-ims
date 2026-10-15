@@ -22,6 +22,7 @@ import {
   PortfolioIcon,
 } from "../svg";
 // import { ReferralsSidebarIcon } from "../referrals/icons";
+import { cn } from "@/lib/utils";
 import { NavMain } from "./nav-main";
 import { SidebarCollapseToggle } from "./sidebar-collapse-toggle";
 import { SidebarSupportFooter } from "./sidebar-footer";
@@ -40,9 +41,12 @@ const navMain = [
   // { title: "Referrals", url: "/dashboard/referrals", icon: ReferralsSidebarIcon },
 ];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({
+  className,
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" className={cn("z-40", className)} {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>

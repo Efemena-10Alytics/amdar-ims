@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Timer, Volume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PencilIcon } from "../svg";
+import { useGetAnnouncements } from "@/features/announcement/use-get-announcement";
 import { useGetCurrentProject } from "@/features/interns-project/use-get-current-project";
 import { useIsSpecialistPreview } from "@/features/internship/use-is-specialist-preview";
 import PageHeader from "../dashboard/header";
@@ -83,16 +84,26 @@ const InternshipProgramOverview = () => {
   const totalStages = current?.stagesTotal ?? 0;
   const isLoading = currentProjectQuery.isLoading;
   const { isPreview } = useIsSpecialistPreview();
+  const { newer } = useGetAnnouncements();
+  const newerCount = newer.length;
 
   return (
     <section className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/dashboard/internship-program/announcement"
-          className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#D7EEF4] px-4 py-2.5 text-sm font-semibold text-[#156374] transition hover:bg-[#C8E6EE]"
+          className="relative inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#D7EEF4] px-4 py-2.5 text-sm font-semibold text-[#156374] transition hover:bg-[#C8E6EE]"
         >
           <Volume2 className="size-4 shrink-0" strokeWidth={2.25} aria-hidden />
           Announcement
+          {newerCount > 0 ? (
+            <span
+              aria-label={`${newerCount} new announcement${newerCount === 1 ? "" : "s"}`}
+              className="flex min-w-5 items-center justify-center rounded-full bg-[#EF4444] p-1.5 text-[10px] font-bold leading-none text-white"
+            >
+              {newerCount > 99 ? "99+" : newerCount}
+            </span>
+          ) : null}
         </Link>
 
         <PageHeader />

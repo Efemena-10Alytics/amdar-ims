@@ -1,46 +1,48 @@
 "use client";
 
 import Link from "next/link";
-import { useGetCurrentProject } from "@/features/interns-project/use-get-current-project";
+import { useEffect, useRef } from "react";
+import type { Announcement } from "@/features/announcement/announcement.types";
+import { useGetAnnouncements } from "@/features/announcement/use-get-announcement";
+import { useMarkAllAnnouncementsAsRead } from "@/features/announcement/use-mark-all-as-read";
 import { AnnouncementLinkIcon, AnnouncementSoundIcon, BackArrowIcon } from "./icons";
 import PageHeader from "@/components/_core/dashboard/dashboard/header";
 
-type Announcement = {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  /** Rendered as a link only when the announcement points somewhere. */
-  href?: string;
-};
+function getAnnouncementHref(announcement: Announcement) {
+  return announcement.url?.trim() || announcement.fileUrl?.trim() || undefined;
+}
 
-/**
- * Placeholder feed — there is no announcements endpoint yet. Swap this for the
- * API when one exists; the list below is the only thing that needs replacing.
- */
-const ANNOUNCEMENTS: Announcement[] = Array.from({ length: 8 }, (_, index) => ({
-  id: String(index + 1),
-  title: "A new video has been uploaded",
-  description: "How to speak with confident",
-  date: "Jan 12, 2026",
-}));
-
-
+function formatAnnouncementDate(value?: string | null) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
 
 function AnnouncementRow({ announcement }: { announcement: Announcement }) {
+  const href = getAnnouncementHref(announcement);
+
   const content = (
     <>
       <AnnouncementSoundIcon />
 
       <div className="min-w-0 flex-1">
-        <p className="font-sora text-base font-semibold text-[#092A31]">{announcement.title}</p>
-        <p className="mt-0.5 font-sora text-base text-[#64748B]">{announcement.description}</p>
+        <p className="font-sora text-base font-semibold text-[#092A31]">
+          {announcement.title}
+        </p>
+        <p className="mt-0.5 font-sora text-base text-[#64748B]">
+          {announcement.message}
+        </p>
       </div>
 
       <div className="flex shrink-0 flex-col items-end justify-between gap-3 self-stretch">
         <AnnouncementLinkIcon />
         <span className="font-sora text-sm whitespace-nowrap text-[#64748B]">
-          {announcement.date}
+          {formatAnnouncementDate(announcement.createdAt)}
         </span>
       </div>
     </>
@@ -49,11 +51,16 @@ function AnnouncementRow({ announcement }: { announcement: Announcement }) {
   const className =
     "flex items-center gap-4 rounded-2xl bg-[#F8FAFC] p-4 sm:gap-5 sm:px-5";
 
-  if (announcement.href) {
+  if (href) {
     return (
-      <Link href={announcement.href} className={`${className} transition-colors hover:bg-[#EEF3F6]`}>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`${className} transition-colors hover:bg-[#EEF3F6]`}
+      >
         {content}
-      </Link>
+      </a>
     );
   }
 
@@ -61,7 +68,23 @@ function AnnouncementRow({ announcement }: { announcement: Announcement }) {
 }
 
 export default function AnnouncementView() {
-  
+  const { newer, older, isLoading, isError, errorMessage } =
+    useGetAnnouncements();
+  const { markAllAsRead } = useMarkAllAnnouncementsAsRead();
+  const hasMarkedReadRef = useRef(false);
+  const announcements = [...newer, ...older];
+
+  useEffect(() => {
+    if (isLoading || isError || hasMarkedReadRef.current) return;
+    if (newer.length === 0) return;
+
+    hasMarkedReadRef.current = true;
+    void markAllAsRead().catch(() => {
+      // Allow a retry if the request fails.
+      hasMarkedReadRef.current = false;
+    });
+  }, [isLoading, isError, newer.length, markAllAsRead]);
+
   return (
     <div className="min-w-0 space-y-6 px-4 py-6 lg:px-6">
       {/* Back + heading, stage badges */}
@@ -83,12 +106,21 @@ export default function AnnouncementView() {
       </div>
 
       {/* Feed */}
-      {ANNOUNCEMENTS.length === 0 ? (
+      {isLoading ? (
+        <p className="font-sora text-sm text-[#7D8F98]">Loading announcements…</p>
+      ) : isError ? (
+        <p className="font-sora text-sm text-[#B91C1C]">
+          {errorMessage || "Failed to load announcements."}
+        </p>
+      ) : announcements.length === 0 ? (
         <p className="font-sora text-sm text-[#7D8F98]">No announcements yet.</p>
       ) : (
         <div className="space-y-3">
-          {ANNOUNCEMENTS.map((announcement) => (
-            <AnnouncementRow key={announcement.id} announcement={announcement} />
+          {announcements.map((announcement) => (
+            <AnnouncementRow
+              key={announcement.id}
+              announcement={announcement}
+            />
           ))}
         </div>
       )}
