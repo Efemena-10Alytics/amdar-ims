@@ -3,9 +3,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import confetti from "canvas-confetti";
-import { ArrowUpRightIcon, CircleIcon } from "lucide-react";
+import { ArrowUpRightIcon, CircleIcon, Loader2 } from "lucide-react";
 import { useGetWeeklySurveyQuestions } from "@/features/weekly-survey/use-get-weekly-survey-questions";
 import { WEEKLY_SURVEY_STATUS_QUERY_KEY } from "@/features/weekly-survey/use-get-weekly-survey-status";
+import { useGetWeeklySurveyCheckLastWeek } from "@/features/weekly-survey/use-get-weekly-survey-check-last-week";
 import {
   useWeeklySurveyEligibility,
   type WeeklySurveyPhase,
@@ -14,6 +15,11 @@ import {
   getWeeklySurveySubmitErrorMessage,
   submitWeeklySurvey,
 } from "@/features/weekly-survey/submit-weekly-survey";
+import {
+  getWeeklySurveySkipErrorMessage,
+  skipWeeklySurvey,
+} from "@/features/weekly-survey/skip-weekly-survey";
+
 import {
   buildSubmitAnswers,
   followUpRequired,
@@ -422,6 +428,8 @@ export default function WeeklySurveyModal() {
   const [answers, setAnswers] = useState<WeeklySurveyAnswers>({});
   const [flowComplete, setFlowComplete] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [skipError, setSkipError] = useState<string | null>(null);
+  const [isCheckingLastWeek, setIsCheckingLastWeek] = useState(false);
   const [showSectionFieldErrors, setShowSectionFieldErrors] = useState(false);
 
   const {
@@ -430,6 +438,12 @@ export default function WeeklySurveyModal() {
     internshipCourseId,
     questionsEnabled,
   } = useWeeklySurveyEligibility({ phase, flowComplete });
+
+  const checkLastWeekQuery = useGetWeeklySurveyCheckLastWeek({
+    cohortId,
+    internshipCourseId,
+    enabled: shouldRenderOverlay,
+  });
 
   const questionsQuery = useGetWeeklySurveyQuestions(questionsEnabled);
 
@@ -521,7 +535,10 @@ export default function WeeklySurveyModal() {
           next = setByPath(next, "section_5.lms_issue_description", undefined);
         }
       }
-      if (dottedKey === "section_5.positive_change_experience" && value === "yes") {
+      if (
+        dottedKey === "section_5.positive_change_experience" &&
+        value === "yes"
+      ) {
         next = setByPath(next, "section_5.no_change_description", undefined);
       }
       return next;
@@ -550,6 +567,72 @@ export default function WeeklySurveyModal() {
       }
     },
   });
+
+  const skipMutation = useMutation({
+    mutationFn: skipWeeklySurvey,
+    onSuccess: () => {
+      invalidateStatus();
+      setPhase("success");
+    },
+    onError: (err: unknown) => {
+      const { message, isAlreadySubmitted } =
+        getWeeklySurveySkipErrorMessage(err);
+      setSkipError(message);
+      if (isAlreadySubmitted) {
+        setFlowComplete(true);
+        invalidateStatus();
+      }
+    },
+  });
+
+  const handleStartSurvey = async () => {
+    setShowSectionFieldErrors(false);
+    setSubmitError(null);
+    setSkipError(null);
+
+    if (!checkLastWeekQuery.isLoading && !checkLastWeekQuery.isFetching) {
+      if (checkLastWeekQuery.data?.submitted) {
+        setPhase("check_last_week");
+        return;
+      }
+      setPhase("questions");
+      setSectionIndex(0);
+      return;
+    }
+
+    setIsCheckingLastWeek(true);
+    try {
+      const res = await checkLastWeekQuery.refetch();
+      if (res.data?.submitted) {
+        setPhase("check_last_week");
+      } else {
+        setPhase("questions");
+        setSectionIndex(0);
+      }
+    } catch {
+      setPhase("questions");
+      setSectionIndex(0);
+    } finally {
+      setIsCheckingLastWeek(false);
+    }
+  };
+
+  const handleSkipThisWeek = () => {
+    setSkipError(null);
+    if (cohortId == null || internshipCourseId == null) return;
+    skipMutation.mutate({
+      cohort_id: cohortId,
+      internship_course_id: internshipCourseId,
+    });
+  };
+
+  const handleFillItIn = () => {
+    setShowSectionFieldErrors(false);
+    setSubmitError(null);
+    setSkipError(null);
+    setPhase("questions");
+    setSectionIndex(0);
+  };
 
   const handleSubmit = () => {
     setSubmitError(null);
@@ -583,8 +666,10 @@ export default function WeeklySurveyModal() {
 
   const handleBack = () => {
     setSubmitError(null);
+    setSkipError(null);
     setShowSectionFieldErrors(false);
     if (clampedSectionIndex > 0) setSectionIndex(clampedSectionIndex - 1);
+    else if (checkLastWeekQuery.data?.submitted) setPhase("check_last_week");
     else setPhase("intro");
   };
 
@@ -604,7 +689,11 @@ export default function WeeklySurveyModal() {
         className="fixed inset-0 z-100 flex h-screen w-full items-center justify-center bg-[#0B0D0F]/85 font-sora"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="weekly-survey-title"
+        aria-labelledby={
+          phase === "check_last_week"
+            ? "weekly-survey-check-last-week-title"
+            : "weekly-survey-title"
+        }
         onClick={(e) => e.stopPropagation()}
       >
         <div
@@ -668,18 +757,79 @@ export default function WeeklySurveyModal() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => {
-                    setShowSectionFieldErrors(false);
-                    setPhase("questions");
-                    setSectionIndex(0);
-                  }}
-                  className="flex h-14 w-full items-center justify-center gap-4 rounded-[40px] bg-[#156374] text-lg text-white transition duration-300 hover:opacity-95"
+                  disabled={isCheckingLastWeek}
+                  onClick={handleStartSurvey}
+                  className="flex h-14 w-full items-center justify-center gap-4 rounded-[40px] bg-[#156374] text-lg text-white transition duration-300 hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-75"
                 >
-                  Start Survey
-                  <span className="flex size-6 items-center justify-center rounded-full bg-[#FFE082]">
-                    <ArrowUpRightIcon className="size-4 text-[#156374]" />
-                  </span>
+                  {isCheckingLastWeek ? (
+                    <>
+                      <Loader2 className="size-5 animate-spin text-white" />
+                      Checking…
+                    </>
+                  ) : (
+                    <>
+                      Start Survey
+                      <span className="flex size-6 items-center justify-center rounded-full bg-[#FFE082]">
+                        <ArrowUpRightIcon className="size-4 text-[#156374]" />
+                      </span>
+                    </>
+                  )}
                 </button>
+              </div>
+            </div>
+          )}
+
+          {phase === "check_last_week" && (
+            <div className="max-h-[min(85dvh,820px)] min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
+              <div className="flex flex-col items-center justify-center gap-8 py-1 text-center sm:gap-10">
+                <div
+                  className="flex size-20 items-center justify-center rounded-full bg-[#C7F5D8]"
+                  aria-hidden
+                >
+                  <span className="text-5xl">🤭</span>
+                </div>
+                <div className="flex flex-col items-center gap-4 text-center">
+                  <p className="font-sora text-base text-[#092A31]">
+                    Hi 👋, this is your weekly survey check-in
+                  </p>
+                  <h2
+                    id="weekly-survey-check-last-week-title"
+                    className="max-w-[480px] font-sora text-xl font-bold leading-snug text-[#5C6777]"
+                  >
+                    Great to see your last ratings! Has your experience stayed
+                    the same? If it has, feel free to skip this one.
+                  </h2>
+                </div>
+                {skipError && (
+                  <p className="text-center text-sm text-red-600" role="alert">
+                    {skipError}
+                  </p>
+                )}
+                <div className="flex w-full gap-3 xs:flex-col sm:gap-4">
+                  <button
+                    type="button"
+                    disabled={skipMutation.isPending}
+                    onClick={handleFillItIn}
+                    className="flex h-14 flex-1 items-center justify-center rounded-[40px] bg-[#F2F4F7] px-4 text-base font-semibold text-[#5C6777] transition duration-200 hover:bg-[#E4E7EC] disabled:cursor-not-allowed disabled:opacity-50 sm:text-lg"
+                  >
+                    No, I’ll fill it in
+                  </button>
+                  <button
+                    type="button"
+                    disabled={skipMutation.isPending}
+                    onClick={handleSkipThisWeek}
+                    className="flex h-14 flex-1 items-center justify-center gap-2 rounded-[40px] bg-[#156374] px-4 text-base font-semibold text-white transition duration-200 hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50 sm:text-lg"
+                  >
+                    {skipMutation.isPending ? (
+                      <>
+                        <Loader2 className="size-5 animate-spin text-white" />
+                        Skipping…
+                      </>
+                    ) : (
+                      "Yes, skip this week"
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           )}

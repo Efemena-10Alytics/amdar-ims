@@ -31,8 +31,8 @@ function isWithinWeeklySurveyUtcWindow(date: Date): boolean {
   if (dow === 1) return msSinceUtcMidnight < mon0100;
   return false;
 }
-
-export type WeeklySurveyPhase = "intro" | "questions" | "success";
+import type { WeeklySurveyPhase } from "./types";
+export type { WeeklySurveyPhase };
 
 /**
  * Resolves whether the weekly-survey overlay should be showing at all, independent

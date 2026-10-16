@@ -64,8 +64,22 @@ export type WeeklySurveyStatusData = {
   submitted_at: string | null;
 };
 
+export type WeeklySurveyPhase =
+  | "intro"
+  | "check_last_week"
+  | "questions"
+  | "success";
+
 /** Unlike `questions`/`submit`, this endpoint returns the bare status object — no `data` wrapper. */
 export type WeeklySurveyStatusResponse = WeeklySurveyStatusData;
+
+export type WeeklySurveyCheckLastWeekData = {
+  submitted: boolean;
+  submitted_at: string | null;
+};
+
+/** Unlike `questions`/`submit`, this endpoint returns the bare check object — no `data` wrapper. */
+export type WeeklySurveyCheckLastWeekResponse = WeeklySurveyCheckLastWeekData;
 
 /** Nested map keyed by section (e.g. `section_2`), values keyed by question key. */
 export type WeeklySurveyAnswers = Record<string, unknown>;
@@ -80,3 +94,13 @@ export type WeeklySurveySubmitPayload = {
 export type WeeklySurveySubmitResponse = {
   data?: unknown;
 };
+
+export type WeeklySurveySkipPayload = {
+  cohort_id: number;
+  internship_course_id: number;
+};
+
+export type WeeklySurveySkipResponse = {
+  data?: unknown;
+};
+
