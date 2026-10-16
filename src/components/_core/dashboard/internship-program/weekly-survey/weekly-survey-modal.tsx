@@ -794,7 +794,7 @@ export default function WeeklySurveyModal() {
                   </p>
                   <h2
                     id="weekly-survey-check-last-week-title"
-                    className="max-w-[480px] font-sora text-xl font-bold leading-snug text-[#5C6777]"
+                    className="max-w-[480px] font-sora text-xl font-semibold leading-snug text-[#5C6777]"
                   >
                     Great to see your last ratings! Has your experience stayed
                     the same? If it has, feel free to skip this one.
