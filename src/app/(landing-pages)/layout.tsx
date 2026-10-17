@@ -11,7 +11,7 @@ const LandingPageLayout = ({
   children,
 }: Readonly<{ children: React.ReactNode }>) => {
   const pathname = usePathname();
-  const hideFaq = pathname === "/job-board";
+  const hideFaq = pathname === "/job-board" || pathname === "/faqs";
 
   return (
     <div className="overflow-x-hidden">
