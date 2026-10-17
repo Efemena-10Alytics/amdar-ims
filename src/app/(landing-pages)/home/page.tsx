@@ -10,7 +10,7 @@ import RoadMap from "@/components/_core/landing-pages/home/road-map/index";
 import SuccessStories from "@/components/_core/landing-pages/home/success-stories/index";
 import CareerNeeds from "@/components/_core/landing-pages/home/career-needs";
 import JobReady from "@/components/_core/landing-pages/internship-program/job-ready";
-import InternshipHeroTwo from "@/components/_core/landing-pages/home/hero-two";
+import HeroThree from "@/components/_core/landing-pages/home/hero-three";
 import SpeakToExpertWidget from "@/components/_core/landing-pages/shared/speak-to-expert-widget";
 // import HomeSpecialOffer from "@/components/_core/two-years-aniversary-offer/home-special-offer";
 // import SuccessStoriesShowcase from "@/components/_core/two-years-aniversary-offer/testimonal";
@@ -19,7 +19,7 @@ const InternShipProgram = () => {
   return (
     <div>
       {/* <HomeSpecialOffer /> */}
-      <InternshipHeroTwo />
+      <HeroThree />
       {/* <SuccessStoriesShowcase /> */}
       <Companies />
       <WhatWeOffer />
