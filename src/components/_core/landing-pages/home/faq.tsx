@@ -16,38 +16,38 @@ const Faq = () => {
       id: 1,
       question: "What is Amdari and what do you offer?",
       answer:
-        "Amdari is a platform that provides internship programs and real-world project opportunities to help individuals gain practical experience and build their portfolios. We offer structured programs with expert guidance and curated project videos.",
+        "Amdari is a workforce development platform focused on bridging the gap between learning and real-world experience. We provide hands-on programs, career mentorship, CV revamps, interview preparation, and tools to help you secure your dream tech role.",
     },
     {
       id: 2,
       question: "Who is Amdari for?",
       answer:
-        "Amdari is designed for individuals looking to transition into tech careers, recent graduates seeking practical experience, and professionals wanting to upskill in data science, product design, software engineering, and related fields.",
+        "Amdari is for early-career professionals, recent graduates, career switchers, and individuals looking to gain practical experience and stand out in the tech job market.",
     },
     {
       id: 3,
-      question: "How does the Amdari internship program work?",
+      question: "How does the Amdari consulting program work?",
       answer:
-        "Our internship program provides hands-on experience through real-world projects. You'll work on carefully curated projects, receive expert-guided instruction, build a professional portfolio, and get interview preparation support to help you land your dream job.",
+        "Our consulting programs provide experience by placing participants in real-world projects with partner organizations for 6 months. You'll receive mentorship, skill development, and portfolio building tools.",
     },
     {
       id: 4,
       question:
-        "Do I need prior experience to join Amdari's internship programs?",
+        "Do I need prior experience to join Amdari's consulting programs?",
       answer:
-        "No prior experience is required! Our programs are designed to help individuals at all levels, from beginners to those looking to advance their careers. We provide comprehensive guidance and resources to support your learning journey.",
+        "While foundational knowledge in your chosen career path is helpful, our programs are designed to help participants gain practical experience regardless of their starting point.",
     },
     {
       id: 5,
-      question: "What fields does Amdari offer internships in?",
+      question: "What fields does Amdari offer consulting in?",
       answer:
-        "Amdari offers internships in various fields including Data Science, Product Design, Software Engineering, UX Design, Product Management, Data Analysis, and more. We continuously expand our offerings based on industry demand.",
+        "We currently offer consulting programs in fields like Data Analytics, Data Science, Cybersecurity, Data Engineering, Project Management, Business Analysis, HR Analytics, and Financial Analytics.",
     },
     {
       id: 6,
-      question: "Is Amdari's internship program remote or on-site?",
+      question: "Is Amdari's consulting program remote or on-site?",
       answer:
-        "Amdari's internship programs are fully remote, allowing you to participate from anywhere in the world. This flexibility enables you to learn at your own pace while balancing other commitments.",
+        "Our programs are remote, allowing you to gain real-world experience from anywhere in the world.",
     },
   ];
 
