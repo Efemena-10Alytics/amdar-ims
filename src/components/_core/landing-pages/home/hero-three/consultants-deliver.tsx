@@ -43,10 +43,10 @@ const ConsultantsDeliver = () => {
         </p>
         <Link
           href="/internship"
-          className="group mt-6 inline-flex items-center gap-3 rounded-full bg-[#F6D56A] py-2 pr-2 pl-5 text-sm font-semibold text-[#0E4C58] transition-colors hover:bg-[#ffe082] sm:text-base"
+          className="group mt-6 inline-flex items-center gap-3 rounded-full bg-[#F6D56A] py-2 pr-2 pl-5 text-sm font-semibold text-[#0E4C58] transition-colors duration-300 hover:bg-[#0E4C58] hover:text-[#F6D56A] sm:text-base"
         >
           Explore careers
-          <span className="flex size-8 items-center justify-center rounded-full bg-[#0E4C58] text-[#F6D56A] transition-transform group-hover:translate-x-0.5">
+          <span className="flex size-8 items-center justify-center rounded-full bg-[#0E4C58] text-[#F6D56A] transition-colors duration-300 group-hover:bg-[#F6D56A] group-hover:text-[#0E4C58]">
             <ArrowUpRight className="size-4" />
           </span>
         </Link>

@@ -149,7 +149,11 @@ const Navbar = () => {
       const shouldStick = window.scrollY >= window.innerHeight;
       setIsNavSticky(shouldStick);
       if (shouldStick && navBarRef.current) {
-        setNavSpacerHeight(navBarRef.current.offsetHeight);
+        const nav = navBarRef.current.querySelector("nav");
+        setNavSpacerHeight(
+          nav?.getBoundingClientRect().height ??
+            navBarRef.current.offsetHeight,
+        );
       }
     };
 
@@ -176,7 +180,6 @@ const Navbar = () => {
         className={cn(
           "top-0 left-0 right-0 z-120 isolate -mt-px",
           shouldStickNav ? "fixed" : "relative",
-          showWhiteNav && "bg-white",
         )}
       >
         {/* {showAnniversaryBanner && (
@@ -349,7 +352,7 @@ const Navbar = () => {
             </div>
           </div>
         </nav>
-        <div className="h-10"></div>
+        {shouldStickNav ? null : <div className="h-10" />}
       </div>
       {shouldStickNav ? (
         <div style={{ height: navSpacerHeight }} aria-hidden />
