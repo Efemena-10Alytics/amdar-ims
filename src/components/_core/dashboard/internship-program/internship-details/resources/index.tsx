@@ -146,10 +146,16 @@ function ResourceRow({
   const isByCategory = variant === "by-category";
 
   return (
-    <article
+    <button
+      type="button"
+      onClick={() => onOpen(item)}
+      disabled={!href}
+      aria-label={`Open ${item.title}`}
       className={cn(
-        "flex min-w-0 items-center justify-between gap-3 rounded-xl px-3 py-3",
-        isByCategory ? "bg-[#EDF2FF]" : "bg-[#F8FAFC]",
+        "flex w-full min-w-0 cursor-pointer items-center justify-between gap-3 rounded-xl px-3 py-3 text-left transition disabled:cursor-not-allowed disabled:opacity-40",
+        isByCategory
+          ? "bg-[#EDF2FF] hover:bg-[#E4ECFF]"
+          : "bg-[#F8FAFC] hover:bg-[#EEF3F6]",
       )}
     >
       <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -173,21 +179,15 @@ function ResourceRow({
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={() => onOpen(item)}
-        disabled={!href}
+      <span
         className={cn(
-          "shrink-0 cursor-pointer transition disabled:cursor-not-allowed disabled:opacity-40",
-          isByCategory
-            ? "text-[#3B82F6] hover:text-[#2563EB]"
-            : "text-[#1A6B8A] hover:text-[#0E6174]",
+          "shrink-0",
+          isByCategory ? "text-[#3B82F6]" : "text-[#1A6B8A]",
         )}
-        aria-label={`Open ${item.title}`}
       >
         <ExternalLink className="size-4" aria-hidden />
-      </button>
-    </article>
+      </span>
+    </button>
   );
 }
 
