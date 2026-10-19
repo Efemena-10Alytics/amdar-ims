@@ -47,10 +47,10 @@ const HeroThree = () => {
                     />
                     <div
                         className="absolute inset-0 backdrop-blur-[3px]"
-                        style={{
-                            background:
-                                "linear-gradient(0deg, rgba(9, 42, 49, 0.5), rgba(9, 42, 49, 0.5)), linear-gradient(0deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55))",
-                        }}
+                        // style={{
+                        //     background:
+                        //         "linear-gradient(0deg, rgba(9, 42, 49, 0.5), rgba(9, 42, 49, 0.5)), linear-gradient(0deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55))",
+                        // }}
                     />
                 </div>
 
@@ -65,7 +65,7 @@ const HeroThree = () => {
                             <h1
                                 data-aos="fade-right"
                                 // data-aos-duration="800"
-                                className="hero-slide-right max-w-3xl text-[1.85rem] leading-[0.95] font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-[4.2rem]"
+                                className="hero-slide-right font-clash-display! max-w-3xl text-[1.85rem] leading-[0.95] font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-[4.2rem]"
                             >
                                 <span className="inline-flex flex-wrap items-center gap-x-[0.12em] gap-y-1">
                                     Where <span className="text-[#F6D56A]">Emerging Tech</span>

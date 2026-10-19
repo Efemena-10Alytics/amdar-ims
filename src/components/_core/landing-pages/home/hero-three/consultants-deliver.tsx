@@ -33,12 +33,12 @@ const ConsultantsDeliver = () => {
   );
 
   return (
-    <div className="relative z-10 -mt-8 grid items-center gap-8 rounded-t-[32px] bg-[#187F8C] pt-8 lg:-mt-12 lg:grid-cols-[minmax(220px,320px)_1fr] lg:gap-10 lg:rounded-t-[48px] lg:pt-10">
+    <div className="relative z-10 -mt-8 grid items-center gap-8 rounded-t-[32px] bg-[#187F8C] pt-8 lg:-mt-12 lg:grid-cols-[minmax(280px,440px)_1fr] lg:gap-10 lg:rounded-t-[48px] lg:pt-10">
       <div className="px-2 sm:px-4 lg:px-6">
         <h2 className="text-3xl leading-tight font-semibold text-white sm:text-4xl">
           Where our consultants deliver
         </h2>
-        <p className="mt-3 max-w-xs text-sm text-white/85 sm:text-base">
+        <p className="mt-3 max-w-sm text-sm text-white/85 sm:text-base">
           Some of our current Work Experience Programmes
         </p>
         <Link
@@ -74,7 +74,7 @@ const ConsultantsDeliver = () => {
                 return (
                   <CarouselItem
                     key={program.id}
-                    className="flex basis-[280px] sm:basis-[320px]"
+                    className="flex basis-[85%] lg:basis-[calc(100%*3/7)]"
                   >
                     <Link
                       href={`/internship/${program.slug}`}
