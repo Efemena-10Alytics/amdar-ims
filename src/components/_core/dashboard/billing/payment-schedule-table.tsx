@@ -14,7 +14,7 @@ export function PaymentScheduleTable({
   installmentsCount?: number;
 }) {
   return (
-    <div className="rounded-2xl bg-white p-5 shadow">
+    <div className="min-w-0 rounded-2xl bg-white p-5 shadow">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex flex-col gap-1">
           <h2 className="font-sora text-lg text-[#092A31] font-bold">
