@@ -11,6 +11,7 @@ import SuccessStories from "@/components/_core/landing-pages/home/success-storie
 import CareerNeeds from "@/components/_core/landing-pages/home/career-needs";
 import JobReady from "@/components/_core/landing-pages/internship-program/job-ready";
 import HeroThree from "@/components/_core/landing-pages/home/hero-three";
+import TheImpact from "@/components/_core/landing-pages/home/the-impact";
 import SpeakToExpertWidget from "@/components/_core/landing-pages/shared/speak-to-expert-widget";
 // import HomeSpecialOffer from "@/components/_core/two-years-aniversary-offer/home-special-offer";
 // import SuccessStoriesShowcase from "@/components/_core/two-years-aniversary-offer/testimonal";
@@ -20,6 +21,7 @@ const InternShipProgram = () => {
     <div>
       {/* <HomeSpecialOffer /> */}
       <HeroThree />
+      <TheImpact />
       {/* <SuccessStoriesShowcase /> */}
       <Companies />
       <WhatWeOffer />
