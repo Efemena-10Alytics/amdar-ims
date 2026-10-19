@@ -1,14 +1,16 @@
 "use client";
 
-import { formatReferralCurrency } from "@/features/referral/mock-data";
+import { formatReferralAmount, type ReferralCurrency } from "@/features/referral/locale";
 import type { ReferralPaymentSummary } from "@/features/referral/types";
 
 export function ReferralPaymentSummaryCard({
   summary,
+  currency,
   onWithdraw,
   onViewHistory,
 }: {
   summary: ReferralPaymentSummary;
+  currency: ReferralCurrency;
   onWithdraw: () => void;
   onViewHistory: () => void;
 }) {
@@ -56,7 +58,7 @@ export function ReferralPaymentSummaryCard({
             Paid
           </span>
           <span className="font-sora text-sm font-semibold text-[#092A31]">
-            {formatReferralCurrency(summary.paid)}
+            {formatReferralAmount(summary.paid, currency)}
           </span>
         </div>
         <div className="flex items-center justify-between gap-2">
@@ -65,13 +67,13 @@ export function ReferralPaymentSummaryCard({
             Remaining
           </span>
           <span className="font-sora text-sm font-semibold text-[#092A31]">
-            {formatReferralCurrency(summary.remaining)}
+            {formatReferralAmount(summary.remaining, currency)}
           </span>
         </div>
         <div className="flex items-center justify-between gap-2">
           <span className="font-sora text-sm font-medium text-[#64748B]">Total</span>
           <span className="font-sora text-sm font-semibold text-[#092A31]">
-            {formatReferralCurrency(summary.total)}
+            {formatReferralAmount(summary.total, currency)}
           </span>
         </div>
       </div>

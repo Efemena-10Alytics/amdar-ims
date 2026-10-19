@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { formatReferralCurrency } from "@/features/referral/mock-data";
+import { formatReferralAmount, type ReferralCurrency } from "@/features/referral/locale";
 import type { WithdrawalEntry } from "@/features/referral/types";
 import { ExportIcon } from "./icons";
 import { WithdrawalStatusBadge } from "./status-badge";
@@ -10,7 +10,13 @@ import { EmptyWithdrawalState } from "./empty-withdrawal-state";
 
 const PAGE_SIZE = 9;
 
-export function WithdrawalHistoryTable({ withdrawals }: { withdrawals: WithdrawalEntry[] }) {
+export function WithdrawalHistoryTable({
+  withdrawals,
+  currency,
+}: {
+  withdrawals: WithdrawalEntry[];
+  currency: ReferralCurrency;
+}) {
   const [page, setPage] = useState(1);
   const totalPages = Math.max(1, Math.ceil(withdrawals.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -21,7 +27,7 @@ export function WithdrawalHistoryTable({ withdrawals }: { withdrawals: Withdrawa
   }, [withdrawals, currentPage]);
 
   return (
-    <div className="rounded-2xl bg-white p-5 shadow">
+    <div className="min-w-0 rounded-2xl bg-white p-5 shadow">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="font-clash-display text-lg font-semibold text-[#092A31]">
           Withdrawal History
@@ -63,7 +69,7 @@ export function WithdrawalHistoryTable({ withdrawals }: { withdrawals: Withdrawa
                       {(currentPage - 1) * PAGE_SIZE + index + 1}
                     </td>
                     <td className="px-4 text-[#64748B]">{withdrawal.date}</td>
-                    <td className="px-4">{formatReferralCurrency(withdrawal.amount)}.00</td>
+                    <td className="px-4">{formatReferralAmount(withdrawal.amount, currency)}.00</td>
                     <td className="px-4 text-[#64748B]">{withdrawal.method}</td>
                     <td className="px-4">
                       <div className="flex flex-col">

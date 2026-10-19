@@ -1,12 +1,18 @@
-import { formatReferralCurrency } from "@/features/referral/mock-data";
+import { formatReferralAmount, type ReferralCurrency } from "@/features/referral/locale";
 import type { ReferralEntry } from "@/features/referral/types";
 import { ExportIcon } from "./icons";
 import { ReferralPaymentPlanBadge } from "./status-badge";
 import { EmptyReferralState } from "./empty-referral-state";
 
-export function ReferralTrackingTable({ referrals }: { referrals: ReferralEntry[] }) {
+export function ReferralTrackingTable({
+  referrals,
+  currency,
+}: {
+  referrals: ReferralEntry[];
+  currency: ReferralCurrency;
+}) {
   return (
-    <div className="rounded-2xl bg-white p-5 shadow">
+    <div className="min-w-0 rounded-2xl bg-white p-5 shadow">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="font-clash-display text-lg font-semibold text-[#092A31]">
           Referral Tracking
@@ -55,7 +61,7 @@ export function ReferralTrackingTable({ referrals }: { referrals: ReferralEntry[
                   </td>
                   <td className="px-4 text-[#64748B]">{referral.joinedOn}</td>
                   <td className="px-4 text-[#156374]">
-                    {formatReferralCurrency(referral.reward)}
+                    {formatReferralAmount(referral.reward, currency)}
                   </td>
                 </tr>
               ))}

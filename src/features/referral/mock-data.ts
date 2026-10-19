@@ -89,8 +89,3 @@ export const mockEmptyReferralData: ReferralData = {
   withdrawals: [],
 };
 
-const CURRENCY_SYMBOL = "£";
-
-export function formatReferralCurrency(amount: number): string {
-  return `${CURRENCY_SYMBOL}${amount.toLocaleString("en-GB")}`;
-}
