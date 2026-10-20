@@ -138,8 +138,17 @@ function resolveSafeRedirectUrl(redirectParam?: string): URL {
     const fallbackHost = fallback.host.toLowerCase();
     const candidateHost = candidate.host.toLowerCase();
 
+    const legacyHost = (() => {
+      try {
+        return new URL(externalRedirect.replace(/\/+$/, "")).host.toLowerCase();
+      } catch {
+        return null;
+      }
+    })();
     const isAllowedHost =
-      candidateHost === fallbackHost || redirectAllowlist.includes(candidateHost);
+      candidateHost === fallbackHost ||
+      (legacyHost !== null && candidateHost === legacyHost) ||
+      redirectAllowlist.includes(candidateHost);
     const isHttp = candidate.protocol === "http:" || candidate.protocol === "https:";
 
     if (isHttp && isAllowedHost) {
