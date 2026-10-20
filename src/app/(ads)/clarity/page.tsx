@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Script from "next/script";
 import Link from "next/link";
 
@@ -93,11 +94,21 @@ export default function ClarityAdsPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             {/* Left Brand Identifier */}
             <div className="flex items-center gap-3.5 sm:gap-4">
-              <span className="text-2xl sm:text-[26px] font-black tracking-tight text-white font-sans lowercase">
-                amdari
+              <Image
+                src="/logo-white.svg"
+                alt="Amdari"
+                width={130}
+                height={26}
+                className="h-6 sm:h-7 w-auto"
+                priority
+              />
+              <span
+                className="text-[#3A6B72] hidden sm:inline text-xl font-light"
+                aria-hidden="true"
+              >
+                |
               </span>
-              <span className="text-[#3A6B72] text-xl font-light">|</span>
-              <span className="text-[11px] sm:text-[13px] font-semibold tracking-[0.18em] text-[#8EB7BE] uppercase">
+              <span className="hidden sm:inline  text-[11px] sm:text-[13px] font-semibold tracking-[0.18em] text-[#8EB7BE] uppercase">
                 CAREER CLARITY SESSION
               </span>
             </div>
@@ -106,7 +117,7 @@ export default function ClarityAdsPage() {
             <button
               type="button"
               onClick={scrollToBooking}
-              className="inline-flex items-center justify-center rounded-lg border border-[#F5CE5F] px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-[#F5CE5F] transition-all hover:bg-[#F5CE5F]/15 active:scale-95 cursor-pointer"
+              className="inline-flex items-center justify-center rounded-lg border border-[#F5CE5F] px-2 sm:px-5 py-2 text-[0.625rem] sm:text-sm font-semibold text-[#F5CE5F] transition-all hover:bg-[#F5CE5F]/15 active:scale-95 cursor-pointer"
             >
               Choose a Time
             </button>
