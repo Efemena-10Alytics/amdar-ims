@@ -1,5 +1,7 @@
 const externalRedirect =
-  process.env.NEXT_PUBLIC_REDIRECT_URL || "https://app.amdari.io";
+  process.env.NEXT_PUBLIC_REDIRECT_URL ||
+  process.env.NEXT_PUBLIC_OLD_APP_URL ||
+  "https://app.amdari.io";
 const redirectAllowlist = (process.env.NEXT_PUBLIC_REDIRECT_ALLOWLIST || "")
   .split(",")
   .map((host) => host.trim().toLowerCase())
@@ -169,6 +171,51 @@ export async function buildExternalAuthRedirectUrl(
   }
 
   return redirectUrl.toString();
+}
+
+export async function buildOldAppLoginUrl(
+  providedToken?: string,
+): Promise<string | null> {
+  const token = providedToken || getAccessTokenFromStorage();
+  if (!token) return null;
+
+  const encryptedToken = await encryptTokenForRedirect(token);
+  if (!encryptedToken) return null;
+
+  const base = externalRedirect.replace(/\/+$/, "");
+  const url = new URL("/login", `${base}/`);
+  url.searchParams.set(HANDOFF_TOKEN_PARAM, encryptedToken);
+
+  return url.toString();
+}
+
+/**
+ * Opens `<OLD_APP_ORIGIN>/login?token=<ENCRYPTED_HANDOFF_TOKEN>` in a new tab
+ * so the legacy app can hydrate its localStorage session and close the tab.
+ * Skips if the primary navigation destination is already heading to the old app.
+ */
+export async function openOldAppLoginTab(
+  providedToken?: string,
+  destinationUrl?: string,
+): Promise<void> {
+  if (typeof window === "undefined") return;
+
+  try {
+    const handoffUrl = await buildOldAppLoginUrl(providedToken);
+    if (!handoffUrl) return;
+
+    const handoffOrigin = new URL(handoffUrl).origin;
+    if (handoffOrigin === window.location.origin) return;
+
+    if (destinationUrl) {
+      const destOrigin = new URL(destinationUrl, window.location.origin).origin;
+      if (destOrigin === handoffOrigin) return;
+    }
+
+    window.open(handoffUrl, "_blank");
+  } catch {
+    // Best-effort sync: never block login on the new app if handoff fails.
+  }
 }
 
 /* -------------------------------------------------------------------------- */

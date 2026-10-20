@@ -10,7 +10,10 @@ import { Eye, EyeOff } from "lucide-react";
 import { AppleSvg, GoogleSvg, LinkedInSvg } from "@/components/_core/auth/svg";
 import ErrorAlert from "@/components/_core/auth/error-alert";
 import { useLogin } from "@/features/auth/use-login";
-import { buildExternalAuthRedirectUrl } from "@/utils/externalAuthLogic";
+import {
+  buildExternalAuthRedirectUrl,
+  openOldAppLoginTab,
+} from "@/utils/externalAuthLogic";
 
 export default function SignInContent() {
   const searchParams = useSearchParams();
@@ -27,9 +30,12 @@ export default function SignInContent() {
     const user = await login({ email, password }, undefined, true);
     if (!user) return;
 
+    const token = typeof user.token === "string" ? user.token : undefined;
     const redirectUrl = await buildExternalAuthRedirectUrl(
       redirectParam ?? "/dashboard",
+      token,
     );
+    await openOldAppLoginTab(token, redirectUrl);
     window.location.replace(redirectUrl);
   };
 

@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { axiosInstance } from "@/lib/axios-instance";
 import { useAuthStore, type AuthUser } from "../../store/auth-store";
+import { openOldAppLoginTab } from "@/utils/externalAuthLogic";
 
 export type LoginCredentials = {
   email?: string;
@@ -41,7 +42,13 @@ const login = async (
     if (res.status === 200 && res.data?.data) {
       useAuthStore.getState().setUser(res.data.data);
       if (typeof window !== "undefined" && !skipRedirect) {
-        window.location.replace(redirectURL ?? "/dashboard");
+        const destination = redirectURL ?? "/dashboard";
+        const token =
+          typeof res.data.data.token === "string"
+            ? res.data.data.token
+            : undefined;
+        await openOldAppLoginTab(token, destination);
+        window.location.replace(destination);
       }
       return res.data.data;
     }
