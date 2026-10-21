@@ -9,7 +9,7 @@ import Slider from "./slider";
 import WordDrop from "./word-drop";
 import Aos from "aos";
 import Flag from "./flag";
-import LearnMoreVideo from "../learn-more-video";
+import LearnMoreVideo from "../../learn-more-video";
 
 const InternshipHero = () => {
     const [showPopUpVid, setShowPopUpVid] = React.useState(false);

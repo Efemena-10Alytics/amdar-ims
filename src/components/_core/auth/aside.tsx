@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import Flag from "../landing-pages/home/hero/flag";
+import Flag from "../landing-pages/home/legacy-files/hero/flag";
 import ReactPlayer from "react-player";
 // import { CohortSwitcher } from "../journey-aside/cohort-switcher";
 import { DeferInternshipButton } from "../journey-aside/defer-internship-button";

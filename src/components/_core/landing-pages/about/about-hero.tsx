@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Image from "next/image";
 import { Linkedin } from "lucide-react";
 import Aos from "aos";
-import Flag from "../home/hero/flag";
+import Flag from "../home/legacy-files/hero/flag";
 import { cn } from "@/lib/utils";
 
 type FounderCard = {

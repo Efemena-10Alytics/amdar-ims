@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Image from "next/image";
 import Aos from "aos";
 import { cn } from "@/lib/utils";
-import CustomButton from "../shared/custom-button";
+import CustomButton from "../../shared/custom-button";
 import { COMPANY_LOGOS } from "@/constants/company-logos";
 
 export default function Companies() {

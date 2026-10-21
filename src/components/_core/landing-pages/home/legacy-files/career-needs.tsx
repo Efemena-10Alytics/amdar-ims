@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import Aos from "aos";
-import CustomButton from "../shared/custom-button";
+import CustomButton from "../../shared/custom-button";
 import Link from "next/link";
 
 const CareerNeeds = () => {

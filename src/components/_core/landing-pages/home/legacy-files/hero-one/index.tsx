@@ -5,13 +5,13 @@ import { cn } from "@/lib/utils";
 import { ArrowUpRight, Lightbulb, PlayIcon } from "lucide-react";
 import Flag from "../hero/flag";
 import React from "react";
-import LearnMoreVideo from "../learn-more-video";
+import LearnMoreVideo from "../../learn-more-video";
 import Image from "next/image";
 import Aos from "aos";
 import VerticalCarousel from "./vertical-carousel";
 import Slider from "../hero/slider";
 import Link from "next/link";
-import { IdeaSvg } from "../svg";
+import { IdeaSvg } from "../../svg";
 
 const HERO_TOOLS = [
   {

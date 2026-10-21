@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
-import CustomButton from "../../shared/custom-button";
+import CustomButton from "../../../shared/custom-button";
 import Link from "next/link";
 import { useGetInternshipPrograms } from "@/features/internship/use-get-all-internship-programs";
 import { getImageUrl, pickRandomTwo } from "@/lib/utils";
