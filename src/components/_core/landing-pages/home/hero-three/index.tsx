@@ -65,7 +65,7 @@ const HeroThree = () => {
                             <h1
                                 data-aos="fade-right"
                                 // data-aos-duration="800"
-                                className="hero-slide-right font-clash-display! max-w-3xl text-[1.85rem] leading-[0.95] font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-[4.2rem]"
+                                className="hero-slide-right font-display font-clash-display! max-w-3xl text-[1.85rem] leading-[0.95] font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-[4.2rem]"
                             >
                                 <span className="inline-flex flex-wrap items-center gap-x-[0.12em] gap-y-1">
                                     Where <span className="text-[#F6D56A]">Emerging Tech</span>
@@ -89,7 +89,7 @@ const HeroThree = () => {
 
                             <Link
                                 href="/auth/sign-up"
-                                className="group mt-8 inline-flex h-12 items-center gap-8 rounded-full bg-[#0F4652] px-5 py-6 text-base text-white transition-colors duration-300 hover:bg-amdari-yellow hover:text-primary"
+                                className="group mt-8 inline-flex h-13.5 items-center gap-8 rounded-full bg-[#0F4652] px-5 py-6 text-base text-white transition-colors duration-300 hover:bg-amdari-yellow hover:text-primary"
                             >
                                 Become Part of the Team
                                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amdari-yellow text-primary group-hover:bg-primary group-hover:text-white">
@@ -151,7 +151,7 @@ const HeroThree = () => {
                             <button
                                 type="button"
                                 onClick={() => setShowPopUpVid(true)}
-                                className="group cursor-pointer mt-5 inline-flex items-center bg-transparent border-2 border-primary gap-3 rounded-full border border-white/15 bg-[#123F4A]/80 py-2 pr-2 pl-5 text-sm font-medium text-white transition-colors hover:bg-[#0E4C58] sm:text-base"
+                                className="group cursor-pointer mt-5 inline-flex items-center bg-transparent border-2 border-primary gap-3 rounded-full  py-2 pr-2 pl-5 text-sm font-medium text-white transition-colors hover:bg-[#0E4C58] sm:text-base"
                             >
                                 Learn more
                                 <span className="flex size-8 items-center justify-center rounded-full bg-white text-[#156374]">

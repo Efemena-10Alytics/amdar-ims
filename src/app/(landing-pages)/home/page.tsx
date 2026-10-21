@@ -14,6 +14,9 @@ import HeroThree from "@/components/_core/landing-pages/home/hero-three";
 import TheImpact from "@/components/_core/landing-pages/home/the-impact";
 import ProjectExperience from "@/components/_core/landing-pages/home/project-experience";
 import BusinessTestimonial from "@/components/_core/landing-pages/home/business-testimonial";
+import BecomeAPartner from "@/components/_core/landing-pages/home/become-a-partner";
+import AboutUs from "@/components/_core/landing-pages/home/about";
+import TheCompanies from "@/components/_core/landing-pages/home/the-companies";
 import SpeakToExpertWidget from "@/components/_core/landing-pages/shared/speak-to-expert-widget";
 // import HomeSpecialOffer from "@/components/_core/two-years-aniversary-offer/home-special-offer";
 // import SuccessStoriesShowcase from "@/components/_core/two-years-aniversary-offer/testimonal";
@@ -26,18 +29,21 @@ const InternShipProgram = () => {
       <TheImpact />
       <ProjectExperience />
       <BusinessTestimonial />
+      <BecomeAPartner />
+      <AboutUs />
+      <TheCompanies />
       {/* <SuccessStoriesShowcase /> */}
       {/* <Companies /> */}
       {/* <WhatWeOffer /> */}
-      <Partners />
-      <CareerNeeds />
-      <JobReady />
-      <Portfolio />
-      <WhatOurInternsSays />
-      <Experience />
-      <RoadMap />
-      <SuccessStories />
-      <SpeakToExpertWidget />
+      {/* <Partners /> */}
+      {/* <CareerNeeds /> */}
+      {/* <JobReady /> */}
+      {/* <Portfolio /> */}
+      {/* <WhatOurInternsSays /> */}
+      {/* <Experience /> */}
+      {/* <RoadMap /> */}
+      {/* <SuccessStories /> */}
+      {/* <SpeakToExpertWidget /> */}
     </div>
   );
 };
