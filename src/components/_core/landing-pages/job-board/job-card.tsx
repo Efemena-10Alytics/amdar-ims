@@ -1,6 +1,10 @@
 "use client";
 
+import { useMemo } from "react";
 import type { NormalizedJob } from "@/features/jobs/types";
+import { useCountries } from "@/features/portfolio/use-countries";
+
+const UK_FLAG_FALLBACK = "/uk-flag.png";
 
 const JobIcon = () => (
   <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -56,7 +60,30 @@ export type Job = NormalizedJob;
 const applyClassName =
   "ml-4 shrink-0 rounded-xl bg-[#0C3640] px-5 py-3 font-sora text-sm font-semibold text-white transition-opacity hover:opacity-90";
 
+/**
+ * Locations arrive either as a bare country ("Canada", "United States") or as a
+ * UK town and county ("Southampton, Hampshire"). Only the last comma-separated
+ * segment is matched, and only exactly — "Sutton, London" must not match on a
+ * town that happens to share a country's name.
+ */
+function useLocationFlag(location: string): string {
+  const { data: countries } = useCountries();
+
+  return useMemo(() => {
+    const lastSegment = location.split(",").pop()?.trim().toLowerCase();
+    if (lastSegment && countries) {
+      const match = countries.find(
+        (country) => country.name.toLowerCase() === lastSegment,
+      );
+      if (match?.flag) return match.flag;
+    }
+    // The feed is UK-heavy and its UK rows carry a county, not a country.
+    return UK_FLAG_FALLBACK;
+  }, [countries, location]);
+}
+
 const JobCard = ({ job }: { job: Job }) => {
+  const flagSrc = useLocationFlag(job.location);
   const metaLine = [job.remoteMode, job.jobType, job.salary].filter(Boolean).join(" · ");
 
   const dateLabel = job.datePosted && job.closingDate
@@ -79,7 +106,12 @@ const JobCard = ({ job }: { job: Job }) => {
           </p>
           {job.location && (
             <div className="mt-1 flex items-center gap-1.5">
-              <img src="/uk-flag.png" alt="flag" className="h-4 w-4 shrink-0 object-contain" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={flagSrc}
+                alt=""
+                className="h-4 w-4 shrink-0 rounded-full object-cover"
+              />
               <span className="font-sora text-sm text-[#64748B]">{job.location}</span>
             </div>
           )}
