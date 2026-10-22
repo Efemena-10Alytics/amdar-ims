@@ -17,6 +17,13 @@ type TabId = (typeof TABS)[number]["id"];
 
 const ProjectExperience = () => {
   const [tab, setTab] = useState<TabId>("client-impact");
+  const [hasChangedTab, setHasChangedTab] = useState(false);
+
+  const selectTab = (next: TabId) => {
+    if (next === tab) return;
+    setHasChangedTab(true);
+    setTab(next);
+  };
 
   return (
     <section className="bg-white">
@@ -36,7 +43,7 @@ const ProjectExperience = () => {
               <button
                 key={item.id}
                 type="button"
-                onClick={() => setTab(item.id)}
+                onClick={() => selectTab(item.id)}
                 className={cn(
                   "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
                   isActive
@@ -51,9 +58,25 @@ const ProjectExperience = () => {
         </div>
       </div>
 
-      {tab === "client-impact" ? <ClientImpact /> : null}
-      {tab === "industries" ? <IndustriesImpact /> : null}
-      {tab === "capabilities" ? <Capabilities /> : null}
+      <div className="overflow-hidden">
+        <div key={tab} className={hasChangedTab ? "tab-slide-from-right" : undefined}>
+          {tab === "client-impact" ? <ClientImpact /> : null}
+          {tab === "industries" ? <IndustriesImpact /> : null}
+          {tab === "capabilities" ? <Capabilities /> : null}
+        </div>
+      </div>
+      <style>{`
+        .tab-slide-from-right {
+          animation: tab-slide-from-right 500ms ease;
+        }
+        @keyframes tab-slide-from-right {
+          from { transform: translateX(100%); }
+          to { transform: translateX(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .tab-slide-from-right { animation: none; }
+        }
+      `}</style>
     </section>
   );
 };
