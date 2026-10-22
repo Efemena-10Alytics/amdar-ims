@@ -15,6 +15,7 @@ import {
 
 const PROJECTS = [
   {
+    id: "bottom-line-impact",
     title:
       "How AMDARI Consultants Delivered Over $4.5 Billion in Bottom-Line Impact",
     description:
@@ -22,6 +23,7 @@ const PROJECTS = [
     image: "/images/pngs/new-home/the-impact/project-1.jpg",
   },
   {
+    id: "carbon-footprint",
     title:
       "How AMDARI Consultants Unlocked a New Revenue Stream Through Carbon Footprint Accounting",
     description:
@@ -29,6 +31,7 @@ const PROJECTS = [
     image: "/images/pngs/new-home/the-impact/project-2.jpg",
   },
   {
+    id: "avoidable-discharges",
     title:
       "How AMDARI Consultants Helped a Regional Health System Reduce Avoidable Discharges by 32%",
     description:
@@ -36,6 +39,7 @@ const PROJECTS = [
     image: "/images/pngs/new-home/the-impact/project-3.jpg",
   },
   {
+    id: "cyber-threats",
     title:
       "How AMDARI Consultants Helped a Global Financial Services Firm Respond to Cyber Threats 55% Faster",
     description:
@@ -140,7 +144,10 @@ const TheImpact = () => {
                   key={project.title}
                   className="basis-[86%] sm:basis-[48%] lg:basis-[42%]"
                 >
-                  <article className="relative flex h-90 flex-col justify-end overflow-hidden rounded sm:h-97.5">
+                  <Link
+                    href={`/home/project/${project.id}`}
+                    className="relative flex h-90 flex-col justify-end overflow-hidden rounded sm:h-97.5"
+                  >
                     <Image
                       src={project.image}
                       alt=""
@@ -163,7 +170,7 @@ const TheImpact = () => {
                         View project
                       </Link> */}
                     </div>
-                  </article>
+                  </Link>
                 </CarouselItem>
               ))}
             </CarouselContent>
