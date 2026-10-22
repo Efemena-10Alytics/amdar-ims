@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ArrowLeftCurve, ArrowRightCurve } from "./svg";
-import { VideoPlayerModal } from "../shared/video-player-modal";
+import { ArrowLeftCurve, ArrowRightCurve } from "../svg";
+import { VideoPlayerModal } from "../../shared/video-player-modal";
 import {
   getYoutubeThumbnail,
   TESTIMONIAL_VIDEOS,

@@ -16,9 +16,7 @@ const AboutUs = () => {
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
             <p className="absolute inset-x-0 bottom-0 p-4 text-sm leading-relaxed text-white sm:p-5 sm:text-[15px]">
-              Our program is not a course. It is work experience, with
-              expectations, deliverables, teamwork, leadership guidance, and
-              results for real clients.
+              At Amdari we immerse you in a real-world work environment, where you collaborate on live projects that solve actual business challenges.
             </p>
           </div>
         </div>
@@ -28,12 +26,7 @@ const AboutUs = () => {
             About Us
           </h2>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-[#3D4F55] sm:text-base">
-            At Amdari, we know what it&apos;s like to navigate the modern job
-            market, it&apos;s complex, competitive, and often overwhelming.
-            That&apos;s why we built Amdari, a platform created by professionals
-            who&apos;ve walked the same path and understand the real challenges
-            of getting hired today. We believe that opportunities should be
-            accessible to everyone willing to put in the work.
+            Amdari Consulting brings together  technology professionals across the UK, US, Canada, and beyond to work on  business challenges, contribute to meaningful projects, and deliver practical solutions. Through collaborative consulting teams spanning data, business analysis, project management, cybersecurity, and other technology disciplines, we help organizations move ideas forward while enabling our consultants to build practical experience, demonstrate their capabilities, and progress towards global tech careers.
           </p>
           <Link
             href="/about"

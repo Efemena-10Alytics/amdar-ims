@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ArrowLeftCurve, ArrowRightCurve } from "../svg";
+import { ArrowLeftCurve, ArrowRightCurve } from "../../svg";
 
 // Custom Navigation Buttons
 const CustomCarouselPrevious = ({

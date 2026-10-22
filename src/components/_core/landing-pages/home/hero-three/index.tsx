@@ -7,7 +7,7 @@ import Aos from "aos";
 import { ArrowUpRight, Play, } from "lucide-react";
 import LearnMoreVideo from "../learn-more-video";
 import ConsultantsDeliver from "./consultants-deliver";
-import { COMPANY_LOGOS } from "@/constants/company-logos";
+import { NEW_HOME_PARTNER_LOGOS } from "@/constants/company-logos";
 import { RocketIcon } from "@/components/_core/dashboard/internship-program/svg";
 
 const HeroThree = () => {
@@ -36,7 +36,7 @@ const HeroThree = () => {
                     aria-hidden
                 >
                     <Image
-                        src="/images/pngs/hero-three/office-bg.png"
+                        src="/images/pngs/new-home/office-bg.png"
                         alt=""
                         fill
                         priority
@@ -47,10 +47,10 @@ const HeroThree = () => {
                     />
                     <div
                         className="absolute inset-0 backdrop-blur-[3px]"
-                        // style={{
-                        //     background:
-                        //         "linear-gradient(0deg, rgba(9, 42, 49, 0.5), rgba(9, 42, 49, 0.5)), linear-gradient(0deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55))",
-                        // }}
+                    // style={{
+                    //     background:
+                    //         "linear-gradient(0deg, rgba(9, 42, 49, 0.5), rgba(9, 42, 49, 0.5)), linear-gradient(0deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55))",
+                    // }}
                     />
                 </div>
 
@@ -67,13 +67,11 @@ const HeroThree = () => {
                                 // data-aos-duration="800"
                                 className="hero-slide-right font-display font-clash-display! max-w-3xl text-[1.85rem] leading-[0.95] font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-[4.2rem]"
                             >
-                                <span className="inline-flex flex-wrap items-center gap-x-[0.12em] gap-y-1">
-                                    Where <span className="text-[#F6D56A]">Emerging Tech</span>
-                                </span>
+                                Building
+                                <span className="text-[#F6D56A]"> Solutions</span>
                                 <br />
-                                <span className="text-[#F6D56A]">Professionals</span> Make
-                                <br />
-                                Their Mark
+                                Shaping Careers <br />
+                                <span className="text-[#F6D56A]">Making</span> an <span className="text-[#F6D56A]"> Impact</span>
                             </h1>
 
                             <p
@@ -102,7 +100,7 @@ const HeroThree = () => {
                                     className="partners-scroll flex w-max"
                                     style={{ animation: "partners-scroll 40s linear infinite" }}
                                 >
-                                    {[COMPANY_LOGOS, COMPANY_LOGOS].map((group, groupIndex) => (
+                                    {[NEW_HOME_PARTNER_LOGOS, NEW_HOME_PARTNER_LOGOS].map((group, groupIndex) => (
                                         <div
                                             key={groupIndex}
                                             className="flex items-center gap-10 pr-10"
@@ -115,7 +113,7 @@ const HeroThree = () => {
                                                     alt={groupIndex === 0 ? partner.alt : ""}
                                                     width={120}
                                                     height={36}
-                                                    className="h-7 w-auto max-w-28 shrink-0 object-contain brightness-0 invert sm:h-8"
+                                                    className="h-7 w-auto max-w-28 shrink-0 object-contain sm:h-8"
                                                 />
                                             ))}
                                         </div>

@@ -173,7 +173,7 @@ const TheImpact = () => {
         <div className="mt-4 grid items-stretch gap-10 rounded-[28px] bg-[#F7F1E4] p-6 lg:grid-cols-[1.05fr_0.95fr]">
           <article className="relative min-h-115 overflow-hidden rounded-[28px]">
             <Image
-              src="/images/pngs/the-impact/road.jpg"
+              src="/images/pngs/new-home/the-impact/road.png"
               alt=""
               fill
               className="object-cover"

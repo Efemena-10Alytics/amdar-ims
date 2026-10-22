@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { COMPANY_LOGOS } from "@/constants/company-logos";
+import { NEW_HOME_PARTNER_LOGOS } from "@/constants/company-logos";
 
 const TheCompanies = () => {
   return (
@@ -15,7 +15,7 @@ const TheCompanies = () => {
             href="#become-a-partner"
             className="mt-5 inline-flex items-center gap-3 rounded-full bg-[#156374] py-2 pr-2 pl-5 text-sm font-semibold text-white"
           >
-            Be a partners
+            Join the team
             <span className="flex size-7 items-center justify-center rounded-full bg-[#F6D56A] text-[#156374]">
               <ArrowUpRight className="size-4" />
             </span>
@@ -26,7 +26,7 @@ const TheCompanies = () => {
           <div className="hired-companies-scroll flex w-max">
             {[0, 1].map((copy) => (
               <ul key={copy} className="flex shrink-0 items-center gap-3 pr-3">
-                {COMPANY_LOGOS.map((company) => (
+                {NEW_HOME_PARTNER_LOGOS.map((company) => (
                   <li
                     key={`${company.src}-${copy}`}
                     className="flex size-20 shrink-0 items-center justify-center rounded-md bg-[#E8CC76] p-3 sm:size-24"

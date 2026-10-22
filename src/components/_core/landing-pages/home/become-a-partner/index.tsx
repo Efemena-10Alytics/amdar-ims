@@ -2,7 +2,7 @@
 
 import { useRef, useState, type FormEvent, type ReactNode } from "react";
 import Image from "next/image";
-import { Check, Zap } from "lucide-react";
+import { Check, } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,12 +18,12 @@ import SuccessModal from "@/components/_core/landing-pages/business-partners/suc
 import { cn } from "@/lib/utils";
 
 const TRUST_NOTES = [
-  { icon: "check", text: "No sensitive data required" },
-  { icon: "zap", text: "We'll respond within 2 business days" },
-  { icon: "check", text: "No contracts or commitments at this stage" },
+  { icon: "check", text: "🔒 No sensitive data required" },
+  { icon: "zap", text: "⚡ We'll respond within 2 business days" },
+  { icon: "check", text: "💬 No contracts or commitments at this stage" },
   {
     icon: "check",
-    text: "We shape the brief — you just point us in the right direction",
+    text: "🎯 We shape the brief  you just point us in the right direction",
   },
 ] as const;
 
@@ -71,12 +71,12 @@ function payloadFromForm(formData: FormData, industry: string): BecomeAPartnerPa
 function isPayloadComplete(payload: BecomeAPartnerPayload) {
   return Boolean(
     payload.companyName &&
-      payload.industry &&
-      payload.companySize &&
-      payload.yourName &&
-      payload.jobTitle &&
-      payload.workEmail &&
-      payload.challenge,
+    payload.industry &&
+    payload.companySize &&
+    payload.yourName &&
+    payload.jobTitle &&
+    payload.workEmail &&
+    payload.challenge,
   );
 }
 
@@ -126,26 +126,22 @@ const BecomeAPartner = () => {
 
         <div className="app-width relative z-10 grid items-start gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <div className="pt-2 lg:pt-8">
-            <h2 className="text-4xl leading-tight font-semibold sm:text-5xl">
-              Become a Partner
+            <h2 className="text-4xl font-semibold sm:text-5xl">
+              Partner with <br /> Amdari Consulting
             </h2>
-            <p className="mt-4 max-w-md text-base leading-relaxed text-[#64748B] sm:text-lg">
-              Fill in the form below and we&apos;ll be in touch within 2
-              business days to confirm fit and walk you through the next steps.
+            <p className="mt-4 max-w-md text-base leading-relaxed text-[#64748B]">
+              Bring us your business challenges. Let' our team of consultants work on the solutions.
+            </p>
+            <p className="mt-2 max-w-md text-base leading-relaxed text-[#64748B]">
+              Access multidisciplinary technology consulting teams across the UK, US and Canada, with capabilities spanning data, business analysis, project management, cybersecurity, product design and related technology disciplines.
             </p>
 
             <ul className="mt-10 space-y-3.5">
               {TRUST_NOTES.map((note) => (
                 <li key={note.text} className="flex items-center gap-3 text-sm text-[#64748B]">
-                  {note.icon === "zap" ? (
-                    <span className="flex size-5 shrink-0 items-center justify-center text-[#F5A524]">
-                      <Zap className="size-4 fill-[#F5A524]" />
-                    </span>
-                  ) : (
-                    <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#D8F5E3] text-[#22A957]">
-                      <Check className="size-3" strokeWidth={3} />
-                    </span>
-                  )}
+                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#D8F5E3] text-[#22A957]">
+                    <Check className="size-3" strokeWidth={3} />
+                  </span>
                   <span>{note.text}</span>
                 </li>
               ))}
@@ -155,7 +151,7 @@ const BecomeAPartner = () => {
           <form
             ref={formRef}
             onSubmit={handleSubmit}
-            className="rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-[0_18px_50px_rgba(15,70,82,0.08)] sm:p-7"
+            className="rounded-2xl border border-[#B6CFD4] bg-white p-5 shadow-[-24px_62px_40px_0px_#93B7BF3D] sm:p-7"
           >
             <h3 className="text-lg font-semibold text-[#0B2B33]">Register Here</h3>
             <p className="mt-1 text-sm text-[#94A3B8]">
