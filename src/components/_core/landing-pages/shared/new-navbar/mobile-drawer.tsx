@@ -81,7 +81,7 @@ const MobileDrawer = ({
                     "text-primary hover:text-[#0f4d5a]",
                   )}
                 >
-                  Resources
+                  More
                 </h1>
                 <div className="pl-2 space-y-3 mt-2">
                   {/* <div>

@@ -20,7 +20,7 @@ import {
 } from "@/components/_core/landing-pages/home/svg";
 import { cn } from "@/lib/utils";
 
-const ProjectExperience = () => {
+const InsideAmdari = () => {
   const [api, setApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [playingVideoUrl, setPlayingVideoUrl] = useState<string | null>(null);
@@ -135,4 +135,4 @@ const ProjectExperience = () => {
   );
 };
 
-export default ProjectExperience;
+export default InsideAmdari;

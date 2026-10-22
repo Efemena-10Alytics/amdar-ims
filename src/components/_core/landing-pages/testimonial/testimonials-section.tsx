@@ -23,7 +23,7 @@ import {
   TESTIMONIAL_VIDEOS,
 } from "@/features/testimonials/constants";
 import { useYoutubeCaptions } from "@/features/youtube/use-youtube-caption";
-import SuccessStories from "../home/hero-three/success-stories";
+import SuccessStories from "@/components/_core/landing-pages/home/legacy-files/success-stories";
 
 type TestimonialVideoCardProps = {
   testimonial: (typeof TESTIMONIAL_VIDEOS)[number];

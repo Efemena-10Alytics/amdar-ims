@@ -68,10 +68,10 @@ const HeroThree = () => {
                                 className="hero-slide-right font-display font-clash-display! max-w-3xl text-[1.85rem] leading-[0.95] font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-[4.2rem]"
                             >
                                 Building
-                                <span className="text-[#F6D56A]"> Solutions</span>
+                                <span className="text-[#F6D56A] font-display"> Solutions</span>
                                 <br />
                                 Shaping Careers <br />
-                                <span className="text-[#F6D56A]">Making</span> an <span className="text-[#F6D56A]"> Impact</span>
+                                <span className="text-[#F6D56A] font-display">Making</span> an <span className="text-[#F6D56A] font-display"> Impact</span>
                             </h1>
 
                             <p

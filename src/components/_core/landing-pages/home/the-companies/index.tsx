@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { NEW_HOME_PARTNER_LOGOS } from "@/constants/company-logos";
+import { COMPANY_LOGOS } from "@/constants/company-logos";
 
 const TheCompanies = () => {
   return (
@@ -26,7 +26,7 @@ const TheCompanies = () => {
           <div className="hired-companies-scroll flex w-max">
             {[0, 1].map((copy) => (
               <ul key={copy} className="flex shrink-0 items-center gap-3 pr-3">
-                {NEW_HOME_PARTNER_LOGOS.map((company) => (
+                {COMPANY_LOGOS.map((company) => (
                   <li
                     key={`${company.src}-${copy}`}
                     className="flex size-20 shrink-0 items-center justify-center rounded-md bg-[#E8CC76] p-3 sm:size-24"

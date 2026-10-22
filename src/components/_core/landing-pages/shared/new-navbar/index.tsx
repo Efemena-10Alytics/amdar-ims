@@ -167,8 +167,8 @@ const Navbar = () => {
   }, [pathname]);
 
   const navLinks: { label: string; href: string }[] = [
-    { label: "Real World Project", href: "/projects" },
-    { label: "Internship Program", href: "/internship" },
+    // { label: "Real World Project", href: "/projects" },
+    { label: "Become a Consultant", href: "/internship" },
   ];
 
   const closeDrawer = () => setIsDrawerOpen(false);

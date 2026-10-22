@@ -50,8 +50,8 @@ const Capabilities = () => {
             <li
               key={item.title}
               data-aos={item.label === "below" ? "fade-up" : "fade"}
-              data-aos-duration="800"
-              data-aos-delay={item.label === "below" ? 120 : 0}
+              data-aos-duration="1200"
+              data-aos-delay={item.label === "below" ? 240 : 0}
               className={`flex w-44 shrink-0 flex-col lg:w-auto ${item.label === "below" ? "mt-28" : ""}`}
             >
               {item.label === "above" ? (

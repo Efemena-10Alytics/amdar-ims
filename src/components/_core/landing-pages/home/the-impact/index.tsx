@@ -229,10 +229,10 @@ const TheImpact = () => {
                       {index + 1}
                     </span>
                     <div className="-mt-0.5">
-                      <h3 className="text-[15px] font-semibold text-[#3D8C97] transition-colors group-hover:text-[#0E4C58]">
+                      <h3 className="text-[15px] font-semibold text-[#3D8C97] transition-colors group-hover:text-[#156374]">
                         {step.title}
                       </h3>
-                      <p className="mt-0.5 max-w-60 text-sm leading-snug text-[#76808D]">
+                      <p className="mt-0.5 max-w-60 text-sm leading-snug text-[#76808D] group-hover:text-[#092A31]">
                         {step.description}
                       </p>
                     </div>
