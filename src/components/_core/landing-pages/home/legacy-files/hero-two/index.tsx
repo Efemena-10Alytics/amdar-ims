@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight, PlayIcon } from "lucide-react";
 import Aos from "aos";
-import LearnMoreVideo from "../learn-more-video";
+import LearnMoreVideo from "../../learn-more-video";
 import WordDrop from "./word-drop";
 import Slider from "./slider";
 import Flag from "../hero/flag";

@@ -4,7 +4,7 @@ import React from "react";
 import Image from "next/image";
 import Aos from "aos";
 import { useAuthStore } from "@/store/auth-store";
-import CustomButton from "../shared/custom-button";
+import CustomButton from "../../shared/custom-button";
 
 const Portfolio = () => {
   const [imageError, setImageError] = React.useState(false);

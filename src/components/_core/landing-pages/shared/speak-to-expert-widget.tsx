@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import SpeakToOurExpertPanel from "@/components/_core/landing-pages/home/hero-two/speak-to-our-expert";
+import SpeakToOurExpertPanel from "@/components/_core/landing-pages/home/legacy-files/hero-two/speak-to-our-expert";
 import { cn } from "@/lib/utils";
 import { SpeakToExpertWidgetSvg } from "../home/svg";
 
