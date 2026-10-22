@@ -46,49 +46,39 @@ const TextCard = ({ className }: { className?: string }) => (
   </article>
 );
 
+const ImageCard = ({ className }: { className?: string }) => (
+  <article className={cn("relative min-h-120 flex-1 overflow-hidden rounded-3xl", className)}>
+    <Image
+      src="/images/pngs/business-testimonial/meeting.jpg"
+      alt=""
+      fill
+      className="object-cover"
+      sizes="(min-width: 1024px) 36vw, 100vw"
+    />
+    <div className="absolute inset-0 bg-linear-to-t from-[#0B3A44]/90 via-[#0B3A44]/15 to-transparent" />
+    <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+      <p className="text-sm leading-relaxed text-white sm:text-[15px]">{QUOTE}</p>
+      <Author onDark />
+    </div>
+  </article>
+);
+
 const ClientImpact = () => {
   return (
     <section className="pt-8 pb-14 lg:pt-10 lg:pb-20">
       <div className="app-width">
-        <div className="grid items-stretch gap-4 lg:grid-cols-3">
-          <div className="flex flex-col gap-6">
-            <h2 className="text-4xl font-semibold text-[#092A31] sm:text-5xl">
-              Client impact
-            </h2>
-            <div className="relative min-h-80 flex-1">
-              <span className="absolute top-1/2 -left-5 z-10 size-12 -translate-y-1/2 overflow-hidden rounded-full border-[3px] border-[#3B82F6] bg-white shadow-md">
-                <Image
-                  src="/images/pngs/about/adeiza.png"
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes="48px"
-                />
-              </span>
-              <article className="absolute inset-0 overflow-hidden rounded-3xl">
-                <Image
-                  src="/images/pngs/business-testimonial/meeting.jpg"
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes="(min-width: 1024px) 30vw, 100vw"
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-[#0B3A44]/90 via-[#0B3A44]/20 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
-                  <p className="text-sm leading-relaxed text-white sm:text-[15px]">{QUOTE}</p>
-                  <Author onDark />
-                </div>
-              </article>
-            </div>
+        <div className="grid items-start gap-4 lg:grid-cols-[minmax(220px,1fr)_1.15fr_1fr] lg:items-stretch">
+          <h2 className="text-4xl font-semibold text-[#092A31] sm:text-5xl lg:pt-2">
+            Client impact
+          </h2>
+
+          <div className="flex flex-col gap-4">
+            <TextCard />
+            <ImageCard />
           </div>
 
           <div className="flex flex-col gap-4">
-            <TextCard className="flex-1" />
-            <TextCard className="flex-1" />
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <TextCard className="flex-1" />
+            <ImageCard className="flex-1" />
             <TextCard className="flex-1" />
           </div>
         </div>

@@ -7,46 +7,67 @@ const INDUSTRIES = [
   "Fintech",
   "Healthcare",
   "Education",
+  "E-commerce",
 ] as const;
 
 const IndustriesImpact = () => {
   return (
-    <section className="pt-10 pb-14 lg:pt-14 lg:pb-20">
-      <div className="app-width grid items-start gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-        <div className="max-w-md lg:pt-6">
-          <h2 className="text-4xl leading-tight font-semibold text-[#092A31] sm:text-5xl">
-            Industries we
-            <br />
-            serve
-          </h2>
-          <p className="mt-4 text-sm leading-relaxed text-[#64748B] sm:text-base">
-            Our consultants have gone on to work with leading companies across
-            tech, finance, care, and beyond, proof that the right experience
-            opens the right doors.
-          </p>
-        </div>
+    <section className="py-10 lg:py-14">
+      <div className="app-width">
+        <div className="relative overflow-hidden rounded-[28px]">
+          <Image
+            src="/images/pngs/new-home/industries.png"
+            alt=""
+            fill
+            className="object-cover"
+            sizes="100vw"
+          />
+          <div className="relative px-4 py-8 sm:px-8 sm:py-12 lg:px-14 lg:py-16">
+            <div className="grid gap-8 rounded-[24px] bg-black/45 p-6 backdrop-blur-md sm:p-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12 lg:p-10">
+              <div className="max-w-md text-white">
+                <h2 className="text-4xl leading-tight font-semibold sm:text-5xl">
+                  Industries we
+                  <br />
+                  serve
+                </h2>
+                <p className="mt-4 text-sm leading-relaxed text-white/80 sm:text-base">
+                  Our consultants have gone on to work with leading companies
+                  across tech, finance, care, and beyond, proof that the right
+                  experience opens the right doors.
+                </p>
+              </div>
 
-        <ul className="flex flex-col gap-3">
-          {INDUSTRIES.map((industry) => (
-            <li
-              key={industry}
-              className="relative flex min-h-16 items-center justify-center rounded-xl bg-[#F3F6F8] px-6 py-5 text-center text-lg font-semibold text-[#092A31] sm:text-xl"
-            >
-              {industry}
-              {industry === "Technology" ? (
-                <span className="absolute top-1/2 left-1/2 size-11 -translate-x-2 translate-y-1 overflow-hidden rounded-full border-[3px] border-[#3B82F6] bg-white shadow-md">
-                  <Image
-                    src="/images/pngs/about/adeiza.png"
-                    alt=""
-                    fill
-                    className="object-cover"
-                    sizes="44px"
-                  />
-                </span>
-              ) : null}
-            </li>
-          ))}
-        </ul>
+              <div className="relative h-82 overflow-hidden">
+                <div className="industries-scroll flex flex-col">
+                  {[0, 1].map((copy) => (
+                    <ul key={copy} className="flex shrink-0 flex-col gap-3 pb-3">
+                      {INDUSTRIES.map((industry) => (
+                        <li
+                          key={`${industry}-${copy}`}
+                          className="flex min-h-14 items-center justify-center rounded-xl bg-[#F6E7C1] px-6 py-4 text-center text-base font-semibold text-[#5C4A2A] sm:text-lg"
+                        >
+                          {industry}
+                        </li>
+                      ))}
+                    </ul>
+                  ))}
+                </div>
+                <style>{`
+                  .industries-scroll {
+                    animation: industries-scroll 16s linear infinite;
+                  }
+                  @keyframes industries-scroll {
+                    from { transform: translateY(0); }
+                    to { transform: translateY(-50%); }
+                  }
+                  @media (prefers-reduced-motion: reduce) {
+                    .industries-scroll { animation: none; }
+                  }
+                `}</style>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -19,28 +19,28 @@ const PROJECTS = [
       "How AMDARI Consultants Delivered Over $4.5 Billion in Bottom-Line Impact",
     description:
       "AMDARI Consultants partnered with a leading technology firm to reimagine productivity at scale, by leveraging AI and data-driven decision-making, the engagement focused on streamlining operations",
-    image: "/images/pngs/the-impact/project-1.jpg",
+    image: "/images/pngs/new-home/the-impact/project-1.jpg",
   },
   {
     title:
       "How AMDARI Consultants Unlocked a New Revenue Stream Through Carbon Footprint Accounting",
     description:
       "AMDARI Consultants explored how lower-emission production could become a scalable revenue opportunity. Through technology, data, and sustainability-driven insights, the collaboration",
-    image: "/images/pngs/the-impact/project-2.jpg",
+    image: "/images/pngs/new-home/the-impact/project-2.jpg",
   },
   {
     title:
       "How AMDARI Consultants Helped a Regional Health System Reduce Avoidable Discharges by 32%",
     description:
       "A regional health system faced mounting pressure on beds and clinical capacity. AMDARI Consultants worked alongside its operations, clinical and IT leaders to unify patient-flow data, predict discharge readiness",
-    image: "/images/pngs/the-impact/project-3.jpg",
+    image: "/images/pngs/new-home/the-impact/project-3.jpg",
   },
   {
     title:
       "How AMDARI Consultants Helped a Global Financial Services Firm Respond to Cyber Threats 55% Faster",
     description:
       "A global financial services firm was overwhelmed by security alerts from dozens of disconnected tools. AMDARI Consultants teamed with its security and technology leaders to consolidate telemetry",
-    image: "/images/pngs/the-impact/project-1.jpg",
+    image: "/images/pngs/new-home/the-impact/project-1.jpg",
   },
 ];
 
@@ -225,14 +225,14 @@ const TheImpact = () => {
                     className="mb-4 block h-0.75 w-2/3 bg-linear-to-r from-[#B7CED2] via-[#B7CED2]/40 to-transparent [clip-path:polygon(0_0,100%_38%,100%_62%,0_100%)] transition-all group-hover:from-[#156374] group-hover:via-[#156374]/50"
                   />
                   <div className="flex flex-col gap-3">
-                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[#8FB3B8] text-[11px] font-semibold text-white transition-colors group-hover:bg-[#156374] group-hover:text-amdari-yellow">
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[#8FB3B8] text-[11px] font-semibold text-amdari-yellow transition-colors group-hover:bg-[#156374] group-hover:text-amdari-yellow">
                       {index + 1}
                     </span>
                     <div className="-mt-0.5">
                       <h3 className="text-[15px] font-semibold text-[#3D8C97] transition-colors group-hover:text-[#0E4C58]">
                         {step.title}
                       </h3>
-                      <p className="mt-0.5 max-w-60 text-sm leading-snug text-[#8A969B]">
+                      <p className="mt-0.5 max-w-60 text-sm leading-snug text-[#76808D]">
                         {step.description}
                       </p>
                     </div>

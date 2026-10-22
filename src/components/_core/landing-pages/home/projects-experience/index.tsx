@@ -28,7 +28,7 @@ const ProjectExperience = () => {
           Where we make impact
         </p>
 
-        <div className="inline-flex w-fit items-center rounded-full bg-[#F8F1DE] p-1.5">
+        <div className="inline-flex w-fit items-center rounded-full bg-[#FFFCF3] p-1.5">
           {TABS.map((item) => {
             const isActive = tab === item.id;
 
@@ -40,7 +40,7 @@ const ProjectExperience = () => {
                 className={cn(
                   "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
                   isActive
-                    ? "bg-[#F6D56A] text-[#3D3A1F]"
+                    ? "bg-[#FFF1C6] text-[#3D3A1F]"
                     : "text-[#6E6758] hover:text-[#3D3A1F]",
                 )}
               >

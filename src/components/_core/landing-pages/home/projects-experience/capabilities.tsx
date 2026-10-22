@@ -1,34 +1,43 @@
+"use client";
+
+import { useEffect } from "react";
 import Image from "next/image";
+import Aos from "aos";
 
 const CAPABILITIES = [
   {
     title: "Artificial Intelligence",
     image: "/images/pngs/capabilities/ai.png",
-    label: "above",
+    label: "below",
   },
   {
     title: "Innovation Strategy & Delivery",
     image: "/images/pngs/capabilities/isd.png",
-    label: "below",
+    label: "above",
   },
   {
     title: "Customer Insight",
     image: "/images/pngs/capabilities/ci.png",
-    label: "above",
+    label: "below",
   },
   {
     title: "Digital Tech Data",
     image: "/images/pngs/capabilities/dt.png",
-    label: "below",
+    label: "above",
   },
   {
     title: "Business Transformation",
     image: "/images/pngs/capabilities/ba.png",
-    label: "above",
+    label: "below",
   },
 ] as const;
 
 const Capabilities = () => {
+  useEffect(() => {
+    Aos.init({ duration: 800, once: true });
+    Aos.refresh();
+  }, []);
+
   return (
     <section className="pt-10 pb-14 lg:pt-14 lg:pb-20">
       <div className="app-width">
@@ -40,6 +49,9 @@ const Capabilities = () => {
           {CAPABILITIES.map((item) => (
             <li
               key={item.title}
+              data-aos={item.label === "below" ? "fade-up" : "fade"}
+              data-aos-duration="800"
+              data-aos-delay={item.label === "below" ? 120 : 0}
               className={`flex w-44 shrink-0 flex-col lg:w-auto ${item.label === "below" ? "mt-28" : ""}`}
             >
               {item.label === "above" ? (
