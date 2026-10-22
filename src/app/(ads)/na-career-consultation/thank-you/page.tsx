@@ -35,8 +35,10 @@ export default function ThankYouPage() {
 
           <a
             href={WHATSAPP_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
+            onClick={(e) => {
+              e.preventDefault();
+              window.location.replace(WHATSAPP_LINK);
+            }}
             className="mb-4 flex w-full items-center justify-center gap-2 rounded-lg bg-[#FFE082] py-3.5 text-sm font-bold uppercase tracking-[0.02em] text-[#0C2730] transition-[background-color,transform] hover:scale-[1.01] hover:bg-[#FFD54F]"
           >
             Join WhatsApp Community
@@ -46,6 +48,7 @@ export default function ThankYouPage() {
 
           <Link
             href="/na-career-consultation"
+            replace
             className="text-[13px] text-[#2B7F95] underline-offset-2 hover:underline"
           >
             Back to consultation page

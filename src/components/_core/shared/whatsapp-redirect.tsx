@@ -15,7 +15,7 @@ export default function WhatsAppRedirect({
 
   useEffect(() => {
     if (countdown <= 0) {
-      window.location.href = url;
+      window.location.replace(url);
       return;
     }
 
