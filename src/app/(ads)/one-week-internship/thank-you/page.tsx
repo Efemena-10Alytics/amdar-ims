@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import WhatsAppRedirect from "@/components/_core/shared/whatsapp-redirect";
 
-const WHATSAPP_LINK = "https://chat.whatsapp.com/F9hlOgl2jyWGy2WcsoAlJE";
+const WHATSAPP_LINK = "https://chat.whatsapp.com/GgfbOWL8b9TCbcFftMwa8b";
 
 export default function ThankYouPage() {
   return (
