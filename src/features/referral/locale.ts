@@ -11,8 +11,16 @@
  * - `us`     — USD payout, domestic US fields (routing number, account type)
  * - `uk-usd` — USD payout to a UK account; one of IBAN or SWIFT is supplied
  * - `cad`    — CAD payout to a Canadian account via Interac
+ * - `cad-out` — non-CAD payout from Canada; same form as `uk-out`
  */
-export type ReferralLocale = "ng" | "uk" | "uk-out" | "us" | "uk-usd" | "cad";
+export type ReferralLocale =
+  | "ng"
+  | "uk"
+  | "uk-out"
+  | "us"
+  | "uk-usd"
+  | "cad"
+  | "cad-out";
 
 export type ReferralCurrency = "GBP" | "USD" | "CAD" | "NGN";
 
@@ -54,7 +62,7 @@ export const REFERRAL_COUNTRIES: {
 
 /** Currencies offered per country; the first is the default. */
 export const COUNTRY_CURRENCIES: Record<ReferralCountry, ReferralCurrency[]> = {
-  canada: ["CAD", "GBP"],
+  canada: ["CAD", "GBP", "USD", "NGN"],
   nigeria: ["NGN"],
   "united-kingdom": ["GBP", "USD"],
   "united-states": ["USD"],
@@ -71,6 +79,8 @@ const SELECTION_TO_LOCALE: Record<string, ReferralLocale> = {
   "united-states:USD": "us",
   "canada:CAD": "cad",
   "canada:GBP": "uk-out",
+  "canada:USD": "cad-out",
+  "canada:NGN": "cad-out",
   "nigeria:NGN": "ng",
 };
 
@@ -121,6 +131,12 @@ export const REFERRAL_LOCALES: Record<ReferralLocale, ReferralLocaleConfig> = {
     maxWithdrawal: 1000,
     phone: { flag: "🇬🇧", code: "+44" },
   },
+  "cad-out": {
+    currency: "GBP",
+    minWithdrawal: 20,
+    maxWithdrawal: 1000,
+    phone: { flag: "🇨🇦", code: "+1" },
+  },
   cad: {
     currency: "GBP",
     minWithdrawal: 20,
@@ -161,7 +177,8 @@ export function parseReferralLocale(value: string | null | undefined): ReferralL
     normalized === "uk-out" ||
     normalized === "us" ||
     normalized === "uk-usd" ||
-    normalized === "cad"
+    normalized === "cad" ||
+    normalized === "cad-out"
   ) {
     return normalized;
   }
@@ -171,7 +188,7 @@ export function parseReferralLocale(value: string | null | undefined): ReferralL
 /** Locales whose withdrawal form uses the shared bank-details drawer. */
 export type BankDrawerLocale = Extract<
   ReferralLocale,
-  "uk" | "uk-out" | "us" | "uk-usd" | "cad"
+  "uk" | "uk-out" | "us" | "uk-usd" | "cad" | "cad-out"
 >;
 
 export function usesBankDrawer(locale: ReferralLocale): locale is BankDrawerLocale {

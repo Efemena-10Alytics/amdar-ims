@@ -87,6 +87,12 @@ const LOCALE_CONFIG: Record<BankDrawerLocale, LocaleConfig> = {
     defaultCurrency: "GBP",
     showHomeAddress: false,
   },
+  "cad-out": {
+    variant: "gbp-out",
+    defaultCountry: "Canada",
+    defaultCurrency: "USD",
+    showHomeAddress: false,
+  },
   cad: {
     variant: "cad",
     defaultCountry: "Canada",
