@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { AlertCircle, Check, ChevronDown, X } from "lucide-react";
 import Image from "next/image";
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
@@ -16,11 +16,23 @@ import {
 } from "@/components/ui/select";
 import { useCountries } from "@/features/portfolio/use-countries";
 import {
+  COUNTRY_CURRENCIES,
+  CURRENCY_LABELS,
   formatReferralAmount,
   getCurrencySymbol,
+  localeFromSelection,
+  REFERRAL_COUNTRIES,
   REFERRAL_LOCALES,
+  selectionFromLocale,
   type BankDrawerLocale,
+  type ReferralCountry,
+  type ReferralCurrency,
+  type ReferralLocale,
 } from "@/features/referral/locale";
+import { SelectOneDropdown } from "./select-one-dropdown";
+import { WithdrawalDrawerSkeleton } from "./withdrawal-drawer-skeleton";
+
+const FORM_SWAP_MS = 3000;
 import type { WithdrawalProfile } from "@/features/referral/types";
 import { BankTransferIcon } from "./icons";
 
@@ -37,11 +49,9 @@ const COUNTRY_FLAG_OVERRIDES: Record<string, string> = {
   Canada: "/canada-flag.png",
 };
 
-const PAYOUT_CURRENCIES = [
-  { value: "GBP", label: "Pounds (GBP)" },
-  { value: "USD", label: "US Dollar ($)" },
-  { value: "CAD", label: "Canadian Dollar (CAD)" },
-  { value: "EUR", label: "Euro (€)" },
+const INTL_ACCOUNT_TYPES = [
+  { value: "iban", label: "IBAN / Account number" },
+  { value: "swift", label: "SWIFT / BIC code" },
 ];
 
 const ACCOUNT_TYPES = [
@@ -50,7 +60,7 @@ const ACCOUNT_TYPES = [
 ];
 
 /** What differs between the bank forms; everything else is shared. */
-type BankFormVariant = "uk" | "us" | "intl" | "cad";
+type BankFormVariant = "uk" | "us" | "intl" | "cad" | "intl-single" | "gbp-out";
 
 type LocaleConfig = {
   variant: BankFormVariant;
@@ -72,15 +82,10 @@ const LOCALE_CONFIG: Record<BankDrawerLocale, LocaleConfig> = {
     accountNumberPlaceholder: "12345678",
   },
   "uk-out": {
-    variant: "intl",
+    variant: "gbp-out",
     defaultCountry: "Canada",
     defaultCurrency: "GBP",
-    warning: {
-      text: "To send money to this account, we need to use the SWIFT network. It's slower, so the transfer might take 2-5 days longer. Also note that intermediary banks and your recipient's bank might charge extra fees to the amount recieved.",
-      placement: "above-heading",
-    },
     showHomeAddress: false,
-    swiftPlaceholder: "BUKBGB22",
   },
   cad: {
     variant: "cad",
@@ -94,8 +99,8 @@ const LOCALE_CONFIG: Record<BankDrawerLocale, LocaleConfig> = {
     defaultCurrency: "USD",
     showHomeAddress: true,
   },
-  "us-out": {
-    variant: "intl",
+  "uk-usd": {
+    variant: "intl-single",
     defaultCountry: "United Kingdom",
     defaultCurrency: "USD",
     warning: {
@@ -119,6 +124,9 @@ type FormState = {
   accountType: string;
   iban: string;
   swift: string;
+  /** UK + USD supplies either an IBAN or a SWIFT code, not both. */
+  intlAccountType: string;
+  intlAccountValue: string;
   interacEmail: string;
   institutionalNumber: string;
   transitNumber: string;
@@ -139,6 +147,8 @@ function initialFormState(locale: BankDrawerLocale): FormState {
     accountType: "",
     iban: "",
     swift: "",
+    intlAccountType: "",
+    intlAccountValue: "",
     interacEmail: "",
     institutionalNumber: "",
     transitNumber: "",
@@ -162,6 +172,8 @@ type BankWithdrawalDrawerProps = {
   profile: WithdrawalProfile;
   onSuccess: () => void;
   locale: BankDrawerLocale;
+  /** Country/currency pick resolves to a different form; the page re-routes. */
+  onLocaleChange: (locale: ReferralLocale) => void;
 };
 
 export function BankWithdrawalDrawer({
@@ -170,21 +182,84 @@ export function BankWithdrawalDrawer({
   profile,
   onSuccess,
   locale,
+  onLocaleChange,
 }: BankWithdrawalDrawerProps) {
   const config = LOCALE_CONFIG[locale];
   const [form, setForm] = useState<FormState>(() => initialFormState(locale));
   const [preset, setPreset] = useState<AmountPreset | null>(null);
-  /** CAD collects Interac first, then full wire details on a second screen. */
-  const [cadStep, setCadStep] = useState<"interac" | "wire">("interac");
   const [accountTypeOpen, setAccountTypeOpen] = useState(false);
   const { data: countries } = useCountries();
 
+  /**
+   * Skeleton while a form is swapped in — on first open and whenever the
+   * country/currency pick lands on a different locale. Readiness is derived
+   * from the session key rather than reset in an effect, so it flips back to
+   * false synchronously and avoids a set-state-in-effect lint error.
+   */
+  const sessionKey = `${locale}:${open}`;
+  const [readyFor, setReadyFor] = useState<string | null>(null);
+  const isReady = readyFor === sessionKey;
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setReadyFor(sessionKey), FORM_SWAP_MS);
+    return () => clearTimeout(timeout);
+  }, [sessionKey]);
+
+  const selection = selectionFromLocale(locale);
+  const [country, setCountry] = useState<ReferralCountry>(selection.country);
+  const [payoutCurrency, setPayoutCurrency] = useState<ReferralCurrency>(
+    selection.currency,
+  );
+
+  const flagFor = (apiName: string) =>
+    COUNTRY_FLAG_OVERRIDES[apiName] ??
+    countries?.find((item) => item.name === apiName)?.flag;
+
+  const countryOptions = REFERRAL_COUNTRIES.map((entry) => ({
+    value: entry.value,
+    label: entry.label,
+    icon: flagFor(entry.apiName) ? (
+      <Image
+        src={flagFor(entry.apiName) as string}
+        alt=""
+        width={20}
+        height={20}
+        unoptimized
+        className="size-5 shrink-0 rounded-full object-cover"
+      />
+    ) : undefined,
+  }));
+
+  const currencyOptions = COUNTRY_CURRENCIES[country].map((code) => ({
+    value: code,
+    label: CURRENCY_LABELS[code],
+  }));
+
+  /**
+   * Switching country assumes that country's default currency and shows the
+   * matching form straight away — Canada lands on CAD, for example. The other
+   * currencies stay available in the dropdown to switch again from there.
+   */
+  const handleCountryChange = (next: string) => {
+    const nextCountry = next as ReferralCountry;
+    const [defaultCurrency] = COUNTRY_CURRENCIES[nextCountry];
+
+    setCountry(nextCountry);
+    setPayoutCurrency(defaultCurrency);
+
+    const target = localeFromSelection(nextCountry, defaultCurrency);
+    if (target && target !== locale) onLocaleChange(target);
+  };
+
+  const handleCurrencyChange = (next: string) => {
+    const nextCurrency = next as ReferralCurrency;
+    setPayoutCurrency(nextCurrency);
+    const target = localeFromSelection(country, nextCurrency);
+    if (target && target !== locale) onLocaleChange(target);
+  };
+
   const { currency, minWithdrawal, maxWithdrawal } = REFERRAL_LOCALES[locale];
   const symbol = getCurrencySymbol(currency);
-
-  const countryFlag =
-    COUNTRY_FLAG_OVERRIDES[form.accountCountry] ??
-    countries?.find((country) => country.name === form.accountCountry)?.flag;
 
   const accountTypeLabel = ACCOUNT_TYPES.find(
     (type) => type.value === form.accountType,
@@ -195,7 +270,6 @@ export function BankWithdrawalDrawer({
       setForm(initialFormState(locale));
       setPreset(null);
       setAccountTypeOpen(false);
-      setCadStep("interac");
     }
     onOpenChange(nextOpen);
   };
@@ -215,14 +289,6 @@ export function BankWithdrawalDrawer({
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    if (config.variant === "cad" && cadStep === "interac") {
-      setCadStep("wire");
-      // The second screen is quoted in GBP in the design.
-      setForm((current) => ({ ...current, payoutCurrency: "GBP" }));
-      return;
-    }
-
     handleOpenChange(false);
     onSuccess();
   };
@@ -244,7 +310,13 @@ export function BankWithdrawalDrawer({
           </SheetTitle>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+        {!isReady ? (
+          <WithdrawalDrawerSkeleton />
+        ) : (
+        <form
+          onSubmit={handleSubmit}
+          className="flex min-h-0 flex-1 flex-col duration-300 animate-in fade-in-0 slide-in-from-bottom-2"
+        >
           <div className="flex-1 overflow-y-auto px-6 py-5">
             {/* Who is withdrawing */}
             <div className="flex items-center gap-3 rounded-xl bg-[#156374] px-4 py-3.5 text-white">
@@ -328,72 +400,26 @@ export function BankWithdrawalDrawer({
 
             {/* Account country + payout currency */}
             <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
+              <div className="min-w-0">
                 <span className={FIELD_LABEL_CLASS}>Country</span>
-                <div className="flex items-center gap-2">
-                  <span className="flex h-11 w-12 shrink-0 items-center justify-center rounded-xl bg-[#F6F8FA]">
-                    {countryFlag ? (
-                      <Image
-                        src={countryFlag}
-                        alt=""
-                        width={24}
-                        height={24}
-                        unoptimized
-                        className="size-6 rounded-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-xs text-[#94A3B8]">—</span>
-                    )}
-                  </span>
-                  <Select
-                    value={form.accountCountry}
-                    onValueChange={(value) =>
-                      setForm((current) => ({ ...current, accountCountry: value }))
-                    }
-                  >
-                    <SelectTrigger className={SELECT_TRIGGER_CLASS}>
-                      <SelectValue placeholder="Select country" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {/* The API lists it as "United States"; the design says "USA". */}
-                      {config.defaultCountry === "USA" && (
-                        <SelectItem value="USA">USA</SelectItem>
-                      )}
-                      {(countries ?? [])
-                        .filter(
-                          (country) =>
-                            config.defaultCountry !== "USA" ||
-                            country.name !== "United States",
-                        )
-                        .map((country) => (
-                          <SelectItem key={country.code} value={country.name}>
-                            {country.name}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <SelectOneDropdown
+                  title="Country"
+                  placeholder="Select country"
+                  options={countryOptions}
+                  value={country}
+                  onChange={handleCountryChange}
+                />
               </div>
 
-              <div>
+              <div className="min-w-0">
                 <span className={FIELD_LABEL_CLASS}>Currency</span>
-                <Select
-                  value={form.payoutCurrency}
-                  onValueChange={(value) =>
-                    setForm((current) => ({ ...current, payoutCurrency: value }))
-                  }
-                >
-                  <SelectTrigger className={SELECT_TRIGGER_CLASS}>
-                    <SelectValue placeholder="Select currency" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PAYOUT_CURRENCIES.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <SelectOneDropdown
+                  title="Currency"
+                  placeholder="Select currency"
+                  options={currencyOptions}
+                  value={payoutCurrency}
+                  onChange={handleCurrencyChange}
+                />
               </div>
             </div>
 
@@ -422,7 +448,7 @@ export function BankWithdrawalDrawer({
               />
             </div>
 
-            {config.variant === "cad" && cadStep === "interac" && (
+            {config.variant === "cad" && (
               <div className="mt-4">
                 <label htmlFor="bank-interac-email" className={FIELD_LABEL_CLASS}>
                   Interac registered email
@@ -438,7 +464,7 @@ export function BankWithdrawalDrawer({
               </div>
             )}
 
-            {config.variant === "cad" && cadStep === "wire" && (
+            {config.variant === "gbp-out" && (
               <>
                 <div className="mt-4">
                   <label htmlFor="bank-institutional-number" className={FIELD_LABEL_CLASS}>
@@ -603,6 +629,39 @@ export function BankWithdrawalDrawer({
               </>
             )}
 
+            {config.variant === "intl-single" && (
+              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div className="min-w-0">
+                  <span className={FIELD_LABEL_CLASS}>Account type</span>
+                  <SelectOneDropdown
+                    title="Account type"
+                    placeholder="Select type"
+                    options={INTL_ACCOUNT_TYPES}
+                    value={form.intlAccountType}
+                    onChange={(value) =>
+                      setForm((current) => ({ ...current, intlAccountType: value }))
+                    }
+                  />
+                </div>
+
+                <div className="min-w-0 sm:col-span-2">
+                  <label htmlFor="bank-intl-account" className={FIELD_LABEL_CLASS}>
+                    Account number / BIC code
+                  </label>
+                  <Input
+                    id="bank-intl-account"
+                    value={form.intlAccountValue}
+                    onChange={updateField("intlAccountValue")}
+                    placeholder="Enter number"
+                    // Stays inert until a type is picked, so it is clear which
+                    // of the two numbers is being asked for.
+                    disabled={!form.intlAccountType}
+                    className={`${FIELD_INPUT_CLASS} disabled:cursor-not-allowed disabled:opacity-60`}
+                  />
+                </div>
+              </div>
+            )}
+
             {config.variant === "intl" && (
               <>
                 <div className="mt-4">
@@ -681,6 +740,7 @@ export function BankWithdrawalDrawer({
             </button>
           </div>
         </form>
+        )}
       </SheetContent>
     </Sheet>
   );

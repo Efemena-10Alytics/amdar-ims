@@ -7,6 +7,7 @@ import {
   parseReferralLocale,
   REFERRAL_LOCALES,
   usesBankDrawer,
+  type ReferralLocale,
 } from "@/features/referral/locale";
 import { ReferralStatsCards } from "./stats-cards";
 import { InviteEarnBanner } from "./invite-earn-banner";
@@ -17,6 +18,9 @@ import { WithdrawalHistoryTable } from "./withdrawal-history-table";
 import { WithdrawalRequestDrawer } from "./withdrawal-request-drawer";
 import { BankWithdrawalDrawer } from "./withdrawal-request-drawer-bank";
 import { WithdrawalSuccessModal } from "./withdrawal-success-modal";
+
+/** Matches the sheet's closed-state animation duration. */
+const SHEET_CLOSE_MS = 320;
 
 export function ReferralsDashboard() {
   const router = useRouter();
@@ -31,19 +35,48 @@ export function ReferralsDashboard() {
 
   const data = mockReferralData;
   const isWithdrawalHistoryView = searchParams.get("view") === "withdrawal-history";
-  // ?ln=us swaps the withdrawal form to the US bank fields.
-  const withdrawalLocale = parseReferralLocale(searchParams.get("ln"));
+  // `ln` picks the withdrawal form. With no param the drawer still has to render
+  // something the moment it opens, and that default is UK/GBP — falling back to
+  // `ng` here made the Nigerian form flash before the URL caught up.
+  const withdrawalLocale = parseReferralLocale(searchParams.get("ln") ?? "uk");
   const currency = REFERRAL_LOCALES[withdrawalLocale].currency;
 
   // Keep `ln` across in-page navigation, otherwise the locale (and so the
   // currency) silently resets when moving to or from the history view.
-  const buildHref = (view?: string) => {
+  const buildHref = (view?: string, lnOverride?: string | null) => {
     const params = new URLSearchParams();
     if (view) params.set("view", view);
-    const ln = searchParams.get("ln");
+    // `null` clears the locale outright; `undefined` keeps whatever is there.
+    const ln = lnOverride === null ? null : lnOverride ?? searchParams.get("ln");
     if (ln) params.set("ln", ln);
     const query = params.toString();
     return query ? `/dashboard/referrals?${query}` : "/dashboard/referrals";
+  };
+
+  /** Withdraw defaults to the UK form (GBP); the drawer can switch from there. */
+  const openWithdrawDrawer = () => {
+    setWithdrawDrawerOpen(true);
+    if (!searchParams.get("ln")) {
+      router.replace(buildHref(undefined, "uk"), { scroll: false });
+    }
+  };
+
+  /**
+   * Closing — button, Escape or overlay — drops `ln` so the URL goes back clean.
+   * Deferred past the sheet's exit animation: the drawer is keyed on the locale,
+   * so clearing immediately would remount it mid-close and flash the skeleton.
+   */
+  const handleWithdrawOpenChange = (nextOpen: boolean) => {
+    setWithdrawDrawerOpen(nextOpen);
+    if (nextOpen || !searchParams.get("ln")) return;
+
+    window.setTimeout(() => {
+      router.replace(buildHref(undefined, null), { scroll: false });
+    }, SHEET_CLOSE_MS);
+  };
+
+  const changeWithdrawalLocale = (next: ReferralLocale) => {
+    router.replace(buildHref(undefined, next), { scroll: false });
   };
 
   const openWithdrawalHistory = () => {
@@ -84,7 +117,7 @@ export function ReferralsDashboard() {
           <ReferralPaymentSummaryCard
             summary={data.paymentSummary}
             currency={currency}
-            onWithdraw={() => setWithdrawDrawerOpen(true)}
+            onWithdraw={openWithdrawDrawer}
             onViewHistory={openWithdrawalHistory}
           />
           <TopReferrersCard referrers={data.topReferrers} currency={currency} />
@@ -93,8 +126,10 @@ export function ReferralsDashboard() {
 
       {usesBankDrawer(withdrawalLocale) ? (
         <BankWithdrawalDrawer
+          key={withdrawalLocale}
+          onLocaleChange={changeWithdrawalLocale}
           open={withdrawDrawerOpen}
-          onOpenChange={setWithdrawDrawerOpen}
+          onOpenChange={handleWithdrawOpenChange}
           profile={data.withdrawalProfile}
           onSuccess={() => setWithdrawSuccessOpen(true)}
           locale={withdrawalLocale}
@@ -102,7 +137,7 @@ export function ReferralsDashboard() {
       ) : (
         <WithdrawalRequestDrawer
           open={withdrawDrawerOpen}
-          onOpenChange={setWithdrawDrawerOpen}
+          onOpenChange={handleWithdrawOpenChange}
           profile={data.withdrawalProfile}
           onSuccess={() => setWithdrawSuccessOpen(true)}
           locale={withdrawalLocale}

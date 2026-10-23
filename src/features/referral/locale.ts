@@ -9,22 +9,97 @@
  * - `uk`     — GBP payout, UK fields (sort code, account number)
  * - `uk-out` — GBP sent outside the UK, international fields (IBAN, SWIFT)
  * - `us`     — USD payout, domestic US fields (routing number, account type)
- * - `us-out` — USD sent outside the US, international fields (IBAN, SWIFT)
+ * - `uk-usd` — USD payout to a UK account; one of IBAN or SWIFT is supplied
  * - `cad`    — CAD payout to a Canadian account via Interac
  */
-export type ReferralLocale = "ng" | "uk" | "uk-out" | "us" | "us-out" | "cad";
+export type ReferralLocale = "ng" | "uk" | "uk-out" | "us" | "uk-usd" | "cad";
 
-export type ReferralCurrency = "GBP" | "USD";
+export type ReferralCurrency = "GBP" | "USD" | "CAD" | "NGN";
 
 const CURRENCY_SYMBOLS: Record<ReferralCurrency, string> = {
   GBP: "£",
   USD: "$",
+  CAD: "C$",
+  NGN: "₦",
 };
 
 const CURRENCY_NUMBER_LOCALE: Record<ReferralCurrency, string> = {
   GBP: "en-GB",
   USD: "en-US",
+  CAD: "en-CA",
+  NGN: "en-NG",
 };
+
+export const CURRENCY_LABELS: Record<ReferralCurrency, string> = {
+  GBP: "GBP (£)",
+  USD: "USD ($)",
+  CAD: "CAD (C$)",
+  NGN: "NGN (₦)",
+};
+
+/** The four countries offered in the withdrawal drawer, in design order. */
+export type ReferralCountry = "canada" | "nigeria" | "united-kingdom" | "united-states";
+
+export const REFERRAL_COUNTRIES: {
+  value: ReferralCountry;
+  label: string;
+  /** Name used to look the flag up in the countries API. */
+  apiName: string;
+}[] = [
+  { value: "canada", label: "Canada", apiName: "Canada" },
+  { value: "nigeria", label: "Nigeria", apiName: "Nigeria" },
+  { value: "united-kingdom", label: "United Kingdom", apiName: "United Kingdom" },
+  { value: "united-states", label: "United State of America", apiName: "United States" },
+];
+
+/** Currencies offered per country; the first is the default. */
+export const COUNTRY_CURRENCIES: Record<ReferralCountry, ReferralCurrency[]> = {
+  canada: ["CAD", "GBP"],
+  nigeria: ["NGN"],
+  "united-kingdom": ["GBP", "USD"],
+  "united-states": ["USD"],
+};
+
+/**
+ * Country + payout currency decide which withdrawal form is shown. This mirrors
+ * the designs: GBP to a UK account is the domestic UK form, GBP to Canada is the
+ * international one, and so on.
+ */
+const SELECTION_TO_LOCALE: Record<string, ReferralLocale> = {
+  "united-kingdom:GBP": "uk",
+  "united-kingdom:USD": "uk-usd",
+  "united-states:USD": "us",
+  "canada:CAD": "cad",
+  "canada:GBP": "uk-out",
+  "nigeria:NGN": "ng",
+};
+
+export function localeFromSelection(
+  country: ReferralCountry,
+  currency: ReferralCurrency,
+): ReferralLocale | null {
+  const explicit = SELECTION_TO_LOCALE[`${country}:${currency}`];
+  if (explicit) return explicit;
+
+  // GBP to a country without its own dedicated GBP form falls back to the
+  // generic "GBP outside the UK" one.
+  if (currency === "GBP") return "uk-out";
+
+  return null;
+}
+
+/** The country/currency pair a locale represents, for pre-filling the dropdowns. */
+export function selectionFromLocale(locale: ReferralLocale): {
+  country: ReferralCountry;
+  currency: ReferralCurrency;
+} {
+  const entry = Object.entries(SELECTION_TO_LOCALE).find(([, value]) => value === locale);
+  const [country, currency] = (entry?.[0] ?? "united-kingdom:GBP").split(":");
+  return {
+    country: country as ReferralCountry,
+    currency: currency as ReferralCurrency,
+  };
+}
 
 type ReferralLocaleConfig = {
   currency: ReferralCurrency;
@@ -67,7 +142,7 @@ export const REFERRAL_LOCALES: Record<ReferralLocale, ReferralLocaleConfig> = {
     maxWithdrawal: 1000,
     phone: { flag: "🇺🇸", code: "+1" },
   },
-  "us-out": {
+  "uk-usd": {
     currency: "GBP",
     minWithdrawal: 20,
     maxWithdrawal: 1000,
@@ -78,12 +153,14 @@ export const REFERRAL_LOCALES: Record<ReferralLocale, ReferralLocaleConfig> = {
 /** Anything other than a known locale falls back to the default. */
 /** Underscore and hyphen are both accepted, e.g. `uk_out` and `uk-out`. */
 export function parseReferralLocale(value: string | null | undefined): ReferralLocale {
-  const normalized = value?.trim().toLowerCase().replace(/_/g, "-");
+  let normalized = value?.trim().toLowerCase().replace(/_/g, "-");
+  // Former name for the UK + USD form.
+  if (normalized === "us-out") normalized = "uk-usd";
   if (
     normalized === "uk" ||
     normalized === "uk-out" ||
     normalized === "us" ||
-    normalized === "us-out" ||
+    normalized === "uk-usd" ||
     normalized === "cad"
   ) {
     return normalized;
@@ -94,7 +171,7 @@ export function parseReferralLocale(value: string | null | undefined): ReferralL
 /** Locales whose withdrawal form uses the shared bank-details drawer. */
 export type BankDrawerLocale = Extract<
   ReferralLocale,
-  "uk" | "uk-out" | "us" | "us-out" | "cad"
+  "uk" | "uk-out" | "us" | "uk-usd" | "cad"
 >;
 
 export function usesBankDrawer(locale: ReferralLocale): locale is BankDrawerLocale {

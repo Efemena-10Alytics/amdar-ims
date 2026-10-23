@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { X } from "lucide-react";
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,9 @@ import {
 } from "@/features/referral/locale";
 import type { WithdrawalProfile } from "@/features/referral/types";
 import { BankTransferIcon } from "./icons";
+import { WithdrawalDrawerSkeleton } from "./withdrawal-drawer-skeleton";
+
+const FORM_SWAP_MS = 3000;
 
 const NIGERIAN_BANKS = [
   "Access Bank",
@@ -86,6 +89,16 @@ export function WithdrawalRequestDrawer({
     REFERRAL_LOCALES[locale];
   const currencySymbol = getCurrencySymbol(currency);
   const limitsHint = `Minimum of ${currencySymbol}${minWithdrawal} | Maximum of ${currencySymbol}${maxWithdrawal}`;
+  /** Matches the bank drawer: skeleton while the form is swapped in. */
+  const sessionKey = String(open);
+  const [readyFor, setReadyFor] = useState<string | null>(null);
+  const isReady = readyFor === sessionKey;
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setReadyFor(sessionKey), FORM_SWAP_MS);
+    return () => clearTimeout(timeout);
+  }, [sessionKey]);
+
   const [step, setStep] = useState<WithdrawalStep>("form");
   const [form, setForm] = useState<FormState>(INITIAL_FORM_STATE);
   const [selectedPercent, setSelectedPercent] = useState<number | null>(null);
@@ -145,7 +158,9 @@ export function WithdrawalRequestDrawer({
           </SheetTitle>
         </div>
 
-        {step === "form" ? (
+        {!isReady ? (
+          <WithdrawalDrawerSkeleton />
+        ) : step === "form" ? (
           <form onSubmit={handleProceed} className="flex min-h-0 flex-1 flex-col">
             <div className="flex-1 overflow-y-auto px-6 py-5">
               <div className="flex items-center gap-3 rounded-xl bg-[#156374] px-4 py-3.5 text-white">
