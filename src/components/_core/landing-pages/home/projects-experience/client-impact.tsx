@@ -1,86 +1,159 @@
+"use client";
+
+import { useRef } from "react";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import Autoplay from "embla-carousel-autoplay";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
 
-const QUOTE =
-  "Loved the system hacking test we had with the team, absolutely brilliant and a thumbs up on the result collation slide. Looking to work with you more!";
+type Story = {
+  name: string;
+  role: string;
+  quote: string;
+  image?: string;
+};
 
-const GoogleMark = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 48 48" className={className} aria-hidden>
-    <path
-      fill="#FFC107"
-      d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"
-    />
-    <path
-      fill="#FF3D00"
-      d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"
-    />
-    <path
-      fill="#4CAF50"
-      d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"
-    />
-    <path
-      fill="#1976D2"
-      d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"
-    />
-  </svg>
-);
+const LEFT: Story[] = [
+  {
+    name: "AZUKA, UK",
+    role: "Project Management",
+    quote:
+      'Awesome moral boaster work experience. I\'m still undergoing my work experience session with Amdari, I must say the experience has been nothing but top notch especially the support and mentorship from our coach "Blessing E."',
+    image: "/images/pngs/new-home/impact-1.png",
+  },
+  {
+    name: "Henry",
+    role: "Data Analysis",
+    quote:
+      "My experience at AMDARI as a data science consultant has been great so far. Working on projects that are in demand and industrial based. Well coordinated. And the staff know the onus is on you if you really want to get work experience and get involve in live projects.",
+  },
+  {
+    name: "Chinedu, USA",
+    role: "Data Science",
+    quote:
+      "What stands out most is the culture of innovation and collaboration, there's a strong focus on building practical solutions with real-world value. It has been a great place to grow while contributing to work that makes an impact.",
+    image: "/images/pngs/new-home/impact-2.png",
+  },
+];
 
-const Author = ({ onDark = false }: { onDark?: boolean }) => (
-  <div className="mt-5 flex items-center gap-2.5">
-    <GoogleMark className="size-6 shrink-0" />
+const RIGHT: Story[] = [
+  {
+    name: "JAPHET, UK",
+    role: "Product design",
+    quote:
+      "Completing the Amdari Product Design Programme has been an excellent and rewarding experience. I had the opportunity to apply what I was learning to real design challenges, which helped me better understand the product design process",
+  },
+  {
+    name: "Esther, UK",
+    role: "Data Engineering",
+    quote:
+      "Had a wonderful experience with Amdari team, lots of real world projects to work on, My cordinator was very responsive to all questions and even when I needed reference for my Job, the team were all helpful.",
+    image: "/images/pngs/new-home/imapact-3.png",
+  },
+  {
+    name: "Ayotunde",
+    role: "Data Engineer",
+    quote:
+      "Amdari provided me with solid hands-on experience in Data Engineering. Working on real-world scenarios and practical projects helped bridge the gap between theoretical knowledge and actual industry application.",
+  },
+];
+
+const Author = ({
+  name,
+  role,
+  onDark,
+}: {
+  name: string;
+  role: string;
+  onDark?: boolean;
+}) => (
+  <div className="mt-4 flex items-center gap-2.5">
+    <span
+      className={`flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
+        onDark ? "bg-white/20 text-white" : "bg-[#E7F3F5] text-[#156374]"
+      }`}
+    >
+      {name.charAt(0)}
+    </span>
     <div className="leading-tight">
-      <p className={cn("text-sm font-semibold", onDark ? "text-white" : "text-[#092A31]")}>
-        Amina
+      <p className={`text-sm font-semibold ${onDark ? "text-white" : "text-[#156374]"}`}>
+        {name}
       </p>
-      <p className={cn("text-xs", onDark ? "text-white/80" : "text-[#7B8A90]")}>
-        Head of Product, Google
-      </p>
+      <p className={`text-xs ${onDark ? "text-white/75" : "text-[#7B8A90]"}`}>{role}</p>
     </div>
   </div>
 );
 
-const TextCard = ({ className }: { className?: string }) => (
-  <article className={cn("rounded-3xl bg-[#F3F6F8] p-5 sm:p-6", className)}>
-    <p className="text-sm leading-relaxed text-[#1C3A42] sm:text-[15px]">{QUOTE}</p>
-    <Author />
-  </article>
-);
-
-const ImageCard = ({ className }: { className?: string }) => (
-  <article className={cn("relative min-h-120 flex-1 overflow-hidden rounded-3xl", className)}>
+const ImageCard = ({ story }: { story: Story }) => (
+  <article className="relative h-full min-h-[424px] overflow-hidden rounded-3xl">
     <Image
-      src="/images/pngs/business-testimonial/meeting.jpg"
+      src={story.image ?? ""}
       alt=""
       fill
       className="object-cover"
-      sizes="(min-width: 1024px) 36vw, 100vw"
+      sizes="(min-width: 1024px) 28vw, 80vw"
     />
-    <div className="absolute inset-0 bg-linear-to-t from-[#0B3A44]/90 via-[#0B3A44]/15 to-transparent" />
-    <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
-      <p className="text-sm leading-relaxed text-white sm:text-[15px]">{QUOTE}</p>
-      <Author onDark />
+    <div className="absolute inset-0 bg-linear-to-t from-[#071E24]/90 via-[#071E24]/25 to-transparent" />
+    <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+      <p className="line-clamp-4 text-sm leading-relaxed text-white">{story.quote}</p>
+      <Author name={story.name} role={story.role} onDark />
     </div>
   </article>
 );
+
+const TextCard = ({ story }: { story: Story }) => (
+  <article className="flex h-[200px] flex-col justify-between rounded-3xl bg-[#F4F7F8] p-4 sm:p-5">
+    <p className="line-clamp-6 text-sm leading-relaxed text-[#1C3A42]">{story.quote}</p>
+    <Author name={story.name} role={story.role} />
+  </article>
+);
+
+const StoryColumn = ({
+  stories,
+  delay,
+}: {
+  stories: Story[];
+  delay: number;
+}) => {
+  const autoplay = useRef(
+    Autoplay({ delay, stopOnInteraction: false, stopOnMouseEnter: true }),
+  );
+  const slides = [...stories, stories[1]];
+
+  return (
+    <Carousel
+      orientation="vertical"
+      plugins={[autoplay.current]}
+      opts={{ align: "start", loop: true, duration: 35 }}
+      className="h-[648px]"
+    >
+      <CarouselContent className="-mt-3 h-[648px]">
+        {slides.map((story, index) => (
+          <CarouselItem
+            key={`${story.name}-${index}`}
+            className={story.image ? "basis-[436px] pt-3" : "basis-[212px] pt-3"}
+          >
+            {story.image ? <ImageCard story={story} /> : <TextCard story={story} />}
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+    </Carousel>
+  );
+};
 
 const ClientImpact = () => {
   return (
     <section className="pt-8 pb-14 lg:pt-10 lg:pb-20">
       <div className="app-width">
-        <div className="grid items-start gap-4 lg:grid-cols-[minmax(220px,1fr)_1.15fr_1fr] lg:items-stretch">
+        <div className="grid items-start gap-6 lg:grid-cols-[minmax(180px,0.7fr)_1fr_1fr] lg:gap-4">
           <h2 className="text-4xl font-semibold text-[#092A31] sm:text-5xl lg:pt-2">
             Client impact
           </h2>
-
-          <div className="flex flex-col gap-4">
-            <TextCard />
-            <ImageCard />
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <ImageCard className="flex-1" />
-            <TextCard className="flex-1" />
-          </div>
+          <StoryColumn stories={LEFT} delay={3200} />
+          <StoryColumn stories={RIGHT} delay={3200} />
         </div>
       </div>
     </section>

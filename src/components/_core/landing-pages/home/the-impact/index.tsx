@@ -178,49 +178,17 @@ const TheImpact = () => {
         </div>
 
         <div className="mt-4 grid items-stretch gap-10 rounded-[28px] bg-[#F7F1E4] p-6 lg:grid-cols-[1.05fr_0.95fr]">
-          <article className="relative min-h-115 overflow-hidden rounded-[28px]">
-            <Image
-              src="/images/pngs/new-home/the-impact/road.png"
-              alt=""
-              fill
-              className="object-cover"
-              sizes="(min-width: 1024px) 50vw, 100vw"
+          <article className="relative min-h-100 overflow-hidden rounded-[28px]">
+            <video
+              src="/images/pngs/new-home/videos/engagement.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              disablePictureInPicture
+              controls={false}
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover [&::-webkit-media-controls]:hidden [&::-webkit-media-controls-enclosure]:hidden"
             />
-            <div className="absolute inset-0 bg-linear-to-b from-black/35 via-black/10 to-black/55" />
-            <div className="relative flex h-full flex-col justify-between p-6 sm:p-8">
-              <div className="max-w-md text-white">
-                <h3 className="text-3xl leading-tight font-semibold sm:text-4xl">
-                  How an engagement moves from brief to hire
-                </h3>
-                <p className="mt-3 max-w-xs text-sm text-white/85 sm:text-base">
-                  The same model from brief to hire to give the most desired
-                  result
-                </p>
-              </div>
-
-              <div className="mt-8 rounded-2xl bg-white/95 p-4 text-[#092A31] shadow-lg backdrop-blur-sm sm:p-5">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-[10px] font-semibold tracking-[0.16em] text-[#8AA0A6] uppercase">
-                    Live engagement
-                  </p>
-                  <span className="rounded-full bg-[#EDE4FF] px-2.5 py-1 text-[11px] font-medium text-[#6D4CC4]">
-                    Data Sc.
-                  </span>
-                </div>
-                <p className="mt-3 text-sm font-semibold">
-                  (MICROSOFT) Customer Churn analysis
-                </p>
-                <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-                  <p className="text-[#7B8A90]">Consultant team</p>
-                  <p className="text-right font-medium">8 Consultants</p>
-                  <p className="text-[#7B8A90]">Supervision</p>
-                  <p className="text-right font-medium">Data Specialist</p>
-                </div>
-                <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-[#E6EEF0]">
-                  <div className="h-full w-[62%] rounded-full bg-[#3B82F6]" />
-                </div>
-              </div>
-            </div>
           </article>
 
           <div className="flex w-full min-w-0 flex-col justify-between">
