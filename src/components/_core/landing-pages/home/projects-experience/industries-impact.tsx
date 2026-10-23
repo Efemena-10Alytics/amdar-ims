@@ -37,14 +37,14 @@ const IndustriesImpact = () => {
                 </p>
               </div>
 
-              <div className="relative h-82 overflow-hidden">
+              <div className="relative h-92 overflow-hidden">
                 <div className="industries-scroll flex flex-col">
                   {[0, 1].map((copy) => (
                     <ul key={copy} className="flex shrink-0 flex-col gap-3 pb-3">
                       {INDUSTRIES.map((industry) => (
                         <li
                           key={`${industry}-${copy}`}
-                          className="flex min-h-14 items-center justify-center rounded-xl bg-[#F6E7C1] px-6 py-4 text-center text-base font-semibold text-[#5C4A2A] sm:text-lg"
+                          className="flex min-h-14 items-center justify-center bg-[#F6E7C1] px-6 py-4 text-center text-base font-semibold text-[#5C4A2A] sm:text-3xl"
                         >
                           {industry}
                         </li>
