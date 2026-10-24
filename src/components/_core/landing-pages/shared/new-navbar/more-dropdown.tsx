@@ -109,7 +109,7 @@ export function MoreDropdown({
         aria-expanded={open}
         aria-haspopup="true"
       >
-        Resources
+        More
         <ChevronDown
           className={cn("size-4 transition-transform", open && "rotate-180")}
         />

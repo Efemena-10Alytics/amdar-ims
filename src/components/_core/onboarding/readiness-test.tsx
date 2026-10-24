@@ -16,7 +16,7 @@ import {
   isEnrollmentWhatsappVerified,
   WHATSAPP_COMMUNITY_TOAST_MESSAGE,
 } from "@/features/internship/resolve-enrollment-journey";
-import Flag from "../landing-pages/home/hero/flag";
+import Flag from "../landing-pages/home/legacy-files/hero/flag";
 import { useOnboardingData } from "./onboarding-context";
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
 import OnboardingPreviousStepButton from "./onboarding-previous-step-button";

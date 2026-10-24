@@ -65,7 +65,8 @@ const Navbar = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
   const [useGlassNav, setUseGlassNav] = useState(false);
-  const [isPastHomeHero, setIsPastHomeHero] = useState(false);
+  const [isNavSticky, setIsNavSticky] = useState(false);
+  const [navSpacerHeight, setNavSpacerHeight] = useState(0);
   const navBarRef = useRef<HTMLDivElement>(null);
 
   const pathname = usePathname();
@@ -77,9 +78,13 @@ const Navbar = () => {
   const isHomePageRoute = pathname === "/home";
   const isAboutPageRoute = pathname === "/about";
   const isHeroNavRoute = isHomePageRoute || isAboutPageRoute;
-  const shouldStickNav = !isHeroNavRoute || isPastHomeHero;
+  const shouldStickNav = isNavSticky;
   const shouldUseScrolledNavStyles = isHeroNavRoute ? shouldStickNav : true;
-  const showWhiteNav = isHeroNavRoute ? useGlassNav && shouldStickNav : true;
+  const showWhiteNav = isHomePageRoute
+    ? shouldStickNav
+    : isHeroNavRoute
+      ? useGlassNav && shouldStickNav
+      : true;
   const logoImg = shouldUseScrolledNavStyles
     ? "/logo.svg"
     : isHeroNavRoute
@@ -140,24 +145,16 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    if (!isHeroNavRoute) {
-      setIsPastHomeHero(true);
-      return;
-    }
-
     const updateStickyState = () => {
-      const heroSectionId = isHomePageRoute
-        ? "home-hero-section"
-        : "about-hero-section";
-      const hero = document.getElementById(heroSectionId);
-      if (!hero) {
-        setIsPastHomeHero(false);
-        return;
+      const shouldStick = window.scrollY >= window.innerHeight;
+      setIsNavSticky(shouldStick);
+      if (shouldStick && navBarRef.current) {
+        const nav = navBarRef.current.querySelector("nav");
+        setNavSpacerHeight(
+          nav?.getBoundingClientRect().height ??
+            navBarRef.current.offsetHeight,
+        );
       }
-      const navHeight = navBarRef.current?.getBoundingClientRect().height ?? 0;
-      const heroTop = window.scrollY + hero.getBoundingClientRect().top;
-      const heroBottom = heroTop + hero.getBoundingClientRect().height;
-      setIsPastHomeHero(window.scrollY >= heroBottom - navHeight);
     };
 
     updateStickyState();
@@ -167,11 +164,11 @@ const Navbar = () => {
       window.removeEventListener("scroll", updateStickyState);
       window.removeEventListener("resize", updateStickyState);
     };
-  }, [isHeroNavRoute, isHomePageRoute]);
+  }, [pathname]);
 
   const navLinks: { label: string; href: string }[] = [
-    { label: "Real World Project", href: "/projects" },
-    { label: "Internship Program", href: "/internship" },
+    // { label: "Real World Project", href: "/projects" },
+    { label: "Become a Consultant", href: "/internship" },
   ];
 
   const closeDrawer = () => setIsDrawerOpen(false);
@@ -182,7 +179,7 @@ const Navbar = () => {
         ref={navBarRef}
         className={cn(
           "top-0 left-0 right-0 z-120 isolate -mt-px",
-          shouldStickNav ? "sticky" : "relative",
+          shouldStickNav ? "fixed" : "relative",
         )}
       >
         {/* {showAnniversaryBanner && (
@@ -195,16 +192,20 @@ const Navbar = () => {
             "relative z-121 w-full mt-0 border-b border-t-0 shadow-sm",
             "transition-[background-color,backdrop-filter,border-b-color,box-shadow,color] duration-300 ease-out",
             showWhiteNav
-              ? cn("border-gray-200 bg-white text-primary backdrop-blur-xs")
+              ? cn(
+                  "border-gray-200 bg-white text-primary",
+                  !isHomePageRoute && "backdrop-blur-xs",
+                )
               : cn(
-                  "border-transparent bg-transparent text-white backdrop-blur-xs",
+                  "border-transparent bg-transparent text-white shadow-none",
+                  !isHomePageRoute && "backdrop-blur-xs",
                 ),
           )}
         >
           <div
             className={cn(
               "pointer-events-none absolute inset-0 overflow-hidden transition-opacity duration-300",
-              useGlassNav ? "opacity-0" : "opacity-100",
+              useGlassNav || isHomePageRoute ? "opacity-0" : "opacity-100",
             )}
             aria-hidden
           >
@@ -351,8 +352,11 @@ const Navbar = () => {
             </div>
           </div>
         </nav>
-        <div className="h-10"></div>
+        {shouldStickNav ? null : <div className="h-10" />}
       </div>
+      {shouldStickNav ? (
+        <div style={{ height: navSpacerHeight }} aria-hidden />
+      ) : null}
 
       <MobileDrawer
         isDrawerOpen={isDrawerOpen}

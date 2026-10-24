@@ -3,6 +3,20 @@ export type CompanyLogo = {
   alt: string;
 };
 
+export const NEW_HOME_PARTNER_LOGOS: CompanyLogo[] = [
+  { src: "/images/pngs/new-home/partners/un.svg", alt: "United Nations" },
+  { src: "/images/pngs/new-home/partners/nhs.svg", alt: "NHS" },
+  { src: "/images/pngs/new-home/partners/age-uk.svg", alt: "Age UK" },
+  { src: "/images/pngs/new-home/partners/hsbc.svg", alt: "HSBC" },
+  { src: "/images/pngs/new-home/partners/deloitte.svg", alt: "Deloitte" },
+  { src: "/images/pngs/new-home/partners/ukri.svg", alt: "UK Research and Innovation" },
+  { src: "/images/pngs/new-home/partners/gov.uk.svg", alt: "GOV.UK" },
+  { src: "/images/pngs/new-home/partners/mcc.svg", alt: "Manchester City Council" },
+  { src: "/images/pngs/new-home/partners/croydon.svg", alt: "Croydon Council" },
+  { src: "/images/pngs/new-home/partners/ngg.svg", alt: "National Grid" },
+  { src: "/images/pngs/new-home/partners/he.svg", alt: "Health Education England" },
+];
+
 export const COMPANY_LOGOS: CompanyLogo[] = [
   { src: "/images/svgs/companies/un.svg", alt: "United Nations" },
   { src: "/images/svgs/companies/nhs.svg", alt: "NHS" },

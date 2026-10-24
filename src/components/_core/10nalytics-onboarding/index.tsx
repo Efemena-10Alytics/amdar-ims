@@ -13,7 +13,7 @@ import {
   type TenAnalyticsOnboardingProfileData,
 } from "@/features/10nalytics/use-get-profile";
 import { useForgotPassword } from "@/features/auth/use-forgot-password";
-import Flag from "../landing-pages/home/hero/flag";
+import Flag from "../landing-pages/home/legacy-files/hero/flag";
 import { COMPANY_LOGOS } from "@/constants/company-logos";
 
 const FLOATING_AVATARS = [

@@ -14,7 +14,7 @@ import { isOnboardingEnrollmentStepComplete } from "@/features/internship/use-up
 import { useUpdateWhatsappVerification } from "@/features/internship/use-update-whatsapp-verification";
 import { isEnrollmentWhatsappVerified } from "@/features/internship/resolve-enrollment-journey";
 import { getInternsWhatsappGroupUrl } from "@/constants/interns-whatsapp-group";
-import Flag from "../landing-pages/home/hero/flag";
+import Flag from "../landing-pages/home/legacy-files/hero/flag";
 import { Button } from "@/components/ui/button";
 import { WhatsappSVG } from "./svg";
 import { JourneyAsideHeader } from "../journey-aside/header";
