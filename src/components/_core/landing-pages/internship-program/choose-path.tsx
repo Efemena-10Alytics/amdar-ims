@@ -77,14 +77,14 @@ const ChoosePath = ({ internshipPrograms }: ChoosePathProps) => {
                     {career.description}
                   </p>
                   <div className="flex items-center justify-between">
-                    <div className="flex flex-col justify-end">
+                    {/* <div className="flex flex-col justify-end">
                       <span className="text-[#8492A6] group-hover:text-white/80 line-through text-[15px] font-medium leading-tight">
                         {INTERNSHIP_ORIGINAL_PRICE_LABEL}
                       </span>
                       <span className="text-xl font-bold group-hover:text-white text-[#092A31] leading-tight">
                         {INTERNSHIP_DISCOUNTED_PRICE_LABEL}
                       </span>
-                    </div>
+                    </div> */}
                     <Link href={`/internship/${career.slug}${querySuffix}`}>
                       <Button
                         className={cn(

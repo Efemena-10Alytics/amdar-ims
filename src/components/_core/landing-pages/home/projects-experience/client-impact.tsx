@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Autoplay from "embla-carousel-autoplay";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  type CarouselApi,
 } from "@/components/ui/carousel";
 
 type Story = {
@@ -18,14 +19,14 @@ type Story = {
 
 const LEFT: Story[] = [
   {
-    name: "AZUKA, UK",
+    name: "Azuka, UK",
     role: "Project Management",
     quote:
       'Awesome moral boaster work experience. I\'m still undergoing my work experience session with Amdari, I must say the experience has been nothing but top notch especially the support and mentorship from our coach "Blessing E."',
     image: "/images/pngs/new-home/impact-1.png",
   },
   {
-    name: "Henry",
+    name: "Henry, UK",
     role: "Data Analysis",
     quote:
       "My experience at AMDARI as a data science consultant has been great so far. Working on projects that are in demand and industrial based. Well coordinated. And the staff know the onus is on you if you really want to get work experience and get involve in live projects.",
@@ -41,7 +42,7 @@ const LEFT: Story[] = [
 
 const RIGHT: Story[] = [
   {
-    name: "JAPHET, UK",
+    name: "Japhet, UK",
     role: "Product design",
     quote:
       "Completing the Amdari Product Design Programme has been an excellent and rewarding experience. I had the opportunity to apply what I was learning to real design challenges, which helped me better understand the product design process",
@@ -54,7 +55,7 @@ const RIGHT: Story[] = [
     image: "/images/pngs/new-home/imapact-3.png",
   },
   {
-    name: "Ayotunde",
+    name: "Ayotunde, US",
     role: "Data Engineer",
     quote:
       "Amdari provided me with solid hands-on experience in Data Engineering. Working on real-world scenarios and practical projects helped bridge the gap between theoretical knowledge and actual industry application.",
@@ -79,7 +80,7 @@ const Author = ({
       {name.charAt(0)}
     </span>
     <div className="leading-tight">
-      <p className={`text-sm font-semibold ${onDark ? "text-white" : "text-[#156374]"}`}>
+      <p className={`font-clash-display capitalize font-display text-sm font-semibold ${onDark ? "text-white" : "text-[#156374]"}`}>
         {name}
       </p>
       <p className={`text-xs ${onDark ? "text-white/75" : "text-[#7B8A90]"}`}>{role}</p>
@@ -88,7 +89,7 @@ const Author = ({
 );
 
 const ImageCard = ({ story }: { story: Story }) => (
-  <article className="relative h-full min-h-[424px] overflow-hidden rounded-3xl">
+  <article className="relative h-full min-h-[424px] overflow-hidden rounded-xl">
     <Image
       src={story.image ?? ""}
       alt=""
@@ -105,7 +106,7 @@ const ImageCard = ({ story }: { story: Story }) => (
 );
 
 const TextCard = ({ story }: { story: Story }) => (
-  <article className="flex h-[200px] flex-col justify-between rounded-3xl bg-[#F4F7F8] p-4 sm:p-5">
+  <article className="flex h-[200px] flex-col justify-between rounded-xl bg-[#F4F7F8] p-4 sm:p-5">
     <p className="line-clamp-6 text-sm leading-relaxed text-[#1C3A42]">{story.quote}</p>
     <Author name={story.name} role={story.role} />
   </article>
@@ -114,19 +115,49 @@ const TextCard = ({ story }: { story: Story }) => (
 const StoryColumn = ({
   stories,
   delay,
+  reverse = false,
 }: {
   stories: Story[];
   delay: number;
+  reverse?: boolean;
 }) => {
+  const [api, setApi] = useState<CarouselApi>();
+  const paused = useRef(false);
   const autoplay = useRef(
     Autoplay({ delay, stopOnInteraction: false, stopOnMouseEnter: true }),
   );
   const slides = [...stories, stories[1]];
 
+  useEffect(() => {
+    if (!reverse || !api) return;
+
+    const root = api.rootNode();
+    const pause = () => {
+      paused.current = true;
+    };
+    const resume = () => {
+      paused.current = false;
+    };
+
+    root.addEventListener("mouseenter", pause);
+    root.addEventListener("mouseleave", resume);
+
+    const timer = window.setInterval(() => {
+      if (!paused.current) api.scrollPrev();
+    }, delay);
+
+    return () => {
+      window.clearInterval(timer);
+      root.removeEventListener("mouseenter", pause);
+      root.removeEventListener("mouseleave", resume);
+    };
+  }, [api, delay, reverse]);
+
   return (
     <Carousel
+      setApi={setApi}
       orientation="vertical"
-      plugins={[autoplay.current]}
+      plugins={reverse ? undefined : [autoplay.current]}
       opts={{ align: "start", loop: true, duration: 35 }}
       className="h-[648px]"
     >
@@ -153,7 +184,7 @@ const ClientImpact = () => {
             Client impact
           </h2>
           <StoryColumn stories={LEFT} delay={3200} />
-          <StoryColumn stories={RIGHT} delay={3200} />
+          <StoryColumn stories={RIGHT} delay={3200} reverse />
         </div>
       </div>
     </section>

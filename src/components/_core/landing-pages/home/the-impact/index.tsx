@@ -17,9 +17,9 @@ const PROJECTS = [
   {
     id: "bottom-line-impact",
     title:
-      "How AMDARI Consultants Delivered Over $4.5 Billion in Bottom-Line Impact",
+      "How AMDARI Consultants Delivered Over $4.5 Million in Bottom-Line Impact",
     description:
-      "AMDARI Consultants partnered with a leading technology firm to reimagine productivity at scale, by leveraging AI and data-driven decision-making, the engagement focused on streamlining operations",
+      "AMDARI Consultants partnered with a leading technology firm to reimagine productivity at scale. By leveraging AI and data-driven decision-making, the engagement focused on streamlining operations, accelerating execution, and unlocking measurable business value.",
     image: "/images/pngs/new-home/the-impact/project-1.jpg",
   },
   {
@@ -27,23 +27,23 @@ const PROJECTS = [
     title:
       "How AMDARI Consultants Unlocked a New Revenue Stream Through Carbon Footprint Accounting",
     description:
-      "AMDARI Consultants explored how lower-emission production could become a scalable revenue opportunity. Through technology, data, and sustainability-driven insights, the collaboration",
+      "AMDARI Consultants explored how lower-emission production could become a scalable revenue opportunity. Through technology, data, and sustainability-driven insights, the collaboration focused on linking environmental performance to commercial value.",
     image: "/images/pngs/new-home/the-impact/project-2.jpg",
   },
   {
     id: "avoidable-discharges",
     title:
-      "How AMDARI Consultants Helped a Regional Health System Reduce Avoidable Discharges by 32%",
+      "AMDARI Consultants Helped a Regional Health System Reduce Avoidable Discharge Delays by 18%",
     description:
-      "A regional health system faced mounting pressure on beds and clinical capacity. AMDARI Consultants worked alongside its operations, clinical and IT leaders to unify patient-flow data, predict discharge readiness",
+      "AMDARI Consultants partnered with a regional health system to address avoidable discharge delays and reduce pressure on inpatient capacity. By unifying patient-flow data and supporting clinical adoption, the engagement focused on helping teams act earlier and with greater confidence.",
     image: "/images/pngs/new-home/the-impact/project-3.jpg",
   },
   {
     id: "cyber-threats",
     title:
-      "How AMDARI Consultants Helped a Global Financial Services Firm Respond to Cyber Threats 55% Faster",
+      "How AMDARI Consultants Helped a Global Financial Services Firm Respond to Cyber Threats 62% Faster",
     description:
-      "A global financial services firm was overwhelmed by security alerts from dozens of disconnected tools. AMDARI Consultants teamed with its security and technology leaders to consolidate telemetry",
+      "A global financial services firm was overwhelmed by security alerts from dozens of disconnected tools. AMDARI Consultants teamed with its security and technology leaders to consolidate telemetry, automate triage, and focus analysts on the threats that carried real business risk.",
     image: "/images/pngs/new-home/the-impact/project-1.jpg",
   },
 ];
@@ -163,12 +163,9 @@ const TheImpact = () => {
                       <p className="mt-2 line-clamp-4 text-sm leading-relaxed text-white/90">
                         {project.description}
                       </p>
-                      {/* <Link
-                        href="/projects"
-                        className="mt-3 inline-block text-sm underline underline-offset-4"
-                      >
+                      <span className="mt-3 inline-block text-sm underline underline-offset-4">
                         View project
-                      </Link> */}
+                      </span>
                     </div>
                   </Link>
                 </CarouselItem>

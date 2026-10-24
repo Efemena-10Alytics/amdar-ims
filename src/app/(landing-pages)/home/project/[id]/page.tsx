@@ -32,13 +32,13 @@ export default async function ProjectPage({
   return (
     <>
       <ProjectHero project={project} />
-      <Challenges />
-      <Approach />
-      <JoinTheTeam />
-      <BusinessImpact />
-      <Highlights />
-      <Capabilities />
-      <Solve />
+      <Challenges project={project} />
+      <Approach project={project} />
+      <JoinTheTeam project={project} />
+      <BusinessImpact project={project} />
+      <Highlights project={project} />
+      <Capabilities project={project} />
+      <Solve project={project} />
     </>
   );
 }

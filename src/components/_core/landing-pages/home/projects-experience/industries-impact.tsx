@@ -44,7 +44,7 @@ const IndustriesImpact = () => {
                       {INDUSTRIES.map((industry) => (
                         <li
                           key={`${industry}-${copy}`}
-                          className="flex min-h-14 items-center justify-center bg-[#F6E7C1] px-6 py-4 text-center text-base font-semibold text-[#5C4A2A] sm:text-3xl"
+                          className="flex min-h-14 items-center font-display justify-center bg-[#F6E7C1] px-6 py-4 text-center text-base font-semibold text-[#5C4A2A] sm:text-3xl"
                         >
                           {industry}
                         </li>

@@ -9,16 +9,20 @@ import {
   CarouselItem,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import {
-  getYoutubeThumbnail,
-  TESTIMONIAL_VIDEOS,
-} from "@/features/testimonials/constants";
+import { getYoutubeThumbnail } from "@/features/testimonials/constants";
 import { VideoPlayerModal } from "@/components/_core/landing-pages/shared/video-player-modal";
 import {
   ArrowLeftCurve,
   ArrowRightCurve,
 } from "@/components/_core/landing-pages/home/svg";
 import { cn } from "@/lib/utils";
+
+const INSIDE_AMDARI_VIDEOS = [
+  // { id: 1, videoUrl: "https://youtu.be/FHdp8c-Y7fg" },
+  { id: 2, videoUrl: "https://youtu.be/XsaBrA9vlAs" },
+  { id: 3, videoUrl: "https://youtu.be/VcXN9FrCtmg" },
+  { id: 4, videoUrl: "https://youtu.be/AnP2jFk7ZAo" },
+];
 
 const InsideAmdari = () => {
   const [api, setApi] = useState<CarouselApi>();
@@ -57,7 +61,7 @@ const InsideAmdari = () => {
       <div className="mt-8 w-full pl-4 sm:pl-6 xl:pl-[max(4rem,calc((100vw-100rem)/2+4rem))] lg:mt-10">
         <Carousel setApi={setApi} opts={{ align: "start", loop: false }}>
           <CarouselContent className="items-center">
-            {TESTIMONIAL_VIDEOS.map((video, index) => {
+            {INSIDE_AMDARI_VIDEOS.map((video, index) => {
               const isActive = index === selectedIndex;
 
               return (

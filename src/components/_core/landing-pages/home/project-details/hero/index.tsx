@@ -1,12 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { DEFAULT_PROJECT_IMAGE, type Project } from "../data";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import type { Project } from "../data";
 import Project1 from "./images-fomation/project1";
 
 const ProjectHero = ({ project }: { project: Project }) => {
-    const image = project.image || DEFAULT_PROJECT_IMAGE;
-
     return (
         <section className="bg-[#F7FBFC] py-8 sm:py-12 lg:py-16 -translate-y-10">
             <div className="app-width">
@@ -28,30 +25,18 @@ const ProjectHero = ({ project }: { project: Project }) => {
                         {project.description}
                     </p>
 
-                    {project.metric ? (
-                        <p className="mt-8 inline-flex items-center gap-3 rounded-full bg-[#F6E3A1] px-5 py-2.5">
-                            <span className="text-lg font-bold text-[#1A1A1A]">
-                                {project.metric.value}
-                            </span>
-                            <span className="text-sm text-[#6B7280]">
-                                {project.metric.label}
-                            </span>
-                        </p>
-                    ) : null}
+                    <Link
+                        href="/internship"
+                        className="mt-8 inline-flex items-center gap-3 rounded-full bg-[#F6D56A] py-1.5 pr-1.5 pl-5 text-sm font-semibold text-[#1A1A1A] transition-colors hover:bg-[#F3CC55]"
+                    >
+                        Join The Team
+                        <span className="flex size-8 items-center justify-center rounded-full bg-[#156374] text-white">
+                            <ArrowUpRight className="size-4" />
+                        </span>
+                    </Link>
                 </div>
 
-                {project.id === "bottom-line-impact" ? (
-                    <Project1 />
-                ) : (
-                    <Image
-                        src={image}
-                        alt=""
-                        width={560}
-                        height={440}
-                        priority
-                        className="h-auto w-full rounded-[28px]"
-                    />
-                )}
+                <Project1 />
             </div>
         </section>
     );

@@ -16,6 +16,51 @@ import type { InternshipProgram } from "@/types/internship-program";
 
 const CARD_BACKGROUNDS = ["bg-[#F6F1E8]", "bg-[#E7F3EE]", "bg-[#F7F6F2]"];
 const FALLBACK_IMAGE = "/images/pngs/internship.png";
+const TITLE_NOISE =
+  /\b(work experience|internship|programme|program|career|track)\b/gi;
+const SHORT_FORMS: Array<[RegExp, string]> = [
+  [/\bsoc\b/, "SOC"],
+  [/\bgrc\b/, "GRC"],
+  [/cybersecurity|cyber security/, "Cybersecurity"],
+  [/data analy/, "Data Analysis"],
+  [/data science/, "Data Science"],
+  [/data engineer/, "Data Engineering"],
+  [/product design/, "Product Design"],
+  [/product manage/, "Product Management"],
+  [/project manage/, "Project Management"],
+  [/business analy/, "Business Analytics"],
+  [/ethical hack/, "Ethical Hacking"],
+  [/app and cloud|cloud security/, "Cloud Security"],
+];
+
+function getProgramShortTitle(title: string) {
+  const normalized = title
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  for (const [pattern, shortTitle] of SHORT_FORMS) {
+    if (pattern.test(normalized)) return shortTitle;
+  }
+
+  const words = normalized
+    .replace(new RegExp(TITLE_NOISE.source, "gi"), " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!words) return title.trim();
+
+  return words
+    .split(" ")
+    .map((word) =>
+      word.length <= 3
+        ? word.toUpperCase()
+        : word.charAt(0).toUpperCase() + word.slice(1),
+    )
+    .join(" ");
+}
 
 const ConsultantsDeliver = () => {
   const { data, isLoading } = useGetInternshipPrograms();
@@ -80,8 +125,11 @@ const ConsultantsDeliver = () => {
                       href={`/internship/${program.slug}`}
                       className={`flex h-full w-full flex-col rounded-3xl p-4 ${CARD_BACKGROUNDS[index % CARD_BACKGROUNDS.length]}`}
                     >
-                      <h3 className="text-lg font-semibold text-[#092A31]">
-                        {program.title}
+                      <h3
+                        className="text-lg font-semibold text-[#092A31]"
+                        title={program.title}
+                      >
+                        {getProgramShortTitle(program.title)}
                       </h3>
                       <div className="relative mt-3 aspect-4/3 overflow-hidden rounded-2xl">
                         <Image
@@ -93,9 +141,6 @@ const ConsultantsDeliver = () => {
                           unoptimized={!imageSrc.startsWith("/")}
                         />
                       </div>
-                      <p className="mt-3 line-clamp-3 text-sm leading-snug text-[#3D4F55]">
-                        {program.description}
-                      </p>
                     </Link>
                   </CarouselItem>
                 );

@@ -35,22 +35,24 @@ const HeroThree = () => {
                     }}
                     aria-hidden
                 >
-                    <Image
-                        src="/images/pngs/new-home/office-bg.png"
-                        alt=""
-                        fill
-                        priority
+                    <video
+                        src="/images/pngs/new-home/videos/hero-video.mp4"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        disablePictureInPicture
+                        controls={false}
                         data-aos="zoom-out"
                         data-aos-duration="1400"
-                        className="object-cover object-[center_30%]"
-                        sizes="100vw"
+                        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-[center_30%] [&::-webkit-media-controls]:hidden [&::-webkit-media-controls-enclosure]:hidden"
                     />
                     <div
-                        className="absolute inset-0 backdrop-blur-[3px]"
-                    // style={{
-                    //     background:
-                    //         "linear-gradient(0deg, rgba(9, 42, 49, 0.5), rgba(9, 42, 49, 0.5)), linear-gradient(0deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55))",
-                    // }}
+                        className="absolute inset-0 backdrop-blur-[4px]"
+                        style={{
+                            background:
+                                "linear-gradient(0deg, rgba(9, 42, 49, 0.5), rgba(9, 42, 49, 0.5)), linear-gradient(0deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55))",
+                        }}
                     />
                 </div>
 
