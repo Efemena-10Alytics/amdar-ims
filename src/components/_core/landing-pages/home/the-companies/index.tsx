@@ -12,7 +12,7 @@ const TheCompanies = () => {
             Companies that have hired our consultant
           </h2>
           <Link
-            href="#become-a-partner"
+            href="/auth/sign-up"
             className="mt-5 inline-flex items-center gap-3 rounded-full bg-[#156374] py-2 pr-2 pl-5 text-sm font-semibold text-white"
           >
             Join the team

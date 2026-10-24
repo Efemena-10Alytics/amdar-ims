@@ -6,27 +6,27 @@ import Aos from "aos";
 
 const CAPABILITIES = [
   {
-    title: "Artificial Intelligence",
+    title: "Artificial Data & Analytics",
     image: "/images/pngs/capabilities/ai.png",
     label: "below",
   },
   {
-    title: "Innovation Strategy & Delivery",
+    title: "Project &Programme Delivery",
     image: "/images/pngs/capabilities/isd.png",
     label: "above",
   },
   {
-    title: "Customer Insight",
+    title: "Product &Experience Design",
     image: "/images/pngs/capabilities/ci.png",
     label: "below",
   },
   {
-    title: "Digital Tech Data",
+    title: "Cybersecurity & Risk",
     image: "/images/pngs/capabilities/dt.png",
     label: "above",
   },
   {
-    title: "Business Transformation",
+    title: "Business & Digital Transformation",
     image: "/images/pngs/capabilities/ba.png",
     label: "below",
   },
@@ -55,7 +55,7 @@ const Capabilities = () => {
               className={`flex w-44 shrink-0 flex-col lg:w-auto ${item.label === "below" ? "mt-28" : ""}`}
             >
               {item.label === "above" ? (
-                <p className="mb-3 max-w-[140px] text-sm leading-snug font-semibold text-[#092A31]">
+                <p className="mb-3 max-w-[200px] text-sm sm:text-lg leading-snug font-semibold text-[#092A31]">
                   {item.title}
                 </p>
               ) : null}
@@ -71,7 +71,7 @@ const Capabilities = () => {
               </div>
 
               {item.label === "below" ? (
-                <p className="mt-3 max-w-[150px] text-sm leading-snug font-semibold text-[#092A31]">
+                <p className="mt-3 max-w-[200px] text-sm sm:text-lg leading-snug font-semibold text-[#092A31]">
                   {item.title}
                 </p>
               ) : null}

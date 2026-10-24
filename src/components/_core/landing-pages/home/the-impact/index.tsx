@@ -10,6 +10,8 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
 
@@ -20,7 +22,7 @@ const PROJECTS = [
       "How AMDARI Consultants Delivered Over $4.5 Million in Bottom-Line Impact",
     description:
       "AMDARI Consultants partnered with a leading technology firm to reimagine productivity at scale. By leveraging AI and data-driven decision-making, the engagement focused on streamlining operations, accelerating execution, and unlocking measurable business value.",
-    image: "/images/pngs/new-home/the-impact/project-1.jpg",
+    image: "/images/pngs/new-home/the-impact/project-1.png",
   },
   {
     id: "carbon-footprint",
@@ -28,7 +30,7 @@ const PROJECTS = [
       "How AMDARI Consultants Unlocked a New Revenue Stream Through Carbon Footprint Accounting",
     description:
       "AMDARI Consultants explored how lower-emission production could become a scalable revenue opportunity. Through technology, data, and sustainability-driven insights, the collaboration focused on linking environmental performance to commercial value.",
-    image: "/images/pngs/new-home/the-impact/project-2.jpg",
+    image: "/images/pngs/new-home/the-impact/project-2.png",
   },
   {
     id: "avoidable-discharges",
@@ -36,7 +38,7 @@ const PROJECTS = [
       "AMDARI Consultants Helped a Regional Health System Reduce Avoidable Discharge Delays by 18%",
     description:
       "AMDARI Consultants partnered with a regional health system to address avoidable discharge delays and reduce pressure on inpatient capacity. By unifying patient-flow data and supporting clinical adoption, the engagement focused on helping teams act earlier and with greater confidence.",
-    image: "/images/pngs/new-home/the-impact/project-3.jpg",
+    image: "/images/pngs/new-home/the-impact/project-3.png",
   },
   {
     id: "cyber-threats",
@@ -44,7 +46,7 @@ const PROJECTS = [
       "How AMDARI Consultants Helped a Global Financial Services Firm Respond to Cyber Threats 62% Faster",
     description:
       "A global financial services firm was overwhelmed by security alerts from dozens of disconnected tools. AMDARI Consultants teamed with its security and technology leaders to consolidate telemetry, automate triage, and focus analysts on the threats that carried real business risk.",
-    image: "/images/pngs/new-home/the-impact/project-1.jpg",
+    image: "/images/pngs/new-home/the-impact/project-4.png",
   },
 ];
 
@@ -171,6 +173,8 @@ const TheImpact = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
+            <CarouselPrevious className="top-1/2 left-3 z-10 size-11 -translate-y-1/2 border-0 bg-white text-[#092A31] shadow-[0_8px_24px_rgba(16,24,40,0.16)] hover:bg-white" />
+            <CarouselNext className="top-1/2 right-3 z-10 size-11 -translate-y-1/2 border-0 bg-white text-[#092A31] shadow-[0_8px_24px_rgba(16,24,40,0.16)] hover:bg-white" />
           </Carousel>
         </div>
 

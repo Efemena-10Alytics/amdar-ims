@@ -131,8 +131,8 @@ const Footer = () => {
     { label: "About Us", href: "/about" },
     { label: "FAQs", href: "/faqs" },
     { label: "Blog", href: "/blog" },
-    { label: "Success Story", href: "/home#success-stories" },
-    { label: "Careers", href: "#" },
+    { label: "Success Story", href: "/testimonial" },
+    // { label: "Careers", href: "#" },
     { label: "Privacy Policy", href: "/privacy-policy" },
     { label: "Terms and Conditions", href: "/terms-and-conditions" },
   ];

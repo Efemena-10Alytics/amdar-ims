@@ -15,7 +15,7 @@ const Project1 = () => {
     <div className="relative aspect-[560/440] w-full">
       <div className="absolute inset-0 overflow-hidden rounded-[28px]">
         <Image
-          src="/images/pngs/new-home/project-1.png"
+          src="/images/pngs/new-home/project-1/project-1.png"
           alt=""
           fill
           priority
