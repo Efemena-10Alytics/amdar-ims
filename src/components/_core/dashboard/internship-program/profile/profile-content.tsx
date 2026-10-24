@@ -198,8 +198,7 @@ export default function ProfileContent() {
 
   const enrollment = enrollmentQuery.data;
   const details = detailsQuery.data;
-  const current = currentProjectQuery.data;
-
+  const current = currentProjectQuery.data?.currentProject;
 
   const taskProgress =
     typeof current?.stageProgress === "number" ? current.stageProgress : null;

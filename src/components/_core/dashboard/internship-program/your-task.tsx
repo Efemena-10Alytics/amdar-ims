@@ -2,11 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Building2, CalendarDays, FileSpreadsheet, User } from "lucide-react";
-import {
-  formatCareerStageLabel,
-  formatDurationLabel,
-} from "@/components/_core/dashboard/internship-program/project-details/project-content";
+import { FileSpreadsheet } from "lucide-react";
 import { useGetCurrentProject } from "@/features/interns-project/use-get-current-project";
 import { useGetInternshipProgress } from "@/features/interns-project/use-get-internship-progress";
 import { stripHtml } from "@/lib/utils";
@@ -38,21 +34,20 @@ function buildProjectHref(slug?: string | null) {
 const YourTask = ({
   imageSrc = "/images/svgs/illustration/Smug 2.svg",
 }: YourTaskProps) => {
-  const currentProjectQuery = useGetCurrentProject();
   const {
     currentTask,
     preAssessmentDone,
-    isLoading: isProgressLoading,
+    isLoading,
   } = useGetInternshipProgress();
+  const currentProjectQuery = useGetCurrentProject();
+  const project = currentProjectQuery.data?.currentProject?.project;
 
-  const current = currentProjectQuery.data;
-  const project = current?.project;
-  const isProjectLoading = currentProjectQuery.isLoading;
-  const isLoading = isProjectLoading || isProgressLoading;
-
-  const projectSlug =
-    project?.slug?.trim() || currentTask?.projectSlug?.trim() || null;
-  const projectHref = buildProjectHref(projectSlug);
+  const projectSlug = currentTask?.projectSlug?.trim() || null;
+  const projectHref = buildProjectHref(project?.slug?.trim() || projectSlug);
+  const projectTitle =
+    project?.title?.trim() ||
+    (currentProjectQuery.isLoading ? "Loading..." : "Current project");
+  const logoSrc = project?.logoPreview || "/favicon.svg";
   const taskHref =
     currentTask && projectSlug
       ? buildCurrentTaskHref({
@@ -62,22 +57,12 @@ const YourTask = ({
       })
       : null;
 
-  if (!isLoading && !project && !currentTask) {
+  if (!isLoading && !currentTask) {
     return null;
   }
 
-  const stageTitle = formatCareerStageLabel(project?.careerStage ?? "");
-  const rawDuration =
-    formatDurationLabel(project?.duration) ?? project?.duration;
-  const durationLabel = rawDuration
-    ? /duration/i.test(rawDuration)
-      ? rawDuration
-      : `${rawDuration} duration`
-    : null;
-  const logoSrc = project?.logoPreview || "/favicon.svg";
   const displayTitle =
     currentTask?.todoTitle?.trim() ||
-    project?.title?.trim() ||
     (isLoading ? "Loading..." : "Current task");
   const taskDescription = stripHtml(currentTask?.type?.description);
   const startLabel = preAssessmentDone ? "Continue task" : "Start task";
@@ -91,7 +76,7 @@ const YourTask = ({
             <div className="flex items-start gap-3">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={logoSrc}
+                src="/favicon.svg"
                 alt=""
                 className="mt-1 size-5 shrink-0 rounded-full object-cover"
               />
@@ -109,22 +94,6 @@ const YourTask = ({
               </div>
             </div>
 
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              {project?.industry ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F4DEB5] px-3 py-1 text-xs font-medium text-[#5B5E67]">
-                  <Building2 className="size-3.5" aria-hidden />
-                  {project.industry}
-                </span>
-              ) : null}
-              {durationLabel ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F4DEB5] px-3 py-1 text-xs font-medium text-[#5B5E67]">
-                  <CalendarDays className="size-3.5" aria-hidden />
-                  {durationLabel}
-                </span>
-              ) : null}
-
-            </div>
-
             {taskHref ? (
               <Link
                 href={taskHref}
@@ -138,7 +107,7 @@ const YourTask = ({
           <div className="hidden shrink-0 self-end sm:block">
             <Image
               src={imageSrc}
-              alt={`${stageTitle || "Stage"} buddy`}
+              alt="Stage buddy"
               width={120}
               height={140}
               className="h-auto w-24 object-contain lg:w-28"
@@ -162,13 +131,13 @@ const YourTask = ({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2.5">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={logoSrc}
-              alt=""
-              className="size-5 shrink-0 rounded-full object-cover"
-            />
+              <img
+                src={logoSrc}
+                alt=""
+                className="size-5 shrink-0 rounded-full object-cover"
+              />
             <p className="min-w-0 truncate text-sm font-semibold text-[#233A43] sm:text-base">
-              {displayTitle}
+              {projectTitle}
             </p>
           </div>
 

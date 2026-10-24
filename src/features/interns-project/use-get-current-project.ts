@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import type {
-  CurrentInternProject,
+  CurrentInternProjectPayload,
   CurrentInternProjectResponse,
 } from "./internship-project.types";
 import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
@@ -21,7 +21,7 @@ export const CURRENT_INTERN_PROJECT_QUERY_KEY = (
 export async function getCurrentInternProject({
   cohortId,
   programId,
-}: GetCurrentInternProjectParams): Promise<CurrentInternProject> {
+}: GetCurrentInternProjectParams): Promise<CurrentInternProjectPayload> {
   const { data } = await axiosInstance.get<CurrentInternProjectResponse>(
     "v3/intern-projects/current",
     {
