@@ -73,8 +73,7 @@ function StatCard({
 
 const InternshipProgramOverview = () => {
   const currentProjectQuery = useGetCurrentProject();
-  const current = currentProjectQuery.data;
-
+  const current = currentProjectQuery.data?.currentProject;
 
   const currentWeek = current?.currentWeek ?? 0;
   const stageProgress = current?.stageProgress ?? 0;

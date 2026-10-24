@@ -161,7 +161,7 @@ export type CurrentInternProjectSummary = {
   contributor: string;
 };
 
-/** GET /intern-projects/current */
+/** Progress block nested under GET /intern-projects/current `currentProject`. */
 export type CurrentInternProject = {
   currentWeek: number;
   duration: number;
@@ -173,10 +173,41 @@ export type CurrentInternProject = {
   project: CurrentInternProjectSummary | null;
 };
 
+export type CurrentInternProjectTaskType = {
+  id: number;
+  contentType: string;
+  description: string | null;
+  docName: string | null;
+  docUrl: string | null;
+  videoUrl: string | null;
+  submissionRequired: boolean;
+  solutionFormat: string[];
+  sortOrder: number;
+  status: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CurrentInternProjectTask = {
+  projectId: number;
+  projectSlug: string;
+  todoId: number;
+  todoTitle: string;
+  week: number;
+  dayOfWeek: string;
+  type: CurrentInternProjectTaskType | null;
+};
+
+/** GET /intern-projects/current `data`. */
+export type CurrentInternProjectPayload = {
+  currentTask: CurrentInternProjectTask | null;
+  currentProject: CurrentInternProject | null;
+};
+
 export type CurrentInternProjectResponse = {
   success: boolean;
   message: string;
-  data: CurrentInternProject | null;
+  data: CurrentInternProjectPayload | null;
 };
 
 export type InternProjectTodoContentType =
