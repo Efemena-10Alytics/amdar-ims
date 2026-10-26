@@ -20,7 +20,7 @@ const HeroThree = () => {
     return (
         <section
             id="home-hero-section"
-            className="relative -mt-30 bg-[#187F8C] px-2.5 pt-1 pb-10 sm:px-3.5 lg:-mt-35  lg:px-4 lg:pb-14"
+            className="relative min-h-[calc(100dvh)] -mt-30 bg-[#187F8C] px-2.5 pt-1 pb-10 sm:px-3.5 lg:-mt-35  lg:px-4 lg:pb-14"
         >
             <div className="relative overflow-hidden rounded-[28px] lg:rounded-[40px]">
                 <div
