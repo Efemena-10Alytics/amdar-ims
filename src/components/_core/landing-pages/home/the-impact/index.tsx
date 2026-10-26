@@ -10,10 +10,12 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
+import {
+  ArrowLeftCurve,
+  ArrowRightCurve,
+} from "@/components/_core/landing-pages/home/svg";
 
 const PROJECTS = [
   {
@@ -118,7 +120,7 @@ const TheImpact = () => {
           Real problem
           <br />
           Real client{" "}
-          <span className="inline-block rounded-md bg-[#F6D56A] px-2 align-middle text-primary">
+          <span className="inline-block font-display rounded-md bg-[#F6D56A] px-2 align-middle text-primary">
             Real delivery
           </span>
         </h2>
@@ -173,9 +175,25 @@ const TheImpact = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="top-1/2 left-3 z-10 size-11 -translate-y-1/2 border-0 bg-white text-[#092A31] shadow-[0_8px_24px_rgba(16,24,40,0.16)] hover:bg-white" />
-            <CarouselNext className="top-1/2 right-3 z-10 size-11 -translate-y-1/2 border-0 bg-white text-[#092A31] shadow-[0_8px_24px_rgba(16,24,40,0.16)] hover:bg-white" />
           </Carousel>
+          <div className="mt-4 flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => api?.scrollPrev()}
+              aria-label="Previous project"
+              className="flex size-11 items-center justify-center rounded-full bg-[#E8EFF1] text-[#8AA0A6] transition-colors hover:bg-[#D5DEE2]"
+            >
+              <ArrowLeftCurve />
+            </button>
+            <button
+              type="button"
+              onClick={() => api?.scrollNext()}
+              aria-label="Next project"
+              className="flex size-11 items-center justify-center rounded-full bg-[#156374] text-white transition-colors hover:bg-[#0E4C58]"
+            >
+              <ArrowRightCurve />
+            </button>
+          </div>
         </div>
 
         <div className="mt-4 grid items-stretch gap-10 rounded-[28px] bg-[#F7F1E4] p-6 lg:grid-cols-[1.05fr_0.95fr]">
