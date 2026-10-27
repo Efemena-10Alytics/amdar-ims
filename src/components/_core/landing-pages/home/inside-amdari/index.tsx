@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Play } from "lucide-react";
+import ReactPlayer from "react-player";
 import {
   Carousel,
   CarouselContent,
@@ -10,7 +11,6 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import { getYoutubeThumbnail } from "@/features/testimonials/constants";
-import { VideoPlayerModal } from "@/components/_core/landing-pages/shared/video-player-modal";
 import {
   ArrowLeftCurve,
   ArrowRightCurve,
@@ -27,13 +27,16 @@ const INSIDE_AMDARI_VIDEOS = [
 const InsideAmdari = () => {
   const [api, setApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [playingVideoUrl, setPlayingVideoUrl] = useState<string | null>(null);
+  const [playingVideoId, setPlayingVideoId] = useState<number | null>(null);
   const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     if (!api) return;
 
-    const update = () => setSelectedIndex(api.selectedScrollSnap());
+    const update = () => {
+      setSelectedIndex(api.selectedScrollSnap());
+      setPlayingVideoId(null);
+    };
 
     update();
     api.on("select", update);
@@ -63,44 +66,62 @@ const InsideAmdari = () => {
           <CarouselContent className="items-center">
             {INSIDE_AMDARI_VIDEOS.map((video, index) => {
               const isActive = index === selectedIndex;
+              const isPlaying = playingVideoId === video.id;
 
               return (
                 <CarouselItem key={video.id} className="basis-[88vw] pr-4">
-                  <button
-                    type="button"
-                    onClick={() => setPlayingVideoUrl(video.videoUrl)}
-                    className={cn(
-                      "group relative block w-full overflow-hidden rounded-[28px] bg-[#E8EFF1] text-left transition-[aspect-ratio] duration-500",
-                      isActive ? "aspect-[16/7.2]" : "aspect-[16/6.4]",
-                    )}
-                    aria-label="Play project experience video"
-                  >
-                    {!imageErrors[video.id] ? (
-                      <Image
-                        src={getYoutubeThumbnail(video.videoUrl)}
-                        alt=""
-                        fill
-                        className="object-cover"
-                        sizes="(min-width: 1024px) 90vw, 100vw"
-                        onError={() =>
-                          setImageErrors((current) => ({
-                            ...current,
-                            [video.id]: true,
-                          }))
-                        }
+                  {isPlaying ? (
+                    <div
+                      className={cn(
+                        "relative w-full overflow-hidden rounded-[28px] bg-black",
+                        isActive ? "aspect-[16/7.2]" : "aspect-[16/6.4]",
+                      )}
+                    >
+                      <ReactPlayer
+                        src={video.videoUrl}
+                        playing
+                        controls
+                        width="100%"
+                        height="100%"
                       />
-                    ) : null}
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setPlayingVideoId(video.id)}
+                      className={cn(
+                        "group relative block w-full overflow-hidden rounded-[28px] bg-[#E8EFF1] text-left transition-[aspect-ratio] duration-500",
+                        isActive ? "aspect-[16/7.2]" : "aspect-[16/6.4]",
+                      )}
+                      aria-label="Play project experience video"
+                    >
+                      {!imageErrors[video.id] ? (
+                        <Image
+                          src={getYoutubeThumbnail(video.videoUrl)}
+                          alt=""
+                          fill
+                          className="object-cover"
+                          sizes="(min-width: 1024px) 90vw, 100vw"
+                          onError={() =>
+                            setImageErrors((current) => ({
+                              ...current,
+                              [video.id]: true,
+                            }))
+                          }
+                        />
+                      ) : null}
 
-                    <span className="absolute top-4 left-4 flex size-8 items-center justify-center rounded-md bg-[#FF0000]">
-                      <Play className="size-4 fill-white text-white" />
-                    </span>
-
-                    <span className="absolute inset-0 flex items-center justify-center">
-                      <span className="flex size-16 items-center justify-center rounded-full bg-[#156374]/90 shadow-lg transition-transform group-hover:scale-105">
-                        <Play className="ml-1 size-7 fill-white text-white" />
+                      <span className="absolute top-4 left-4 flex size-8 items-center justify-center rounded-md bg-[#FF0000]">
+                        <Play className="size-4 fill-white text-white" />
                       </span>
-                    </span>
-                  </button>
+
+                      <span className="absolute inset-0 flex items-center justify-center">
+                        <span className="flex size-16 items-center justify-center rounded-full bg-[#156374]/90 shadow-lg transition-transform group-hover:scale-105">
+                          <Play className="ml-1 size-7 fill-white text-white" />
+                        </span>
+                      </span>
+                    </button>
+                  )}
                 </CarouselItem>
               );
             })}
@@ -128,13 +149,6 @@ const InsideAmdari = () => {
           </button>
         </div>
       </div>
-
-      <VideoPlayerModal
-        open={!!playingVideoUrl}
-        onOpenChange={(open) => !open && setPlayingVideoUrl(null)}
-        videoUrl={playingVideoUrl}
-        title="Inside Amdari Consulting"
-      />
     </section>
   );
 };
