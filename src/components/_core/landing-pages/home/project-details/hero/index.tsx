@@ -8,7 +8,7 @@ const ProjectHero = ({ project }: { project: Project }) => {
         <section className="bg-[#F7FBFC] py-8 sm:py-12 lg:py-16 -translate-y-10">
             <div className="app-width">
                 <Link
-                    href="/home"
+                    href="/home#client-impact"
                     className="inline-flex items-center gap-1.5 text-sm text-[#7A868C] transition-colors hover:text-[#092A31]"
                 >
                     <ArrowLeft className="size-4" />
@@ -26,7 +26,7 @@ const ProjectHero = ({ project }: { project: Project }) => {
                     </p>
 
                     <Link
-                        href="/internship"
+                        href="/auth/sign-up"
                         className="mt-8 inline-flex items-center gap-3 rounded-full bg-[#F6D56A] py-1.5 pr-1.5 pl-5 text-sm font-semibold text-[#1A1A1A] transition-colors hover:bg-[#F3CC55]"
                     >
                         Join The Team

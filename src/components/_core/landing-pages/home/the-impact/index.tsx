@@ -108,7 +108,7 @@ const TheImpact = () => {
   }, [api]);
 
   return (
-    <section className="py-14 lg:py-20">
+    <section id="client-impact" className="scroll-mt-24 py-14 lg:py-20">
       <div className="app-width">
         <span className="inline-flex items-center gap-2 rounded-full bg-[#F8E7A8] py-1.5 pr-4 pl-1.5 text-sm font-semibold text-[#3D3A1F]">
           <span className="flex size-7 items-center justify-center rounded-full bg-[#F6D56A] text-[#3D3A1F]">
