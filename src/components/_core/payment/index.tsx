@@ -14,6 +14,7 @@ import { usePayNow } from "@/features/payment/use-pay-now";
 import { useCheckoutSelectionsStorage } from "@/features/payment/use-checkout-storage";
 import { resolvePromoCode } from "@/features/payment/default-promo";
 import { useAuthStore } from "@/store/auth-store";
+import { cn } from "@/lib/utils";
 import { PaymentSuccessModal } from "./payment-success-modal";
 import { SignInModal } from "./auth/sign-in-modal";
 import { SignUpModal } from "./auth/sign-up-modal";
@@ -45,12 +46,15 @@ interface PaymentMainProps {
   checkoutData?: CheckoutData;
   /** Payment page [id] for success redirect (so Stripe returns here with session_id) */
   paymentPageId?: string;
+  /** True once scroll passes 100vh and the navbar sticks */
+  navStuck?: boolean;
 }
 
 const PaymentMain = ({
   program,
   checkoutData,
   paymentPageId,
+  navStuck = false,
 }: PaymentMainProps) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -190,7 +194,12 @@ const PaymentMain = ({
 
   return (
     <div className="flex flex-col gap-8 lg:flex-row">
-      <div className="lg:sticky lg:top-28 lg:self-start shrink-0">
+      <div
+        className={cn(
+          "lg:sticky lg:self-start shrink-0 transition-[top] duration-200",
+          navStuck ? "lg:top-48" : "lg:top-28",
+        )}
+      >
         <SideNav activeStep={activeStep} onStepChange={setActiveStep} />
       </div>
 
@@ -235,7 +244,14 @@ const PaymentMain = ({
         )}
       </div>
       {activeStep === "checkout" && (
-        <div className="lg:sticky lg:top-28 lg:self-start shrink-0 space-y-6 lg:w-60 lg:max-h-[calc(100dvh-8rem)] lg:overflow-y-auto xl:w-80">
+        <div
+          className={cn(
+            "lg:sticky lg:self-start shrink-0 space-y-6 lg:w-60 lg:overflow-y-auto xl:w-80 transition-[top] duration-200",
+            navStuck
+              ? "lg:top-48 lg:max-h-[calc(100dvh-13rem)]"
+              : "lg:top-28 lg:max-h-[calc(100dvh-8rem)]",
+          )}
+        >
           <Coupon
             discount={
               checkoutData?.promo_code_data?.discount_percentage as string

@@ -11,6 +11,7 @@ type FounderCard = {
   name: string;
   role: string;
   image: string;
+  linkedin: string;
 };
 
 const founders: FounderCard[] = [
@@ -18,16 +19,19 @@ const founders: FounderCard[] = [
     name: "Efemena Ikpro",
     role: "Co-founder",
     image: "/images/pngs/about/efe.png",
+    linkedin: "https://www.linkedin.com/in/ikproefemena/",
   },
   {
     name: "Omowunmi Samson",
     role: "Co-founder",
     image: "/images/pngs/about/omowunmi.png",
+    linkedin: "https://www.linkedin.com/in/omowumi-victoria-samson-2a7706b8/",
   },
   {
     name: "Adeiza Suleman",
     role: "Co-founder",
     image: "/images/pngs/about/adeiza.png",
+    linkedin: "https://www.linkedin.com/in/adeiza-suleman-4557b389?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
   },
 ];
 
@@ -103,13 +107,15 @@ const AboutHero = () => {
                   </h3>
                   <p className="text-sm text-white/80">{founder.role}</p>
                 </div>
-                <button
-                  type="button"
-                  className="inline-flex size-9 items-center cursor-pointer justify-center rounded-md bg-white text-[#0F4652] transition hover:bg-[#EAF3F5]"
+                <a
+                  href={founder.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex size-9 items-center justify-center rounded-md bg-white text-[#0F4652] transition hover:bg-[#EAF3F5]"
                   aria-label={`${founder.name} LinkedIn`}
                 >
                   <Linkedin className="size-5" />
-                </button>
+                </a>
               </div>
             </article>
           ))}
