@@ -190,7 +190,7 @@ const Footer = () => {
     { icon: Instagram, href: "https://www.instagram.com/amdari_io?igsh=MTYwdG1ydTFib2I1bg%3D%3D&utm_source=qr", label: "Instagram" },
     { icon: Facebook, href: "https://www.facebook.com/share/1B6fY6uoT2/?mibextid=wwXIfr", label: "Facebook" },
     { icon: Twitter, href: "https://x.com/amdari_io?s=21", label: "Twitter" },
-    { icon: Youtube, href: "https://www.youtube.com/@Amdari-Projects", label: "YouTube" },
+    { icon: Youtube, href: "https://youtube.com/@uk_tech_internships?si=7QGcdRbxgklg2OT4", label: "YouTube" },
     { icon: LinkindInSvg, href: "https://www.linkedin.com/company/amdari", label: "LinkedIn" },
     { icon: TikTokSvg, href: "https://www.tiktok.com/@amdari_io", label: "TikTok" },
   ];
