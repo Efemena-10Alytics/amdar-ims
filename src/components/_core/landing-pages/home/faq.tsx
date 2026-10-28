@@ -3,7 +3,9 @@
 import React, { useState } from "react";
 import { Plus, Minus, ArrowRight, MessageCircle } from "lucide-react";
 import Aos from "aos";
-import { WHATSAPP_URL } from "@/components/_core/landing-pages/shared/whatsapp-widget";
+
+const FAQ_WHATSAPP_URL = "https://wa.me/447446442409";
+
 
 const Faq = () => {
   const [openItems, setOpenItems] = useState<number[]>([]);
@@ -120,7 +122,7 @@ const Faq = () => {
                 Chat with us on whatsapp
               </h3>
               <a
-                href={WHATSAPP_URL}
+                href={FAQ_WHATSAPP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full bg-[#15535E] rounded-lg p-6 flex items-center gap-4 cursor-pointer hover:bg-[#124a54] transition-colors text-left"
