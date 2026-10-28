@@ -60,7 +60,7 @@ export default function PaymentPage() {
   return (
     <div className="min-h-screen bg-white">
       <div className="app-width">
-        <header className="sticky top-20 z-10 py-4 mb-10 bg-white">
+        <header className="sticky top-0 z-20 mb-10 bg-white py-4">
           <h1 className="font-clash-display text-3xl font-bold text-[#092A31] sm:text-4xl">
             Your Internship Enrollment
           </h1>

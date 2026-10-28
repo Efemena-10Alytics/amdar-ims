@@ -14,7 +14,7 @@ const LandingPageLayout = ({
   const hideFaq = pathname === "/job-board" || pathname === "/faqs";
 
   return (
-    <div className="overflow-x-hidden">
+    <div className="overflow-x-clip">
       <ScrollToTopOnRoute />
       <Navbar />
       <div>{children}</div>

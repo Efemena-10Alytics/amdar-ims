@@ -190,7 +190,7 @@ const PaymentMain = ({
 
   return (
     <div className="flex flex-col gap-8 lg:flex-row">
-      <div className="lg:sticky lg:top-48 lg:self-start shrink-0">
+      <div className="lg:sticky lg:top-28 lg:self-start shrink-0">
         <SideNav activeStep={activeStep} onStepChange={setActiveStep} />
       </div>
 
@@ -235,7 +235,7 @@ const PaymentMain = ({
         )}
       </div>
       {activeStep === "checkout" && (
-        <div className="lg:sticky lg:top-48 lg:self-start shrink-0 space-y-6 lg:w-60 xl:w-80">
+        <div className="lg:sticky lg:top-28 lg:self-start shrink-0 space-y-6 lg:w-60 lg:max-h-[calc(100dvh-8rem)] lg:overflow-y-auto xl:w-80">
           <Coupon
             discount={
               checkoutData?.promo_code_data?.discount_percentage as string

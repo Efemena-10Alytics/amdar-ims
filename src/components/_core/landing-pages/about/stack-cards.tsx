@@ -67,7 +67,7 @@ const StackCards = ({ slides, scrollLinear, onActiveIndexChange }: StackCardsPro
   const peelTranslate = -partial * (CARD_HEIGHT_PX * 0.45 + 40);
 
   return (
-    <div className="w-full overflow-x-hidden py-4 rounded-2xl">
+    <div className="w-full overflow-x-clip py-4 rounded-2xl">
       <div
         className="relative mx-auto w-full"
         style={{

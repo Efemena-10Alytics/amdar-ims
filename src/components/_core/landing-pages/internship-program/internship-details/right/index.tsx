@@ -121,46 +121,6 @@ const Right = ({ program }: RightProps) => {
         title="Program video"
       />
 
-      {/* Secure Your Seat Section */}
-      {/* <div className="bg-[#F8FAFB] rounded-lg p-6"> */}
-      {/* <h3 className="font-semibold text-[#092A31] mb-4">Secure your seat</h3> */}
-
-      {/* Countdown Timer */}
-      {/* <div className="flex gap-2 mb-3">
-          <div className="text-center">
-            <div className="text-lg font-semibold text-[#092A31] mb-1">
-              {String(countdown.days).padStart(2, "0")} :
-            </div>
-            <div className="text-xs text-[#092A31]">D</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-semibold text-[#092A31] mb-1">
-              {String(countdown.hours).padStart(2, "0")} :
-            </div>
-            <div className="text-xs text-[#092A31]">Hrs</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-semibold text-[#092A31] mb-1">
-              {String(countdown.minutes).padStart(2, "0")} :
-            </div>
-            <div className="text-xs text-[#092A31]">Min</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-semibold text-[#092A31] mb-1">
-              {String(countdown.seconds).padStart(2, "0")}
-            </div>
-            <div className="text-xs text-[#092A31]">Sec</div>
-          </div>
-        </div> */}
-
-      {/* <a
-          href={`/payment/${program?.id}`}
-          className="text-primary underline text-sm font-medium"
-        >
-          Apply for the next cohort
-        </a> */}
-      {/* </div> */}
-
       {/* Skills You Will Learn Section */}
       <div className="bg-[#F8FAFB] rounded-lg p-6">
         <h3 className="text-xl font-semibold text-[#092A31] mb-4">

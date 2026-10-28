@@ -162,7 +162,7 @@ const Left = ({ program }: LeftProps) => {
           Don't let the lack of real world experience hold you back. Join Amdari
           today and take a decisive step toward a successful career in tech.
         </p>
-        <Link href={`/payment/${program?.id}${querySuffix}`}>
+        <Link href={`/payment/${program?.slug}${querySuffix}`}>
           <Button
             className={cn(
               "bg-amdari-yellow text-[#092A31] hover:bg-amdari-yellow/90 rounded-full px-8 py-6 text-base font-medium",

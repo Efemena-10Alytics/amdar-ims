@@ -52,8 +52,10 @@ const JoinCommunity = () => {
             we&apos;re shaping the future of tech opportunities, one experience at a time.
           </p>
 
-          <button
-            type="button"
+          <a
+            href="https://chat.whatsapp.com/J5rK8ZThPIVJypl6SkCJTU"
+            target="_blank"
+            rel="noopener noreferrer"
             data-aos="fade-up"
             data-aos-delay="220"
             className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#F3DD83] px-6 py-3 text-lg font-semibold text-[#17434E] transition hover:bg-[#EED46C]"
@@ -62,7 +64,7 @@ const JoinCommunity = () => {
             <span className="inline-flex size-6 items-center justify-center rounded-full bg-[#0B7A84] text-white">
               <ArrowUpRight className="size-3.5" />
             </span>
-          </button>
+          </a>
         </div>
       </div>
     </section>
