@@ -198,10 +198,10 @@ export default function ProfileContent() {
 
   const enrollment = enrollmentQuery.data;
   const details = detailsQuery.data;
-  const current = currentProjectQuery.data?.currentProject;
+  const project = currentProjectQuery.data?.currentProject;
 
   const taskProgress =
-    typeof current?.stageProgress === "number" ? current.stageProgress : null;
+    typeof project?.stageProgress === "number" ? project.stageProgress : null;
 
   const cohortLabel = enrollment?.cohort
     ? formatCohortLabel(enrollment.cohort)

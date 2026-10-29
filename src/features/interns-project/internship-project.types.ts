@@ -161,8 +161,8 @@ export type CurrentInternProjectSummary = {
   contributor: string;
 };
 
-/** Progress block nested under GET /intern-projects/current `currentProject`. */
-export type CurrentInternProject = {
+/** Progress + project block under `currentProject` on GET /intern-projects/current */
+export type CurrentInternProjectDetails = {
   currentWeek: number;
   duration: number;
   stageProgress: number;
@@ -173,7 +173,11 @@ export type CurrentInternProject = {
   project: CurrentInternProjectSummary | null;
 };
 
-export type CurrentInternProjectTaskType = {
+/** @deprecated Prefer CurrentInternProjectDetails */
+export type CurrentInternProject = CurrentInternProjectDetails;
+
+/** Active todo under `currentTask` on GET /intern-projects/current */
+export type CurrentInternTaskType = {
   id: number;
   contentType: string;
   description: string | null;
@@ -188,27 +192,31 @@ export type CurrentInternProjectTaskType = {
   updated_at: string;
 };
 
-export type CurrentInternProjectTask = {
+export type CurrentInternTask = {
   projectId: number;
   projectSlug: string;
   todoId: number;
   todoTitle: string;
   week: number;
   dayOfWeek: string;
-  type: CurrentInternProjectTaskType | null;
+  type: CurrentInternTaskType | null;
 };
 
-/** GET /intern-projects/current `data`. */
+/** GET /v3/intern-projects/current body */
 export type CurrentInternProjectPayload = {
-  currentTask: CurrentInternProjectTask | null;
-  currentProject: CurrentInternProject | null;
+  currentTask: CurrentInternTask | null;
+  currentProject: CurrentInternProjectDetails | null;
 };
 
-export type CurrentInternProjectResponse = {
-  success: boolean;
-  message: string;
-  data: CurrentInternProjectPayload | null;
+export type CurrentInternProjectEnvelope = {
+  success?: boolean;
+  message?: string;
+  data: CurrentInternProjectPayload | CurrentInternProjectDetails | null;
 };
+
+export type CurrentInternProjectResponse =
+  | CurrentInternProjectPayload
+  | CurrentInternProjectEnvelope;
 
 export type InternProjectTodoContentType =
   | "text"

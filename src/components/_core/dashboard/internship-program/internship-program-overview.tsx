@@ -73,14 +73,14 @@ function StatCard({
 
 const InternshipProgramOverview = () => {
   const currentProjectQuery = useGetCurrentProject();
-  const current = currentProjectQuery.data?.currentProject;
+  const project = currentProjectQuery.data?.currentProject;
 
-  const currentWeek = current?.currentWeek ?? 0;
-  const stageProgress = current?.stageProgress ?? 0;
-  const activitiesDone = current?.activitiesDone ?? 0;
-  const activitiesTotal = current?.activitiesTotal ?? 0;
-  const stagesCompleted = current?.stagesCompleted ?? 0;
-  const totalStages = current?.stagesTotal ?? 0;
+  const currentWeek = project?.currentWeek ?? 0;
+  const stageProgress = project?.stageProgress ?? 0;
+  const activitiesDone = project?.activitiesDone ?? 0;
+  const activitiesTotal = project?.activitiesTotal ?? 0;
+  const stagesCompleted = project?.stagesCompleted ?? 0;
+  const totalStages = project?.stagesTotal ?? 0;
   const isLoading = currentProjectQuery.isLoading;
   const { isPreview } = useIsSpecialistPreview();
   const { newer } = useGetAnnouncements();

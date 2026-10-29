@@ -8,17 +8,17 @@ const PageHeader = () => {
   const { data: enrollment, isLoading: isEnrollmentLoading } =
     useGetUserEnrollment();
   const { data: current, isLoading: isCurrentLoading } = useGetCurrentProject();
-  const currentProject = current?.currentProject;
 
   const isLoading = isEnrollmentLoading || isCurrentLoading;
 
-  const stageLabel = currentProject?.project
-    ? formatCareerStageLabel(currentProject.project.careerStage)
+  const project = current?.currentProject;
+  const stageLabel = project?.project
+    ? formatCareerStageLabel(project.project.careerStage)
     : null;
 
-  const currentWeek =
-    currentProject?.currentWeek ?? enrollment?.cohort.active_week;
-  const totalWeeks = currentProject?.duration ?? enrollment?.cohort.duration;
+  const currentWeek = project?.currentWeek ?? enrollment?.cohort.active_week;
+  const totalWeeks =
+    project?.duration ?? (enrollment?.cohort.duration ?? 0) * 4;
 
   const weekLabel =
     currentWeek != null && totalWeeks != null && totalWeeks > 0
