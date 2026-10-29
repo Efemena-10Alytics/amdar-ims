@@ -9,6 +9,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +31,11 @@ export function NavMain({
   }[];
 }) {
   const pathname = usePathname();
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  const closeMobileDrawer = () => {
+    if (isMobile) setOpenMobile(false);
+  };
 
   return (
     <SidebarGroup>
@@ -52,6 +58,7 @@ export function NavMain({
                 >
                   <Link
                     href={item.url}
+                    onClick={closeMobileDrawer}
                     className="flex h-full items-center gap-2 group-data-[collapsible=icon]:justify-center"
                   >
                     {Icon && <Icon />}
