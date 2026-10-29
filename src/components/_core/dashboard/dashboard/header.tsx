@@ -8,7 +8,6 @@ const PageHeader = () => {
   const { data: enrollment, isLoading: isEnrollmentLoading } =
     useGetUserEnrollment();
   const { data: current, isLoading: isCurrentLoading } = useGetCurrentProject();
-  const currentProject = current?.currentProject;
 
   const isLoading = isEnrollmentLoading || isCurrentLoading;
 
