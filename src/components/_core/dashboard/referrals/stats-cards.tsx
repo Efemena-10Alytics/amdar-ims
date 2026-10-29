@@ -1,4 +1,4 @@
-import { formatReferralCurrency } from "@/features/referral/mock-data";
+import { formatReferralAmount, type ReferralCurrency } from "@/features/referral/locale";
 import type { ReferralStats } from "@/features/referral/types";
 import {
   PendingReferralsStatIcon,
@@ -35,12 +35,18 @@ function StatCard({
   );
 }
 
-export function ReferralStatsCards({ stats }: { stats: ReferralStats }) {
+export function ReferralStatsCards({
+  stats,
+  currency,
+}: {
+  stats: ReferralStats;
+  currency: ReferralCurrency;
+}) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <StatCard
         label="Total Earned"
-        value={formatReferralCurrency(stats.totalEarned)}
+        value={formatReferralAmount(stats.totalEarned, currency)}
         icon={<TotalEarnedStatIcon />}
         active
       />

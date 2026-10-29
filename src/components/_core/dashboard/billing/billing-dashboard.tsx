@@ -20,7 +20,7 @@ function BillingSkeleton() {
         <Skeleton className="h-27.5 w-full rounded-lg" />
         <Skeleton className="h-27.5 w-full rounded-lg" />
       </div>
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_320px]">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
         <Skeleton className="h-96 w-full rounded-2xl" />
         <div className="flex flex-col gap-4">
           <Skeleton className="h-64 w-full rounded-2xl" />
@@ -72,7 +72,7 @@ export function BillingDashboard() {
 
       <StatsCards summary={summary} />
 
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_320px]">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
         <PaymentScheduleTable schedule={schedule} installmentsCount={plan.installmentsCount} />
 
         <div className="flex flex-col gap-4">

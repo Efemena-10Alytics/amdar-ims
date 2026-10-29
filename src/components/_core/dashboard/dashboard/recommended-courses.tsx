@@ -50,18 +50,18 @@ function CourseCard({
     stripHtml(course.description) || "Explore this course on Amdari Learn.";
 
   return (
-    <article className="flex flex-col rounded-xl border border-[#E2E8F0] bg-white p-4">
+    <a
+      href={href}
+      aria-label={`Open ${course.title}`}
+      className="flex flex-col rounded-xl border border-[#E2E8F0] bg-white p-4 transition-colors hover:border-[#134E5E]"
+    >
       <div className="flex items-start justify-between gap-2">
         <span className="rounded-full bg-[#E0F2FE] px-2.5 py-0.5 text-xs font-medium text-[#1A6B8A]">
           {level}
         </span>
-        <a
-          href={href}
-          className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#134E5E] text-white transition-colors hover:bg-[#0E6174]"
-          aria-label={`Open ${course.title}`}
-        >
+        <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#134E5E] text-white">
           <ArrowUpRight className="size-3.5" strokeWidth={2.5} />
-        </a>
+        </span>
       </div>
 
       <h4 className="mt-3 text-sm font-semibold leading-snug text-[#0B2B33]">
@@ -84,7 +84,7 @@ function CourseCard({
           {DISPLAY_RATING}
         </span>
       </div>
-    </article>
+    </a>
   );
 }
 

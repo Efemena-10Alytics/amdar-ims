@@ -1,4 +1,4 @@
-import { formatReferralCurrency } from "@/features/referral/mock-data";
+import { formatReferralAmount, type ReferralCurrency } from "@/features/referral/locale";
 import type { TopReferrer } from "@/features/referral/types";
 
 function ReferrerAvatar({ initials, color }: { initials: string; color: string }) {
@@ -12,7 +12,13 @@ function ReferrerAvatar({ initials, color }: { initials: string; color: string }
   );
 }
 
-export function TopReferrersCard({ referrers }: { referrers: TopReferrer[] }) {
+export function TopReferrersCard({
+  referrers,
+  currency,
+}: {
+  referrers: TopReferrer[];
+  currency: ReferralCurrency;
+}) {
   return (
     <div className="rounded-2xl bg-white p-5 shadow">
       <h2 className="mb-4 flex items-center gap-2 font-clash-display text-lg font-semibold text-[#092A31]">
@@ -62,7 +68,7 @@ export function TopReferrersCard({ referrers }: { referrers: TopReferrer[] }) {
                 }
                 aria-hidden
               />
-              {formatReferralCurrency(referrer.amount)}
+              {formatReferralAmount(referrer.amount, currency)}
             </span>
           </div>
         ))}

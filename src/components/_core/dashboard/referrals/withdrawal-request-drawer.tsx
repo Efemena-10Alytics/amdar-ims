@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { X } from "lucide-react";
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
@@ -12,9 +12,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { formatReferralCurrency } from "@/features/referral/mock-data";
+import {
+  formatReferralAmount,
+  getCurrencySymbol,
+  REFERRAL_LOCALES,
+  type ReferralLocale,
+} from "@/features/referral/locale";
 import type { WithdrawalProfile } from "@/features/referral/types";
 import { BankTransferIcon } from "./icons";
+import { WithdrawalDrawerSkeleton } from "./withdrawal-drawer-skeleton";
+
+const FORM_SWAP_MS = 3000;
 
 const NIGERIAN_BANKS = [
   "Access Bank",
@@ -40,6 +48,8 @@ type WithdrawalRequestDrawerProps = {
   onOpenChange: (open: boolean) => void;
   profile: WithdrawalProfile;
   onSuccess: () => void;
+  /** Drives the currency and the locale-specific bank fields. */
+  locale?: ReferralLocale;
 };
 
 type WithdrawalStep = "form" | "confirm";
@@ -73,7 +83,22 @@ export function WithdrawalRequestDrawer({
   onOpenChange,
   profile,
   onSuccess,
+  locale = "ng",
 }: WithdrawalRequestDrawerProps) {
+  const { currency, minWithdrawal, maxWithdrawal, phone: phonePrefix } =
+    REFERRAL_LOCALES[locale];
+  const currencySymbol = getCurrencySymbol(currency);
+  const limitsHint = `Minimum of ${currencySymbol}${minWithdrawal} | Maximum of ${currencySymbol}${maxWithdrawal}`;
+  /** Matches the bank drawer: skeleton while the form is swapped in. */
+  const sessionKey = String(open);
+  const [readyFor, setReadyFor] = useState<string | null>(null);
+  const isReady = readyFor === sessionKey;
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setReadyFor(sessionKey), FORM_SWAP_MS);
+    return () => clearTimeout(timeout);
+  }, [sessionKey]);
+
   const [step, setStep] = useState<WithdrawalStep>("form");
   const [form, setForm] = useState<FormState>(INITIAL_FORM_STATE);
   const [selectedPercent, setSelectedPercent] = useState<number | null>(null);
@@ -133,7 +158,9 @@ export function WithdrawalRequestDrawer({
           </SheetTitle>
         </div>
 
-        {step === "form" ? (
+        {!isReady ? (
+          <WithdrawalDrawerSkeleton />
+        ) : step === "form" ? (
           <form onSubmit={handleProceed} className="flex min-h-0 flex-1 flex-col">
             <div className="flex-1 overflow-y-auto px-6 py-5">
               <div className="flex items-center gap-3 rounded-xl bg-[#156374] px-4 py-3.5 text-white">
@@ -153,7 +180,7 @@ export function WithdrawalRequestDrawer({
                 <label className={FIELD_LABEL_CLASS}>Available Balance</label>
                 <div className="flex h-11 items-center justify-between rounded-xl border border-[#DCE5E9] bg-[#F6F8FA] px-3">
                   <span className="font-sora text-sm text-[#092A31]">
-                    {formatReferralCurrency(profile.availableBalance)}
+                    {formatReferralAmount(profile.availableBalance, currency)}
                   </span>
                   <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[#DBEAFE] text-[#3B82F6]">
                     <BankTransferIcon />
@@ -178,7 +205,7 @@ export function WithdrawalRequestDrawer({
                   className={FIELD_INPUT_CLASS}
                 />
                 <p className="mt-1.5 font-sora text-xs text-[#94A3B8]">
-                  Minimum of £20 | Maximum of £1000
+                  {limitsHint}
                 </p>
                 <div className="mt-2 grid grid-cols-4 gap-2">
                   {PERCENT_OPTIONS.map((percent) => (
@@ -240,23 +267,28 @@ export function WithdrawalRequestDrawer({
               </div>
 
               <div className="mt-4">
-                <label className={FIELD_LABEL_CLASS}>Bank Name</label>
+                <label htmlFor="withdrawal-bank-name" className={FIELD_LABEL_CLASS}>
+                  Bank Name
+                </label>
                 <Select
-                  value={form.bankName}
-                  onValueChange={(value) => setForm((current) => ({ ...current, bankName: value }))}
-                >
-                  <SelectTrigger className="h-11 w-full rounded-xl border-[#DCE5E9] bg-[#F6F8FA] font-sora text-sm text-[#092A31] data-[placeholder]:text-[#94A3B8]">
-                    <SelectValue placeholder="Select your bank" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {NIGERIAN_BANKS.map((bank) => (
-                      <SelectItem key={bank} value={bank}>
-                        {bank}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                    value={form.bankName}
+                    onValueChange={(value) =>
+                      setForm((current) => ({ ...current, bankName: value }))
+                    }
+                  >
+                    <SelectTrigger className="h-11 w-full rounded-xl border-[#DCE5E9] bg-[#F6F8FA] font-sora text-sm text-[#092A31] data-[placeholder]:text-[#94A3B8]">
+                      <SelectValue placeholder="Select your bank" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {NIGERIAN_BANKS.map((bank) => (
+                        <SelectItem key={bank} value={bank}>
+                          {bank}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
               </div>
+
 
               <div className="mt-4">
                 <label htmlFor="withdrawal-account-number" className={FIELD_LABEL_CLASS}>
@@ -271,6 +303,7 @@ export function WithdrawalRequestDrawer({
                   className={FIELD_INPUT_CLASS}
                 />
               </div>
+
 
               <div className="mt-4">
                 <label htmlFor="withdrawal-email" className={FIELD_LABEL_CLASS}>
@@ -292,8 +325,8 @@ export function WithdrawalRequestDrawer({
                 </label>
                 <div className="flex h-11 items-center gap-2 rounded-xl border border-[#DCE5E9] bg-[#F6F8FA] pl-3">
                   <span className="flex items-center gap-1 border-r border-[#DCE5E9] pr-2 font-sora text-sm text-[#092A31]">
-                    <span aria-hidden>🇳🇬</span>
-                    +234
+                    <span aria-hidden>{phonePrefix.flag}</span>
+                    {phonePrefix.code}
                   </span>
                   <input
                     id="withdrawal-phone"
@@ -345,7 +378,7 @@ export function WithdrawalRequestDrawer({
                 <label className={FIELD_LABEL_CLASS}>Available Balance</label>
                 <div className="flex h-11 items-center justify-between rounded-xl border border-[#DCE5E9] bg-[#F6F8FA] px-3">
                   <span className="font-sora text-sm text-[#092A31]">
-                    {formatReferralCurrency(profile.availableBalance)}
+                    {formatReferralAmount(profile.availableBalance, currency)}
                   </span>
                   <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[#DBEAFE] text-[#3B82F6]">
                     <BankTransferIcon />
@@ -370,7 +403,7 @@ export function WithdrawalRequestDrawer({
                   className={FIELD_INPUT_CLASS}
                 />
                 <p className="mt-1.5 font-sora text-xs text-[#94A3B8]">
-                  Minimum of £20 | Maximum of £1000
+                  {limitsHint}
                 </p>
                 <div className="mt-2 grid grid-cols-4 gap-2">
                   {PERCENT_OPTIONS.map((percent) => (
