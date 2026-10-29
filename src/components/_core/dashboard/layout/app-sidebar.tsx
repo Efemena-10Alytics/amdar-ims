@@ -11,6 +11,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import {
   BillingIcon,
@@ -45,6 +46,12 @@ export function AppSidebar({
   className,
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  const closeMobileDrawer = () => {
+    if (isMobile) setOpenMobile(false);
+  };
+
   return (
     <Sidebar collapsible="icon" className={cn("z-40", className)} {...props}>
       <SidebarHeader>
@@ -55,7 +62,11 @@ export function AppSidebar({
               tooltip="AMDARI"
               className="data-[slot=sidebar-menu-button]:p-1.5! group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-1!"
             >
-              <Link href="/home" className="flex items-center gap-2">
+              <Link
+                href="/home"
+                onClick={closeMobileDrawer}
+                className="flex items-center gap-2"
+              >
                 <Image
                   src="/favicon.svg"
                   height={28}

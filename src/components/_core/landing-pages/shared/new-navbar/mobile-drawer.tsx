@@ -102,6 +102,7 @@ const MobileDrawer = ({
                         "text-primary hover:text-[#0f4d5a]",
                       )}
                       href="/job-board"
+                      onClick={onClose}
                     >
                       <h2>Job Board</h2>
                     </Link>
@@ -113,6 +114,7 @@ const MobileDrawer = ({
                         "text-primary hover:text-[#0f4d5a]",
                       )}
                       href="/blog"
+                      onClick={onClose}
                     >
                       <h2>Blog</h2>
                     </Link>
@@ -124,6 +126,7 @@ const MobileDrawer = ({
                         "text-primary hover:text-[#0f4d5a]",
                       )}
                       href="/testimonial"
+                      onClick={onClose}
                     >
                       <h2>Testimonials</h2>
                     </Link>
@@ -135,6 +138,7 @@ const MobileDrawer = ({
                         "text-primary hover:text-[#0f4d5a]",
                       )}
                       href="/contact"
+                      onClick={onClose}
                     >
                       <h2>Chat With Us</h2>
                     </Link>
