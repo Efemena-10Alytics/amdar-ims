@@ -11,12 +11,14 @@ const PageHeader = () => {
 
   const isLoading = isEnrollmentLoading || isCurrentLoading;
 
-  const stageLabel = current?.project
-    ? formatCareerStageLabel(current.project.careerStage)
+  const project = current?.currentProject;
+  const stageLabel = project?.project
+    ? formatCareerStageLabel(project.project.careerStage)
     : null;
 
-  const currentWeek = current?.currentWeek ?? enrollment?.cohort.active_week;
-  const totalWeeks = current?.duration ?? enrollment?.cohort.duration;
+  const currentWeek = project?.currentWeek ?? enrollment?.cohort.active_week;
+  const totalWeeks =
+    project?.duration ?? (enrollment?.cohort.duration ?? 0) * 4;
 
   const weekLabel =
     currentWeek != null && totalWeeks != null && totalWeeks > 0

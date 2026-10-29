@@ -161,8 +161,8 @@ export type CurrentInternProjectSummary = {
   contributor: string;
 };
 
-/** GET /intern-projects/current */
-export type CurrentInternProject = {
+/** Progress + project block under `currentProject` on GET /intern-projects/current */
+export type CurrentInternProjectDetails = {
   currentWeek: number;
   duration: number;
   stageProgress: number;
@@ -173,11 +173,50 @@ export type CurrentInternProject = {
   project: CurrentInternProjectSummary | null;
 };
 
-export type CurrentInternProjectResponse = {
-  success: boolean;
-  message: string;
-  data: CurrentInternProject | null;
+/** @deprecated Prefer CurrentInternProjectDetails */
+export type CurrentInternProject = CurrentInternProjectDetails;
+
+/** Active todo under `currentTask` on GET /intern-projects/current */
+export type CurrentInternTaskType = {
+  id: number;
+  contentType: string;
+  description: string | null;
+  docName: string | null;
+  docUrl: string | null;
+  videoUrl: string | null;
+  submissionRequired: boolean;
+  solutionFormat: string[];
+  sortOrder: number;
+  status: string | null;
+  created_at: string;
+  updated_at: string;
 };
+
+export type CurrentInternTask = {
+  projectId: number;
+  projectSlug: string;
+  todoId: number;
+  todoTitle: string;
+  week: number;
+  dayOfWeek: string;
+  type: CurrentInternTaskType | null;
+};
+
+/** GET /v3/intern-projects/current body */
+export type CurrentInternProjectPayload = {
+  currentTask: CurrentInternTask | null;
+  currentProject: CurrentInternProjectDetails | null;
+};
+
+export type CurrentInternProjectEnvelope = {
+  success?: boolean;
+  message?: string;
+  data: CurrentInternProjectPayload | CurrentInternProjectDetails | null;
+};
+
+export type CurrentInternProjectResponse =
+  | CurrentInternProjectPayload
+  | CurrentInternProjectEnvelope;
 
 export type InternProjectTodoContentType =
   | "text"

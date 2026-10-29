@@ -40,18 +40,19 @@ const YourTask = ({
 }: YourTaskProps) => {
   const currentProjectQuery = useGetCurrentProject();
   const {
-    currentTask,
+    currentTask: progressCurrentTask,
     preAssessmentDone,
     isLoading: isProgressLoading,
   } = useGetInternshipProgress();
 
   const current = currentProjectQuery.data;
-  const project = current?.project;
+  const project = current?.currentProject?.project;
+  const currentTask = current?.currentTask ?? progressCurrentTask;
   const isProjectLoading = currentProjectQuery.isLoading;
   const isLoading = isProjectLoading || isProgressLoading;
 
   const projectSlug =
-    project?.slug?.trim() || currentTask?.projectSlug?.trim() || null;
+    currentTask?.projectSlug?.trim() || project?.slug?.trim() || null;
   const projectHref = buildProjectHref(projectSlug);
   const taskHref =
     currentTask && projectSlug

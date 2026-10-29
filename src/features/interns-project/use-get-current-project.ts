@@ -2,7 +2,9 @@
 
 import { useQuery } from "@tanstack/react-query";
 import type {
-  CurrentInternProject,
+  CurrentInternProjectDetails,
+  CurrentInternProjectEnvelope,
+  CurrentInternProjectPayload,
   CurrentInternProjectResponse,
 } from "./internship-project.types";
 import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
@@ -18,10 +20,77 @@ export const CURRENT_INTERN_PROJECT_QUERY_KEY = (
   programId: number | string,
 ) => ["v3", "intern-projects", "current", cohortId, programId] as const;
 
+function isProjectDetails(
+  value: unknown,
+): value is CurrentInternProjectDetails {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "currentWeek" in value &&
+    "project" in value &&
+    !("currentProject" in value)
+  );
+}
+
+function isPayload(value: unknown): value is CurrentInternProjectPayload {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    ("currentTask" in value || "currentProject" in value) &&
+    !("data" in value)
+  );
+}
+
+function isEnvelope(value: unknown): value is CurrentInternProjectEnvelope {
+  return typeof value === "object" && value !== null && "data" in value;
+}
+
+function normalizeCurrentInternProjectResponse(
+  body: CurrentInternProjectResponse,
+): CurrentInternProjectPayload {
+  if (isPayload(body)) {
+    return {
+      currentTask: body.currentTask ?? null,
+      currentProject: body.currentProject ?? null,
+    };
+  }
+
+  if (isEnvelope(body)) {
+    if (body.success === false) {
+      throw new Error(
+        body.message?.trim() || "Failed to load current intern project.",
+      );
+    }
+
+    const payload = body.data;
+    if (!payload) {
+      throw new Error(
+        body.message?.trim() || "Failed to load current intern project.",
+      );
+    }
+
+    if (isPayload(payload)) {
+      return {
+        currentTask: payload.currentTask ?? null,
+        currentProject: payload.currentProject ?? null,
+      };
+    }
+
+    if (isProjectDetails(payload)) {
+      return {
+        currentTask: null,
+        currentProject: payload,
+      };
+    }
+  }
+
+  throw new Error("Failed to load current intern project.");
+}
+
 export async function getCurrentInternProject({
   cohortId,
   programId,
-}: GetCurrentInternProjectParams): Promise<CurrentInternProject> {
+}: GetCurrentInternProjectParams): Promise<CurrentInternProjectPayload> {
   const { data } = await axiosInstance.get<CurrentInternProjectResponse>(
     "v3/intern-projects/current",
     {
@@ -32,13 +101,7 @@ export async function getCurrentInternProject({
     },
   );
 
-  if (data.success === false || !data.data) {
-    throw new Error(
-      data.message?.trim() || "Failed to load current intern project.",
-    );
-  }
-
-  return data.data;
+  return normalizeCurrentInternProjectResponse(data);
 }
 
 export function useGetCurrentProject(
