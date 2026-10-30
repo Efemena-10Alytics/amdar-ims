@@ -59,7 +59,6 @@ export interface WithdrawalProfile {
 
 export interface ReferralData {
   stats: ReferralStats;
-  referralLink: string;
   referrals: ReferralEntry[];
   paymentSummary: ReferralPaymentSummary;
   topReferrers: TopReferrer[];

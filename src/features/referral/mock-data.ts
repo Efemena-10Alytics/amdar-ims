@@ -7,7 +7,6 @@ export const mockReferralData: ReferralData = {
     successfulReferrals: 16,
     pendingReferrals: 7,
   },
-  referralLink: "https://amdari.io/refer/queen123",
   referrals: [
     { id: "1", refereeName: "Queen Agada", email: "example@gmail.com", programme: "Data Science", paymentPlan: { current: 3, total: 3, status: "paid" }, joinedOn: "25 Jul, 2026", reward: 50 },
     { id: "2", refereeName: "Queen Agada", email: "example@gmail.com", programme: "Data Science", paymentPlan: { current: 1, total: 3, status: "pending" }, joinedOn: "25 Jul, 2026", reward: 50 },
@@ -67,7 +66,6 @@ export const mockEmptyReferralData: ReferralData = {
     successfulReferrals: 0,
     pendingReferrals: 0,
   },
-  referralLink: "https://amdari.io/refer/queen123",
   referrals: [],
   paymentSummary: {
     paid: 0,

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { mockReferralData } from "@/features/referral/mock-data";
+import { useGetReferralCode } from "@/features/referral/use-get-referral-code";
 import {
   parseReferralLocale,
   REFERRAL_LOCALES,
@@ -34,6 +35,9 @@ export function ReferralsDashboard() {
   const [withdrawSuccessOpen, setWithdrawSuccessOpen] = useState(false);
 
   const data = mockReferralData;
+  // The referral code (and so the invite link) is live; the rest of the page is
+  // still mock data until the remaining endpoints are integrated.
+  const referralCode = useGetReferralCode();
   const isWithdrawalHistoryView = searchParams.get("view") === "withdrawal-history";
   // `ln` picks the withdrawal form. With no param the drawer still has to render
   // something the moment it opens, and that default is UK/GBP — falling back to
@@ -108,7 +112,11 @@ export function ReferralsDashboard() {
     <div className="min-w-0 space-y-6 px-4 py-6 lg:px-6">
       <ReferralStatsCards stats={data.stats} currency={currency} />
 
-      <InviteEarnBanner referralLink={data.referralLink} />
+      <InviteEarnBanner
+        referralLink={referralCode.referralLink}
+        isLoading={referralCode.isPending}
+        errorMessage={referralCode.errorMessage}
+      />
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
         <ReferralTrackingTable referrals={data.referrals} currency={currency} />
