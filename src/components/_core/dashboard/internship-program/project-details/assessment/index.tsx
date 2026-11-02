@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { Building2, CalendarDays, Lock, User } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -11,9 +12,11 @@ import {
   INTERN_PROJECT_ASSESSMENTS_QUERY_KEY,
   useGetProjectAssessments,
 } from "@/features/interns-project/use-get-project-assessments";
+import { useGetTodosByProjectId } from "@/features/interns-project/use-get-todos-by-project-id";
 import { normalizeReadinessSubmitResultData } from "@/features/readiness-test/normalize-submit-result";
 import type {
   InternProject,
+  InternProjectTodo,
   ProjectAssessment,
   ProjectAssessmentType,
 } from "@/features/interns-project/internship-project.types";
@@ -48,7 +51,28 @@ function toQuizForm(assessment: ProjectAssessment): ReadinessTestQuizForm {
   return { id: assessment.id, fields: assessment.fields };
 }
 
+function getFirstTaskHref(
+  projectSlug: string | null | undefined,
+  todos: InternProjectTodo[] | undefined,
+) {
+  const slug = projectSlug?.trim();
+  if (!slug || !todos?.length) return null;
+
+  const firstTodo = [...todos].sort(
+    (a, b) => a.week - b.week || a.sortOrder - b.sortOrder || a.id - b.id,
+  )[0];
+  if (!firstTodo) return null;
+
+  const firstType = [...(firstTodo.types ?? [])].sort(
+    (a, b) => a.sortOrder - b.sortOrder,
+  )[0];
+
+  const base = `/dashboard/internship-program/projects/${encodeURIComponent(slug)}/classroom/${firstTodo.id}`;
+  return firstType?.id != null ? `${base}?type=${firstType.id}` : base;
+}
+
 const Assessment = ({ project }: { project: InternProject }) => {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<ProjectAssessmentType>("pre");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -58,6 +82,12 @@ const Assessment = ({ project }: { project: InternProject }) => {
     isLoading,
     isError,
   } = useGetProjectAssessments(project.id);
+  const { data: todos } = useGetTodosByProjectId(project.id);
+
+  const firstTaskHref = useMemo(
+    () => getFirstTaskHref(project.slug, todos),
+    [project.slug, todos],
+  );
 
   const isPreAssessment = activeTab === "pre";
   const assessment = assessments?.[activeTab] ?? null;
@@ -240,6 +270,18 @@ const Assessment = ({ project }: { project: InternProject }) => {
                   fields={assessment.fields}
                   answers={assessment.my_latest_submission?.answers ?? []}
                   onClose={() => setIsDrawerOpen(false)}
+                  onContinue={() => {
+                    setIsDrawerOpen(false);
+                    if (firstTaskHref) {
+                      router.push(firstTaskHref);
+                      return;
+                    }
+                    const slug = project.slug?.trim();
+                    if (!slug) return;
+                    router.push(
+                      `/dashboard/internship-program/projects/${encodeURIComponent(slug)}`,
+                    );
+                  }}
                 />
               )}
               onSubmitted={handleSubmitted}
