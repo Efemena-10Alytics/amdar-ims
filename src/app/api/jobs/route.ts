@@ -5,8 +5,12 @@ import { NextRequest, NextResponse } from "next/server";
 const JOBS_API_URL = process.env.JOBS_API_URL ?? "https://demo.cvmatchly.ai/api/public/jobs";
 const JOBS_API_KEY = process.env.JOBS_API_KEY ?? "";
 
+// The feed's only supported category; upstream 400s on anything else.
+const JOBS_CATEGORY = "tech";
+
 // Filters/params supported by the upstream cvMatchly jobs endpoint.
 const FORWARDED_PARAMS = [
+  "category",
   "q",
   "source",
   "location",
@@ -35,6 +39,11 @@ export async function GET(request: NextRequest) {
   for (const param of FORWARDED_PARAMS) {
     const value = searchParams.get(param);
     if (value) upstreamUrl.searchParams.set(param, value);
+  }
+
+  // Every board is tech-only, so pin the category even if a caller omits it.
+  if (!upstreamUrl.searchParams.get("category")) {
+    upstreamUrl.searchParams.set("category", JOBS_CATEGORY);
   }
 
   // Cap pageSize at 100 as documented by the upstream API.

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import JobCard from "@/components/_core/landing-pages/job-board/job-card";
 import JobCardSkeleton from "@/components/_core/landing-pages/job-board/job-card-skeleton";
@@ -14,7 +14,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { JOB_TITLE_OPTIONS, LOCATION_OPTIONS, SPONSORSHIP_OPTIONS } from "@/features/jobs/constants";
+import { JOB_TITLE_OPTIONS, SPONSORSHIP_OPTIONS } from "@/features/jobs/constants";
+import { buildLocationOptions, locationFilterParams } from "@/features/jobs/location";
+import { useCountries } from "@/features/portfolio/use-countries";
 
 const ResetFilterIcon = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -53,8 +55,16 @@ const JobOpeningSection = () => {
     return () => clearTimeout(timeout);
   }, [searchInput]);
 
+  // Location dropdown: Remote first, then every country.
+  const { data: countries } = useCountries();
+  const locationOptions = useMemo(
+    () => buildLocationOptions(countries?.map((country) => country.name)),
+    [countries],
+  );
+
   const { data, isLoading, isError } = useJobs({
-    location: location || undefined,
+    // "Remote" filters on remoteMode; a country filters on location.
+    ...locationFilterParams(location),
     role: jobTitle || undefined,
     sponsorship: sponsorship || undefined,
     q: search || undefined,
@@ -104,7 +114,7 @@ const JobOpeningSection = () => {
               <SelectValue placeholder="Location" />
             </SelectTrigger>
             <SelectContent>
-              {LOCATION_OPTIONS.map((opt) => (
+              {locationOptions.map((opt) => (
                 <SelectItem key={opt} value={opt}>
                   {opt}
                 </SelectItem>

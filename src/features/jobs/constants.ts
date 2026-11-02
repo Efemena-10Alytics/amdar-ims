@@ -1,4 +1,9 @@
-export const LOCATION_OPTIONS = ["Dublin, Ireland", "London, UK", "Remote"];
+/**
+ * The jobs feed's only supported category — anything else is a 400
+ * ("Unknown category: x. Supported: tech."). Sent on every request so the
+ * boards only ever show tech roles.
+ */
+export const JOBS_CATEGORY = "tech";
 
 export const JOB_TITLE_OPTIONS = [
   "Business Analysis",

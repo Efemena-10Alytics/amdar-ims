@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import type { JobsFilters, JobsResponse } from "./types";
 import { normalizeJobsResponse } from "./normalize";
+import { JOBS_CATEGORY } from "./constants";
 
 const JOBS_API = "/api/jobs";
 const MAX_PAGE_SIZE = 100;
@@ -14,6 +15,9 @@ function buildQueryString(params: UseJobsParams): string {
   const searchParams = new URLSearchParams();
 
   const { page, pageSize, ...filters } = params;
+
+  // Always scoped to tech, so the boards never surface non-tech roles.
+  searchParams.set("category", JOBS_CATEGORY);
 
   Object.entries(filters).forEach(([key, value]) => {
     if (value) searchParams.set(key, value);

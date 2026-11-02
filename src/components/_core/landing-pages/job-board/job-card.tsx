@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import type { NormalizedJob } from "@/features/jobs/types";
 import { useCountries } from "@/features/portfolio/use-countries";
+import { countryNameFromFeedLabel } from "@/features/jobs/location";
 
 const UK_FLAG_FALLBACK = "/uk-flag.png";
 
@@ -70,10 +71,13 @@ function useLocationFlag(location: string): string {
   const { data: countries } = useCountries();
 
   return useMemo(() => {
-    const lastSegment = location.split(",").pop()?.trim().toLowerCase();
+    // The feed writes the same country several ways ("USA" as well as
+    // "United States"), so normalise before matching the country list.
+    const lastSegment = location.split(",").pop()?.trim();
     if (lastSegment && countries) {
+      const canonical = countryNameFromFeedLabel(lastSegment).toLowerCase();
       const match = countries.find(
-        (country) => country.name.toLowerCase() === lastSegment,
+        (country) => country.name.toLowerCase() === canonical,
       );
       if (match?.flag) return match.flag;
     }
