@@ -175,39 +175,41 @@ const AssessmentResult = ({
   );
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="text-center">
-        <ScoreRing percentage={percentage} />
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="min-h-0 flex-1 overflow-y-auto pb-4">
+        <div className="text-center">
+          <ScoreRing percentage={percentage} />
 
-        <p className="mt-4 text-lg font-semibold text-[#173740]">
-          {hasMaxScore
-            ? `You scored ${formatScore(result.total_score)}/${formatScore(maxScore)}`
-            : `You scored ${Math.round(percentage)}%`}
-        </p>
-        <p className="mt-1 text-sm text-[#64748B]">
-          {isPreAssessment
-            ? "This is your starting point. You'll take the post-assessment after the project to see how far you've come."
-            : "That's a wrap. Compare this with your pre-assessment score to see your progress on this project."}
-        </p>
+          <p className="mt-4 text-lg font-semibold text-[#173740]">
+            {hasMaxScore
+              ? `You scored ${formatScore(result.total_score)}/${formatScore(maxScore)}`
+              : `You scored ${Math.round(percentage)}%`}
+          </p>
+          <p className="mt-1 text-sm text-[#64748B]">
+            {isPreAssessment
+              ? "This is your starting point. You'll take the post-assessment after the project to see how far you've come."
+              : "That's a wrap. Compare this with your pre-assessment score to see your progress on this project."}
+          </p>
+        </div>
+
+        {answers.length === 0 ? (
+          <p className="mt-6 text-center text-sm text-[#94A3B8]">
+            Loading your answers...
+          </p>
+        ) : (
+          <ul className="mt-6 space-y-4">
+            {fields.map((field) => (
+              <QuestionReview
+                key={field.id}
+                field={field}
+                answer={answersByFieldId.get(field.id)}
+              />
+            ))}
+          </ul>
+        )}
       </div>
 
-      {answers.length === 0 ? (
-        <p className="mt-6 text-center text-sm text-[#94A3B8]">
-          Loading your answers...
-        </p>
-      ) : (
-        <ul className="mt-6 space-y-4">
-          {fields.map((field) => (
-            <QuestionReview
-              key={field.id}
-              field={field}
-              answer={answersByFieldId.get(field.id)}
-            />
-          ))}
-        </ul>
-      )}
-
-      <div className="mx-auto mt-6 w-full max-w-lg pb-4">
+      <div className="mx-auto w-full max-w-lg shrink-0 border-t border-[#E2EBEF] bg-white pt-4 pb-4">
         <Button
           type="button"
           onClick={() => {

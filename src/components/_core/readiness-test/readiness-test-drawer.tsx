@@ -234,7 +234,13 @@ const ReadinessTestDrawer = ({
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-6 py-5">
+            <div
+              className={
+                renderResult
+                  ? "flex min-h-0 flex-1 flex-col overflow-hidden px-6 pt-5"
+                  : "flex-1 overflow-y-auto px-6 py-5"
+              }
+            >
               {renderResult ? (
                 renderResult(displayedResult)
               ) : (
