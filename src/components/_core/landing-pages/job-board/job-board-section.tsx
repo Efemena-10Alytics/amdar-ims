@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import JobCard from "./job-card";
+import { LocationFilter } from "./location-filter";
 import JobCardSkeleton from "./job-card-skeleton";
 import { useJobs } from "@/features/jobs/use-jobs";
 import { useMinDurationLoading } from "@/hooks/use-min-duration-loading";
@@ -138,22 +139,13 @@ const JobBoardSection = () => {
           <div className="flex flex-wrap items-center gap-3">
             <h3 className="font-sora text-xl font-semibold leading-none text-[#092A31]">All Jobs</h3>
 
-            <Select
+            <LocationFilter
               key={`location-${filterResetKey}`}
-              value={location || undefined}
-              onValueChange={updateFilter(setLocation)}
-            >
-              <SelectTrigger className="h-8.5 w-auto min-w-44 rounded-lg bg-[#E8EFF1] px-3 py-0 font-sora text-sm text-[#0C3640]">
-                <SelectValue placeholder="Location" />
-              </SelectTrigger>
-              <SelectContent>
-                {locationOptions.map((opt) => (
-                  <SelectItem key={opt} value={opt}>
-                    {opt}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              value={location}
+              options={locationOptions}
+              onChange={updateFilter(setLocation)}
+              className="h-8.5 w-auto min-w-44 rounded-lg bg-[#E8EFF1] px-3 py-0 font-sora text-sm text-[#0C3640]"
+            />
 
             <Select
               key={`job-title-${filterResetKey}`}
