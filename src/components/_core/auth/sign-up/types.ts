@@ -5,6 +5,7 @@ export interface SignUpFormData {
   phone: string;
   countryCode: string;
   selectedCountryName: string;
+  referralCode: string;
   password: string;
   confirmPassword: string;
   showPassword: boolean;
@@ -18,6 +19,7 @@ export const defaultSignUpFormData: SignUpFormData = {
   phone: "",
   countryCode: "",
   selectedCountryName: "",
+  referralCode: "",
   password: "",
   confirmPassword: "",
   showPassword: false,

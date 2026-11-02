@@ -31,7 +31,7 @@ const PersonalInfo = ({
   setFormData,
   onContinue,
 }: PersonalInfoProps) => {
-  const { firstName, lastName, email, phone, countryCode } = formData;
+  const { firstName, lastName, email, phone, countryCode, referralCode } = formData;
   const { data: countries = [], isLoading: countriesLoading } = useCountries();
   const selectedCountry = countries.find((c) => c.code === countryCode);
 
@@ -205,6 +205,26 @@ const PersonalInfo = ({
               )}
             />
           </div>
+        </div>
+
+        <div>
+          <label
+            htmlFor="referralCode"
+            className="block text-sm font-medium text-[#092A31] mb-1.5"
+          >
+            Referral code{" "}
+            <span className="text-[#64748B] font-normal text-xs">(Optional)</span>
+          </label>
+          <input
+            id="referralCode"
+            type="text"
+            placeholder="Enter referral code"
+            value={referralCode}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, referralCode: e.target.value }))
+            }
+            className={inputBase}
+          />
         </div>
 
         <Button

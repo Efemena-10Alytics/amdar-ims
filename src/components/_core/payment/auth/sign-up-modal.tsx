@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Eye, EyeOff } from "lucide-react";
@@ -21,6 +21,7 @@ import {
   defaultSignUpFormData,
   type SignUpFormData,
 } from "@/components/_core/auth/sign-up/types";
+import { getStoredReferralCode } from "@/features/referral/referral-storage";
 
 const inputBase = cn(
   "w-full rounded-lg bg-[#F8FAFC] text-sm placeholder:text-[#94A3B8] px-4 py-3 text-[#092A31] border border-transparent",
@@ -81,6 +82,18 @@ export function SignUpModal({
     formData.password === formData.confirmPassword;
   const showMatchError = formData.confirmPassword.length > 0 && !passwordsMatch;
 
+  useEffect(() => {
+    if (open) {
+      const storedRef = getStoredReferralCode();
+      if (storedRef) {
+        setFormData((prev) => ({
+          ...prev,
+          referralCode: prev.referralCode || storedRef,
+        }));
+      }
+    }
+  }, [open]);
+
   const requirementStatus = useMemo(
     () =>
       PASSWORD_REQUIREMENTS.map((r) => ({
@@ -106,6 +119,7 @@ export function SignUpModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     clearError();
+    const ref = formData.referralCode?.trim() || undefined;
     try {
       await signUp(
         {
@@ -116,6 +130,7 @@ export function SignUpModal({
           password: formData.password,
           password_confirmation: formData.password,
           location: formData.selectedCountryName,
+          ...(ref ? { ref } : {}),
         },
         undefined,
         undefined,
@@ -301,6 +316,29 @@ export function SignUpModal({
                   )}
                 />
               </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor="sign-up-modal-referralCode"
+                className="block text-sm font-medium text-[#092A31] mb-1.5"
+              >
+                Referral code{" "}
+                <span className="text-[#64748B] font-normal text-xs">(Optional)</span>
+              </label>
+              <input
+                id="sign-up-modal-referralCode"
+                type="text"
+                placeholder="Enter referral code"
+                value={formData.referralCode}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    referralCode: e.target.value,
+                  }))
+                }
+                className={inputBase}
+              />
             </div>
 
             <div>

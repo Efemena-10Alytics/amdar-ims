@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import PersonalInfo from "@/components/_core/auth/sign-up/personal-info";
 import CreatePassword from "@/components/_core/auth/sign-up/create-password";
 import { useSignUp } from "@/features/auth/use-sign-up";
@@ -13,6 +12,7 @@ import {
   type SignUpFormData,
 } from "@/components/_core/auth/sign-up/types";
 import { ArrowLeft } from "lucide-react";
+import { getStoredReferralCode } from "@/features/referral/referral-storage";
 
 type SignUpStep = "personal" | "password";
 
@@ -24,6 +24,18 @@ export default function SignUpContent() {
     defaultSignUpFormData,
   );
 
+  useEffect(() => {
+    const urlRef = searchParams.get("ref");
+    const storedRef = getStoredReferralCode();
+    const initialRef = urlRef?.trim() || storedRef || "";
+    if (initialRef) {
+      setFormData((prev) => ({
+        ...prev,
+        referralCode: prev.referralCode || initialRef,
+      }));
+    }
+  }, [searchParams]);
+
   const handleContinue = () => {
     clearError();
     setStep("password");
@@ -32,6 +44,8 @@ export default function SignUpContent() {
   const handleSignUpSuccess = () => {
     const redirect = searchParams.get("redirect") ?? undefined;
     const program = searchParams.get("program") ?? undefined;
+    const ref = formData.referralCode?.trim() || undefined;
+
     signUp(
       {
         firstName: formData.firstName,
@@ -41,6 +55,7 @@ export default function SignUpContent() {
         password: formData.password,
         password_confirmation: formData.confirmPassword,
         location: formData.selectedCountryName,
+        ...(ref ? { ref } : {}),
       },
       redirect,
       program,
@@ -64,14 +79,6 @@ export default function SignUpContent() {
         ) : (
           <div />
         )}
-        {/* <Link href="/auth/sign-in" className="cursor-pointer">
-          <Button
-            variant="outline"
-            className="rounded-md bg-[#C8DDE3] border-[#C8DDE3] text-[#092A31] hover:bg-[#B8CDD3] hover:border-[#B8CDD3] px-6"
-          >
-            Login
-          </Button>
-        </Link> */}
       </div>
 
       <div className="w-full max-w-152 flex-1 mx-auto md:mx-[unset] mt-5">

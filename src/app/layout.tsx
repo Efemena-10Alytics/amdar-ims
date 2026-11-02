@@ -6,6 +6,7 @@ import "aos/dist/aos.css";
 import { Providers } from "./providers";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NextTopLoader from "nextjs-toploader";
+import { ReferralTracker } from "@/components/_core/referral-tracker";
 import { GoogleAnalytics } from '@next/third-parties/google'
 import MetaPixel from "@/components/_core/meta-pixel";
 import SnapPixel from "@/components/_core/snap-pixel";
@@ -43,6 +44,7 @@ export default function RootLayout({
         className="antialiased"
         suppressHydrationWarning
       >
+        <ReferralTracker />
         <GoogleTagManagerNoScript />
         <TooltipProvider>
           <Providers>
