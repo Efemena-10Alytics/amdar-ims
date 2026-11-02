@@ -18,6 +18,8 @@ type AssessmentResultProps = {
   /** Empty for the moment between submitting and the refetch landing. */
   answers: ProjectAssessmentAnswer[];
   onClose: () => void;
+  /** After pre-assessment, Continue should start the project's first task. */
+  onContinue?: () => void;
 };
 
 const CHOICE_TYPES = new Set(["single_choice", "multiple_choice", "dropdown"]);
@@ -164,6 +166,7 @@ const AssessmentResult = ({
   fields,
   answers,
   onClose,
+  onContinue,
 }: AssessmentResultProps) => {
   const percentage = result.percentage_score;
   const hasMaxScore = maxScore > 0;
@@ -207,10 +210,16 @@ const AssessmentResult = ({
       <div className="mx-auto mt-6 w-full max-w-lg pb-4">
         <Button
           type="button"
-          onClick={onClose}
+          onClick={() => {
+            if (isPreAssessment) {
+              (onContinue ?? onClose)();
+              return;
+            }
+            onClose();
+          }}
           className="h-12 w-full cursor-pointer rounded-full bg-primary text-base font-medium text-white hover:bg-primary/90"
         >
-          Close
+          {isPreAssessment ? "Continue" : "Close"}
         </Button>
       </div>
     </div>

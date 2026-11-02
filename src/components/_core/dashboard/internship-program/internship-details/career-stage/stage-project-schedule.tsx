@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, Folder, Loader, Lock, Settings2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -9,9 +10,12 @@ import { CustmDropdownIcon } from "@/components/_core/dashboard/internship-progr
 import { RichTextContent } from "@/components/_core/dashboard/internship-program/project-details/project-content";
 import AssessmentResult from "@/components/_core/dashboard/internship-program/project-details/assessment/assessment-result";
 import ReadinessTestDrawer from "@/components/_core/readiness-test/readiness-test-drawer";
+import { CURRENT_INTERN_PROJECT_QUERY_KEY } from "@/features/interns-project/use-get-current-project";
+import { ENROLLMENT_PROGRESS_QUERY_KEY } from "@/features/interns-project/use-get-internship-progress";
 import {
   INTERN_PROJECT_ASSESSMENTS_QUERY_KEY,
 } from "@/features/interns-project/use-get-project-assessments";
+import { useSelectedEnrollmentIds } from "@/store/enrollment-selection-store";
 import { normalizeReadinessSubmitResultData } from "@/features/readiness-test/normalize-submit-result";
 import type {
   ProjectAssessment,
@@ -78,6 +82,8 @@ type StageProjectScheduleProps = {
   weeks: ProjectScheduleTab[];
   tone?: StageProjectScheduleTone;
   projectHref?: string;
+  /** Classroom URL for the project's first scheduled task. */
+  firstTaskHref?: string;
   continueHref?: string;
   continueLabel?: string;
   defaultOpen?: boolean;
@@ -308,8 +314,18 @@ function toQuizForm(source: ProjectAssessment): ReadinessTestQuizForm {
   return { id: source.id, fields: source.fields };
 }
 
-function AssessmentPanel({ assessment }: { assessment: AssessmentTabMeta }) {
+function AssessmentPanel({
+  assessment,
+  firstTaskHref,
+  projectHref,
+}: {
+  assessment: AssessmentTabMeta;
+  firstTaskHref?: string;
+  projectHref?: string;
+}) {
+  const router = useRouter();
   const queryClient = useQueryClient();
+  const { cohortId, programId } = useSelectedEnrollmentIds();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const source = assessment.source ?? null;
@@ -326,10 +342,33 @@ function AssessmentPanel({ assessment }: { assessment: AssessmentTabMeta }) {
   const drawerTitle = isPreAssessment ? "Pre-assessment" : "Post-assessment";
 
   const handleSubmitted = async () => {
-    if (assessment.projectId == null) return;
-    await queryClient.invalidateQueries({
-      queryKey: INTERN_PROJECT_ASSESSMENTS_QUERY_KEY(assessment.projectId),
-    });
+    const invalidations = [];
+    if (assessment.projectId != null) {
+      invalidations.push(
+        queryClient.invalidateQueries({
+          queryKey: INTERN_PROJECT_ASSESSMENTS_QUERY_KEY(assessment.projectId),
+        }),
+      );
+    }
+    if (cohortId && programId) {
+      invalidations.push(
+        queryClient.invalidateQueries({
+          queryKey: ENROLLMENT_PROGRESS_QUERY_KEY(cohortId, programId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: CURRENT_INTERN_PROJECT_QUERY_KEY(cohortId, programId),
+        }),
+      );
+    }
+    await Promise.all(invalidations);
+  };
+
+  const handleContinue = () => {
+    setIsDrawerOpen(false);
+    const href = firstTaskHref ?? projectHref;
+    if (href) {
+      router.push(href);
+    }
   };
 
   return (
@@ -389,6 +428,7 @@ function AssessmentPanel({ assessment }: { assessment: AssessmentTabMeta }) {
               fields={source.fields}
               answers={source.my_latest_submission?.answers ?? []}
               onClose={() => setIsDrawerOpen(false)}
+              onContinue={isPreAssessment ? handleContinue : undefined}
             />
           )}
           onSubmitted={handleSubmitted}
@@ -405,6 +445,7 @@ export default function StageProjectSchedule({
   weeks,
   tone = "active",
   projectHref,
+  firstTaskHref,
   continueHref,
   continueLabel = "Continue project",
   defaultOpen = true,
@@ -591,7 +632,11 @@ export default function StageProjectSchedule({
                   </p>
                 )
               ) : activeWeek.assessment ? (
-                <AssessmentPanel assessment={activeWeek.assessment} />
+                <AssessmentPanel
+                  assessment={activeWeek.assessment}
+                  firstTaskHref={firstTaskHref}
+                  projectHref={projectHref}
+                />
               ) : (
                 <p className="py-4 text-sm text-[#94A3B8]">
                   Assessment details are unavailable.

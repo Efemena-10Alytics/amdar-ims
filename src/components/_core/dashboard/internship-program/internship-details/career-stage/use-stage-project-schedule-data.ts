@@ -227,6 +227,26 @@ function buildProjectHref(project: InternProject): string | undefined {
   return `/dashboard/internship-program/projects/${encodeURIComponent(slug)}`;
 }
 
+function buildFirstTaskHref(
+  project: InternProject | null,
+  todos: InternProjectTodo[],
+): string | undefined {
+  const slug = project?.slug?.trim();
+  if (!slug || !todos.length) return undefined;
+
+  const firstTodo = [...todos].sort(
+    (a, b) => a.week - b.week || a.sortOrder - b.sortOrder || a.id - b.id,
+  )[0];
+  if (!firstTodo) return undefined;
+
+  const firstType = [...(firstTodo.types ?? [])].sort(
+    (a, b) => a.sortOrder - b.sortOrder,
+  )[0];
+
+  const base = `/dashboard/internship-program/projects/${encodeURIComponent(slug)}/classroom/${firstTodo.id}`;
+  return firstType?.id != null ? `${base}?type=${firstType.id}` : base;
+}
+
 /** Builds week/day schedule UI data from a published stage project + its todos. */
 export function useStageProjectScheduleData(project: InternProject | null) {
   const todosQuery = useGetTodosByProjectId(project?.id);
@@ -287,12 +307,18 @@ export function useStageProjectScheduleData(project: InternProject | null) {
     !assessmentsQuery.data?.pre ||
     Boolean(assessmentsQuery.data.pre.my_latest_submission);
 
+  const firstTaskHref = useMemo(
+    () => buildFirstTaskHref(project, todosQuery.data ?? []),
+    [project, todosQuery.data],
+  );
+
   return {
     project,
     weeks,
     weekRange: buildWeekRange(weeks),
     projectTitle: project?.title ?? "",
     projectHref: project ? buildProjectHref(project) : undefined,
+    firstTaskHref,
     preAssessmentDone,
     isLoading,
     isError,

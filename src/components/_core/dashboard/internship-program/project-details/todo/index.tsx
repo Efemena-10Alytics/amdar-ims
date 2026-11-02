@@ -90,6 +90,7 @@ const Todo = ({ project }: TodoProps) => {
     weekRange,
     weeks,
     projectHref,
+    firstTaskHref,
     preAssessmentDone,
     isLoading,
     isError,
@@ -128,7 +129,9 @@ const Todo = ({ project }: TodoProps) => {
           todoId: currentTask.todoId,
           typeId: currentTask.type?.id,
         })
-      : (projectHref ?? null);
+      : (preAssessmentDone || progressPreDone
+          ? (firstTaskHref ?? projectHref ?? null)
+          : (projectHref ?? null));
 
   return (
     <section className="space-y-6">
@@ -164,6 +167,7 @@ const Todo = ({ project }: TodoProps) => {
           weeks={weeks}
           tone="active"
           projectHref={projectHref}
+          firstTaskHref={firstTaskHref}
           continueHref={undefined}
           defaultOpen
           standalone
