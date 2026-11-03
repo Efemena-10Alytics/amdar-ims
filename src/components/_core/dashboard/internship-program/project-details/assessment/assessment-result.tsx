@@ -178,17 +178,25 @@ const AssessmentResult = ({
     <div className="flex h-full min-h-0 flex-col">
       <div className="min-h-0 flex-1 overflow-y-auto pb-4">
         <div className="text-center">
-          <ScoreRing percentage={percentage} />
-
-          <p className="mt-4 text-lg font-semibold text-[#173740]">
-            {hasMaxScore
-              ? `You scored ${formatScore(result.total_score)}/${formatScore(maxScore)}`
-              : `You scored ${Math.round(percentage)}%`}
-          </p>
-          <p className="mt-1 text-sm text-[#64748B]">
+          {hasMaxScore ? (
+            <>
+              <ScoreRing percentage={percentage} />
+              <p className="mt-4 text-lg font-semibold text-[#173740]">
+                {`You scored ${formatScore(result.total_score)}/${formatScore(maxScore)}`}
+              </p>
+            </>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E8F5EC] px-3 py-1.5 text-sm font-semibold text-[#3A8E53]">
+              <Check className="size-3.5" aria-hidden />
+              Completed
+            </span>
+          )}
+          <p className="mt-3 text-sm text-[#64748B]">
             {isPreAssessment
               ? "This is your starting point. You'll take the post-assessment after the project to see how far you've come."
-              : "That's a wrap. Compare this with your pre-assessment score to see your progress on this project."}
+              : hasMaxScore
+                ? "That's a wrap. Compare this with your pre-assessment score to see your progress on this project."
+                : "That's a wrap. You've completed the post-assessment for this project."}
           </p>
         </div>
 
