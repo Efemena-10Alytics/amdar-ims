@@ -11,11 +11,15 @@ import { REFERRAL_QUERY_KEY } from "./use-referral-dashboard";
  * character referral code along with the programme's reward information.
  */
 
-/** Public link a referee follows; see the handover guide section 2. */
-const REFERRAL_LINK_BASE = "https://amdari.io/refer";
+/**
+ * Public link a referee follows. The code rides in `?ref=`, which
+ * ReferralTracker captures from the root layout on any page, and sign-up
+ * then sends on to the register endpoint (handover guide section 2).
+ */
+const REFERRAL_LINK_BASE = "https://www.amdari.io/internship";
 
 export function buildReferralLink(code: string): string {
-  return `${REFERRAL_LINK_BASE}/${code}`;
+  return `${REFERRAL_LINK_BASE}?ref=${encodeURIComponent(code)}`;
 }
 
 export const REFERRAL_CODE_QUERY_KEY = [...REFERRAL_QUERY_KEY, "code"] as const;
