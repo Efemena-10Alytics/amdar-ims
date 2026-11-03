@@ -207,3 +207,65 @@ export function formatReferralAmount(
     CURRENCY_NUMBER_LOCALE[currency],
   )}`;
 }
+
+/** The API sends currency codes as plain strings; anything odd falls back to GBP. */
+export function toReferralCurrency(value: string | null | undefined): ReferralCurrency {
+  const normalized = value?.trim().toUpperCase();
+  if (
+    normalized === "GBP" ||
+    normalized === "USD" ||
+    normalized === "CAD" ||
+    normalized === "NGN"
+  ) {
+    return normalized;
+  }
+  return "GBP";
+}
+
+/** The API sends money as decimal strings, e.g. "420.00". */
+export function toAmount(value: string | number | null | undefined): number {
+  if (typeof value === "number") return Number.isFinite(value) ? value : 0;
+  const parsed = Number.parseFloat(value ?? "");
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+/** API dates arrive as "2026-07-25"; the tables show "25 Jul, 2026". */
+export function formatReferralDate(value: string | null | undefined): string {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  const formatted = date.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+  // en-GB gives "25 Jul 2026"; the design has a comma before the year.
+  return formatted.replace(/ (\d{4})$/, ", $1");
+}
+
+/**
+ * The payout forms now come from the withdrawal-options endpoint, which keys
+ * countries by ISO code. `ln` no longer selects a form, but it still maps to a
+ * country and currency so existing review links preselect the right one.
+ */
+export function localeToPayout(locale: ReferralLocale): {
+  country: string;
+  currency: ReferralCurrency;
+} {
+  switch (locale) {
+    case "uk":
+      return { country: "GB", currency: "GBP" };
+    case "uk-usd":
+      return { country: "GB", currency: "USD" };
+    case "us":
+      return { country: "US", currency: "USD" };
+    case "cad":
+      return { country: "CA", currency: "CAD" };
+    case "uk-out":
+      return { country: "CA", currency: "GBP" };
+    case "cad-out":
+      return { country: "CA", currency: "USD" };
+    default:
+      return { country: "NG", currency: "NGN" };
+  }
+}

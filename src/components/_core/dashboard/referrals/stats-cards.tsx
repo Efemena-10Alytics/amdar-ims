@@ -38,10 +38,35 @@ function StatCard({
 export function ReferralStatsCards({
   stats,
   currency,
+  isLoading = false,
+  errorMessage = null,
 }: {
   stats: ReferralStats;
   currency: ReferralCurrency;
+  isLoading?: boolean;
+  errorMessage?: string | null;
 }) {
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-busy>
+        {Array.from({ length: 4 }).map((_, index) => (
+          <div key={index} className="rounded-2xl bg-white p-5 shadow">
+            <span className="block h-3 w-24 animate-pulse rounded bg-[#E8EFF1]" />
+            <span className="mt-3 block h-6 w-20 animate-pulse rounded bg-[#E8EFF1]" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (errorMessage) {
+    return (
+      <div className="rounded-2xl bg-white p-5 shadow">
+        <p className="font-sora text-sm text-[#AA3030]">{errorMessage}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <StatCard

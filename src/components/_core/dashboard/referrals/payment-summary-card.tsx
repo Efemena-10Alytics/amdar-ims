@@ -3,18 +3,29 @@
 import { formatReferralAmount, type ReferralCurrency } from "@/features/referral/locale";
 import type { ReferralPaymentSummary } from "@/features/referral/types";
 
+const WITHDRAW_LOCKED_HINT =
+  "Withdrawals open once you meet the programme's payment and duration requirements.";
+
 export function ReferralPaymentSummaryCard({
   summary,
   currency,
   onWithdraw,
   onViewHistory,
+  percentPaid: percentPaidProp,
+  canWithdraw = true,
 }: {
   summary: ReferralPaymentSummary;
   currency: ReferralCurrency;
   onWithdraw: () => void;
   onViewHistory: () => void;
+  /** The API's own paid_percentage; computed from the totals when absent. */
+  percentPaid?: number;
+  /** False locks withdrawals, per the summary endpoint's can_withdraw. */
+  canWithdraw?: boolean;
 }) {
-  const percentPaid = summary.total > 0 ? Math.round((summary.paid / summary.total) * 100) : 0;
+  const percentPaid =
+    percentPaidProp ??
+    (summary.total > 0 ? Math.round((summary.paid / summary.total) * 100) : 0);
 
   const radius = 52;
   const circumference = 2 * Math.PI * radius;
@@ -82,10 +93,16 @@ export function ReferralPaymentSummaryCard({
         <button
           type="button"
           onClick={onWithdraw}
-          className="flex h-11 w-full items-center justify-center rounded-lg bg-[#156374] font-sora text-sm font-semibold text-white transition-colors hover:bg-[#156374]/90"
+          disabled={!canWithdraw}
+          title={canWithdraw ? undefined : WITHDRAW_LOCKED_HINT}
+          className="flex h-11 w-full items-center justify-center rounded-lg bg-[#156374] font-sora text-sm font-semibold text-white transition-colors hover:bg-[#156374]/90 disabled:cursor-not-allowed disabled:opacity-60"
         >
           Withdraw Earnings
         </button>
+
+        {!canWithdraw && (
+          <p className="font-sora text-xs text-[#64748B]">{WITHDRAW_LOCKED_HINT}</p>
+        )}
         <button
           type="button"
           onClick={onViewHistory}

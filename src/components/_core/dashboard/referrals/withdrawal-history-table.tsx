@@ -1,47 +1,92 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { formatReferralAmount, type ReferralCurrency } from "@/features/referral/locale";
-import type { WithdrawalEntry } from "@/features/referral/types";
+import { useState } from "react";
+import {
+  CURRENCY_LABELS,
+  formatReferralAmount,
+  formatReferralDate,
+  getCurrencySymbol,
+  toAmount,
+  type ReferralCurrency,
+} from "@/features/referral/locale";
+import type {
+  ReferralPagination,
+  WithdrawalRecord,
+} from "@/features/referral/referral-api.types";
 import { ExportIcon } from "./icons";
 import { WithdrawalStatusBadge } from "./status-badge";
 import { EmptyWithdrawalState } from "./empty-withdrawal-state";
+import { TablePagination } from "./table-pagination";
 
-const PAGE_SIZE = 9;
+const COLUMN_COUNT = 8;
+
+/** Payout currencies outside the four we carry symbols for show the code. */
+function formatPayout(amount: string, code: string): string {
+  const normalized = code?.trim().toUpperCase();
+  if (normalized in CURRENCY_LABELS) {
+    return `${getCurrencySymbol(normalized as ReferralCurrency)}${toAmount(
+      amount,
+    ).toLocaleString()}`;
+  }
+  return `${toAmount(amount).toLocaleString()} ${normalized}`;
+}
 
 export function WithdrawalHistoryTable({
   withdrawals,
   currency,
+  pagination,
+  onPageChange,
+  onExport,
+  isLoading = false,
+  errorMessage = null,
 }: {
-  withdrawals: WithdrawalEntry[];
+  withdrawals: WithdrawalRecord[];
   currency: ReferralCurrency;
+  pagination: ReferralPagination | null;
+  onPageChange: (page: number) => void;
+  onExport: () => void | Promise<void>;
+  isLoading?: boolean;
+  errorMessage?: string | null;
 }) {
-  const [page, setPage] = useState(1);
-  const totalPages = Math.max(1, Math.ceil(withdrawals.length / PAGE_SIZE));
-  const currentPage = Math.min(page, totalPages);
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
 
-  const pageItems = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
-    return withdrawals.slice(start, start + PAGE_SIZE);
-  }, [withdrawals, currentPage]);
+  const handleExport = async () => {
+    setIsExporting(true);
+    setExportError(null);
+    try {
+      await onExport();
+    } catch {
+      setExportError("Export failed. Please try again.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const rowOffset = pagination ? (pagination.current_page - 1) * pagination.per_page : 0;
 
   return (
     <div className="min-w-0 rounded-2xl bg-white p-5 shadow">
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-between gap-3">
         <h2 className="font-clash-display text-lg font-semibold text-[#092A31]">
           Withdrawal History
         </h2>
         <button
           type="button"
-          className="flex h-8.5 items-center gap-1 rounded-lg bg-[#B6CFD4] px-2 font-sora text-sm text-[#0C3640] transition-colors hover:bg-[#B6CFD4]/80"
+          onClick={handleExport}
+          disabled={isExporting || withdrawals.length === 0}
+          className="flex h-8.5 items-center gap-1 rounded-lg bg-[#B6CFD4] px-2 font-sora text-sm text-[#0C3640] transition-colors hover:bg-[#B6CFD4]/80 disabled:cursor-not-allowed disabled:opacity-60"
         >
           <ExportIcon />
-          {withdrawals.length > 0 ? "Export" : "Download"}
+          {isExporting ? "Exporting…" : "Export"}
         </button>
       </div>
 
-      {withdrawals.length === 0 ? (
+      {exportError && <p className="mb-3 font-sora text-sm text-[#AA3030]">{exportError}</p>}
+
+      {errorMessage ? (
+        <p className="font-sora text-sm text-[#AA3030]">{errorMessage}</p>
+      ) : withdrawals.length === 0 && !isLoading ? (
         <EmptyWithdrawalState />
       ) : (
         <>
@@ -52,7 +97,7 @@ export function WithdrawalHistoryTable({
                   <th className="rounded-l-lg px-4 text-left">#</th>
                   <th className="px-4 text-left">Date</th>
                   <th className="px-4 text-left">Amount</th>
-                  <th className="px-4 text-left">Method</th>
+                  <th className="px-4 text-left">Payout</th>
                   <th className="px-4 text-left">Account</th>
                   <th className="px-4 text-left">Status</th>
                   <th className="px-4 text-left">Reference</th>
@@ -60,72 +105,74 @@ export function WithdrawalHistoryTable({
                 </tr>
               </thead>
               <tbody>
-                {pageItems.map((withdrawal, index) => (
-                  <tr
-                    key={withdrawal.id}
-                    className="h-16 border-b border-[#EEF2F6] font-sora text-sm font-medium text-[#092A31] last:border-b-0"
-                  >
-                    <td className="px-4 text-[#94A3B8]">
-                      {(currentPage - 1) * PAGE_SIZE + index + 1}
-                    </td>
-                    <td className="px-4 text-[#64748B]">{withdrawal.date}</td>
-                    <td className="px-4">{formatReferralAmount(withdrawal.amount, currency)}.00</td>
-                    <td className="px-4 text-[#64748B]">{withdrawal.method}</td>
-                    <td className="px-4">
-                      <div className="flex flex-col">
-                        <span>{withdrawal.accountMasked}</span>
-                        <span className="text-xs text-[#94A3B8]">{withdrawal.accountLabel}</span>
-                      </div>
-                    </td>
-                    <td className="px-4">
-                      <WithdrawalStatusBadge status={withdrawal.status} />
-                    </td>
-                    <td className="px-4 text-[#64748B]">{withdrawal.reference}</td>
-                    <td className="px-4 max-w-40 truncate text-[#64748B]">
-                      {withdrawal.notes ?? "—"}
-                    </td>
-                  </tr>
-                ))}
+                {isLoading && withdrawals.length === 0
+                  ? Array.from({ length: 6 }).map((_, index) => (
+                      <tr key={index} className="h-16 border-b border-[#EEF2F6] last:border-b-0">
+                        {Array.from({ length: COLUMN_COUNT }).map((__, cell) => (
+                          <td key={cell} className="px-4">
+                            <span className="block h-3 animate-pulse rounded bg-[#E8EFF1]" />
+                          </td>
+                        ))}
+                      </tr>
+                    ))
+                  : withdrawals.map((withdrawal, index) => (
+                      <tr
+                        key={withdrawal.id}
+                        className="h-16 border-b border-[#EEF2F6] font-sora text-sm font-medium text-[#092A31] last:border-b-0"
+                      >
+                        <td className="px-4 text-[#94A3B8]">{rowOffset + index + 1}</td>
+                        <td className="px-4 text-[#64748B]">
+                          {formatReferralDate(withdrawal.date)}
+                        </td>
+                        <td className="px-4">
+                          {formatReferralAmount(toAmount(withdrawal.amount_gbp), currency)}
+                        </td>
+                        <td className="px-4">
+                          <div className="flex flex-col">
+                            <span>
+                              {formatPayout(
+                                withdrawal.payout_amount,
+                                withdrawal.payout_currency,
+                              )}
+                            </span>
+                            {toAmount(withdrawal.exchange_rate) !== 1 && (
+                              <span className="text-xs text-[#94A3B8]">
+                                @ {toAmount(withdrawal.exchange_rate).toLocaleString()}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-4">
+                          <div className="flex flex-col">
+                            <span>{withdrawal.account.masked_number}</span>
+                            <span className="text-xs text-[#94A3B8]">
+                              {withdrawal.account.label}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-4">
+                          <WithdrawalStatusBadge status={withdrawal.status} />
+                        </td>
+                        <td className="px-4 text-[#64748B]">{withdrawal.invoice_id}</td>
+                        <td
+                          className="max-w-40 truncate px-4 text-[#64748B]"
+                          title={withdrawal.decline_reason ?? undefined}
+                        >
+                          {withdrawal.decline_reason ?? "—"}
+                        </td>
+                      </tr>
+                    ))}
               </tbody>
             </table>
           </div>
 
-          {totalPages > 1 ? (
-            <div className="mt-4 flex items-center justify-end gap-1 font-sora text-sm">
-              <button
-                type="button"
-                onClick={() => setPage((current) => Math.max(1, current - 1))}
-                disabled={currentPage === 1}
-                className="flex items-center gap-1 rounded-md px-2 py-1.5 text-[#64748B] disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                <ChevronLeft className="size-4" />
-                Prev
-              </button>
-              {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-                <button
-                  key={pageNumber}
-                  type="button"
-                  onClick={() => setPage(pageNumber)}
-                  className={`flex size-8 items-center justify-center rounded-md ${
-                    pageNumber === currentPage
-                      ? "bg-[#E8EFF1] font-semibold text-[#092A31]"
-                      : "text-[#64748B] hover:bg-[#F6F8FA]"
-                  }`}
-                >
-                  {pageNumber}
-                </button>
-              ))}
-              <button
-                type="button"
-                onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-                disabled={currentPage === totalPages}
-                className="flex items-center gap-1 rounded-md px-2 py-1.5 text-[#64748B] disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                Next
-                <ChevronRight className="size-4" />
-              </button>
-            </div>
-          ) : null}
+          {pagination && (
+            <TablePagination
+              currentPage={pagination.current_page}
+              lastPage={pagination.last_page}
+              onPageChange={onPageChange}
+            />
+          )}
         </>
       )}
     </div>
