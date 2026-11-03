@@ -74,6 +74,18 @@ function ScoreRing({ percentage }: { percentage: number }) {
   );
 }
 
+function CompletedBadge() {
+  return (
+    <div
+      className="mx-auto flex size-28 flex-col items-center justify-center rounded-full border-[3px] border-[#3A8E53] bg-[#E8F5EC]"
+      aria-label="Completed"
+    >
+      <Check className="size-5 text-[#3A8E53]" strokeWidth={2.5} aria-hidden />
+      <span className="mt-1 text-sm font-medium text-[#3A8E53]">Completed</span>
+    </div>
+  );
+}
+
 function QuestionReview({
   field,
   answer,
@@ -186,12 +198,9 @@ const AssessmentResult = ({
               </p>
             </>
           ) : (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E8F5EC] px-3 py-1.5 text-sm font-semibold text-[#3A8E53]">
-              <Check className="size-3.5" aria-hidden />
-              Completed
-            </span>
+            <CompletedBadge />
           )}
-          <p className="mt-3 text-sm text-[#64748B]">
+          <p className={cn("text-sm text-[#64748B]", hasMaxScore ? "mt-3" : "mt-4")}>
             {isPreAssessment
               ? "This is your starting point. You'll take the post-assessment after the project to see how far you've come."
               : hasMaxScore
