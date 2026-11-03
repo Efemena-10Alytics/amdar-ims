@@ -7,6 +7,7 @@ import {
   formatCareerStageLabel,
   formatDurationLabel,
 } from "@/components/_core/dashboard/internship-program/project-details/project-content";
+import { buildClassroomTaskHref } from "@/lib/utils/task-href";
 import { useGetCurrentProject } from "@/features/interns-project/use-get-current-project";
 import { useGetInternshipProgress } from "@/features/interns-project/use-get-internship-progress";
 import { stripHtml } from "@/lib/utils";
@@ -14,19 +15,6 @@ import { stripHtml } from "@/lib/utils";
 type YourTaskProps = {
   imageSrc?: string;
 };
-
-function buildCurrentTaskHref({
-  projectSlug,
-  todoId,
-  typeId,
-}: {
-  projectSlug: string;
-  todoId: number;
-  typeId?: number | null;
-}) {
-  const base = `/dashboard/internship-program/projects/${encodeURIComponent(projectSlug)}/classroom/${todoId}`;
-  return typeId != null ? `${base}?type=${typeId}` : base;
-}
 
 function buildProjectHref(slug?: string | null) {
   const trimmed = slug?.trim();
@@ -56,11 +44,11 @@ const YourTask = ({
   const projectHref = buildProjectHref(projectSlug);
   const taskHref =
     currentTask && projectSlug
-      ? buildCurrentTaskHref({
-        projectSlug,
-        todoId: currentTask.todoId,
-        typeId: currentTask.type?.id,
-      })
+      ? buildClassroomTaskHref({
+          projectSlug,
+          todoId: currentTask.todoId,
+          typeId: currentTask.type?.id,
+        })
       : null;
 
   if (!isLoading && !project && !currentTask) {

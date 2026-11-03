@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { RichTextContent, formatDurationLabel } from "../project-content";
 import ReadinessTestDrawer from "@/components/_core/readiness-test/readiness-test-drawer";
 import AssessmentResult from "./assessment-result";
+import { getFirstTaskHref } from "@/lib/utils/task-href";
 import {
   INTERN_PROJECT_ASSESSMENTS_QUERY_KEY,
   useGetProjectAssessments,
@@ -16,7 +17,6 @@ import { useGetTodosByProjectId } from "@/features/interns-project/use-get-todos
 import { normalizeReadinessSubmitResultData } from "@/features/readiness-test/normalize-submit-result";
 import type {
   InternProject,
-  InternProjectTodo,
   ProjectAssessment,
   ProjectAssessmentType,
 } from "@/features/interns-project/internship-project.types";
@@ -49,26 +49,6 @@ function AssessmentState({ message }: { message: string }) {
 /** The drawer only needs an id to submit against and the questions themselves. */
 function toQuizForm(assessment: ProjectAssessment): ReadinessTestQuizForm {
   return { id: assessment.id, fields: assessment.fields };
-}
-
-function getFirstTaskHref(
-  projectSlug: string | null | undefined,
-  todos: InternProjectTodo[] | undefined,
-) {
-  const slug = projectSlug?.trim();
-  if (!slug || !todos?.length) return null;
-
-  const firstTodo = [...todos].sort(
-    (a, b) => a.week - b.week || a.sortOrder - b.sortOrder || a.id - b.id,
-  )[0];
-  if (!firstTodo) return null;
-
-  const firstType = [...(firstTodo.types ?? [])].sort(
-    (a, b) => a.sortOrder - b.sortOrder,
-  )[0];
-
-  const base = `/dashboard/internship-program/projects/${encodeURIComponent(slug)}/classroom/${firstTodo.id}`;
-  return firstType?.id != null ? `${base}?type=${firstType.id}` : base;
 }
 
 const Assessment = ({ project }: { project: InternProject }) => {
