@@ -74,6 +74,18 @@ function ScoreRing({ percentage }: { percentage: number }) {
   );
 }
 
+function CompletedBadge() {
+  return (
+    <div
+      className="mx-auto flex size-28 flex-col items-center justify-center rounded-full border-[3px] border-[#3A8E53] bg-[#E8F5EC]"
+      aria-label="Completed"
+    >
+      <Check className="size-5 text-[#3A8E53]" strokeWidth={2.5} aria-hidden />
+      <span className="mt-1 text-sm font-medium text-[#3A8E53]">Completed</span>
+    </div>
+  );
+}
+
 function QuestionReview({
   field,
   answer,
@@ -178,17 +190,22 @@ const AssessmentResult = ({
     <div className="flex h-full min-h-0 flex-col">
       <div className="min-h-0 flex-1 overflow-y-auto pb-4">
         <div className="text-center">
-          <ScoreRing percentage={percentage} />
-
-          <p className="mt-4 text-lg font-semibold text-[#173740]">
-            {hasMaxScore
-              ? `You scored ${formatScore(result.total_score)}/${formatScore(maxScore)}`
-              : `You scored ${Math.round(percentage)}%`}
-          </p>
-          <p className="mt-1 text-sm text-[#64748B]">
+          {hasMaxScore ? (
+            <>
+              <ScoreRing percentage={percentage} />
+              <p className="mt-4 text-lg font-semibold text-[#173740]">
+                {`You scored ${formatScore(result.total_score)}/${formatScore(maxScore)}`}
+              </p>
+            </>
+          ) : (
+            <CompletedBadge />
+          )}
+          <p className={cn("text-sm text-[#64748B]", hasMaxScore ? "mt-3" : "mt-4")}>
             {isPreAssessment
               ? "This is your starting point. You'll take the post-assessment after the project to see how far you've come."
-              : "That's a wrap. Compare this with your pre-assessment score to see your progress on this project."}
+              : hasMaxScore
+                ? "That's a wrap. Compare this with your pre-assessment score to see your progress on this project."
+                : "That's a wrap. You've completed the post-assessment for this project."}
           </p>
         </div>
 

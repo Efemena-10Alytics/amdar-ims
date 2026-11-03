@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
 import AssessmentResult from "@/components/_core/dashboard/internship-program/project-details/assessment/assessment-result";
+import { buildClassroomTaskHref } from "@/lib/utils/task-href";
 import ReadinessTestDrawer from "@/components/_core/readiness-test/readiness-test-drawer";
 import {
   ENROLLMENT_PROGRESS_QUERY_KEY,
@@ -16,19 +17,6 @@ import {
 import type { ProjectAssessment } from "@/features/interns-project/internship-project.types";
 import { normalizeReadinessSubmitResultData } from "@/features/readiness-test/normalize-submit-result";
 import type { ReadinessTestQuizForm } from "@/features/readiness-test/types";
-
-function buildCurrentTaskHref({
-  projectSlug,
-  todoId,
-  typeId,
-}: {
-  projectSlug: string;
-  todoId: number;
-  typeId?: number | null;
-}) {
-  const base = `/dashboard/internship-program/projects/${encodeURIComponent(projectSlug)}/classroom/${todoId}`;
-  return typeId != null ? `${base}?type=${typeId}` : base;
-}
 
 const DEFAULT_DURATION_MINUTES = 10;
 
@@ -89,7 +77,7 @@ export default function ContinueTaskButton() {
 
   const continueHref =
     currentTask && projectSlug
-      ? buildCurrentTaskHref({
+      ? buildClassroomTaskHref({
           projectSlug,
           todoId: currentTask.todoId,
           typeId: currentTask.type?.id,

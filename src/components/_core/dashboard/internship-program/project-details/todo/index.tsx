@@ -5,22 +5,10 @@ import Link from "next/link";
 import { Building2, CalendarDays, User } from "lucide-react";
 import StageProjectSchedule from "@/components/_core/dashboard/internship-program/internship-details/career-stage/stage-project-schedule";
 import { useStageProjectScheduleData } from "@/components/_core/dashboard/internship-program/internship-details/career-stage/use-stage-project-schedule-data";
+import { buildClassroomTaskHref } from "@/lib/utils/task-href";
 import { formatDurationLabel } from "../project-content";
 import type { InternProject } from "@/features/interns-project/internship-project.types";
 import { useGetInternshipProgress } from "@/features/interns-project/use-get-internship-progress";
-
-function buildCurrentTaskHref({
-  projectSlug,
-  todoId,
-  typeId,
-}: {
-  projectSlug: string;
-  todoId: number;
-  typeId?: number | null;
-}) {
-  const base = `/dashboard/internship-program/projects/${encodeURIComponent(projectSlug)}/classroom/${todoId}`;
-  return typeId != null ? `${base}?type=${typeId}` : base;
-}
 
 function ProjectSummary({
   project,
@@ -124,7 +112,7 @@ const Todo = ({ project }: TodoProps) => {
     currentTask &&
     currentTask.projectId === project.id &&
     projectSlug
-      ? buildCurrentTaskHref({
+      ? buildClassroomTaskHref({
           projectSlug,
           todoId: currentTask.todoId,
           typeId: currentTask.type?.id,

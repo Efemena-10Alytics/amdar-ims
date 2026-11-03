@@ -14,6 +14,7 @@ import type {
   InternProjectTodoTypeStatus,
   ProjectAssessment,
 } from "@/features/interns-project/internship-project.types";
+import { getFirstTaskHref } from "@/lib/utils/task-href";
 import { useGetProjectAssessments } from "@/features/interns-project/use-get-project-assessments";
 import { useGetTodosByProjectId } from "@/features/interns-project/use-get-todos-by-project-id";
 import { useSelectedEnrollmentIds } from "@/store/enrollment-selection-store";
@@ -227,26 +228,6 @@ function buildProjectHref(project: InternProject): string | undefined {
   return `/dashboard/internship-program/projects/${encodeURIComponent(slug)}`;
 }
 
-function buildFirstTaskHref(
-  project: InternProject | null,
-  todos: InternProjectTodo[],
-): string | undefined {
-  const slug = project?.slug?.trim();
-  if (!slug || !todos.length) return undefined;
-
-  const firstTodo = [...todos].sort(
-    (a, b) => a.week - b.week || a.sortOrder - b.sortOrder || a.id - b.id,
-  )[0];
-  if (!firstTodo) return undefined;
-
-  const firstType = [...(firstTodo.types ?? [])].sort(
-    (a, b) => a.sortOrder - b.sortOrder,
-  )[0];
-
-  const base = `/dashboard/internship-program/projects/${encodeURIComponent(slug)}/classroom/${firstTodo.id}`;
-  return firstType?.id != null ? `${base}?type=${firstType.id}` : base;
-}
-
 /** Builds week/day schedule UI data from a published stage project + its todos. */
 export function useStageProjectScheduleData(project: InternProject | null) {
   const todosQuery = useGetTodosByProjectId(project?.id);
@@ -308,8 +289,8 @@ export function useStageProjectScheduleData(project: InternProject | null) {
     Boolean(assessmentsQuery.data.pre.my_latest_submission);
 
   const firstTaskHref = useMemo(
-    () => buildFirstTaskHref(project, todosQuery.data ?? []),
-    [project, todosQuery.data],
+    () => getFirstTaskHref(project?.slug, todosQuery.data) ?? undefined,
+    [project?.slug, todosQuery.data],
   );
 
   return {
