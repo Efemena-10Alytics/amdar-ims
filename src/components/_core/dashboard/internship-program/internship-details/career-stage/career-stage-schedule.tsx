@@ -48,7 +48,6 @@ function SingleProjectSchedule({
     weeks,
     projectHref,
     firstTaskHref,
-    preAssessmentDone,
     isLoading,
     isError,
     isEmpty,
@@ -85,8 +84,8 @@ function SingleProjectSchedule({
       tone={tone}
       projectHref={projectHref}
       firstTaskHref={firstTaskHref}
-      continueHref={preAssessmentDone ? (firstTaskHref ?? projectHref) : projectHref}
-      continueLabel={preAssessmentDone ? "Continue project" : "View project"}
+      continueHref={projectHref}
+      continueLabel="View project"
       defaultOpen={defaultOpen}
     />
   );

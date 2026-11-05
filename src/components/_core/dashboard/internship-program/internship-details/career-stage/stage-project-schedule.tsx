@@ -447,7 +447,7 @@ export default function StageProjectSchedule({
   projectHref,
   firstTaskHref,
   continueHref,
-  continueLabel = "Continue project",
+  continueLabel = "View project",
   defaultOpen = true,
   standalone = false,
   showProgress = false,
