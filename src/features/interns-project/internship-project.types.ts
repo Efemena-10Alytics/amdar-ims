@@ -194,6 +194,7 @@ export type CurrentInternTaskType = {
 
 export type CurrentInternTask = {
   projectId: number;
+  projectTitle: string;
   projectSlug: string;
   todoId: number;
   todoTitle: string;

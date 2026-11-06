@@ -37,7 +37,7 @@ export function ReferralBanner() {
       {/* Absolute Button (floating on top of marquee) */}
       <div className="absolute right-0 sm:right-4 md:right-5 bg-[#FDE047]/50 backdrop-blur-sm rounded-lg">
         <Link
-          href="https://wa.me/2348160395002"
+          href="https://wa.me/447429981482"
           target="_blank"
           rel="noopener noreferrer"
           className="flex h-10 items-center gap-2 bg-[#156374] hover:bg-[#0F4A57] text-white px-3 md:px-5 py-1.5 md:py-2 rounded-md font-medium text-xs xl:text-sm transition-colors font-display shadow-md whitespace-nowrap"

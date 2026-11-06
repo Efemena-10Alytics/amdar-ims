@@ -64,9 +64,7 @@ const YourTask = ({
       : `${rawDuration} duration`
     : null;
   const logoSrc = project?.logoPreview || "/favicon.svg";
-  const taskDisplayTitle =
-    currentTask?.todoTitle?.trim() ||
-    project?.title?.trim() ||
+  const taskDisplayTitle = currentTask?.projectTitle?.trim() ||
     (isLoading ? "Loading..." : "Current task");
   const projectDisplayTitle =
     project?.title?.trim() ||
