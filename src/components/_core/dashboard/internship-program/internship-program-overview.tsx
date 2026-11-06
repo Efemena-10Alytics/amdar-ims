@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Timer, Volume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { InfoToastBanner } from "@/components/ui/info-toast-banner";
 import { PencilIcon } from "../svg";
 import { useGetAnnouncements } from "@/features/announcement/use-get-announcement";
 import { useGetCurrentProject } from "@/features/interns-project/use-get-current-project";
@@ -83,11 +85,41 @@ const InternshipProgramOverview = () => {
   const totalStages = project?.stagesTotal ?? 0;
   const isLoading = currentProjectQuery.isLoading;
   const { isPreview } = useIsSpecialistPreview();
-  const { newer } = useGetAnnouncements();
+  const { count, newer, isLoading: isAnnouncementsLoading } =
+    useGetAnnouncements();
   const newerCount = newer.length;
+  const [announcementToast, setAnnouncementToast] = useState<string | null>(
+    null,
+  );
+  const hasShownAnnouncementToast = useRef(false);
+
+  useEffect(() => {
+    if (hasShownAnnouncementToast.current || isAnnouncementsLoading) return;
+    if (count <= 0) return;
+
+    hasShownAnnouncementToast.current = true;
+    const label = count === 1 ? "announcement" : "announcements";
+    setAnnouncementToast(`You have ${count} ${label}.`);
+  }, [count, isAnnouncementsLoading]);
+
+  useEffect(() => {
+    if (!announcementToast) return;
+
+    const timeoutId = window.setTimeout(() => {
+      setAnnouncementToast(null);
+    }, 5000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [announcementToast]);
 
   return (
     <section className="space-y-4">
+      {announcementToast ? (
+        <InfoToastBanner
+          message={announcementToast}
+          onDismiss={() => setAnnouncementToast(null)}
+        />
+      ) : null}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/dashboard/internship-program/announcement"

@@ -64,10 +64,11 @@ const YourTask = ({
       : `${rawDuration} duration`
     : null;
   const logoSrc = project?.logoPreview || "/favicon.svg";
-  const displayTitle =
-    currentTask?.todoTitle?.trim() ||
-    project?.title?.trim() ||
+  const taskDisplayTitle = currentTask?.projectTitle?.trim() ||
     (isLoading ? "Loading..." : "Current task");
+  const projectDisplayTitle =
+    project?.title?.trim() ||
+    (isLoading ? "Loading..." : "Current project");
   const taskDescription = stripHtml(currentTask?.type?.description);
   const startLabel = preAssessmentDone ? "Continue task" : "Start task";
 
@@ -87,7 +88,7 @@ const YourTask = ({
               <div className="min-w-0 flex-1">
                 <div className="min-w-0 flex-1">
                   <h3 className="text-[22px] leading-tight font-semibold text-[#233A43] lg:text-[28px] lg:leading-9">
-                    {displayTitle}
+                    {taskDisplayTitle}
                   </h3>
                   {taskDescription ? (
                     <p className="mt-1.5 line-clamp-2 text-sm leading-5 text-[#5B5E67]">
@@ -157,7 +158,7 @@ const YourTask = ({
               className="size-5 shrink-0 rounded-full object-cover"
             />
             <p className="min-w-0 truncate text-sm font-semibold text-[#233A43] sm:text-base">
-              {displayTitle}
+              {projectDisplayTitle}
             </p>
           </div>
 
