@@ -19,16 +19,6 @@ import type {
   UserEnrollment,
 } from "@/types/user/enrollment";
 
-/**
- * Cohort IDs that must complete onboarding/pre-diagnostic before dashboard access.
- */
-export const ENROLLMENT_JOURNEY_COHORT_IDS = [38, 43, 48, 49, 52, 53, 56, 57, 59, 60,] as const;
-// 59, 60, 64
-
-const ENROLLMENT_JOURNEY_COHORT_ID_SET = new Set<number>(
-  ENROLLMENT_JOURNEY_COHORT_IDS,
-);
-
 function pickCohortId(value: unknown): number | null {
   if (typeof value === "number" && Number.isFinite(value)) return value;
   if (typeof value === "string" && value.trim() !== "") {
@@ -46,14 +36,47 @@ export function getEnrollmentCohortId(
   );
 }
 
-/** Journey redirects run only for enrollments in configured cohort IDs. */
+/** Date-only UTC milliseconds so the viewer's timezone does not shift the day. */
+function toDateOnlyUtcMs(value: string | null | undefined): number | null {
+  const trimmed = String(value ?? "").trim();
+  if (!trimmed) return null;
+
+  const isoPrefix = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (isoPrefix) {
+    const [, year, month, day] = isoPrefix;
+    return Date.UTC(Number(year), Number(month) - 1, Number(day));
+  }
+
+  const parsed = new Date(trimmed);
+  if (Number.isNaN(parsed.getTime())) return null;
+
+  return Date.UTC(
+    parsed.getUTCFullYear(),
+    parsed.getUTCMonth(),
+    parsed.getUTCDate(),
+  );
+}
+
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+function todayUtcMs(): number {
+  const now = new Date();
+  return Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+}
+
+/**
+ * Journey redirects open the calendar day before the cohort starts.
+ * The date comes from `cohort.start_date` on GET /v3/user/enrollment.
+ */
 export function isEnrollmentJourneyCohortEligible(
   enrollment: UserEnrollment,
 ): boolean {
-  const cohortId = getEnrollmentCohortId(enrollment);
-  if (cohortId == null) return false;
-  return ENROLLMENT_JOURNEY_COHORT_ID_SET.has(cohortId);
+  const startDate = enrollment.cohort?.start_date;
+  const startMs = toDateOnlyUtcMs(startDate);
+  if (startMs == null) return false;
+  return todayUtcMs() >= startMs - ONE_DAY_MS;
 }
+
 
 function getPreDiagnosticStepRoute(step: string): string | null {
   if (isCareerKnowledgeDiscoveryStep(step)) {
