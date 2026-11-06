@@ -49,6 +49,7 @@ export type EnrollmentTaskTrackerType = {
 
 export type EnrollmentTaskTrackerCurrentTask = {
   projectId: number;
+  projectTitle: string;
   projectSlug: string;
   todoId: number;
   todoTitle: string;
