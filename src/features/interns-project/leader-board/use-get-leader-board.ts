@@ -10,7 +10,7 @@ import type {
   ProjectLeaderBoardData,
   ProjectLeaderBoardResponse,
 } from "./leader-board.types";
-import { axiosInstance } from "@/lib/axios-instance";
+import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
 import { useAuthStore } from "@/store/auth-store";
 
 function useAuthStoreHydrated() {
@@ -47,7 +47,7 @@ export async function fetchProjectLeaderBoard(
   const search = query?.search?.trim() || undefined;
 
   const res = await axiosInstance.get<ProjectLeaderBoardResponse>(
-    `intern-projects/${projectId}/leaderboard`,
+    `v3/intern-projects/${projectId}/leaderboard`,
     {
       params: {
         search,
@@ -104,7 +104,11 @@ export function useGetLeaderBoard(
   };
 
   const canFetch =
-    enabled && hasHydrated && isAuthenticated && resolvedProjectId != null;
+    enabled &&
+    !!apiBaseURL &&
+    hasHydrated &&
+    isAuthenticated &&
+    resolvedProjectId != null;
 
   const query = useQuery({
     queryKey:

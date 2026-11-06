@@ -1,128 +1,44 @@
 "use client";
 
-import { Flame, Search, SlidersHorizontal, Star, Trophy } from "lucide-react";
+import { Flame, Search, Star, } from "lucide-react";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import type { LeaderBoardEntry } from "@/features/interns-project/leader-board/leader-board.types";
+import { useGetLeaderBoard } from "@/features/interns-project/leader-board/use-get-leader-board";
+import { TrophyIcon } from "../svg";
 
 type Leader = {
   id: string;
   name: string;
   handle: string;
   position: number;
+  positionLabel: string;
   points: number;
   task: string;
+  taskScore: number;
   streakDays: number;
+  avatarSrc: string;
   avatarTone: string;
 };
 
-const TOP_LEADERS: Leader[] = [
-  {
-    id: "2",
-    name: "Adams Ojay",
-    handle: "@buddy name",
-    position: 2,
-    points: 89,
-    task: "8/12",
-    streakDays: 9,
-    avatarTone: "bg-[#FFE4C4] text-[#C2410C]",
-  },
-  {
-    id: "1",
-    name: "Adams Ojay",
-    handle: "@buddy name",
-    position: 1,
-    points: 89,
-    task: "8/12",
-    streakDays: 9,
-    avatarTone: "bg-[#FDE68A] text-[#B45309]",
-  },
-  {
-    id: "3",
-    name: "Adams Ojay",
-    handle: "@buddy name",
-    position: 3,
-    points: 89,
-    task: "8/12",
-    streakDays: 9,
-    avatarTone: "bg-[#E0F2FE] text-[#0369A1]",
-  },
+const AVATARS = [
+  "/images/svgs/illustration/Smug%202.svg",
+  "/images/svgs/illustration/Super%20Excited%203.svg",
+  "/images/svgs/illustration/Meh%202.svg",
+  "/images/svgs/illustration/Tired%202.svg",
+  "/images/svgs/illustration/Fainted%202.svg",
 ];
 
-const OTHER_LEADERS: Leader[] = [
-  {
-    id: "6",
-    name: "Amber Ojay",
-    handle: "@buddy name",
-    position: 6,
-    points: 89,
-    task: "3/12",
-    streakDays: 9,
-    avatarTone: "bg-[#FFE4C4] text-[#C2410C]",
-  },
-  {
-    id: "7",
-    name: "Amber Ojay",
-    handle: "@buddy name",
-    position: 7,
-    points: 89,
-    task: "3/12",
-    streakDays: 9,
-    avatarTone: "bg-[#E0E7FF] text-[#4338CA]",
-  },
-  {
-    id: "8",
-    name: "Amber Ojay",
-    handle: "@buddy name",
-    position: 8,
-    points: 89,
-    task: "3/12",
-    streakDays: 9,
-    avatarTone: "bg-[#FCE7F3] text-[#BE185D]",
-  },
-  {
-    id: "9",
-    name: "Amber Ojay",
-    handle: "@buddy name",
-    position: 9,
-    points: 89,
-    task: "3/12",
-    streakDays: 9,
-    avatarTone: "bg-[#DCFCE7] text-[#15803D]",
-  },
-  {
-    id: "10",
-    name: "Amber Ojay",
-    handle: "@buddy name",
-    position: 10,
-    points: 89,
-    task: "3/12",
-    streakDays: 9,
-    avatarTone: "bg-[#FEF3C7] text-[#B45309]",
-  },
-  {
-    id: "11",
-    name: "Amber Ojay",
-    handle: "@buddy name",
-    position: 11,
-    points: 89,
-    task: "3/12",
-    streakDays: 9,
-    avatarTone: "bg-[#E0F2FE] text-[#0369A1]",
-  },
-  {
-    id: "12",
-    name: "Amber Ojay",
-    handle: "@buddy name",
-    position: 12,
-    points: 89,
-    task: "3/12",
-    streakDays: 9,
-    avatarTone: "bg-[#F3E8FF] text-[#7E22CE]",
-  },
+const AVATAR_TONES = [
+  "bg-[#F6D7C3]",
+  "bg-[#F3E4C4]",
+  "bg-[#D7EDE4]",
+  "bg-[#E4D7F2]",
+  "bg-[#F8D7E4]",
+  "bg-[#D7E4F6]",
 ];
 
 function formatPosition(position: number) {
@@ -132,13 +48,47 @@ function formatPosition(position: number) {
   return `${position}th`;
 }
 
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+function toLeader(entry: LeaderBoardEntry): Leader {
+  const index = Math.abs(entry.userId) % AVATARS.length;
+
+  return {
+    id: String(entry.userId),
+    name: entry.name,
+    handle: entry.buddyName?.trim() ? `@${entry.buddyName.trim()}` : "",
+    position: entry.position,
+    positionLabel: entry.positionLabel?.trim() || formatPosition(entry.position),
+    points: entry.points,
+    task: `${entry.taskDone}/${entry.taskTotal}`,
+    taskScore: entry.taskScore,
+    streakDays: entry.streakDays,
+    avatarSrc: AVATARS[index],
+    avatarTone: AVATAR_TONES[index % AVATAR_TONES.length],
+  };
+}
+
+function LeaderAvatar({
+  leader,
+  className,
+}: {
+  leader: Leader;
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        "relative inline-flex shrink-0 overflow-hidden rounded-xl",
+        leader.avatarTone,
+        className,
+      )}
+    >
+      <Image
+        src={leader.avatarSrc}
+        alt=""
+        fill
+        className="object-cover object-[center_18%]"
+      />
+    </span>
+  );
 }
 
 function MedalBadge({ place }: { place: 1 | 2 | 3 }) {
@@ -149,12 +99,12 @@ function MedalBadge({ place }: { place: 1 | 2 | 3 }) {
   }[place];
 
   return (
-    <div className="absolute -top-6 right-4 size-14 sm:size-16">
+    <div className="absolute -top-7 right-3 size-16 sm:right-4 sm:size-[4.5rem]">
       <Image
         src={src}
         alt={`${formatPosition(place)} place medal`}
-        width={64}
-        height={64}
+        width={72}
+        height={72}
         className="h-full w-full object-contain drop-shadow-md"
       />
     </div>
@@ -168,24 +118,18 @@ function TopLeaderCard({ leader }: { leader: Leader }) {
   return (
     <article
       className={cn(
-        "relative self-end overflow-visible rounded-2xl p-4 sm:p-5",
+        "relative self-end overflow-visible rounded-xl p-4 sm:p-5",
         isFirst
-          ? "bg-[#0F6675] text-white lg:min-h-52"
-          : "bg-[#E8EFF1] text-[#092A31]",
+          ? "border border-[#93B7BF] bg-[#0F6675] text-white lg:-translate-y-3"
+          : "bg-[#FFF8EE] text-[#092A31]",
+        place === 2 && "border-[1.5px] border-[#EDD3A7] bg-[#FBF5EC]",
+        place === 3 && "border-[1.5px] border-[#CBC4B1] bg-[#EEECE6]",
       )}
     >
       <MedalBadge place={place} />
 
-      <div className="flex items-center gap-3 pr-10">
-        <span
-          className={cn(
-            "inline-flex size-11 shrink-0 items-center justify-center rounded-full text-sm font-semibold",
-            leader.avatarTone,
-          )}
-          aria-hidden
-        >
-          {getInitials(leader.name)}
-        </span>
+      <div className="flex items-center gap-3 pr-12">
+        <LeaderAvatar leader={leader} className="size-12" />
         <div className="min-w-0">
           <p
             className={cn(
@@ -211,7 +155,7 @@ function TopLeaderCard({ leader }: { leader: Leader }) {
           <p className={cn("text-xs", isFirst ? "text-white/70" : "text-[#94A3B8]")}>
             Position
           </p>
-          <p className="mt-1 text-sm font-bold">{formatPosition(leader.position)}</p>
+          <p className="mt-1 text-sm font-bold">{leader.positionLabel}</p>
         </div>
         <div>
           <p className={cn("text-xs", isFirst ? "text-white/70" : "text-[#94A3B8]")}>
@@ -233,14 +177,7 @@ function TopLeaderCard({ leader }: { leader: Leader }) {
         </div>
       </div>
 
-      <span
-        className={cn(
-          "mt-4 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold",
-          isFirst
-            ? "bg-[#FEF3C7] text-[#B45309]"
-            : "bg-[#FEF3C7] text-[#B45309]",
-        )}
-      >
+      <span className="mt-5 inline-flex items-center gap-1 rounded-full bg-[#F8E7C0] px-2 py-1 text-xs font-semibold text-[#C2410C]">
         <Flame className="size-3.5 fill-[#F97316] text-[#F97316]" aria-hidden />
         {leader.streakDays} days
       </span>
@@ -248,148 +185,178 @@ function TopLeaderCard({ leader }: { leader: Leader }) {
   );
 }
 
-export default function LeadershipBoard() {
+export default function LeadershipBoard({
+  projectId,
+}: {
+  projectId: number | string;
+}) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  const filteredOthers = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
-    if (!query) {
-      return OTHER_LEADERS;
-    }
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedSearch(searchQuery.trim());
+    }, 300);
 
-    return OTHER_LEADERS.filter(
-      (leader) =>
-        leader.name.toLowerCase().includes(query) ||
-        leader.handle.toLowerCase().includes(query),
-    );
+    return () => window.clearTimeout(timeoutId);
   }, [searchQuery]);
 
+  const {
+    podium,
+    leaders,
+    hasLoaded,
+    isError,
+    errorMessage,
+    refetch,
+  } = useGetLeaderBoard(projectId, {
+    search: debouncedSearch || undefined,
+  });
+  const isLoading = !hasLoaded && !isError;
+
   const topLeadersOrdered = useMemo(() => {
-    const first = TOP_LEADERS.find((leader) => leader.position === 1)!;
-    const second = TOP_LEADERS.find((leader) => leader.position === 2)!;
-    const third = TOP_LEADERS.find((leader) => leader.position === 3)!;
-    return [second, first, third];
-  }, []);
+    const ranked = podium.map(toLeader);
+    const first = ranked.find((leader) => leader.position === 1);
+    const second = ranked.find((leader) => leader.position === 2);
+    const third = ranked.find((leader) => leader.position === 3);
+    return [second, first, third].filter((leader): leader is Leader =>
+      Boolean(leader),
+    );
+  }, [podium]);
+
+  const otherLeaders = useMemo(() => leaders.map(toLeader), [leaders]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <h2 className="text-xl font-bold text-[#092A31]">Leader board track</h2>
+    <div className="space-y-8">
+      <h2 className="text-xl font-bold text-[#173740]">Leader board track</h2>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="relative w-full sm:w-64">
-            <Search
-              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-[#94A3B8]"
-              aria-hidden
-            />
-            <Input
-              type="search"
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              placeholder="Search intern"
-              className="h-10 rounded-xl border-[#DCE5E9] bg-white pl-9 text-sm text-[#092A31] placeholder:text-[#94A3B8]"
-            />
-          </div>
+      <div className="space-y-8 rounded-2xl border border-[#E4EBF0] bg-[#F7F9FB] p-4 sm:p-6">
+        <section className="space-y-4">
+          <h3 className="inline-flex items-center gap-2 text-base font-semibold text-[#092A31]">
+            <TrophyIcon />
+            Top 3
+          </h3>
 
-          <Button
-            type="button"
-            className="h-10 rounded-xl bg-[#0F6675] px-4 text-white hover:bg-[#0C5360]"
-          >
-            <SlidersHorizontal className="size-4" aria-hidden />
-            Filter
-          </Button>
-        </div>
-      </div>
-
-      <section className="space-y-4">
-        <h3 className="inline-flex items-center gap-2 text-base font-semibold text-[#092A31]">
-          <Trophy className="size-4 text-[#F59E0B]" aria-hidden />
-          Top 3
-        </h3>
-
-        <div className="grid gap-4 lg:grid-cols-3 lg:items-end">
-          {topLeadersOrdered.map((leader) => (
-            <TopLeaderCard key={leader.id} leader={leader} />
-          ))}
-        </div>
-      </section>
-
-      <section className="space-y-4">
-        <h3 className="inline-flex items-center gap-2 text-base font-semibold text-[#092A31]">
-          <Trophy className="size-4 text-[#F59E0B]" aria-hidden />
-          Other leads
-        </h3>
-
-        <ul className="space-y-1 overflow-hidden rounded-2xl">
-          {filteredOthers.length === 0 ? (
-            <li className="bg-[#F8FAFC] px-5 py-10 text-center text-sm text-[#64748B]">
-              No interns found.
-            </li>
-          ) : (
-            filteredOthers.map((leader) => (
-              <li
-                key={leader.id}
-                className="grid gap-4 bg-[#F8FAFC] px-4 py-4 sm:px-5 lg:grid-cols-5 lg:items-center"
+          {isLoading ? (
+            <p className="rounded-2xl bg-[#F8FAFC] px-5 py-10 text-center text-sm text-[#64748B]">
+              Loading leader board...
+            </p>
+          ) : isError ? (
+            <div className="rounded-2xl bg-[#F8FAFC] px-5 py-10 text-center">
+              <p className="text-sm text-[#64748B]">
+                {errorMessage || "Something went wrong while loading the leader board."}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  void refetch();
+                }}
+                className="mt-4 inline-flex h-10 cursor-pointer items-center rounded-full bg-[#156374] px-5 text-sm font-medium text-white hover:bg-[#124F5D]"
               >
-                <div className="flex min-w-0 items-center gap-3">
-                  <span
-                    className={cn(
-                      "inline-flex size-10 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
-                      leader.avatarTone,
-                    )}
-                    aria-hidden
-                  >
-                    {getInitials(leader.name)}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-[#092A31]">
-                      {leader.name}
-                    </p>
-                    <p className="truncate text-xs text-[#94A3B8]">
-                      {leader.handle}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:contents">
-                  <div className="min-w-16">
-                    <p className="text-xs text-[#94A3B8]">Position</p>
-                    <p className="mt-1 text-sm font-bold text-[#092A31]">
-                      {formatPosition(leader.position)}
-                    </p>
-                  </div>
-                  <div className="min-w-16">
-                    <p className="text-xs text-[#94A3B8]">Points</p>
-                    <p className="mt-1 inline-flex items-center gap-1 text-sm font-bold text-[#092A31]">
-                      <Star
-                        className="size-3.5 fill-[#FACC15] text-[#FACC15]"
-                        aria-hidden
-                      />
-                      {leader.points}
-                    </p>
-                  </div>
-                  <div className="min-w-20">
-                    <p className="text-xs text-[#94A3B8]">Streak</p>
-                    <p className="mt-1 inline-flex items-center gap-1 text-sm font-bold text-[#092A31]">
-                      <Flame
-                        className="size-3.5 fill-[#F97316] text-[#F97316]"
-                        aria-hidden
-                      />
-                      {leader.streakDays} days
-                    </p>
-                  </div>
-                  <div className="min-w-16">
-                    <p className="text-xs text-[#94A3B8]">Task</p>
-                    <p className="mt-1 text-sm font-bold text-[#092A31]">
-                      {leader.task}
-                    </p>
-                  </div>
-                </div>
-              </li>
-            ))
+                Retry
+              </button>
+            </div>
+          ) : topLeadersOrdered.length === 0 ? (
+            <p className="rounded-2xl bg-[#F8FAFC] px-5 py-10 text-center text-sm text-[#64748B]">
+              No leader board rankings yet.
+            </p>
+          ) : (
+            <div className="grid gap-4 pt-8 lg:grid-cols-3 lg:items-end">
+              {topLeadersOrdered.map((leader) => (
+                <TopLeaderCard key={leader.id} leader={leader} />
+              ))}
+            </div>
           )}
-        </ul>
-      </section>
+        </section>
+
+        {!isError ? (
+          <section className="space-y-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <h3 className="inline-flex items-center gap-2 text-base font-semibold text-[#173740]">
+                <TrophyIcon />
+                Other leads
+              </h3>
+
+              <div className="relative w-full sm:w-64">
+                <Search
+                  className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-[#94A3B8]"
+                  aria-hidden
+                />
+                <Input
+                  type="search"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="Search intern"
+                  className="h-10 rounded-xl border-[#E2E8F0] bg-white pl-9 text-sm text-[#173740] shadow-none placeholder:text-[#94A3B8]"
+                />
+              </div>
+            </div>
+
+            <ul className="space-y-2">
+              {otherLeaders.length === 0 ? (
+                <li className="rounded-xl bg-[#F4F7F8] px-5 py-10 text-center text-sm text-[#64748B]">
+                  {isLoading ? "Loading leader board..." : "No interns found."}
+                </li>
+              ) : (
+                otherLeaders.map((leader) => (
+                  <li
+                    key={leader.id}
+                    className="grid gap-4 rounded-xl bg-[#EEF3F6] px-4 py-4 sm:px-5 lg:grid-cols-[minmax(0,1.4fr)_repeat(4,minmax(0,1fr))] lg:items-center"
+                  >
+                    <div className="flex min-w-0 items-center gap-3">
+                      <LeaderAvatar leader={leader} className="size-10" />
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-[#173740]">
+                          {leader.name}
+                        </p>
+                        {leader.handle ? (
+                          <p className="truncate text-xs text-[#94A3B8]">
+                            {leader.handle}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:contents">
+                      <div>
+                        <p className="text-xs text-[#94A3B8]">Position</p>
+                        <p className="mt-1 text-sm font-bold text-[#173740]">
+                          {leader.positionLabel}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-[#94A3B8]">Task</p>
+                        <p className="mt-1 inline-flex items-center gap-1 text-sm font-bold text-[#173740]">
+                          <Star
+                            className="size-3.5 fill-[#FACC15] text-[#FACC15]"
+                            aria-hidden
+                          />
+                          {leader.taskScore}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-[#94A3B8]">Streak</p>
+                        <p className="mt-1 inline-flex items-center gap-1 text-sm font-bold text-[#173740]">
+                          <Flame
+                            className="size-3.5 fill-[#F97316] text-[#F97316]"
+                            aria-hidden
+                          />
+                          {leader.streakDays} days
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-[#94A3B8]">Points</p>
+                        <p className="mt-1 text-sm font-bold text-[#173740]">
+                          {leader.points}
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                ))
+              )}
+            </ul>
+          </section>
+        ) : null}
+      </div>
     </div>
   );
 }
