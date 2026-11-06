@@ -128,7 +128,7 @@ export default function ProjectDetailsContent() {
     ) : activeTab === "material" ? (
       <ResourcesDetails title="Material" project={project} />
     ) : activeTab === "leader-board" ? (
-      <LeaderBoard />
+      <LeaderBoard projectId={project.id} />
     ) : null;
 
   return (
