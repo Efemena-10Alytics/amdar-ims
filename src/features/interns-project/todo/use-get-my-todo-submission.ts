@@ -5,7 +5,7 @@ import type {
   InternProjectTodoSubmissionSolutionItem,
   MyInternProjectTodoSubmission,
   MyInternProjectTodoSubmissionResponse,
-} from "./internship-project.types";
+} from "../internship-project.types";
 import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
 
 export type GetMyInternProjectTodoSubmissionParams = {

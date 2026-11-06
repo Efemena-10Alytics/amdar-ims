@@ -15,11 +15,11 @@ import type {
   InternProjectTodoSolutionFormat,
   InternProjectTodoSubmissionItem,
 } from "@/features/interns-project/internship-project.types";
-import { useDeleteSubmittedFile } from "@/features/interns-project/use-delete-submitted-file";
-import { useEditMyTodoSubmission } from "@/features/interns-project/use-edit-my-todo-submission";
-import { useGetMyTodoSubmission } from "@/features/interns-project/use-get-my-todo-submission";
-import { useGetTodoSubmissionComments } from "@/features/interns-project/use-get-todo-submission-comment";
-import { useSubmitTodo } from "@/features/interns-project/use-submit-todo";
+import { useDeleteSubmittedFile } from "@/features/interns-project/todo/use-delete-submitted-file";
+import { useEditMyTodoSubmission } from "@/features/interns-project/todo/use-edit-my-todo-submission";
+import { useGetMyTodoSubmission } from "@/features/interns-project/todo/use-get-my-todo-submission";
+import { useGetTodoSubmissionComments } from "@/features/interns-project/todo/use-get-todo-submission-comment";
+import { useSubmitTodo } from "@/features/interns-project/todo/use-submit-todo";
 import { useIsSpecialistPreview } from "@/features/internship/use-is-specialist-preview";
 import { useAuthStore } from "@/store/auth-store";
 import { cn } from "@/lib/utils";

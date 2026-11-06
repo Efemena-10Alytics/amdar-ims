@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import type {
   InternProjectTodoSubmissionComment,
   InternProjectTodoSubmissionCommentsResponse,
-} from "./internship-project.types";
+} from "../internship-project.types";
 import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
 
 export type GetInternProjectTodoSubmissionCommentsParams = {

@@ -13,7 +13,7 @@ import {
   INTERN_PROJECT_ASSESSMENTS_QUERY_KEY,
   useGetProjectAssessments,
 } from "@/features/interns-project/use-get-project-assessments";
-import { useGetTodosByProjectId } from "@/features/interns-project/use-get-todos-by-project-id";
+import { useGetTodosByProjectId } from "@/features/interns-project/todo/use-get-todos-by-project-id";
 import { normalizeReadinessSubmitResultData } from "@/features/readiness-test/normalize-submit-result";
 import type {
   InternProject,
