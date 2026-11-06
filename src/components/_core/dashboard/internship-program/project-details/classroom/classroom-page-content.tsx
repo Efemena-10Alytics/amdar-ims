@@ -26,11 +26,11 @@ import type {
   InternProjectTodoContentType,
   InternProjectTodoType,
 } from "@/features/interns-project/internship-project.types";
-import { useCompleteTodo } from "@/features/interns-project/use-complete-todo";
-import { useGetMyTodoSubmission } from "@/features/interns-project/use-get-my-todo-submission";
+import { useCompleteTodo } from "@/features/interns-project/todo/use-complete-todo";
+import { useGetMyTodoSubmission } from "@/features/interns-project/todo/use-get-my-todo-submission";
 import { useGetProjectBySlug } from "@/features/interns-project/use-get-project-by-slug";
-import { useGetTodoById } from "@/features/interns-project/use-get-todo-by-id";
-import { useGetTodosByProjectId } from "@/features/interns-project/use-get-todos-by-project-id";
+import { useGetTodoById } from "@/features/interns-project/todo/use-get-todo-by-id";
+import { useGetTodosByProjectId } from "@/features/interns-project/todo/use-get-todos-by-project-id";
 import { cn } from "@/lib/utils";
 
 type TaskStatus = "done" | "active" | "todo";

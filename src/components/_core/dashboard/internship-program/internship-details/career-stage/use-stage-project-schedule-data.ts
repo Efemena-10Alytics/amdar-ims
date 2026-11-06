@@ -16,7 +16,7 @@ import type {
 } from "@/features/interns-project/internship-project.types";
 import { getFirstTaskHref } from "@/lib/utils/task-href";
 import { useGetProjectAssessments } from "@/features/interns-project/use-get-project-assessments";
-import { useGetTodosByProjectId } from "@/features/interns-project/use-get-todos-by-project-id";
+import { useGetTodosByProjectId } from "@/features/interns-project/todo/use-get-todos-by-project-id";
 import { useSelectedEnrollmentIds } from "@/store/enrollment-selection-store";
 
 const DAY_ORDER = [

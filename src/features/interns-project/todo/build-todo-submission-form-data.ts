@@ -1,4 +1,4 @@
-import type { InternProjectTodoSubmissionItem } from "./internship-project.types";
+import type { InternProjectTodoSubmissionItem } from "../internship-project.types";
 
 export function submissionItemsHaveFile(
   items: InternProjectTodoSubmissionItem[],

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import type {
   InternProjectTodo,
   InternProjectTodosResponse,
-} from "./internship-project.types";
+} from "../internship-project.types";
 import { apiBaseURL, axiosInstance } from "@/lib/axios-instance";
 
 export const INTERN_PROJECT_TODOS_QUERY_KEY = (projectId: number | string) =>

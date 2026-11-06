@@ -1,17 +1,19 @@
 import { useCallback, useState } from "react";
 import axios from "axios";
 import { useQueryClient } from "@tanstack/react-query";
-import type { DeleteInternProjectTodoSubmissionItemResponse } from "./internship-project.types";
-import { MY_INTERN_PROJECT_TODO_SUBMISSION_QUERY_KEY } from "./use-get-my-todo-submission";
+import type {
+  CompleteInternProjectTodoTypePayload,
+  CompleteInternProjectTodoTypeResponse,
+} from "../internship-project.types";
 import { INTERN_PROJECT_TODO_QUERY_KEY } from "./use-get-todo-by-id";
 import { INTERN_PROJECT_TODOS_QUERY_KEY } from "./use-get-todos-by-project-id";
 import { axiosInstance } from "@/lib/axios-instance";
 
-export type DeleteSubmittedFileParams = {
+export type CompleteInternProjectTodoParams = {
   projectId: number | string;
   todoId: number | string;
   typeId: number | string;
-  itemId: number | string;
+  payload?: CompleteInternProjectTodoTypePayload;
 };
 
 function getErrorMessage(error: unknown): string {
@@ -23,56 +25,60 @@ function getErrorMessage(error: unknown): string {
     }
   }
   if (error instanceof Error && error.message) return error.message;
-  return "Failed to delete submitted file.";
+  return "Failed to complete todo.";
 }
 
-export async function deleteSubmittedFile({
+export async function completeInternProjectTodo({
   projectId,
   todoId,
   typeId,
-  itemId,
-}: DeleteSubmittedFileParams): Promise<void> {
-  const { data } =
-    await axiosInstance.delete<DeleteInternProjectTodoSubmissionItemResponse>(
-      `v3/intern-projects/${projectId}/todos/${todoId}/types/${typeId}/submissions/items/${itemId}`,
-    );
+  payload = { status: "completed" },
+}: CompleteInternProjectTodoParams): Promise<CompleteInternProjectTodoTypeResponse> {
+  const { data } = await axiosInstance.patch<CompleteInternProjectTodoTypeResponse>(
+    `v3/intern-projects/${projectId}/todos/${todoId}/types/${typeId}/status`,
+    payload,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
 
-  if (data.success === false) {
-    throw new Error(data.message?.trim() || "Failed to delete submitted file.");
+  if (
+    data.success === false ||
+    (typeof data.status === "string" &&
+      data.status.toLowerCase() !== "success")
+  ) {
+    throw new Error(data.message?.trim() || "Failed to complete todo.");
   }
+
+  return data;
 }
 
-export function useDeleteSubmittedFile() {
+export function useCompleteTodo() {
   const queryClient = useQueryClient();
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const deleteSubmittedFileMutation = useCallback(
+  const completeTodo = useCallback(
     async ({
       projectId,
       todoId,
       typeId,
-      itemId,
-    }: DeleteSubmittedFileParams) => {
-      setIsDeleting(true);
+      payload,
+    }: CompleteInternProjectTodoParams) => {
+      setIsCompleting(true);
       setErrorMessage("");
 
       try {
-        await deleteSubmittedFile({
+        const response = await completeInternProjectTodo({
           projectId,
           todoId,
           typeId,
-          itemId,
+          payload,
         });
 
         await Promise.all([
-          queryClient.invalidateQueries({
-            queryKey: MY_INTERN_PROJECT_TODO_SUBMISSION_QUERY_KEY(
-              projectId,
-              todoId,
-              typeId,
-            ),
-          }),
           queryClient.invalidateQueries({
             queryKey: INTERN_PROJECT_TODO_QUERY_KEY(projectId, todoId),
           }),
@@ -80,20 +86,22 @@ export function useDeleteSubmittedFile() {
             queryKey: INTERN_PROJECT_TODOS_QUERY_KEY(projectId),
           }),
         ]);
+
+        return response;
       } catch (error) {
         const message = getErrorMessage(error);
         setErrorMessage(message);
         throw new Error(message);
       } finally {
-        setIsDeleting(false);
+        setIsCompleting(false);
       }
     },
     [queryClient],
   );
 
   return {
-    deleteSubmittedFile: deleteSubmittedFileMutation,
-    isDeleting,
+    completeTodo,
+    isCompleting,
     errorMessage,
   };
 }

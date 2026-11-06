@@ -2,23 +2,24 @@ import { useCallback, useState } from "react";
 import axios from "axios";
 import { useQueryClient } from "@tanstack/react-query";
 import type {
-  SubmitInternProjectTodoPayload,
-  SubmitInternProjectTodoResponse,
-} from "./internship-project.types";
+  EditInternProjectTodoSubmissionPayload,
+  MyInternProjectTodoSubmission,
+  MyInternProjectTodoSubmissionResponse,
+} from "../internship-project.types";
 import {
   buildTodoSubmissionFormData,
   submissionItemsHaveFile,
 } from "./build-todo-submission-form-data";
+import { MY_INTERN_PROJECT_TODO_SUBMISSION_QUERY_KEY } from "./use-get-my-todo-submission";
 import { INTERN_PROJECT_TODO_QUERY_KEY } from "./use-get-todo-by-id";
 import { INTERN_PROJECT_TODOS_QUERY_KEY } from "./use-get-todos-by-project-id";
-import { MY_INTERN_PROJECT_TODO_SUBMISSION_QUERY_KEY } from "./use-get-my-todo-submission";
 import { axiosInstance } from "@/lib/axios-instance";
 
-export type SubmitInternProjectTodoParams = {
+export type EditMyInternProjectTodoSubmissionParams = {
   projectId: number | string;
   todoId: number | string;
   typeId: number | string;
-  payload: SubmitInternProjectTodoPayload;
+  payload: EditInternProjectTodoSubmissionPayload;
 };
 
 function getErrorMessage(error: unknown): string {
@@ -30,60 +31,76 @@ function getErrorMessage(error: unknown): string {
     }
   }
   if (error instanceof Error && error.message) return error.message;
-  return "Failed to submit todo solution.";
+  return "Failed to update todo submission.";
 }
 
-export async function submitInternProjectTodo({
+export async function editMyInternProjectTodoSubmission({
   projectId,
   todoId,
   typeId,
   payload,
-}: SubmitInternProjectTodoParams): Promise<SubmitInternProjectTodoResponse> {
+}: EditMyInternProjectTodoSubmissionParams): Promise<MyInternProjectTodoSubmission> {
   const hasFile = submissionItemsHaveFile(payload.items);
   const body = hasFile
     ? buildTodoSubmissionFormData(payload.items)
     : payload;
-
-  const { data } = await axiosInstance.post<SubmitInternProjectTodoResponse>(
-    `v3/intern-projects/${projectId}/todos/${todoId}/types/${typeId}/submissions`,
-    body,
-    hasFile
-      ? {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      : {
-          headers: {
-            "Content-Type": "application/json",
-          },
+  const url = `v3/intern-projects/${projectId}/todos/${todoId}/types/${typeId}/submissions`;
+  const config = hasFile
+    ? {
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
-  );
+      }
+    : {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+  const { data } = hasFile
+    ? await axiosInstance.post<MyInternProjectTodoSubmissionResponse>(
+        url,
+        body,
+        config,
+      )
+    : await axiosInstance.put<MyInternProjectTodoSubmissionResponse>(
+        url,
+        body,
+        config,
+      );
 
   if (data.success === false) {
-    throw new Error(data.message?.trim() || "Failed to submit todo solution.");
+    throw new Error(
+      data.message?.trim() || "Failed to update todo submission.",
+    );
   }
 
-  return data;
+  if (!data.data) {
+    throw new Error(
+      data.message?.trim() || "Failed to update todo submission.",
+    );
+  }
+
+  return data.data;
 }
 
-export function useSubmitTodo() {
+export function useEditMyTodoSubmission() {
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const submitTodo = useCallback(
+  const editTodoSubmission = useCallback(
     async ({
       projectId,
       todoId,
       typeId,
       payload,
-    }: SubmitInternProjectTodoParams) => {
+    }: EditMyInternProjectTodoSubmissionParams) => {
       setIsSubmitting(true);
       setErrorMessage("");
 
       try {
-        const response = await submitInternProjectTodo({
+        const response = await editMyInternProjectTodoSubmission({
           projectId,
           todoId,
           typeId,
@@ -92,17 +109,17 @@ export function useSubmitTodo() {
 
         await Promise.all([
           queryClient.invalidateQueries({
-            queryKey: INTERN_PROJECT_TODO_QUERY_KEY(projectId, todoId),
-          }),
-          queryClient.invalidateQueries({
-            queryKey: INTERN_PROJECT_TODOS_QUERY_KEY(projectId),
-          }),
-          queryClient.invalidateQueries({
             queryKey: MY_INTERN_PROJECT_TODO_SUBMISSION_QUERY_KEY(
               projectId,
               todoId,
               typeId,
             ),
+          }),
+          queryClient.invalidateQueries({
+            queryKey: INTERN_PROJECT_TODO_QUERY_KEY(projectId, todoId),
+          }),
+          queryClient.invalidateQueries({
+            queryKey: INTERN_PROJECT_TODOS_QUERY_KEY(projectId),
           }),
         ]);
 
@@ -119,7 +136,7 @@ export function useSubmitTodo() {
   );
 
   return {
-    submitTodo,
+    editTodoSubmission,
     isSubmitting,
     errorMessage,
   };
