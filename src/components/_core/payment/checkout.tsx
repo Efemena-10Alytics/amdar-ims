@@ -35,6 +35,7 @@ interface PaymentPlanOption {
   description: string;
   total: string;
   breakdown: { label: string; amount: string; dueDate?: string }[] | null;
+  message?: string;
 }
 
 function getOrdinal(i: number): string {
@@ -99,11 +100,13 @@ function buildBiweeklyBreakdown(
   count: number,
   displayBreakdown?: number[],
 ): { label: string; amount: string; dueDate?: string }[] {
-  return getInstallmentAmounts(total, count, displayBreakdown).map((amt, i) => ({
-    label: `${getOrdinal(i)} payment`,
-    amount: `${currency} ${amt}`,
-    dueDate: i === 0 ? "Due now" : `Due ${getBiweeklyPaymentDate(i)}`,
-  }));
+  return getInstallmentAmounts(total, count, displayBreakdown).map(
+    (amt, i) => ({
+      label: `${getOrdinal(i)} payment`,
+      amount: `${currency} ${amt}`,
+      dueDate: i === 0 ? "Due now" : `Due ${getBiweeklyPaymentDate(i)}`,
+    }),
+  );
 }
 
 function buildWeeklyBreakdown(
@@ -112,11 +115,13 @@ function buildWeeklyBreakdown(
   count: number,
   displayBreakdown?: number[],
 ): { label: string; amount: string; dueDate?: string }[] {
-  return getInstallmentAmounts(total, count, displayBreakdown).map((amt, i) => ({
-    label: `${getOrdinal(i)} payment`,
-    amount: `${currency} ${amt}`,
-    dueDate: i === 0 ? "Due now" : `Due ${getWeeklyPaymentDate(i)}`,
-  }));
+  return getInstallmentAmounts(total, count, displayBreakdown).map(
+    (amt, i) => ({
+      label: `${getOrdinal(i)} payment`,
+      amount: `${currency} ${amt}`,
+      dueDate: i === 0 ? "Due now" : `Due ${getWeeklyPaymentDate(i)}`,
+    }),
+  );
 }
 
 function buildMonthlyBreakdown(
@@ -125,11 +130,13 @@ function buildMonthlyBreakdown(
   count: number,
   displayBreakdown?: number[],
 ): { label: string; amount: string; dueDate?: string }[] {
-  return getInstallmentAmounts(total, count, displayBreakdown).map((amt, i) => ({
-    label: `${getOrdinal(i)} payment`,
-    amount: `${currency} ${amt}`,
-    dueDate: i === 0 ? "Due now" : `Due ${getNextPaymentDate(i)}`,
-  }));
+  return getInstallmentAmounts(total, count, displayBreakdown).map(
+    (amt, i) => ({
+      label: `${getOrdinal(i)} payment`,
+      amount: `${currency} ${amt}`,
+      dueDate: i === 0 ? "Due now" : `Due ${getNextPaymentDate(i)}`,
+    }),
+  );
 }
 
 /** e.g. "Reserve your seat with GBP 100 today, then 6 bi-weekly payments of GBP 91.67".
@@ -189,6 +196,8 @@ function getPaymentPlansFromPricing(
       label: "2 Installments",
       description: `Pay ${currency} ${half} now and 2nd installment in the next month`,
       total: `${currency} ${two_installments_amount}`,
+      message:
+        "Note: Your next payment will be auto debited from your saved card",
       breakdown: [
         {
           label: "1st payment",
@@ -210,6 +219,8 @@ function getPaymentPlansFromPricing(
       label: "3 Installments",
       description: "Pay in 3 installments over 3 months",
       total: `${currency} ${three_installments_amount}`,
+      message:
+        "Note: Your next payment will be auto debited from your saved card",
       breakdown: buildMonthlyBreakdown(
         currency,
         three_installments_amount,
@@ -233,6 +244,8 @@ function getPaymentPlansFromPricing(
         "monthly",
       ),
       total: `${currency} ${four_installments_amount}`,
+      message:
+        "Note: Your next payment will be auto debited from your saved card",
       breakdown: buildMonthlyBreakdown(
         currency,
         four_installments_amount,
@@ -248,6 +261,8 @@ function getPaymentPlansFromPricing(
       label: "Bi-weekly Installments",
       description: "Pay in 5 installments, every 2 weeks",
       total: `${currency} ${five_installments_amount}`,
+      message:
+        "Note: Your next payment will be auto debited from your saved card",
       breakdown: buildBiweeklyBreakdown(
         currency,
         five_installments_amount,
@@ -263,6 +278,8 @@ function getPaymentPlansFromPricing(
       label: "6 Bi-weekly Installments",
       description: "Pay in 6 installments, every 2 weeks",
       total: `${currency} ${six_installments_amount}`,
+      message:
+        "Note: Your next payment will be auto debited from your saved card",
       breakdown: buildBiweeklyBreakdown(
         currency,
         six_installments_amount,
@@ -301,6 +318,8 @@ function getPaymentPlansFromPricing(
       label: "8 Weekly Installments",
       description: "Pay in 8 installments, every week",
       total: `${currency} ${eight_installments_amount}`,
+      message:
+        "Note: Your next payment will be auto debited from your saved card",
       breakdown: buildWeeklyBreakdown(
         currency,
         eight_installments_amount,
@@ -316,6 +335,8 @@ function getPaymentPlansFromPricing(
       label: "9 Weekly Installments",
       description: "Pay in 9 installments, every week",
       total: `${currency} ${nine_installments_amount}`,
+      message:
+        "Note: Your next payment will be auto debited from your saved card",
       breakdown: buildWeeklyBreakdown(
         currency,
         nine_installments_amount,
@@ -331,6 +352,8 @@ function getPaymentPlansFromPricing(
       label: "Weekly Installments",
       description: "Pay in 10 installments, every week",
       total: `${currency} ${ten_installments_amount}`,
+      message:
+        "Note: Your next payment will be auto debited from your saved card",
       breakdown: buildWeeklyBreakdown(
         currency,
         ten_installments_amount,
@@ -755,6 +778,9 @@ const Checkout = ({
                             );
                           })}
                         </div>
+                        <span className="text-[#3B82F6] text-xs italic">
+                          {plan.message}
+                        </span>
                       </div>
                     </div>
                   )}
