@@ -59,8 +59,8 @@ export default function IWDPayment({
 }: IWDPaymentProps) {
   const { hrs, mins, secs } = usePromoCountdown();
 
-  const originalLabel = toPoundLabel(INTERNSHIP_ORIGINAL_PRICE_LABEL);
-  const discountedLabel = toPoundLabel(INTERNSHIP_DISCOUNTED_PRICE_LABEL);
+  const originalLabel = INTERNSHIP_ORIGINAL_PRICE_LABEL;
+  const discountedLabel = INTERNSHIP_DISCOUNTED_PRICE_LABEL;
 
   return (
     <div
@@ -79,7 +79,7 @@ export default function IWDPayment({
             <OfferClockIcon className="mt-0.5" />
             <div className="min-w-0">
               <p className="text-sm font-bold text-[#156374] sm:text-base uppercase tracking-wide">
-                OFFER ENDING SOON!
+                BLACK FRIDAY OFFER!
               </p>
               <p className="mt-1 text-sm font-medium text-[#475467]">
                 Ends in:{" "}

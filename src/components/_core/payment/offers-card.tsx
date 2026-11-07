@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { INTERNSHIP_OFFERS } from "@/constants/internship-offers";
+import Link from "next/link";
+import { BLACK_FRIDAY_OFFERS } from "@/constants/internship-offers";
 import { usePromoCountdown } from "@/components/_core/landing-pages/shared/iwd-banner/use-countdown";
 import { cn } from "@/lib/utils";
 
@@ -9,13 +10,21 @@ const pad = (value: number) => String(value).padStart(2, "0");
 
 export type OffersCardProps = {
   className?: string;
+  /** Whether to show the "See all offers" button linking to /fast-track. */
+  showSeeAllButton?: boolean;
+  /** Optional custom href for the "See all offers" button (defaults to /fast-track). */
+  seeAllHref?: string;
 };
 
 /**
- * Checkout sidebar card listing everything bundled with the internship, with
- * the same rolling countdown used by the internship page banners.
+ * Sidebar card listing the Black Friday perks bundled with the internship,
+ * with the same rolling countdown used by the internship page banners.
  */
-const OffersCard = ({ className }: OffersCardProps) => {
+const OffersCard = ({
+  className,
+  showSeeAllButton = false,
+  seeAllHref = "/fast-track",
+}: OffersCardProps) => {
   const { hrs, mins, secs } = usePromoCountdown();
 
   return (
@@ -31,7 +40,7 @@ const OffersCard = ({ className }: OffersCardProps) => {
           />
           <div className="min-w-0">
             <h2 className="font-clash-display text-lg font-bold text-primary">
-              OFFERS YOU GET
+              BLACK FRIDAY OFFERS YOU GET
             </h2>
             <p className="mt-0.5 text-xs text-[#334155]">
               Ending soon!{" "}
@@ -43,7 +52,7 @@ const OffersCard = ({ className }: OffersCardProps) => {
         </div>
 
         <ul className="mt-4 space-y-2">
-          {INTERNSHIP_OFFERS.map((offer) => (
+          {BLACK_FRIDAY_OFFERS.map((offer) => (
             <li
               key={offer}
               className={cn(
@@ -55,6 +64,15 @@ const OffersCard = ({ className }: OffersCardProps) => {
             </li>
           ))}
         </ul>
+
+        {showSeeAllButton && (
+          <Link
+            href={seeAllHref}
+            className="mt-4 block w-full rounded-xl bg-[#156374] py-3 text-center text-sm font-medium text-white transition-colors hover:bg-[#0C3640]"
+          >
+            See all offers
+          </Link>
+        )}
       </div>
     </section>
   );

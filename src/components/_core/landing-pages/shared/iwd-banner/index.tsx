@@ -100,10 +100,10 @@ export default function IWDBanner({ className }: IWDBannerProps) {
             />
             <div className="min-w-0">
               <p className="font-display text-base font-extrabold text-primary sm:text-lg">
-                OFFER ENDING SOON!
+                BLACK FRIDAY OFFER ENDING SOON!
               </p>
               <p className="mt-0.5 text-sm text-[#334155]">
-                Registration ending soon!{" "}
+                Ends in:{" "}
                 <span className="font-mono font-semibold tabular-nums animate-countdown-pulse-color">
                   {pad(hrs)} : {pad(mins)} : {pad(secs)}
                 </span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { BLACK_FRIDAY_OFFERS } from "@/constants/internship-offers";
 import { useGetPromoUrgency } from "@/features/payment/use-get-promo-time";
 import { useRotatingIndex } from "@/hooks/use-rotating-index";
 import { cn } from "@/lib/utils";
@@ -20,11 +21,15 @@ const FALLBACK_URGENCY = {
 } as const;
 
 /** Perks that never change — copy lives here, not on the API. */
-const STATIC_PILLS: { value?: string; label: string }[] = [
-  { value: "4K+", label: "Success story" },
-  { label: "Life time support and access to the platform" },
-  { value: "3", label: "Guaranteed Interviews" },
-  { value: "3", label: "Months Free Access to CVMatchly" },
+const STATIC_PILLS: { icon?: string; value?: string; label: string }[] = [
+  { icon: "🔥", label: BLACK_FRIDAY_OFFERS[0] },
+  { icon: "👀", label: BLACK_FRIDAY_OFFERS[2] },
+  { icon: "🔥", label: BLACK_FRIDAY_OFFERS[1] },
+  { icon: "🔥", label: BLACK_FRIDAY_OFFERS[3] },
+  { icon: "🔥", value: "4K+", label: "Success story" },
+  { icon: "🔥", label: "Life time support and access to the platform" },
+  { icon: "🔥", value: "3", label: "Guaranteed Interviews" },
+  { icon: "🔥", value: "3", label: "Months Free Access to CVMatchly" },
 ];
 
 /** 3 live urgency numbers + the static perks. */
@@ -80,15 +85,16 @@ export default function UrgencyPills({
 
   const pills = useMemo(
     () => [
+      ...STATIC_PILLS,
       {
+        icon: "🔥",
         value: String(registered),
         label: `Registered in past ${intervalHours} ${
           intervalHours === 1 ? "hour" : "hours"
         }`,
       },
-      { value: String(slotsLeft), label: "Slots left" },
-      { value: String(viewing), label: "people viewing now" },
-      ...STATIC_PILLS,
+      { icon: "🔥", value: String(slotsLeft), label: "Slots left" },
+      { icon: "👀", value: String(viewing), label: "people viewing now" },
     ],
     [registered, intervalHours, slotsLeft, viewing],
   );
@@ -126,7 +132,7 @@ export default function UrgencyPills({
           pillClassName,
         )}
       >
-        <span aria-hidden>🔥</span>
+        <span aria-hidden>{active.icon ?? "🔥"}</span>
         {active.value ? (
           <span className="font-semibold">{active.value}</span>
         ) : null}

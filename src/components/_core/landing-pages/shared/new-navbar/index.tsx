@@ -21,14 +21,12 @@ import {
 } from "@/components/ui/tooltip";
 import { UserAvatar } from "../../internship-program/svg";
 import { MoreDropdown } from "./more-dropdown";
-// import { AnniversaryBanner } from "@/components/_core/two-years-aniversary-offer/banner";
-// import {
-//   getSpecialOfferDismissed,
-//   getSpecialOfferDismissedServerSnapshot,
-//   getSpecialOfferModalOpen,
-//   getSpecialOfferModalOpenServerSnapshot,
-//   subscribeSpecialOfferVisibility,
-// } from "@/components/_core/two-years-aniversary-offer/special-offer-visibility";
+import { AnniversaryBanner } from "@/components/_core/two-years-aniversary-offer/banner";
+import {
+  getSpecialOfferModalOpen,
+  getSpecialOfferModalOpenServerSnapshot,
+  subscribeSpecialOfferVisibility,
+} from "@/components/_core/two-years-aniversary-offer/special-offer-visibility";
 
 const linkClass = (isActive: boolean, useWhiteText: boolean) =>
   cn(
@@ -104,20 +102,13 @@ const Navbar = () => {
     pathname.startsWith("/talent-loop") ||
     pathname.startsWith("/contact");
 
-  // const specialOfferDismissed = useSyncExternalStore(
-  //   subscribeSpecialOfferVisibility,
-  //   getSpecialOfferDismissed,
-  //   getSpecialOfferDismissedServerSnapshot,
-  // );
-  // const specialOfferModalOpen = useSyncExternalStore(
-  //   subscribeSpecialOfferVisibility,
-  //   getSpecialOfferModalOpen,
-  //   getSpecialOfferModalOpenServerSnapshot,
-  // );
+  const specialOfferModalOpen = useSyncExternalStore(
+    subscribeSpecialOfferVisibility,
+    getSpecialOfferModalOpen,
+    getSpecialOfferModalOpenServerSnapshot,
+  );
 
-  // Home: banner only after the modal is dismissed. Elsewhere: hide while modal is open.
-  // const showAnniversaryBanner =
-  //   !specialOfferModalOpen && (specialOfferDismissed || !isHomePageRoute);
+  const showAnniversaryBanner = isHomePageRoute && !specialOfferModalOpen;
 
   useEffect(() => {
     if (isDrawerOpen) {
@@ -182,11 +173,9 @@ const Navbar = () => {
           shouldStickNav ? "fixed" : "relative",
         )}
       >
-        {/* {showAnniversaryBanner && (
-          <AnniversaryBanner
-            variant={isHomePageRoute ? "home" : "internship"}
-          />
-        )} */}
+        {showAnniversaryBanner && (
+          <AnniversaryBanner variant="home" />
+        )}
         <nav
           className={cn(
             "relative z-121 w-full mt-0 border-b border-t-0 shadow-sm",
@@ -352,7 +341,6 @@ const Navbar = () => {
             </div>
           </div>
         </nav>
-        {shouldStickNav ? null : <div className="h-10" />}
       </div>
       {shouldStickNav ? (
         <div style={{ height: navSpacerHeight }} aria-hidden />

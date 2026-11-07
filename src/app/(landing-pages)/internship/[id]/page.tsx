@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { cache } from "react";
+import { cache, Suspense } from "react";
+import IWDBanner from "@/components/_core/landing-pages/shared/iwd-banner";
 import Left from "@/components/_core/landing-pages/internship-program/internship-details/left";
 import Right from "@/components/_core/landing-pages/internship-program/internship-details/right";
 import Project from "@/components/_core/landing-pages/internship-program/project";
@@ -74,15 +75,20 @@ export default async function InternshipProgramDetails({
 
   return (
     <div className="bg-white">
+      <IWDBanner className="mb-10" />
       <h1 className="sr-only">{program.title}</h1>
       <p className="sr-only">{getSeoDescription(program.description ?? program.overview)}</p>
       <div className="app-width">
         <div className="grid grid-cols-1 lg:grid-cols-8 gap-8 lg:gap-12">
           <div className="lg:col-span-5">
-            <Left program={program} />
+            <Suspense fallback={null}>
+              <Left program={program} />
+            </Suspense>
           </div>
           <div className="lg:col-span-3">
-            <Right program={program} />
+            <Suspense fallback={null}>
+              <Right program={program} />
+            </Suspense>
           </div>
         </div>
       </div>

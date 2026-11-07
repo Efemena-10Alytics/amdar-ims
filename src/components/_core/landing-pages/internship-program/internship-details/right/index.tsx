@@ -8,6 +8,7 @@ import type { InternshipProgram } from "@/types/internship-program";
 import { getYoutubeThumbnail } from "../../../shared/youtube-video";
 import { VideoPlayerModal } from "../../../shared/video-player-modal";
 import { useGetNextCohort } from "@/features/internship/use-get-next-cohort";
+import OffersCard from "@/components/_core/payment/offers-card";
 
 interface RightProps {
   program?: InternshipProgram;
@@ -120,6 +121,8 @@ const Right = ({ program }: RightProps) => {
         videoUrl={PROGRAM_VIDEO_URL}
         title="Program video"
       />
+
+      <OffersCard showSeeAllButton />
 
       {/* Skills You Will Learn Section */}
       <div className="bg-[#F8FAFB] rounded-lg p-6">
