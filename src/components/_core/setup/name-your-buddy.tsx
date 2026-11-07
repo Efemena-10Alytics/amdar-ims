@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAddBuddyName } from "@/features/internship/use-add-buddy-name";
-import { buildExternalAuthRedirectUrl } from "@/utils/externalAuthLogic";
 
 const NameYourBuddy = () => {
+  const router = useRouter();
   const [buddyName, setBuddyName] = useState("");
   const { submitBuddyName, isSubmitting, errorMessage } = useAddBuddyName();
   const canContinue = buddyName.trim().length > 0 && !isSubmitting;
@@ -14,8 +15,7 @@ const NameYourBuddy = () => {
 
     try {
       await submitBuddyName(buddyName);
-      const redirectUrl = await buildExternalAuthRedirectUrl();
-      window.location.replace(redirectUrl);
+      router.replace("/dashboard");
     } catch {
       // errorMessage is set by the hook
     }
