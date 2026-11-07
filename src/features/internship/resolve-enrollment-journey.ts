@@ -13,6 +13,7 @@ import {
   buildPracticalWalkthroughHref,
   isPracticalWalkthroughStep,
 } from "@/features/pre-diagnostic/practical-walkthrough-steps";
+import { isTenAlyticsEnrollment } from "@/features/internship/is-10alytics-cohort";
 import type {
   OnboardingStepsCompletedState,
   PreDiagnosticStepsCompletedState,
@@ -184,6 +185,10 @@ export function resolveEnrollmentJourneyRedirect(
   // Previewing a serviced cohort: no personal onboarding/pre-diagnostic to finish.
   // Specialists on their own enrollment are not preview and still get redirected.
   if (isSpecialistPreviewEnrollment(enrollment)) return null;
+
+  // 10Alytics cohorts join at the emerging stage, so they skip onboarding
+  // and the pre-diagnostic journey.
+  if (isTenAlyticsEnrollment(enrollment)) return null;
 
   if (!isEnrollmentJourneyCohortEligible(enrollment)) return null;
 
