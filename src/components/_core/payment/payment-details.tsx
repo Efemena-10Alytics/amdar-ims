@@ -485,11 +485,13 @@ const PaymentDetails = ({
                             {labelMap[item.label] ?? item.label}
                           </span>
                           <span className="flex items-center gap-2 font-medium text-[#092A31]">
-                            {!showSplitAfter && originalAmounts[i] != null && (
-                              <span className="text-[#9ca3af] line-through text-xs">
-                                {originalAmounts[i]}
-                              </span>
-                            )}
+                            {!showSplitAfter &&
+                              (item.originalAmount ?? originalAmounts[i]) !=
+                                null && (
+                                <span className="text-[#9ca3af] line-through text-xs">
+                                  {item.originalAmount ?? originalAmounts[i]}
+                                </span>
+                              )}
                             {displayAmount}
                           </span>
                         </div>

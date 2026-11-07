@@ -34,7 +34,10 @@ interface PaymentPlanOption {
   label: string;
   description: string;
   total: string;
-  breakdown: { label: string; amount: string; dueDate?: string }[] | null;
+  originalTotal?: string;
+  breakdown:
+    | { label: string; amount: string; originalAmount?: string; dueDate?: string }[]
+    | null;
   message?: string;
 }
 
@@ -94,19 +97,47 @@ function getInstallmentAmounts(
   );
 }
 
+/** Compute per-installment original amounts by scaling each discounted installment
+ * proportionally to originalTotal / total so their sum equals originalTotal. */
+function getOriginalInstallmentAmounts(
+  discountedAmounts: number[],
+  total: number,
+  originalTotal?: number,
+): (number | undefined)[] {
+  if (originalTotal == null || originalTotal <= total || total <= 0) {
+    return discountedAmounts.map(() => undefined);
+  }
+  const ratio = originalTotal / total;
+  const scaled = discountedAmounts.map((amt) => Math.round(amt * ratio));
+  const sumExceptLast = scaled
+    .slice(0, -1)
+    .reduce((acc, val) => acc + val, 0);
+  if (scaled.length > 0) {
+    scaled[scaled.length - 1] = originalTotal - sumExceptLast;
+  }
+  return scaled;
+}
+
 function buildBiweeklyBreakdown(
   currency: string,
   total: number,
   count: number,
   displayBreakdown?: number[],
-): { label: string; amount: string; dueDate?: string }[] {
-  return getInstallmentAmounts(total, count, displayBreakdown).map(
-    (amt, i) => ({
-      label: `${getOrdinal(i)} payment`,
-      amount: `${currency} ${amt}`,
-      dueDate: i === 0 ? "Due now" : `Due ${getBiweeklyPaymentDate(i)}`,
-    }),
+  originalTotal?: number,
+): { label: string; amount: string; originalAmount?: string; dueDate?: string }[] {
+  const amounts = getInstallmentAmounts(total, count, displayBreakdown);
+  const origAmounts = getOriginalInstallmentAmounts(
+    amounts,
+    total,
+    originalTotal,
   );
+  return amounts.map((amt, i) => ({
+    label: `${getOrdinal(i)} payment`,
+    amount: `${currency} ${amt}`,
+    originalAmount:
+      origAmounts[i] != null ? `${currency} ${origAmounts[i]}` : undefined,
+    dueDate: i === 0 ? "Due now" : `Due ${getBiweeklyPaymentDate(i)}`,
+  }));
 }
 
 function buildWeeklyBreakdown(
@@ -114,14 +145,21 @@ function buildWeeklyBreakdown(
   total: number,
   count: number,
   displayBreakdown?: number[],
-): { label: string; amount: string; dueDate?: string }[] {
-  return getInstallmentAmounts(total, count, displayBreakdown).map(
-    (amt, i) => ({
-      label: `${getOrdinal(i)} payment`,
-      amount: `${currency} ${amt}`,
-      dueDate: i === 0 ? "Due now" : `Due ${getWeeklyPaymentDate(i)}`,
-    }),
+  originalTotal?: number,
+): { label: string; amount: string; originalAmount?: string; dueDate?: string }[] {
+  const amounts = getInstallmentAmounts(total, count, displayBreakdown);
+  const origAmounts = getOriginalInstallmentAmounts(
+    amounts,
+    total,
+    originalTotal,
   );
+  return amounts.map((amt, i) => ({
+    label: `${getOrdinal(i)} payment`,
+    amount: `${currency} ${amt}`,
+    originalAmount:
+      origAmounts[i] != null ? `${currency} ${origAmounts[i]}` : undefined,
+    dueDate: i === 0 ? "Due now" : `Due ${getWeeklyPaymentDate(i)}`,
+  }));
 }
 
 function buildMonthlyBreakdown(
@@ -129,14 +167,21 @@ function buildMonthlyBreakdown(
   total: number,
   count: number,
   displayBreakdown?: number[],
-): { label: string; amount: string; dueDate?: string }[] {
-  return getInstallmentAmounts(total, count, displayBreakdown).map(
-    (amt, i) => ({
-      label: `${getOrdinal(i)} payment`,
-      amount: `${currency} ${amt}`,
-      dueDate: i === 0 ? "Due now" : `Due ${getNextPaymentDate(i)}`,
-    }),
+  originalTotal?: number,
+): { label: string; amount: string; originalAmount?: string; dueDate?: string }[] {
+  const amounts = getInstallmentAmounts(total, count, displayBreakdown);
+  const origAmounts = getOriginalInstallmentAmounts(
+    amounts,
+    total,
+    originalTotal,
   );
+  return amounts.map((amt, i) => ({
+    label: `${getOrdinal(i)} payment`,
+    amount: `${currency} ${amt}`,
+    originalAmount:
+      origAmounts[i] != null ? `${currency} ${origAmounts[i]}` : undefined,
+    dueDate: i === 0 ? "Due now" : `Due ${getNextPaymentDate(i)}`,
+  }));
 }
 
 /** e.g. "Reserve your seat with GBP 100 today, then 6 bi-weekly payments of GBP 91.67".
@@ -159,24 +204,38 @@ function getPaymentPlansFromPricing(
   const {
     currency,
     amount,
+    original_amount,
     two_installments_amount,
+    original_two_installments_amount,
     three_installments_amount,
+    original_three_installments_amount,
     display_three_installment_breakdown,
     four_installments_amount,
+    original_four_installments_amount,
     display_four_installment_breakdown,
     five_installments_amount,
+    original_five_installments_amount,
     display_five_installment_breakdown,
     six_installments_amount,
+    original_six_installments_amount,
     display_six_installment_breakdown,
     // seven_installments_amount,
     // display_seven_installment_breakdown,
     eight_installments_amount,
+    original_eight_installments_amount,
     display_eight_installment_breakdown,
     nine_installments_amount,
+    original_nine_installments_amount,
     display_nine_installment_breakdown,
     ten_installments_amount,
+    original_ten_installments_amount,
     display_ten_installment_breakdown,
   } = price;
+
+  const formatOriginalTotal = (orig?: number, current?: number) =>
+    orig != null && current != null && orig > current
+      ? `${currency} ${orig}`
+      : undefined;
 
   const plans: PaymentPlanOption[] = [
     {
@@ -185,28 +244,42 @@ function getPaymentPlansFromPricing(
       description:
         "Make one time payment now and get full access to your course",
       total: `${currency} ${amount}`,
+      originalTotal: formatOriginalTotal(original_amount, amount),
       breakdown: null,
     },
   ];
 
   if (two_installments_amount != null) {
     const half = Math.round(two_installments_amount / 2);
+    const origHalf =
+      original_two_installments_amount != null &&
+      original_two_installments_amount > two_installments_amount
+        ? Math.round(original_two_installments_amount / 2)
+        : undefined;
     plans.push({
       id: "2-installments",
       label: "2 Installments",
       description: `Pay ${currency} ${half} now and 2nd installment in the next month`,
       total: `${currency} ${two_installments_amount}`,
+      originalTotal: formatOriginalTotal(
+        original_two_installments_amount,
+        two_installments_amount,
+      ),
       message:
         "Note: Your next payment will be auto debited from your saved card",
       breakdown: [
         {
           label: "1st payment",
           amount: `${currency} ${half}`,
+          originalAmount:
+            origHalf != null ? `${currency} ${origHalf}` : undefined,
           dueDate: "Due now",
         },
         {
           label: "2nd payment",
           amount: `${currency} ${half}`,
+          originalAmount:
+            origHalf != null ? `${currency} ${origHalf}` : undefined,
           dueDate: `Due ${getNextPaymentDate(1)}`,
         },
       ],
@@ -219,6 +292,10 @@ function getPaymentPlansFromPricing(
       label: "3 Installments",
       description: "Pay in 3 installments over 3 months",
       total: `${currency} ${three_installments_amount}`,
+      originalTotal: formatOriginalTotal(
+        original_three_installments_amount,
+        three_installments_amount,
+      ),
       message:
         "Note: Your next payment will be auto debited from your saved card",
       breakdown: buildMonthlyBreakdown(
@@ -226,6 +303,7 @@ function getPaymentPlansFromPricing(
         three_installments_amount,
         3,
         display_three_installment_breakdown,
+        original_three_installments_amount,
       ),
     });
   }
@@ -244,6 +322,10 @@ function getPaymentPlansFromPricing(
         "monthly",
       ),
       total: `${currency} ${four_installments_amount}`,
+      originalTotal: formatOriginalTotal(
+        original_four_installments_amount,
+        four_installments_amount,
+      ),
       message:
         "Note: Your next payment will be auto debited from your saved card",
       breakdown: buildMonthlyBreakdown(
@@ -251,6 +333,7 @@ function getPaymentPlansFromPricing(
         four_installments_amount,
         4,
         display_four_installment_breakdown,
+        original_four_installments_amount,
       ),
     });
   }
@@ -261,6 +344,10 @@ function getPaymentPlansFromPricing(
       label: "Bi-weekly Installments",
       description: "Pay in 5 installments, every 2 weeks",
       total: `${currency} ${five_installments_amount}`,
+      originalTotal: formatOriginalTotal(
+        original_five_installments_amount,
+        five_installments_amount,
+      ),
       message:
         "Note: Your next payment will be auto debited from your saved card",
       breakdown: buildBiweeklyBreakdown(
@@ -268,6 +355,7 @@ function getPaymentPlansFromPricing(
         five_installments_amount,
         5,
         display_five_installment_breakdown,
+        original_five_installments_amount,
       ),
     });
   }
@@ -278,6 +366,10 @@ function getPaymentPlansFromPricing(
       label: "6 Bi-weekly Installments",
       description: "Pay in 6 installments, every 2 weeks",
       total: `${currency} ${six_installments_amount}`,
+      originalTotal: formatOriginalTotal(
+        original_six_installments_amount,
+        six_installments_amount,
+      ),
       message:
         "Note: Your next payment will be auto debited from your saved card",
       breakdown: buildBiweeklyBreakdown(
@@ -285,6 +377,7 @@ function getPaymentPlansFromPricing(
         six_installments_amount,
         6,
         display_six_installment_breakdown,
+        original_six_installments_amount,
       ),
     });
   }
@@ -318,6 +411,10 @@ function getPaymentPlansFromPricing(
       label: "8 Weekly Installments",
       description: "Pay in 8 installments, every week",
       total: `${currency} ${eight_installments_amount}`,
+      originalTotal: formatOriginalTotal(
+        original_eight_installments_amount,
+        eight_installments_amount,
+      ),
       message:
         "Note: Your next payment will be auto debited from your saved card",
       breakdown: buildWeeklyBreakdown(
@@ -325,6 +422,7 @@ function getPaymentPlansFromPricing(
         eight_installments_amount,
         8,
         display_eight_installment_breakdown,
+        original_eight_installments_amount,
       ),
     });
   }
@@ -335,6 +433,10 @@ function getPaymentPlansFromPricing(
       label: "9 Weekly Installments",
       description: "Pay in 9 installments, every week",
       total: `${currency} ${nine_installments_amount}`,
+      originalTotal: formatOriginalTotal(
+        original_nine_installments_amount,
+        nine_installments_amount,
+      ),
       message:
         "Note: Your next payment will be auto debited from your saved card",
       breakdown: buildWeeklyBreakdown(
@@ -342,6 +444,7 @@ function getPaymentPlansFromPricing(
         nine_installments_amount,
         9,
         display_nine_installment_breakdown,
+        original_nine_installments_amount,
       ),
     });
   }
@@ -352,6 +455,10 @@ function getPaymentPlansFromPricing(
       label: "Weekly Installments",
       description: "Pay in 10 installments, every week",
       total: `${currency} ${ten_installments_amount}`,
+      originalTotal: formatOriginalTotal(
+        original_ten_installments_amount,
+        ten_installments_amount,
+      ),
       message:
         "Note: Your next payment will be auto debited from your saved card",
       breakdown: buildWeeklyBreakdown(
@@ -359,6 +466,7 @@ function getPaymentPlansFromPricing(
         ten_installments_amount,
         10,
         display_ten_installment_breakdown,
+        original_ten_installments_amount,
       ),
     });
   }
@@ -750,8 +858,17 @@ const Checkout = ({
                                       {row.dueDate}
                                     </div>
                                   )}
-                                  <div className="font-medium flex-1">
-                                    {displayAmount}
+                                  <div className="font-medium flex-1 flex items-center gap-2">
+                                    {!showSplitAfter &&
+                                    promoCode?.trim() &&
+                                    row.originalAmount ? (
+                                      <span className="text-xs text-[#9ca3af] line-through font-normal">
+                                        {row.originalAmount}
+                                      </span>
+                                    ) : null}
+                                    <span className="text-[#092A31]">
+                                      {displayAmount}
+                                    </span>
                                   </div>
                                 </div>
                                 {showSplitAfter && (
@@ -785,9 +902,16 @@ const Checkout = ({
                     </div>
                   )}
                 </div>
-                <span className="shrink-0 font-clash-display font-semibold text-[#092A31]">
-                  {plan.total}
-                </span>
+                <div className="flex shrink-0 items-baseline gap-2">
+                  {promoCode?.trim() && plan.originalTotal ? (
+                    <span className="text-sm text-[#9ca3af] line-through">
+                      {plan.originalTotal}
+                    </span>
+                  ) : null}
+                  <span className="font-clash-display font-semibold text-[#092A31]">
+                    {plan.total}
+                  </span>
+                </div>
               </button>
             );
           })}

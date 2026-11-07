@@ -108,6 +108,7 @@ export interface CheckoutApiResponse {
 export interface InstallmentBreakdownItem {
   label: string;
   amount: string;
+  originalAmount?: string;
 }
 
 /** Split info for the first installment when ?unique=1 flow is active */

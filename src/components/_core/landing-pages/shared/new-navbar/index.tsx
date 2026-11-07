@@ -108,7 +108,9 @@ const Navbar = () => {
     getSpecialOfferModalOpenServerSnapshot,
   );
 
-  const showAnniversaryBanner = isHomePageRoute && !specialOfferModalOpen;
+  const isInternshipHubRoute = pathname === "/internship";
+  const showAnniversaryBanner =
+    (isHomePageRoute || isInternshipHubRoute) && !specialOfferModalOpen;
 
   useEffect(() => {
     if (isDrawerOpen) {

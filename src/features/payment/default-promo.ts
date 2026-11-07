@@ -1,7 +1,7 @@
 import { useSearchParams } from "next/navigation";
 
 /** Promo code applied automatically when none is present in the URL. */
-export const DEFAULT_PROMO_CODE = "EMBER";
+export const DEFAULT_PROMO_CODE = "BLACKFRIDAY";
 
 /** Returns the URL promo code, falling back to {@link DEFAULT_PROMO_CODE} when absent/blank. */
 export function resolvePromoCode(value: string | null | undefined): string {
