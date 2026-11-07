@@ -98,22 +98,28 @@ function getInstallmentAmounts(
 }
 
 /** Compute per-installment original amounts by scaling each discounted installment
- * proportionally to originalTotal / total so their sum equals originalTotal. */
+ * proportionally to rounded originalTotal / total so every old price is a whole number. */
 function getOriginalInstallmentAmounts(
   discountedAmounts: number[],
   total: number,
   originalTotal?: number,
 ): (number | undefined)[] {
-  if (originalTotal == null || originalTotal <= total || total <= 0) {
+  const roundedOriginalTotal =
+    originalTotal != null ? Math.round(originalTotal) : undefined;
+  if (
+    roundedOriginalTotal == null ||
+    roundedOriginalTotal <= total ||
+    total <= 0
+  ) {
     return discountedAmounts.map(() => undefined);
   }
-  const ratio = originalTotal / total;
+  const ratio = roundedOriginalTotal / total;
   const scaled = discountedAmounts.map((amt) => Math.round(amt * ratio));
   const sumExceptLast = scaled
     .slice(0, -1)
     .reduce((acc, val) => acc + val, 0);
   if (scaled.length > 0) {
-    scaled[scaled.length - 1] = originalTotal - sumExceptLast;
+    scaled[scaled.length - 1] = Math.round(roundedOriginalTotal - sumExceptLast);
   }
   return scaled;
 }
@@ -234,7 +240,7 @@ function getPaymentPlansFromPricing(
 
   const formatOriginalTotal = (orig?: number, current?: number) =>
     orig != null && current != null && orig > current
-      ? `${currency} ${orig}`
+      ? `${currency} ${Math.round(orig)}`
       : undefined;
 
   const plans: PaymentPlanOption[] = [
@@ -650,7 +656,7 @@ const Checkout = ({
               <div className="flex flex-col items-baseline gap-2">
                 {promoCode?.trim() && selectedPricing ? (
                   <span className="text-sm text-[#9ca3af] line-through">
-                    {`${selectedPricing.currency} ${selectedPricing.original_amount}`}
+                    {`${selectedPricing.currency} ${Math.round(selectedPricing.original_amount)}`}
                   </span>
                 ) : null}
                 <span className="font-clash-display text-xl font-bold text-primary">

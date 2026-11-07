@@ -277,14 +277,20 @@ const PaymentDetails = ({
     }
     const { currency } = pricing;
     if (planId === "full") {
-      const orig = pricing.original_amount;
+      const orig =
+        pricing.original_amount != null
+          ? Math.round(pricing.original_amount)
+          : undefined;
       return {
         originalPlanTotal: orig != null ? `${currency} ${orig}` : undefined,
         originalAmounts: [],
       };
     }
     if (planId === "2-installments") {
-      const orig = pricing.original_two_installments_amount;
+      const orig =
+        pricing.original_two_installments_amount != null
+          ? Math.round(pricing.original_two_installments_amount)
+          : undefined;
       const half = orig != null ? Math.round(orig / 2) : undefined;
       const amountStr = half != null ? `${currency} ${half}` : undefined;
       return {
@@ -293,7 +299,10 @@ const PaymentDetails = ({
       };
     }
     if (planId === "3-installments") {
-      const orig = pricing.original_three_installments_amount;
+      const orig =
+        pricing.original_three_installments_amount != null
+          ? Math.round(pricing.original_three_installments_amount)
+          : undefined;
       if (orig == null) {
         return { originalPlanTotal: undefined, originalAmounts: [] };
       }
@@ -311,7 +320,8 @@ const PaymentDetails = ({
       };
     }
     if (planId === "4-installments") {
-      const orig = pricing.original_four_installments_amount ?? pricing.four_installments_amount;
+      const rawOrig = pricing.original_four_installments_amount ?? pricing.four_installments_amount;
+      const orig = rawOrig != null ? Math.round(rawOrig) : undefined;
       if (orig == null) return { originalPlanTotal: undefined, originalAmounts: [] };
       const base = Math.round(orig / 4);
       const amountStr = (n: number) => `${currency} ${n}`;
@@ -323,7 +333,8 @@ const PaymentDetails = ({
       };
     }
     if (planId === "5-installments") {
-      const orig = pricing.original_five_installments_amount ?? pricing.five_installments_amount;
+      const rawOrig = pricing.original_five_installments_amount ?? pricing.five_installments_amount;
+      const orig = rawOrig != null ? Math.round(rawOrig) : undefined;
       if (orig == null) return { originalPlanTotal: undefined, originalAmounts: [] };
       const base = Math.round(orig / 5);
       const amountStr = (n: number) => `${currency} ${n}`;
@@ -335,7 +346,8 @@ const PaymentDetails = ({
       };
     }
     if (planId === "6-installments") {
-      const orig = pricing.original_six_installments_amount ?? pricing.six_installments_amount;
+      const rawOrig = pricing.original_six_installments_amount ?? pricing.six_installments_amount;
+      const orig = rawOrig != null ? Math.round(rawOrig) : undefined;
       if (orig == null) return { originalPlanTotal: undefined, originalAmounts: [] };
       const base = Math.round(orig / 6);
       const amountStr = (n: number) => `${currency} ${n}`;
@@ -347,7 +359,8 @@ const PaymentDetails = ({
       };
     }
     if (planId === "7-installments") {
-      const orig = pricing.original_seven_installments_amount ?? pricing.seven_installments_amount;
+      const rawOrig = pricing.original_seven_installments_amount ?? pricing.seven_installments_amount;
+      const orig = rawOrig != null ? Math.round(rawOrig) : undefined;
       if (orig == null) return { originalPlanTotal: undefined, originalAmounts: [] };
       const base = Math.round(orig / 7);
       const amountStr = (n: number) => `${currency} ${n}`;
@@ -359,7 +372,8 @@ const PaymentDetails = ({
       };
     }
     if (planId === "8-installments") {
-      const orig = pricing.original_eight_installments_amount ?? pricing.eight_installments_amount;
+      const rawOrig = pricing.original_eight_installments_amount ?? pricing.eight_installments_amount;
+      const orig = rawOrig != null ? Math.round(rawOrig) : undefined;
       if (orig == null) return { originalPlanTotal: undefined, originalAmounts: [] };
       const base = Math.round(orig / 8);
       const amountStr = (n: number) => `${currency} ${n}`;
@@ -371,7 +385,8 @@ const PaymentDetails = ({
       };
     }
     if (planId === "9-installments") {
-      const orig = pricing.original_nine_installments_amount ?? pricing.nine_installments_amount;
+      const rawOrig = pricing.original_nine_installments_amount ?? pricing.nine_installments_amount;
+      const orig = rawOrig != null ? Math.round(rawOrig) : undefined;
       if (orig == null) return { originalPlanTotal: undefined, originalAmounts: [] };
       const base = Math.round(orig / 9);
       const amountStr = (n: number) => `${currency} ${n}`;
@@ -383,7 +398,8 @@ const PaymentDetails = ({
       };
     }
     if (planId === "10-installments") {
-      const orig = pricing.original_ten_installments_amount ?? pricing.ten_installments_amount;
+      const rawOrig = pricing.original_ten_installments_amount ?? pricing.ten_installments_amount;
+      const orig = rawOrig != null ? Math.round(rawOrig) : undefined;
       if (orig == null) return { originalPlanTotal: undefined, originalAmounts: [] };
       const base = Math.round(orig / 10);
       const amountStr = (n: number) => `${currency} ${n}`;
