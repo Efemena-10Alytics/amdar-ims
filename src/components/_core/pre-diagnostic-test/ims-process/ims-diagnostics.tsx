@@ -59,7 +59,7 @@ const ImsDiagnostics = () => {
   const diagnosticTitle = diagnosticForm?.title ?? "IMS Diagnostics";
 
   const handleProceed = async () => {
-    router.push("/dashboard/internship-program");
+    router.push("/setup");
   };
 
   return (
