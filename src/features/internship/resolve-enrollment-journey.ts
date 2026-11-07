@@ -13,6 +13,7 @@ import {
   buildPracticalWalkthroughHref,
   isPracticalWalkthroughStep,
 } from "@/features/pre-diagnostic/practical-walkthrough-steps";
+import { isBridgepathEnrollment } from "@/features/internship/is-bridgepath-cohort";
 import { isTenAlyticsEnrollment } from "@/features/internship/is-10alytics-cohort";
 import type {
   OnboardingStepsCompletedState,
@@ -189,6 +190,9 @@ export function resolveEnrollmentJourneyRedirect(
   // 10Alytics cohorts join at the emerging stage, so they skip onboarding
   // and the pre-diagnostic journey.
   if (isTenAlyticsEnrollment(enrollment)) return null;
+
+  // Bridgepath cohorts do not go through entry setup.
+  if (isBridgepathEnrollment(enrollment)) return null;
 
   if (!isEnrollmentJourneyCohortEligible(enrollment)) return null;
 
