@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowUpRight, LightbulbIcon } from "lucide-react";
 import { usePromoCountdown } from "@/components/_core/landing-pages/shared/iwd-banner/use-countdown";
 import { getBrowserTimeZone } from "@/lib/timezone";
@@ -153,6 +154,7 @@ function detectInitialRegion(): Region {
 }
 
 export default function FastTrackAdsPage() {
+  const router = useRouter();
   const [region, setRegion] = useState<Region>("uk");
   const { days, hrs, mins, secs } = usePromoCountdown();
   const totalHours = days * 24 + hrs;
@@ -184,7 +186,12 @@ export default function FastTrackAdsPage() {
         <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-16 sm:pb-20">
           {/* Header: Logo + Region Switcher */}
           <header className="flex items-center justify-between gap-4">
-            <Link href="/" aria-label="Amdari Home" className="shrink-0">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              aria-label="Go back"
+              className="shrink-0 cursor-pointer"
+            >
               <Image
                 src="/images/pngs/ads/fast-track-logo.png"
                 alt="Amdari"
@@ -193,7 +200,7 @@ export default function FastTrackAdsPage() {
                 className="h-6 sm:h-8 w-auto"
                 priority
               />
-            </Link>
+            </button>
 
             <div
               role="tablist"
