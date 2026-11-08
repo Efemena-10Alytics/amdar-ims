@@ -1,39 +1,22 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { BLACK_FRIDAY_OFFERS } from "@/constants/internship-offers";
-import { useGetPromoUrgency } from "@/features/payment/use-get-promo-time";
 import { useRotatingIndex } from "@/hooks/use-rotating-index";
 import { cn } from "@/lib/utils";
 
 /** Milliseconds each pill stays on screen before the next one takes over. */
 export const URGENCY_PILL_INTERVAL_MS = 3000;
 
-/**
- * Shown until the promo-urgency call resolves, so the pill never renders an
- * empty slot or a jarring 0.
- */
-const FALLBACK_URGENCY = {
-  registered: 24,
-  registered_interval_hours: 2,
-  slots_left: 6,
-  viewing: 18,
-} as const;
-
-/** Perks that never change — copy lives here, not on the API. */
+/** The 4 Black Friday perks shown in the rotating purple pills. */
 const STATIC_PILLS: { icon?: string; value?: string; label: string }[] = [
   { icon: "🔥", label: BLACK_FRIDAY_OFFERS[0] },
   { icon: "👀", label: BLACK_FRIDAY_OFFERS[2] },
   { icon: "🔥", label: BLACK_FRIDAY_OFFERS[1] },
   { icon: "🔥", label: BLACK_FRIDAY_OFFERS[3] },
-  { icon: "🔥", value: "4K+", label: "Success story" },
-  { icon: "🔥", label: "Life time support and access to the platform" },
-  { icon: "🔥", value: "3", label: "Guaranteed Interviews" },
-  { icon: "🔥", value: "3", label: "Months Free Access to CVMatchly" },
 ];
 
-/** 3 live urgency numbers + the static perks. */
-export const URGENCY_PILL_COUNT = 3 + STATIC_PILLS.length;
+export const URGENCY_PILL_COUNT = STATIC_PILLS.length;
 
 export type UrgencyPillsProps = {
   /**
@@ -54,7 +37,7 @@ export type UrgencyPillsProps = {
 
 /**
  * Rotating social-proof pill: one item visible at a time, cycling through the
- * live urgency numbers and the static perks.
+ * 4 Black Friday perks.
  *
  * Each mounted instance keeps its own timer, so two on the same page drift
  * apart rather than flipping in lockstep.
@@ -65,48 +48,17 @@ export default function UrgencyPills({
   pillClassName,
   className,
 }: UrgencyPillsProps) {
-  const { data } = useGetPromoUrgency();
   const [paused, setPaused] = useState(false);
-
-  const registered =
-    typeof data?.registered === "number"
-      ? data.registered
-      : FALLBACK_URGENCY.registered;
-  const intervalHours =
-    typeof data?.registered_interval_hours === "number"
-      ? data.registered_interval_hours
-      : FALLBACK_URGENCY.registered_interval_hours;
-  const slotsLeft =
-    typeof data?.slots_left === "number"
-      ? data.slots_left
-      : FALLBACK_URGENCY.slots_left;
-  const viewing =
-    typeof data?.viewing === "number" ? data.viewing : FALLBACK_URGENCY.viewing;
-
-  const pills = useMemo(
-    () => [
-      ...STATIC_PILLS,
-      {
-        icon: "🔥",
-        value: String(registered),
-        label: `Registered in past ${intervalHours} ${
-          intervalHours === 1 ? "hour" : "hours"
-        }`,
-      },
-      { icon: "🔥", value: String(slotsLeft), label: "Slots left" },
-      { icon: "👀", value: String(viewing), label: "people viewing now" },
-    ],
-    [registered, intervalHours, slotsLeft, viewing],
-  );
 
   // When an index is passed in, the parent owns both the timer and pausing.
   const isControlled = controlledIndex !== undefined;
-  const selfIndex = useRotatingIndex(pills.length, {
+  const selfIndex = useRotatingIndex(STATIC_PILLS.length, {
     intervalMs: URGENCY_PILL_INTERVAL_MS,
     paused: paused || isControlled,
   });
-  const index = (isControlled ? controlledIndex : selfIndex) % pills.length;
-  const active = pills[index];
+  const index =
+    (isControlled ? controlledIndex : selfIndex) % STATIC_PILLS.length;
+  const active = STATIC_PILLS[index];
 
   return (
     <div
@@ -117,9 +69,9 @@ export default function UrgencyPills({
       {/* Announced once instead of re-reading on every rotation. */}
       {announceList ? (
         <p className="sr-only">
-          {pills
-            .map((pill) => [pill.value, pill.label].filter(Boolean).join(" "))
-            .join(". ")}
+          {STATIC_PILLS.map((pill) =>
+            [pill.value, pill.label].filter(Boolean).join(" "),
+          ).join(". ")}
         </p>
       ) : null}
 
