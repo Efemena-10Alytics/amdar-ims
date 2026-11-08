@@ -18,12 +18,18 @@ type BundleBenefit = {
   description: string;
 };
 
+type Card48h = {
+  title: string;
+  description: string;
+};
+
 type RegionContent = {
   consultantBadge: string;
   showTopYellowBanner: boolean;
   subtitle: string;
   slotsBadgeLines: [string, string];
   benefits24h: [BundleBenefit, BundleBenefit];
+  card2_48h: Card48h;
 };
 
 const REGION_CONTENT: Record<Region, RegionContent> = {
@@ -47,6 +53,11 @@ const REGION_CONTENT: Record<Region, RegionContent> = {
           "A visa-ready document pack covering your eligible SOC codes, salary threshold check, and a one-page sponsorship pitch you can hand to employers.",
       },
     ],
+    card2_48h: {
+      title: "Global Talent Visa Evidence Map",
+      description:
+        "Do I qualify? Know in 48 hours: A 48-hour audit of your achievements against Global Talent criteria, with a gap analysis and a structured evidence checklist.",
+    },
   },
   na: {
     consultantBadge: "Amdari for Canada & US consultants",
@@ -68,6 +79,11 @@ const REGION_CONTENT: Record<Region, RegionContent> = {
           "Unlimited CV-to-job matching for 12 months, activated on enrollment day",
       },
     ],
+    card2_48h: {
+      title: "Work Authorization Playbook",
+      description:
+        "Work permit, LMIA/PNP (Canada), H-1B/OPT (US) with employer-facing wording.",
+    },
   },
 };
 
@@ -425,7 +441,7 @@ export default function FastTrackAdsPage() {
                 </div>
               </article>
 
-              {/* Card 2: Global Talent Visa Evidence Map */}
+              {/* Card 2: Visa / Work Authorization Card */}
               <article className="grid grid-cols-1 sm:grid-cols-[0.92fr_1.08fr] overflow-hidden rounded-2xl bg-[#EBE7DF] text-[#092A31] shadow-[0_18px_40px_rgba(0,0,0,0.25)] min-h-[275px]">
                 <div className="relative min-h-[220px] sm:min-h-full">
                   <Image
@@ -438,14 +454,10 @@ export default function FastTrackAdsPage() {
                 </div>
                 <div className="flex flex-col justify-end p-6 sm:p-7">
                   <p className="text-lg sm:text-xl font-semibold leading-snug text-[#092A31]">
-                    Global Talent Visa
-                    <br />
-                    Evidence Map
+                    {content.card2_48h.title}
                   </p>
                   <p className="mt-2 text-xs sm:text-sm leading-relaxed text-[#254852]">
-                    Do I qualify? Know in 48 hours: A 48-hour audit of your
-                    achievements against Global Talent criteria, with a gap
-                    analysis and a structured evidence checklist.
+                    {content.card2_48h.description}
                   </p>
                 </div>
               </article>
