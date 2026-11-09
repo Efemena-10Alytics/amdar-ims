@@ -9,16 +9,23 @@ import { useCallback, useState, useEffect } from "react";
 const CYCLE_HOURS = 24;
 const CYCLE_MS = CYCLE_HOURS * 60 * 60 * 1000;
 
-/** Anchor for the 24h rolling cycle — resets daily at 5:00pm (UTC+1 / 16:00 UTC). */
-const CYCLE_ANCHOR_MS = Date.UTC(2026, 8, 5, 16, 0, 0);
+/** Default daily reset: 5:00pm in UTC+1 (16:00 UTC). */
+const DEFAULT_CYCLE_HOUR_UTC = 16;
+
+/** Fixed calendar day used only to place the daily reset hour. */
+const CYCLE_ANCHOR_DATE_UTC = Date.UTC(2026, 8, 5);
 
 /**
  * Next boundary of the rolling cycle — always in the future, never more than
- * one full cycle away.
+ * one full cycle away. `anchorHourUtc` is the hour the cycle starts each day.
  */
-export function getRollingCycleEnd(now: number = Date.now()): Date {
-  const completedCycles = Math.floor((now - CYCLE_ANCHOR_MS) / CYCLE_MS);
-  return new Date(CYCLE_ANCHOR_MS + (completedCycles + 1) * CYCLE_MS);
+export function getRollingCycleEnd(
+  now: number = Date.now(),
+  anchorHourUtc: number = DEFAULT_CYCLE_HOUR_UTC,
+): Date {
+  const anchorMs = CYCLE_ANCHOR_DATE_UTC + anchorHourUtc * 60 * 60 * 1000;
+  const completedCycles = Math.floor((now - anchorMs) / CYCLE_MS);
+  return new Date(anchorMs + (completedCycles + 1) * CYCLE_MS);
 }
 
 /** @deprecated Kept for the legacy sales banner. Prefer {@link usePromoCountdown}. */
@@ -83,7 +90,10 @@ export function useCountdown(getEndDate: () => Date | null): CountdownResult {
  * cycle so the timer stays between 00:00:00 and 24:00:00 and never freezes
  * on "Ended".
  */
-export function usePromoCountdown(): CountdownResult {
-  const getEndDate = useCallback((): Date => getRollingCycleEnd(), []);
+export function usePromoCountdown(anchorHourUtc?: number): CountdownResult {
+  const getEndDate = useCallback(
+    (): Date => getRollingCycleEnd(Date.now(), anchorHourUtc),
+    [anchorHourUtc],
+  );
   return useCountdown(getEndDate);
 }
