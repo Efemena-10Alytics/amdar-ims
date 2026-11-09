@@ -99,7 +99,7 @@ const JobCard = ({ job }: { job: Job }) => {
   const applyLabel = "Apply";
 
   return (
-    <div className="flex flex-col justify-between rounded-xl border border-transparent bg-[#F8FAFC] p-6 transition-all duration-200 hover:-translate-y-1 hover:border-[#CBD5E1] hover:bg-[#E8EFF1] hover:shadow-lg">
+    <div className="flex h-full flex-col rounded-xl border border-transparent bg-[#F8FAFC] p-6 transition-all duration-200 hover:-translate-y-1 hover:border-[#CBD5E1] hover:bg-[#E8EFF1] hover:shadow-lg">
       <div className="flex items-start gap-3">
         <div className="shrink-0">
           <JobIcon />
