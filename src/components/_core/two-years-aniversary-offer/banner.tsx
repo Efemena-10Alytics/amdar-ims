@@ -23,6 +23,7 @@ export type AnniversaryBannerProps = {
   className?: string;
   clarityHref?: string;
   claimHref?: string;
+  showClaimButton?: boolean;
   variant?: AnniversaryBannerVariant;
 };
 
@@ -111,6 +112,7 @@ export function AnniversaryBanner({
   className,
   clarityHref,
   claimHref = CLAIM_HREF_DEFAULT,
+  showClaimButton = true,
   variant = "home",
 }: AnniversaryBannerProps) {
   const segment = TICKER_SEGMENTS.join(" • ");
@@ -148,14 +150,16 @@ export function AnniversaryBanner({
           <p className="sr-only">{TICKER_SEGMENTS.join(". ")}.</p>
         </div>
 
-        <div className="flex shrink-0 items-center pl-3 border-l border-white/25">
-          <Link
-            href={href}
-            className="shrink-0 rounded-md bg-[#FFE082] px-4 h-8 flex items-center text-xs font-semibold text-[#156374] font-display transition hover:bg-[#FFD56A] sm:px-5 sm:text-sm"
-          >
-            Claim offer
-          </Link>
-        </div>
+        {showClaimButton && (
+          <div className="flex shrink-0 items-center pl-3 border-l border-white/25">
+            <Link
+              href={href}
+              className="shrink-0 rounded-md bg-[#FFE082] px-4 h-8 flex items-center text-xs font-semibold text-[#156374] font-display transition hover:bg-[#FFD56A] sm:px-5 sm:text-sm"
+            >
+              Claim offer
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

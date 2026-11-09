@@ -109,8 +109,15 @@ const Navbar = () => {
   );
 
   const isInternshipHubRoute = pathname === "/internship";
+  const isProjectDetailsRoute = pathname.startsWith("/home/project");
+  const isPaymentRoute =
+    pathname === "/payment" || pathname.startsWith("/payment/");
   const showAnniversaryBanner =
-    (isHomePageRoute || isInternshipHubRoute) && !specialOfferModalOpen;
+    pathname !== "/" &&
+    !isHomePageRoute &&
+    !isProjectDetailsRoute &&
+    !isPaymentRoute &&
+    !specialOfferModalOpen;
 
   useEffect(() => {
     if (isDrawerOpen) {
@@ -160,8 +167,8 @@ const Navbar = () => {
   }, [pathname]);
 
   const navLinks: { label: string; href: string }[] = [
-    { label: "Projects Showcase", href: "/project-showcase" },
     { label: "Become a Consultant", href: "/internship" },
+    { label: "Projects Showcase", href: "/project-showcase" },
   ];
 
   const closeDrawer = () => setIsDrawerOpen(false);
@@ -176,7 +183,10 @@ const Navbar = () => {
         )}
       >
         {showAnniversaryBanner && (
-          <AnniversaryBanner variant="home" />
+          <AnniversaryBanner
+            variant="home"
+            showClaimButton={!isInternshipHubRoute}
+          />
         )}
         <nav
           className={cn(
