@@ -23,8 +23,8 @@ const ReferenceLetter = () => {
   const availabilityHours = formatGmtPlus1Range("14:00", "23:00");
 
   return (
-    <>
-      <section className="rounded-2xl border border-[#E2E8F0] bg-white p-4 sm:p-5">
+    <div className="flex h-full flex-col">
+      <section className="flex h-full flex-col rounded-2xl border border-[#E2E8F0] bg-white p-4 sm:p-5">
         <div className="flex items-start justify-between gap-3">
           <h3 className="text-lg font-semibold text-[#0B2B33]">
             Reference Letter Request
@@ -60,46 +60,48 @@ const ReferenceLetter = () => {
           </div>
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center">
-            {REFERENCE_FLAGS.map((flag, index) => (
-              <span
-                key={`${flag.alt}-${index}`}
-                className={cn(
-                  "relative flex size-8 shrink-0 overflow-hidden rounded-full border-2 border-white bg-white shadow-sm",
-                  index > 0 && "-ml-2",
-                )}
-              >
-                <Image
-                  src={flag.src}
-                  alt={flag.alt}
-                  width={32}
-                  height={32}
-                  className="size-full object-cover"
-                />
-              </span>
-            ))}
+        <div className="mt-auto flex flex-col gap-5 pt-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center">
+              {REFERENCE_FLAGS.map((flag, index) => (
+                <span
+                  key={`${flag.alt}-${index}`}
+                  className={cn(
+                    "relative flex size-8 shrink-0 overflow-hidden rounded-full border-2 border-white bg-white shadow-sm",
+                    index > 0 && "-ml-2",
+                  )}
+                >
+                  <Image
+                    src={flag.src}
+                    alt={flag.alt}
+                    width={32}
+                    height={32}
+                    className="size-full object-cover"
+                  />
+                </span>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsDetailsDrawerOpen(true)}
+              className="cursor-pointer text-sm font-semibold text-[#1A6B8A] underline underline-offset-2 hover:text-[#0E6174]"
+            >
+              Request reference details
+            </button>
           </div>
 
-          <button
+          <Button
             type="button"
-            onClick={() => setIsDetailsDrawerOpen(true)}
-            className="cursor-pointer text-sm font-semibold text-[#1A6B8A] underline underline-offset-2 hover:text-[#0E6174]"
+            onClick={() => {
+              setSuccessMessage("");
+              setIsRequestDrawerOpen(true);
+            }}
+            className="h-11 w-full rounded-full bg-[#134E5E] text-sm font-semibold text-white hover:bg-[#0E6174]"
           >
-            Request reference details
-          </button>
+            Request letter
+          </Button>
         </div>
-
-        <Button
-          type="button"
-          onClick={() => {
-            setSuccessMessage("");
-            setIsRequestDrawerOpen(true);
-          }}
-          className="mt-5 h-11 w-full rounded-full bg-[#134E5E] text-sm font-semibold text-white hover:bg-[#0E6174]"
-        >
-          Request letter
-        </Button>
       </section>
 
       <ReferenceLetterDrawer
@@ -118,7 +120,7 @@ const ReferenceLetter = () => {
           onDismiss={() => setSuccessMessage("")}
         />
       ) : null}
-    </>
+    </div>
   );
 };
 

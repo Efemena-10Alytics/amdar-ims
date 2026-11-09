@@ -99,7 +99,7 @@ function MedalBadge({ place }: { place: 1 | 2 | 3 }) {
   }[place];
 
   return (
-    <div className="absolute -top-7 right-3 size-16 sm:right-4 sm:size-[4.5rem]">
+    <div className="absolute -top-7 right-3 size-16 sm:right-4 sm:size-18">
       <Image
         src={src}
         alt={`${formatPosition(place)} place medal`}
