@@ -142,14 +142,14 @@ export default function IWDBanner({ className }: IWDBannerProps) {
         </div>
       </div>
 
-      <button
+      {/* <button
         type="button"
         onClick={dismissBanner}
         className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full text-zinc-500 transition-colors hover:bg-black/10 hover:text-zinc-800 sm:right-3 sm:top-3"
         aria-label="Dismiss banner"
       >
         <X className="h-4 w-4" />
-      </button>
+      </button> */}
     </div>
   );
 }
