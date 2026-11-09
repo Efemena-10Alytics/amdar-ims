@@ -160,7 +160,7 @@ const Navbar = () => {
   }, [pathname]);
 
   const navLinks: { label: string; href: string }[] = [
-    // { label: "Real World Project", href: "/projects" },
+    { label: "Projects Showcase", href: "/project-showcase" },
     { label: "Become a Consultant", href: "/internship" },
   ];
 
