@@ -6,7 +6,6 @@ import React from "react";
 import Aos from "aos";
 import { ArrowUpRight, Play, } from "lucide-react";
 import LearnMoreVideo from "../learn-more-video";
-import BlackFridayOffer from "./black-friday-offer";
 import ConsultantsDeliver from "./consultants-deliver";
 import { NEW_HOME_PARTNER_LOGOS } from "@/constants/company-logos";
 import { RocketIcon } from "@/components/_core/dashboard/internship-program/svg";
@@ -171,7 +170,6 @@ const HeroThree = () => {
                 showPopUpVid={showPopUpVid}
                 setShowPopUpVid={setShowPopUpVid}
             />
-            <BlackFridayOffer />
         </section>
     );
 };

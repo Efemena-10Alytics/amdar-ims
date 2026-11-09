@@ -17,6 +17,9 @@ const DISMISS_KEY = "amdari-black-friday-offer-dismissed";
 const CLAIM_HREF = "/internship";
 const SPOTS_CLAIMED = 3;
 const SPOTS_TOTAL = 10;
+/** Each 24h window starts at 7:00pm UTC+1 (18:00 UTC) and repeats daily. */
+const CYCLE_START_HOUR_UTC = 18;
+const CLOSE_DELAY_MS = 10_000;
 
 const FLAGS = [
   { src: "/images/svgs/country/UK.svg", alt: "United Kingdom" },
@@ -99,7 +102,8 @@ function CountdownRing({
 
 export default function BlackFridayOffer() {
   const [open, setOpen] = useState(false);
-  const { days, hrs, mins, secs } = usePromoCountdown();
+  const [canClose, setCanClose] = useState(false);
+  const { days, hrs, mins, secs } = usePromoCountdown(CYCLE_START_HOUR_UTC);
   const hoursLeft = days * 24 + hrs;
 
   useEffect(() => {
@@ -113,16 +117,33 @@ export default function BlackFridayOffer() {
     return () => window.clearTimeout(timer);
   }, []);
 
-  const handleOpenChange = useCallback((nextOpen: boolean) => {
-    setOpen(nextOpen);
-    if (!nextOpen) {
-      try {
-        sessionStorage.setItem(DISMISS_KEY, "true");
-      } catch {
-        // ignore private-mode storage errors
-      }
+  useEffect(() => {
+    if (!open) return;
+
+    const timer = window.setTimeout(() => setCanClose(true), CLOSE_DELAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [open]);
+
+  const dismiss = useCallback(() => {
+    setOpen(false);
+    try {
+      sessionStorage.setItem(DISMISS_KEY, "true");
+    } catch {
+      // ignore private-mode storage errors
     }
   }, []);
+
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (nextOpen) {
+        setOpen(true);
+        return;
+      }
+      if (!canClose) return;
+      dismiss();
+    },
+    [canClose, dismiss],
+  );
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -131,6 +152,12 @@ export default function BlackFridayOffer() {
         overlayClassName="z-200 bg-black/75"
         className="z-200 w-full max-w-[calc(100%-1.5rem)] gap-0 overflow-hidden rounded-3xl border-0 bg-transparent p-0 text-white sm:max-w-215"
         style={{ boxShadow: "0px 4px 4px 0px #00000040" }}
+        onEscapeKeyDown={(event) => {
+          if (!canClose) event.preventDefault();
+        }}
+        onPointerDownOutside={(event) => {
+          if (!canClose) event.preventDefault();
+        }}
       >
         <div className="relative max-h-[min(92vh,640px)] overflow-y-auto md:max-h-none md:min-h-130 md:overflow-hidden">
           <Image
@@ -146,14 +173,16 @@ export default function BlackFridayOffer() {
             <div className="relative h-72 sm:h-80 md:h-auto" aria-hidden />
 
             <div className="relative px-5 py-6 sm:px-7 sm:py-8">
-              <button
-                type="button"
-                onClick={() => handleOpenChange(false)}
-                className="absolute top-4 right-4 flex size-8 cursor-pointer items-center justify-center rounded-full text-white/80 transition hover:bg-white/10 hover:text-white"
-                aria-label="Close"
-              >
-                <X className="size-4" />
-              </button>
+              {canClose && (
+                <button
+                  type="button"
+                  onClick={dismiss}
+                  className="absolute top-4 right-4 flex size-8 cursor-pointer items-center justify-center rounded-full text-white/80 transition hover:bg-white/10 hover:text-white"
+                  aria-label="Close"
+                >
+                  <X className="size-4" />
+                </button>
+              )}
 
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#DDD0FA] px-3 py-1 text-[11px] font-semibold text-[#3A2A5C]">
                 <span className="size-2 rounded-full bg-[#F5A524]" aria-hidden />
@@ -182,7 +211,7 @@ export default function BlackFridayOffer() {
               <div className="mt-5 flex flex-wrap items-center gap-3">
                 <Link
                   href={CLAIM_HREF}
-                  onClick={() => handleOpenChange(false)}
+                  onClick={dismiss}
                   className="inline-flex h-11 items-center gap-3 rounded-full bg-[#F6C945] pr-1.5 pl-5 text-sm font-semibold text-[#1A1A1A] transition hover:bg-[#ffd866]"
                 >
                   Claim my spot
