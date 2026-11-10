@@ -109,7 +109,9 @@ const Navbar = () => {
   );
 
   const isInternshipHubRoute = pathname === "/internship";
-  const isProjectDetailsRoute = pathname.startsWith("/home/project");
+  const isProjectDetailsRoute =
+    pathname.startsWith("/home/project") ||
+    pathname.startsWith("/project-showcase/");
   const isPaymentRoute =
     pathname === "/payment" || pathname.startsWith("/payment/");
   const showAnniversaryBanner =
