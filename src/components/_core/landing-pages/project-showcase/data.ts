@@ -13,7 +13,8 @@ export type ShowcaseTab =
 export type ShowcaseSection = {
   heading: string;
   body: string;
-  more?: string;
+  /** When set, shows a "Read more >>>" link to `/internship`. */
+  more?: string | boolean;
 };
 
 export type ShowcaseProject = {
@@ -42,20 +43,21 @@ export const SHOWCASE_TABS: { id: ShowcaseTab; label: string }[] = [
 
 export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
   {
-    id: "cement-demand",
-    title: "Cement Demand Forecasting Across Multiple Sites",
+    id: "tenant-retention-optimization-building-an-interactive-power-bi-dashboard-for",
+    title:
+      "Tenant Retention Optimization: Building an Interactive Power BI Dashboard for.",
     description:
       "This project focuses on developing a data-driven cement demand forecasting system for Midlands Infrastructure Group (MIG) Ltd.",
     careerTrack: "Data Science",
     category: "Civil Engineering and Construction",
-    duration: "5 weeks",
+    duration: "3 weeks",
     status: "Active",
     mark: "google",
     image: "/images/pngs/business-testimonial/meeting.jpg",
-    contributor: "Daniel Okussei",
+    contributor: "Daniel Olusesi",
     skills: [
       "Time-Series Analysis",
-      "Machine Learning/Modelling",
+      "Machine Learning Modelling",
       "Feature Engineering",
       "Dashboarding",
     ],
@@ -63,7 +65,7 @@ export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
       brief: [
         {
           heading: "Project summary",
-          body: "This project focuses on developing a data-driven cement demand forecasting system for Midlands Infrastructure Group (MIG) Ltd. Using historical construction requirements, planned pours, inventory levels, and weather data, the solution will predict cement requirements across multiple construction sites and support efficient inventory management.",
+          body: "This project focuses on developing a data-driven cement demand forecasting system for Midlands Infrastructure Group (MIG) Ltd. Using historical consumption, planned pours, inventory levels, and weather data, the solution will predict cement requirements across multiple construction sites and support efficient inventory management.",
         },
         {
           heading: "Business context",
@@ -71,416 +73,494 @@ export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
         },
         {
           heading: "Project purpose",
-          body: "The purpose of this project is to build a predictive system that forecasts cement demand across sites and cement types over an eight-week horizon.",
-          more: "By combining operational, inventory, and weather variables, the system will enable proactive procurement, optimized site utilization, and fewer emergency deliveries.",
+          body: "The purpose of this project is to build a predictive system that forecasts cement demand across sites and cement types over an eight-week horizon. By combining operational, inventory, and weather variables, the system will enable proactive procurement, optimized silo utilization,",
+          more: "reduced emergency deliveries, and more reliable construction schedules across MIG's multi-site operations.",
         },
       ],
       company: [
         {
-          heading: "About the client",
-          body: "Midlands Infrastructure Group (MIG) Ltd is a West Midlands contractor running several live civil and building sites. Cement is bought centrally, then called off by each site against its own pour calendar.",
+          heading: "Company overview",
+          body: "Midlands Infrastructure Group (MIG) Ltd. Company Name: Midlands Infrastructure Group (MIG) Ltd. Headquarters / Location: Birmingham, United Kingdom. Founded: 1994. Industry: Civil Engineering and Construction.",
         },
         {
-          heading: "Who you work with",
-          body: "The sponsor is the head of supply chain. Site managers own the pour plan, and the buyer places the weekly order. Your forecast has to be readable by all three, not only by a data team.",
+          heading: "Background",
+          body: "MIG has experienced significant operational expansion over three decades: 2000s — Expanded into multi-site operations, establishing regional operational hubs. 2012 — Standardized planning processes and cost coding to improve coordination between site operations and commercial teams. 2018 — Established framework agreements with leading cement suppliers to improve material availability and supply stability. 2021 — Introduced digital operational tools, including weighbridge integration and electronic proof",
+          more: "of delivery, giving procurement and site teams a shared view of cement movements and stock positions.",
         },
       ],
       scope: [
         {
-          heading: "In scope",
-          body: "Forecast weekly cement demand by site and product for an eight-week horizon. Compare that forecast with the current manual estimate, and flag sites heading for a stockout or excess yard stock.",
+          heading: "Project objectives",
+          body: "This project establishes measurable objectives designed to address MIG's demand forecasting and inventory management challenges. Each objective connects predictive modelling with practical operational improvements.",
         },
         {
-          heading: "Out of scope",
-          body: "The engagement does not replace the procurement system or renegotiate supplier contracts. It hands the buyer a number they can act on every Monday.",
+          heading: "Objective 1: Develop Accurate Cement Demand Forecasts",
+          body: "Build forecasting models that predict cement consumption across individual construction sites and cement types over an eight-week horizon. Target: Achieve a Mean Absolute Percentage Error (MAPE) of 15% or less for site-level forecasts.",
+        },
+        {
+          heading: "Objective 2: Improve Construction Readiness",
+          body: "Use predicted demand and inventory information to anticipate cement requirements before scheduled concrete pours. Target: Achieve at least 98% pour readiness, measured by the availability of sufficient cement for scheduled pours.",
+        },
+        {
+          heading: "Objective 3: Optimize Inventory Utilization",
+          body: "Translate forecast outputs into inventory guidance that balances silo capacity, supplier lead times, and pour schedules.",
+          more: "Reduce excess stock and emergency deliveries while keeping sites ready for planned pours.",
         },
       ],
       tech: [
         {
-          heading: "Tools and approach",
-          body: "Work in Python with pandas and a time-series model. Features come from pour plans, on-hand inventory, delivery lead time, and weather. The output is a site-level dashboard plus a short note on model error.",
+          heading: "SQLite",
+          body: "How to install",
+        },
+        {
+          heading: "Python, Numpy, Pandas",
+          body: "How to install · Click to download",
+        },
+        {
+          heading: "Statsmodels, Scikit-learn",
+          body: "How to install · Click to download",
+        },
+        {
+          heading: "Plotly, Dash",
+          body: "How to install · Click to download",
         },
       ],
       workflow: [
         {
-          heading: "How the five weeks run",
-          body: "Week 1 is a data audit and a baseline against the manual forecast. Weeks 2 and 3 build features and the model. Week 4 reviews error with the sponsor and drafts the dashboard. Week 5 is the handover and a one-page operating guide for the Monday order.",
+          heading: "Project phase",
+          body: "The project follows a structured analytical workflow covering data preparation, forecasting, inventory optimization, and application development.",
+        },
+        {
+          heading: "Step 1: Data Ingestion & Validation",
+          body: "Import the Cement_Demand dataset from SQLite into Python. Validate the schema, inspect missing values, identify duplicates, and assess data consistency.",
+        },
+        {
+          heading: "Step 2: Data Cleaning & Preparation",
+          body: "Address missing and negative values, validate inventory movements, reconcile stock balances, and prepare consistent analytical datasets.",
+        },
+        {
+          heading: "Step 3: Exploratory Data Analysis",
+          body: "Analyze consumption patterns across sites and cement types. Investigate seasonality, demand variations, and relationships between weather conditions and planned pours.",
+        },
+        {
+          heading: "Step 4: Feature Engineering",
+          body: "Prepare forecasting variables using historical consumption, planned pours, rainfall, temperature, and relevant time-based features.",
+        },
+        {
+          heading: "Step 5: Forecasting Model",
+          body: "Train and evaluate forecasting models for site-level and cement-type demand over the eight-week horizon.",
+          more: "Compare model error against the MAPE target, then use the best-performing forecasts to support inventory guidance and the interactive dashboard.",
         },
       ],
       lesson: [
         {
-          heading: "What this project teaches",
-          body: "A pour plan is not a fact. The useful forecast is a range the buyer can order against, with a clear note for what happens when a site schedule slips.",
+          heading: "Key takeaways and reflection prompts",
+          body: "This project demonstrates how time-series forecasting and machine learning can address practical supply chain challenges in construction. By integrating operational, inventory, and weather data, businesses can improve demand visibility, optimize material availability, reduce waste, and make proactive procurement decisions. It highlights the value of translating predictive analytics into actionable business intelligence.",
+        },
+        {
+          heading: "Summary",
+          body: "The cement demand forecasting project provides a foundation for smarter, data-driven inventory management across construction sites. By combining predictive modelling, inventory simulation, and interactive visualization, the proposed solution supports operational efficiency and better resource allocation. Ultimately, it demonstrates how data science can transform complex operational challenges into measurable business opportunities.",
         },
       ],
     },
   },
   {
-    id: "harbor-medical",
-    title: "Operational Efficiency and Patient Outcome Analysis",
+    id: "operational-efficiency-and-patient-outcome-analysis-at-harbor-medical-center",
+    title:
+      "Operational Efficiency and Patient Outcome Analysis at Harbor Medical Center",
     description:
-      "Operational Efficiency and Patient Outcome Analysis at Harbor Medical Center.",
+      "Harbor Medical Center wants a clearer view of how patient admissions, doctor visits and vital-sign records relate to hospital performance.",
     careerTrack: "Data Analysis",
     category: "Healthcare",
     duration: "2 weeks",
     status: "Active",
-    mark: "apex",
+    mark: "google",
     image: "/images/pngs/new-home/the-impact/project-1.png",
-    contributor: "Amaka Bello",
+    contributor: "Adedola Elumaro",
     skills: [
-      "Exploratory Analysis",
-      "KPI Design",
-      "Cohort Comparison",
-      "Reporting",
+      "Power Query/Data Cleaning",
+      "Data modelling",
+      "DAX",
+      "KPI Interpretation",
+      "Dashboard Design",
+      "Analytical Thinking",
     ],
     tabs: {
       brief: [
         {
           heading: "Project summary",
-          body: "Harbor Medical Center wants a clear view of where patient flow slows down, and whether those delays show up in outcomes. This project turns theatre, ward, and discharge data into a small set of operational measures the leadership team can review each week.",
+          body: "Harbor Medical Center wants a clearer view of how patient admissions, doctor visits and vital-sign records relate to hospital performance. Consultants will use Power BI to extract valuable insights and recommendations from four healthcare datasets.",
         },
         {
           heading: "Business context",
-          body: "Beds stay occupied longer than planned, and discharge decisions are still assembled from separate ward lists. Leaders can see volume, but they cannot see which pathway, ward, or time of day is driving the delay.",
+          body: "Hospitals collect valuable patient and operational information, but disconnected records can make it difficult to identify delays, understand workload or assess care outcomes. The project focuses on making this information easier to examine and explain.",
         },
         {
           heading: "Project purpose",
-          body: "Build an analysis that links flow measures to outcome measures, so the hospital can choose one operational change to test next.",
-          more: "The deliverable is a baseline pack: where time is lost, which patient groups are most affected, and which metric should be watched if a change is piloted.",
+          body: "To develop an interactive Power BI report that brings together patient, admission, doctor-visit and vital-sign data and helps management identify trends, operational challenges and areas for improvement.",
+          more: true,
         },
       ],
       company: [
         {
-          heading: "About the client",
-          body: "Harbor Medical Center is a regional hospital with inpatient wards, a day-surgery unit, and a busy emergency department. Operations and the clinical director share ownership of patient flow.",
+          heading: "Company overview",
+          body: "Harbor Medical Center is an European multi-specialty healthcare provider serving urban and semi-urban communities. It provides services across areas such as Emergency, Cardiology, Pulmonology and Internal Medicine, supported by electronic patient records.",
         },
         {
-          heading: "Who you work with",
-          body: "You work with the flow lead and a ward manager. Clinical detail stays inside the hospital's existing records. The analysis uses aggregated pathway data, not identifiable patient notes.",
+          heading: "Business challenge",
+          body: "Hospital leaders need better visibility into patient demand, repeated admissions, slow doctor responses, differences between departments and unusual vital-sign readings. The available data exists in separate files, making a combined view difficult.",
+        },
+        {
+          heading: "Rationale for this project",
+          body: "Bringing the datasets into a shared analytical model will help teams monitor trends, investigate bottlenecks and make more informed decisions. This is a learning case study using historical extracts; it is not a live clinical monitoring system.",
+          more: true,
         },
       ],
       scope: [
         {
-          heading: "In scope",
-          body: "Map the current discharge and theatre pathway, define three to five flow KPIs, and compare cohorts by ward and admission type. Recommend one change the hospital can pilot.",
-        },
-        {
-          heading: "Out of scope",
-          body: "This is not a clinical audit and it does not redesign staffing rotas. Recommendations stay inside the data the operations team already collects.",
+          heading: "Project objectives",
+          body: "1. Prepare and connect the four supplied datasets in Power BI. 2. Analyse admissions, recorded readmission outcomes, doctor responsiveness and vital-sign patterns. 3. Compare departmental admission volumes and patient outcomes. 4. Develop clear interactive report pages and evidence-based recommendations.",
+          more: true,
         },
       ],
       tech: [
         {
-          heading: "Tools and approach",
-          body: "Use SQL or spreadsheets for the extract, then a notebook or BI tool for the cohort cuts. The final view is a one-page report a ward manager can read in a stand-up.",
+          heading: "Power BI",
+          body: "How to install · Click to download",
         },
       ],
       workflow: [
         {
-          heading: "How the two weeks run",
-          body: "Days 1 to 3 confirm the measures and the data gaps. Days 4 to 7 cut the cohorts and check the story with the flow lead. The last days package the baseline and the proposed pilot metric.",
+          heading: "Project phase",
+          body: "The project follows a Power BI workflow from connecting the four healthcare datasets through cleaning, modelling, KPI definition and interactive hospital operations reporting.",
         },
       ],
       lesson: [
         {
-          heading: "What this project teaches",
-          body: "An outcome chart without a flow chart does not tell a hospital what to change. Pair the result with the step in the pathway that created it.",
+          heading: "Key takeaways and reflection prompts",
+          body: "Accurate reporting starts with understanding the business question and the meaning of each field. Cleaning should preserve valid information and make assumptions visible. A sound model prevents duplicate counting and supports reliable filtering. KPIs are useful only when their definitions, denominators and limitations are clear. The best dashboards answer business questions, not just attractive charts.",
+        },
+        {
+          heading: "Summary",
+          body: "On completion of this project, consultants will have worked through a complete Power BI project relevant to businesses in the healthcare sector, from the raw data to an interactive hospital operations dashboard. The emphasis is on explaining decisions clearly, validating the results and making responsible recommendations based on what the data supports.",
+          more: true,
         },
       ],
     },
   },
   {
-    id: "largence",
-    title: "Developing a Customer Satisfaction and Retention Programme",
+    id: "developing-a-customer-satisfaction-and-retention-analytics-dashboard-to-improve-customer-experience-at-largence",
+    title:
+      "Developing a Customer Satisfaction and Retention Analytics Dashboard to Improve Customer Experience at Largence",
     description:
-      "Largence is a UK-focused LegalTech platform designed to modernise legal operations by providing clearer case workflows.",
+      "Largence is a UK-focused LegalTech platform designed to modernise legal operations by providing legal professionals with a unified workspace to create, manage, review, collaborate on, and execute legal documents.",
     careerTrack: "Project Management",
     category: "LegalTech",
     duration: "2 weeks",
-    status: "Completed",
-    mark: "spectrum",
+    status: "Active",
+    mark: "google",
     image: "/images/pngs/business-testimonial/collab.jpg",
-    contributor: "Priya Shah",
-    skills: [
-      "Stakeholder Mapping",
-      "Delivery Planning",
-      "Risk Register",
-      "Client Reporting",
-    ],
+    contributor: "Nendelwa Bupwatda",
+    skills: [],
     tabs: {
       brief: [
         {
           heading: "Project summary",
-          body: "Largence wants a retention programme for law firms that already use its case workflow. This project plans that programme: who owns it, what clients hear at each stage, and how the team knows it is working.",
-        },
-        {
-          heading: "Business context",
-          body: "New firms sign up, then go quiet after onboarding. Support hears complaints late, and account managers have no shared view of which clients are at risk of leaving.",
-        },
-        {
-          heading: "Project purpose",
-          body: "Set up a 90-day retention programme with owners, a client cadence, and a simple health score the account team can update.",
-          more: "The plan covers the first check-in, the signals that trigger an escalation, and the report the founder reviews each month.",
+          body: "Largence is a UK-focused LegalTech platform designed to modernise legal operations by providing legal professionals with a unified workspace to create, manage, review, collaborate on, and execute legal documents. Following improvements to its legal workflow capabilities, Largence is focused on understanding whether customers are achieving continuous value from the platform. As a growing SaaS organisation, customer satisfaction and retention are critical to long-term success. While Largence provides advanced capabilities such as AI-assisted drafting, workflow management, compliance support, collaboration tools, and document execution processes, the company requires better visibility into customer experience after adoption. This project focuses on developing a Customer Satisfaction and Retention Analytics Dashboard that enables Largence to monitor customer health, understand user engagement, identify dissatisfaction trends, and proactively address churn risks. The project will combine project management and business analysis practices to gather requirements, analyse customer experience challenges, define key performance indicators (KPIs), and develop a dashboard framework that supports customer success decision-making.",
+          more: true,
         },
       ],
       company: [
         {
-          heading: "About the client",
-          body: "Largence is a UK LegalTech company. Its product gives law firms a clearer path through case work, from intake to completion. The team is small, so the programme has to run without a new department.",
+          heading: "Company overview",
+          body: "Largence is a UK-focused LegalTech platform designed to modernise legal operations by providing a unified workspace for legal professionals to create, manage, review, collaborate on, and execute legal documents. It addresses fragmented workflows and disconnected tools in the legal sector to improve document visibility and efficiency. The platform provides a centralized legal operating environment and combines AI-assisted legal capabilities with structured workflows.",
         },
         {
-          heading: "Who you work with",
-          body: "The founder sponsors the work. Customer success and support supply the complaints and the renewal dates. You coordinate them. You do not rebuild the product.",
+          heading: "Founding & Growth",
+          body: "Largence was founded to address inefficiencies within traditional legal workflows where organizations still operated through disconnected systems.",
+          more: true,
         },
       ],
       scope: [
         {
-          heading: "In scope",
-          body: "A stakeholder map, a 90-day client cadence, a risk register for the rollout, and a monthly report template. Define the health score and who updates it.",
-        },
-        {
-          heading: "Out of scope",
-          body: "Pricing changes, a new product feature, and a full CRM implementation sit outside this engagement.",
+          heading: "Project objectives",
+          body: "1. Analyse customer satisfaction levels and feedback trends. 2. Identify factors influencing customer retention and churn. 3. Evaluate customer engagement with Largence platform features. 4. Develop customer experience KPIs and measurement criteria. 5. Create a customer satisfaction and retention dashboard.",
+          more: true,
         },
       ],
       tech: [
         {
-          heading: "Tools and approach",
-          body: "The working tools are a delivery plan, a RACI, and the client's existing support inbox and billing list. No new platform is required to start the cadence.",
+          heading: "Power BI",
+          body: "How to install · Click to download",
         },
       ],
       workflow: [
         {
-          heading: "How the two weeks run",
-          body: "Week 1 maps who speaks to the client today and where accounts go quiet. Week 2 agrees the cadence, the health score, and the first month's report with the founder.",
+          heading: "1. Project Charter",
+          body: "Project overview, business objectives, scope definition, stakeholder identification, and success criteria.",
+        },
+        {
+          heading: "2. Project Plan",
+          body: "Timeline, milestones, responsibilities, and dependencies.",
+          more: true,
         },
       ],
       lesson: [
         {
-          heading: "What this project teaches",
-          body: "A retention programme fails when nobody owns the check-in. Name the owner, the trigger, and the date before you add another metric.",
+          heading: "Key takeaways and reflection prompts",
+          body: "This project enables Largence to move from simply delivering a LegalTech platform to actively understanding and improving customer experience. By developing a customer satisfaction and retention dashboard, Largence gains better visibility into customer health, engagement levels, and potential churn risks. The project demonstrates how Project Management and Business Analysis practices can work together to transform customer data into actionable business improvements, supporting stronger customer relationships, improved retention, and sustainable SaaS growth.",
+        },
+        {
+          heading: "Summary",
+          body: "10. Lessons Learnt — The Largence Customer Satisfaction and Retention Analytics Dashboard Project provides valuable lessons in project management, business analysis, customer experience management, and data-driven decision-making.",
+          more: true,
         },
       ],
     },
   },
   {
-    id: "housing-repair",
+    id: "housing-repair-service-improvement-project",
     title: "Housing Repair Service Improvement Project",
     description:
-      "Westbridge Borough Council is a local authority based in the West Midlands, England. Established in 1974.",
+      "Westbridge Borough Council is a local authority based in the West Midlands, England. Established in 1978, the council has served its community for 48 years and provides essential public services to approximately 280,000 residents.",
     careerTrack: "Business Analysis",
     category: "Construction",
     duration: "3 weeks",
     status: "Active",
-    mark: "apex",
+    mark: "google",
     image: "/images/pngs/new-home/the-impact/project-2.png",
-    contributor: "James Adeyemi",
+    contributor: "Oluchi Ibeh",
     skills: [
-      "Process Mapping",
-      "Requirements",
-      "As-Is / To-Be",
-      "Stakeholder Interviews",
+      "Business Problem Analysis",
+      "Stakeholder Analysis",
+      "Requirements Elicitation",
+      "Requirements Analysis",
+      "Requirements Prioritisation",
+      "Process Analysis",
+      "Process Modelling",
+      "Root Cause Analysis",
+      "Gap Analysis",
+      "User Story Writing",
+      "Acceptance Criteria Definition",
+      "UAT Planning",
+      "Requirements Traceability",
+      "Consulting Mindset",
+      "Collaboration",
+      "Presentation Skill",
+      "Facilitation & Workshop Skills",
+      "Stakeholder Communication",
+      "Problem-Solving",
+      "Critical Thinking",
     ],
     tabs: {
       brief: [
         {
           heading: "Project summary",
-          body: "Westbridge Borough Council needs its housing repair service to move from first report to completed job with fewer handoffs. This project documents how a repair is raised today and proposes a clearer path for tenants and operatives.",
-        },
-        {
-          heading: "Business context",
-          body: "Tenants report the same repair more than once because status is hard to see. Operatives arrive without the right part, and the contact centre cannot tell a tenant when the job will actually close.",
-        },
-        {
-          heading: "Project purpose",
-          body: "Produce an as-is map, a to-be journey, and the requirements the council can hand to its repairs system owner.",
-          more: "The requirements cover status updates for tenants, a parts check before a visit is booked, and the measure the service lead will use to see repeat reports falling.",
+          body: "Westbridge Borough Council is a local authority based in the West Midlands, England. Established in 1978, the council has served its community for 48 years and provides essential public services to approximately 280,000 residents. Its Housing Services Department manages around 42,000 council-owned properties and receives over 60,000 repair requests each year. The council is currently experiencing challenges within its housing repair service. Residents have reported delays, limited repair updates and difficulties tracking the progress of their requests. Internally, staff rely on manual processes, manage a high volume of repair enquiries and sometimes work with incomplete repair information. Management also has limited visibility into service performance, repair trends, and the key factors driving delays. As part of its Digital Housing Transformation Programme, the council wants to review the current repair journey, understand the challenges affecting service delivery and identify opportunities to improve the experience for both residents and staff. To support this initiative, the Business Analysis and Project Management teams have been engaged to work collaboratively. The Business Analysis team will investigate the current repair process, understand stakeholder needs, identify business challenges and",
+          more: true,
         },
       ],
       company: [
         {
-          heading: "About the client",
-          body: "Westbridge Borough Council is a West Midlands local authority, established in 1974. Its housing service looks after council homes and a repairs team that covers routine and emergency jobs.",
-        },
-        {
-          heading: "Who you work with",
-          body: "The housing service lead sponsors the work. You interview the contact centre, a repairs scheduler, and an operative. Tenant detail stays anonymised.",
+          heading: "Company overview",
+          body: "Westbridge Borough Council is a local authority based in the West Midlands, England. Established in 1978, the council has served its community for 46 years, delivering essential public services to about 280,000 residents. The council is responsible for managing a wide range of services, including housing, waste management, planning, environmental services, social care and community support. The Housing Services Department plays a key role in supporting residents by managing around 42,000 council-owned properties and overseeing more than 60,000 repair requests annually. The department works with internal teams and external maintenance contractors to ensure housing issues are reported, assessed and resolved effectively. As part of its commitment to improving public services, Westbridge Borough Council is investing in digital transformation initiatives that enhance resident experience, improve operational efficiency and enable better decision-making through improved processes and information management.",
+          more: true,
         },
       ],
       scope: [
         {
-          heading: "In scope",
-          body: "Map the current repair journey from report to close. Write the to-be steps and a prioritised requirement list. Call out where the current system blocks a status update.",
-        },
-        {
-          heading: "Out of scope",
-          body: "Procuring a new repairs contractor and changing the council's emergency policy are outside this project.",
+          heading: "Project objectives",
+          body: "The objective of this project is to analyse the current housing repair service at Westbridge Borough Council, identify key challenges and opportunities for improvement, and define requirements for a more efficient, resident-focused service. By working together, the BA and PM teams will: understand how the current housing repair service operates and identify the challenges affecting its delivery; identify key stakeholders involved in the repair journey and understand their needs, expectations and concerns; analyse available project and service information to understand repair volumes, timelines, service performance and resident experience; identify pain points, delays, duplication and manual effort within the current service; investigate the root causes of key problems identified through stakeholder engagement and available evidence; and define the business, user and solution requirements that the future service should address.",
+          more: true,
         },
       ],
       tech: [
         {
-          heading: "Tools and approach",
-          body: "Process maps, a requirements catalogue, and the fields already stored in the repairs system. The output is written so a system owner can configure it without a second discovery round.",
+          heading: "Confluence",
+          body: "How to install · Click to download",
+        },
+        {
+          heading: "Miro",
+          body: "How to install · Click to download",
+        },
+        {
+          heading: "Microsoft Excel",
+          body: "How to install · Click to download",
+        },
+        {
+          heading: "Jira",
+          body: "How to install · Click to download",
         },
       ],
       workflow: [
         {
-          heading: "How the three weeks run",
-          body: "Week 1 is interviews and the as-is map. Week 2 tests that map with the scheduler and drafts the to-be journey. Week 3 prioritises requirements and walks the service lead through them.",
+          heading: "Project Stages & Team Responsibilities",
+          body: "1. Kick-off & Problem Definition — BA Focus: Define the business problem; establish the project purpose, scope and success measures. PM Focus: Coordinate project initiation; agree roles and responsibilities; establish the 10-day project plan, milestones and deadlines; set up communication channels. Joint Output: Project Understanding Summary; Business Problem Statement.",
+          more: true,
         },
       ],
       lesson: [
         {
-          heading: "What this project teaches",
-          body: "A tenant measures the service by whether they know what happens next. A process map that hides the status update has missed the requirement.",
+          heading: "Key takeaways and reflection prompts",
+          body: "The experience has shown that effective BA work goes beyond producing documents, and it requires curiosity, critical thinking, collaboration and the ability to turn business problems into practical improvements.",
+        },
+        {
+          heading: "Key Lessons",
+          body: "1. Listen to different stakeholder perspectives. 2. Ask the right questions, and analyse before concluding.",
+          more: true,
         },
       ],
     },
   },
   {
-    id: "medisure",
-    title: "Strengthening Cyber Resilience through Phishing Simulation",
+    id: "strengthening-cyber-resilience-through-phishing-email-investigation-and-response-in-healthcare-organizations",
+    title:
+      "Strengthening Cyber Resilience through Phishing Email Investigation and Response in Healthcare Organizations",
     description:
-      "This case study simulates a phishing incident targeting MediSure Health Network, a healthcare provider.",
+      "This case study simulates a phishing incident targeting MediSure Health Network, a healthcare provider that relies heavily on electronic health records (EHRs), patient portals, and digital communications.",
     careerTrack: "SOC Analysis",
     category: "Healthcare",
     duration: "2 weeks",
-    status: "Completed",
-    mark: "spectrum",
+    status: "Active",
+    mark: "google",
     image: "/images/pngs/new-home/the-impact/project-3.png",
-    contributor: "Lena Okonkwo",
+    contributor: "Victoria Simon",
     skills: [
-      "Phishing Analysis",
-      "Log Review",
-      "Incident Response",
-      "Awareness Reporting",
+      "Header parsing and Received-chain forensics",
+      "SPF, DKIM, and DMARC interpretation",
+      "URL defanging and reputation lookups",
+      "Risk-based prioritization under queue pressure",
+      "Escalation judgment against defined criteria, including national CSOC thresholds",
+      "Clear, defensible incident writing",
+      "Stakeholder and handover communication",
+      "Social-engineering pattern recognition",
     ],
     tabs: {
       brief: [
         {
           heading: "Project summary",
-          body: "MediSure Health Network wants to know how a phishing email would move through its clinics. This case study walks a simulated incident from the first click to containment, using the logs the security team already keeps.",
+          body: "This case study simulates a phishing incident targeting MediSure Health Network, a healthcare provider that relies heavily on electronic health records (EHRs), patient portals, and digital communications. Students and interns will assume the role of SOC analysts investigating the phishing attempt, validating its authenticity, tracing impact through Splunk logs, and producing actionable reports and awareness content.",
         },
         {
           heading: "Business context",
-          body: "Clinic staff share inboxes and open patient-related email all day. A previous drill stopped at the click rate. Nobody traced what the account could reach after the click, or how long the mailbox stayed exposed.",
-        },
-        {
-          heading: "Project purpose",
-          body: "Produce an incident timeline, the controls that would have stopped it, and a short awareness note for clinic managers.",
-          more: "The note tells managers what to report, who to call, and which mailbox actions to take in the first hour. It is written for clinic staff, not for the security team.",
+          body: "MediSure Health Network is a leading healthcare provider known for its strong use of digital technology. This strength also makes it a prime target for cyber threats. One morning, staff received an email that looked like a vendor invoice. It seemed normal but was actually a phishing attempt designed to steal sensitive data such as patient information and financial records. The incident revealed a deeper issue: while the systems were secure, employees remained vulnerable to deception. The organization faced both immediate risk and the need for stronger long-term protection against phishing and business email compromise attacks.",
+          more: true,
         },
       ],
       company: [
         {
-          heading: "About the client",
-          body: "MediSure Health Network runs clinics and a shared administrative service. Email is the main way referrals and patient documents arrive. The security function is small and shares on-call cover.",
+          heading: "Company overview",
+          body: "MediSure Health Network takes a proactive stance in investigating phishing attempts to safeguard patient data. The organization is moving from reactive defense to proactive resilience through structured investigation workflows and supporting technology stacks.",
         },
         {
-          heading: "Who you work with",
-          body: "The security lead sponsors the simulation. IT provides mailbox and sign-in logs. No real patient record is opened during the exercise.",
+          heading: "Business challenge",
+          body: "Phishing emails continue to target employees. In one case, a suspicious email from what appeared to be a trusted medical supplier asked employees to verify an outstanding invoice, creating both an immediate risk and a longer-term need for stronger detection and response.",
+          more: true,
         },
       ],
       scope: [
         {
-          heading: "In scope",
-          body: "Replay one simulated phishing path. Build the timeline from delivery to containment. List the detective and preventive controls, and draft the one-hour clinic response.",
-        },
-        {
-          heading: "Out of scope",
-          body: "A live phishing campaign against staff, a new email gateway, and a full security-policy rewrite are out of scope.",
+          heading: "Project objectives",
+          body: "The project aims to analyze, validate, and respond to the suspected phishing email, while also improving MediSure's long-term resilience against similar threats. Identify Phishing Indicators: Examine the email headers, sender information, and embedded links for signs of spoofing, domain manipulation, or suspicious payloads. Validate Sender Authenticity: Perform SPF, DKIM, and DMARC checks using DNS analysis tools to confirm or reject the legitimacy of the email's origin. Analyze Links and Attachments: Use malware analysis platforms to detect hidden payloads, trojans, or credential harvesting schemes. Correlate Network Logs: Cross-check inbound and outbound network traffic using SIEM tools to identify any connections to known malicious IP addresses or domains. Respond and Mitigate: Contain the threat by blocking domains, resetting credentials, isolating affected endpoints, and updating email security filters. Educate Employees: Develop awareness material based on findings, training staff to recognize similar attacks in the future.",
+          more: true,
         },
       ],
       tech: [
         {
-          heading: "Tools and approach",
-          body: "Mailbox headers, sign-in logs, and the existing alerting rules. The write-up uses the team's current tooling so the timeline can be repeated after the engagement.",
+          heading: "mxtoolbox",
+          body: "How to install · Click to download",
+        },
+        {
+          heading: "Splunk Enterprise",
+          body: "How to install · Click to download",
         },
       ],
       workflow: [
         {
-          heading: "How the two weeks run",
-          body: "Week 1 reconstructs the path and the gaps in detection. Week 2 checks the timeline with the security lead and writes the clinic note and the control list.",
+          heading: "Project Phase",
+          body: "You will be provided the following: Email Header File — a real-world email header extracted from the suspicious message for SPF/DKIM/DMARC validation. Log File for Splunk — network and email server logs provided for ingestion into Splunk to track communication attempts to external servers. Educational Resources — YouTube: Phishing Attack Explained; Splunk Free Training for Security Logs; OWASP Phishing Awareness Guide. The project will be executed in seven structured phases. 1. Initial Email Review: Analyze subject lines, sender details, and message body for urgency tactics, impersonation, or embedded URLs.",
+          more: true,
         },
       ],
       lesson: [
         {
-          heading: "What this project teaches",
-          body: "A click rate is not an incident report. The useful product is the hour-by-hour path, and the first action a clinic manager can take without waiting for the security on-call.",
+          heading: "Key takeaways and reflection prompts",
+          body: "Greater confidence from patients, regulators, and stakeholders in MediSure's ability to protect sensitive information.",
+        },
+        {
+          heading: "Key Lessons",
+          body: "Phishing is not merely an IT problem; it is a business-critical challenge that directly impacts patient safety, regulatory compliance, and organizational reputation. MediSure Health Network's proactive stance in investigating and responding to this phishing attempt demonstrates its commitment to safeguarding sensitive patient data and maintaining uninterrupted medical services.",
+          more: true,
         },
       ],
     },
   },
   {
-    id: "safemed",
-    title: "Enterprise Security Governance & Compliance",
+    id: "enterprise-security-governance-compliance-transformation-for-safemed-innovations",
+    title:
+      "Enterprise Security Governance & Compliance Transformation for safemed innovations.",
     description:
-      "SafeMed Innovations is a high-growth healthcare technology company founded in 2020 that provides digital care tools.",
+      "SafeMed Innovations is a high-growth healthcare technology company founded in 2020 that provides digital care tools, currently facing governance and security gaps including a GDPR investigation and potential fines.",
     careerTrack: "GRC",
     category: "Healthcare",
-    duration: "3 weeks",
+    duration: "2 weeks",
     status: "Active",
     mark: "google",
     image: "/images/pngs/new-home/the-impact/project-4.png",
-    contributor: "Omar Haddad",
+    contributor: "Azeez Rahman",
     skills: [
-      "Control Mapping",
-      "Risk Assessment",
-      "Policy Review",
-      "Compliance Reporting",
+      "Governance",
+      "Policy Development",
+      "Cybersecurity fundamentals",
     ],
     tabs: {
       brief: [
         {
           heading: "Project summary",
-          body: "SafeMed Innovations is preparing for a customer security review. This project maps the controls it already runs to the questions enterprise buyers ask, and shows where the evidence is thin.",
+          body: "SafeMed Innovations is a high-growth healthcare technology company founded in 2020 that provides digital care tools. The company is facing governance and security gaps, including a GDPR investigation and potential fines, and needs a structured transformation of its security governance and compliance practices.",
         },
         {
           heading: "Business context",
-          body: "SafeMed sells digital care tools into hospitals. Buyers now ask for a control list, an owner for each risk, and proof that policies match what the product team actually does. Those answers currently live in separate documents.",
-        },
-        {
-          heading: "Project purpose",
-          body: "Deliver a control map, a short risk register, and a gap list the founder can use in the next security questionnaire.",
-          more: "Each gap names the owner, the evidence that is missing, and whether it blocks a sale or can wait until the following quarter.",
+          body: "SafeMed Innovations is a high-growth healthcare technology company founded in 2020 that provides digital care tools. Rapid growth has outpaced formal security governance, leaving the organisation exposed to regulatory scrutiny and buyer security reviews.",
+          more: true,
         },
       ],
       company: [
         {
-          heading: "About the client",
-          body: "SafeMed Innovations was founded in 2020. It builds digital care tools used by clinical teams. The company is still small, and security governance sits with the founder and the engineering lead.",
-        },
-        {
-          heading: "Who you work with",
-          body: "You work with the founder and the engineering lead. Policy text is checked against the product's real access, logging, and vendor list, not against a template alone.",
+          heading: "Company overview",
+          body: "SafeMed Innovations. Company Name: SafeMed Innovations. Industry: Healthcare. Headquarters: London, UK. Corporate History & Evolution — Foundation Story (March 2020): Founded during COVID-19 with a focus on AI diagnostics and remote care. The founding team includes Dr. Samuel Lewis (CEO), Clara Mitchell (CTO), and Dr. Laura Rodriguez (CMO).",
+          more: true,
         },
       ],
       scope: [
         {
-          heading: "In scope",
-          body: "Map current controls to a standard buyer questionnaire. Record the top risks, the policy that covers each one, and the evidence on file. Rank the gaps by whether they block a deal.",
-        },
-        {
-          heading: "Out of scope",
-          body: "A full certification audit and a rebuild of the product's access model are outside this engagement.",
+          heading: "Project objectives",
+          body: "This project focuses on transforming SafeMed Innovations' security governance, risk management, and compliance practices. Horizon 1: Immediate Survival (Months 1-3) — Objectives: Achieve compliance with GDPR and MDR to avoid regulatory fines. Key Actions: Rapid GDPR compliance review and action plan.",
+          more: true,
         },
       ],
       tech: [
         {
-          heading: "Tools and approach",
-          body: "A control matrix, the existing policies, and the engineering team's access and vendor records. The output is a register a founder can answer from, with a pointer to the evidence for each control.",
+          heading: "MS Office & Google Workspace",
+          body: "How to install · Click to download",
         },
       ],
       workflow: [
         {
-          heading: "How the three weeks run",
-          body: "Week 1 collects policies and the questions buyers actually send. Week 2 maps controls and marks missing evidence. Week 3 reviews the gap list with the founder and agrees what is fixed before the next questionnaire.",
+          heading: "Project Phase",
+          body: "1. Project Initiation & Threat Landscape Brief (Days 1-2): Kick-off meetings with CISO, DPO, and CTO; develop a Project Charter; compile a Threat Landscape Brief. 2. Rapid Policy & SOP Gap Analysis (Days 3-5): Review SafeMed's existing policies against GDPR, MDR, and ISO 27001 requirements. 3. Core Policy Library Development (Days 6-10): Draft security policies and SOPs using Microsoft Word, focusing on Immediate Survival and Stabilization. 4. Draft Deliverable Review & Finalization (Days 11-13): Submit the draft Policy Library and Project Charter for leadership review and feedback. 5. Knowledge Transfer & Project Closeout (Day 14): Conduct a closeout meeting and transfer documentation.",
+          more: true,
         },
       ],
       lesson: [
         {
-          heading: "What this project teaches",
-          body: "A policy that nobody can evidence will not pass a buyer review. Write the control next to the proof, and say plainly when the proof is not there yet.",
+          heading: "Key takeaways and reflection prompts",
+          body: "1. Learning opportunities for the consultant (Amdari Security). 2. Navigating Crisis-Driven GRC: Experience in extreme pressure environments. 3. Applying Multi-Jurisdictional Healthcare Regulations: GDPR, EU MDR, and HIPAA compliance. 4. Translating Technical Debt into Governance Risk: Analyzing vulnerabilities like unpatched systems. 5. Strategic Policy Writing for a High-Stakes Environment: Drafting policies and SOPs. 6. Rapid Stakeholder Alignment: Identifying key stakeholders across legal, clinical, technical, and commercial teams.",
+        },
+        {
+          heading: "Key Lessons",
+          body: "Here are the key roles at SafeMed Innovations that are exposed to or impacted by this initial phase of the security transformation project: Board of Directors — The ultimate recipients of the project's justification and roadmap, as they have demanded a comprehensive security overhaul to protect the company's valuation and future.",
+          more: true,
         },
       ],
     },

@@ -13,22 +13,15 @@ import {
 } from "./data";
 
 function BriefSection({ section }: { section: ShowcaseSection }) {
-  const [expanded, setExpanded] = useState(false);
-
   return (
     <section>
       <h2 className="text-base font-semibold text-[#0F172A]">{section.heading}</h2>
       <p className="mt-2 text-sm leading-relaxed text-[#64748B] sm:text-[15px]">
-        {section.body}
-        {section.more && expanded ? ` ${section.more}` : null}{" "}
+        {section.body}{" "}
         {section.more ? (
-          <button
-            type="button"
-            onClick={() => setExpanded((open) => !open)}
-            className="font-medium text-[#156374] hover:underline"
-          >
-            {expanded ? "Show less" : "Read more >>>"}
-          </button>
+          <Link href="/internship" className="font-medium text-[#156374] hover:underline">
+            Read more &gt;&gt;&gt;
+          </Link>
         ) : null}
       </p>
     </section>
@@ -72,7 +65,7 @@ export default function ProjectShowcaseDetail({
 
             <div className="mt-auto max-w-xl pt-12">
               <CompanyLogo mark={project.mark} />
-              <h1 className="mt-3 max-w-lg font-clash-display text-3xl font-semibold leading-tight tracking-tight text-white sm:text-4xl">
+              <h1 className="mt-3 max-w-4xl font-clash-display text-3xl font-semibold leading-tight tracking-tight text-white sm:text-4xl">
                 {project.title}
               </h1>
               <Link
@@ -103,16 +96,20 @@ export default function ProjectShowcaseDetail({
 
         <div className="mt-8">
           <h2 className="text-sm font-semibold text-[#0F172A]">Skills to be developed</h2>
-          <ul className="mt-3 flex flex-wrap gap-2">
-            {project.skills.map((skill) => (
-              <li
-                key={skill}
-                className="rounded-md bg-[#F1F5F9] px-2.5 py-1 text-xs font-medium text-[#475569]"
-              >
-                {skill}
-              </li>
-            ))}
-          </ul>
+          {project.skills.length === 0 ? (
+            <p className="mt-3 text-sm text-[#64748B]">No skills listed yet.</p>
+          ) : (
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {project.skills.map((skill) => (
+                <li
+                  key={skill}
+                  className="rounded-md bg-[#F1F5F9] px-2.5 py-1 text-xs font-medium text-[#475569]"
+                >
+                  {skill}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <div className="mt-8 overflow-x-auto border-b border-[#E2E8F0]">
