@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Building2, Clock3, UserRound } from "lucide-react";
+import { Building2, Clock3, Download, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CompanyLogo } from "./company-logo";
 import {
@@ -25,6 +25,33 @@ function BriefSection({ section }: { section: ShowcaseSection }) {
         ) : null}
       </p>
     </section>
+  );
+}
+
+function TechStackCard({ section }: { section: ShowcaseSection }) {
+  return (
+    <div className="rounded-2xl bg-white p-2 shadow-[0_4px_16px_rgba(15,23,42,0.08)]">
+      <div className="flex items-center justify-between gap-4 rounded-xl bg-[#E8EFF1] px-4 py-3.5 sm:px-5">
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-[#0B2B33] sm:text-[15px]">
+            {section.heading}
+          </p>
+          <Link
+            href="/internship"
+            className="mt-0.5 inline-block text-sm font-medium text-[#156374] underline underline-offset-2 hover:text-[#0f4d5a]"
+          >
+            How to install
+          </Link>
+        </div>
+        <Link
+          href="/internship"
+          className="inline-flex h-10 shrink-0 items-center gap-2 rounded-lg bg-[#C5D9DE] px-3 text-sm font-semibold text-[#156374] transition hover:bg-[#B6CFD4] sm:px-4"
+        >
+          <Download className="size-4" strokeWidth={2.25} aria-hidden />
+          Click to download
+        </Link>
+      </div>
+    </div>
   );
 }
 
@@ -137,10 +164,20 @@ export default function ProjectShowcaseDetail({
           </div>
         </div>
 
-        <div className="mt-6 max-w-4xl space-y-6" role="tabpanel">
-          {sections.map((section) => (
-            <BriefSection key={section.heading} section={section} />
-          ))}
+        <div
+          className={cn(
+            "mt-6 max-w-4xl",
+            tab === "tech" ? "space-y-3" : "space-y-6",
+          )}
+          role="tabpanel"
+        >
+          {tab === "tech"
+            ? sections.map((section) => (
+                <TechStackCard key={section.heading} section={section} />
+              ))
+            : sections.map((section) => (
+                <BriefSection key={section.heading} section={section} />
+              ))}
         </div>
       </div>
     </article>
