@@ -36,7 +36,7 @@ export const SHOWCASE_TABS: { id: ShowcaseTab; label: string }[] = [
   { id: "brief", label: "Project brief" },
   { id: "company", label: "Company details" },
   { id: "scope", label: "Scope" },
-  { id: "tech", label: "Tech scope" },
+  { id: "tech", label: "Tech stacks" },
   { id: "workflow", label: "Work flow" },
   { id: "lesson", label: "Lesson" },
 ];

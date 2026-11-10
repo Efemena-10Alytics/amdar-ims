@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import ProjectShowcaseDetail from "@/components/_core/landing-pages/project-showcase/detail";
+import ProjectShowcaseDetail from "@/components/_core/landing-pages/project-showcase/project-details";
 import {
   getShowcaseProject,
   SHOWCASE_PROJECTS,
