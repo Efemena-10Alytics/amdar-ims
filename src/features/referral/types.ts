@@ -1,10 +1,14 @@
-export type ReferralPaymentStatus = "paid" | "pending" | "refunded";
+export type ReferralPaymentStatus = "in_progress" | "completed" | "refunded";
 
 export interface ReferralStats {
-  totalEarned: number;
+  /** Already earned and payable. */
+  confirmedEarnings: number;
+  /** Projected from referrals still working through their payment plan. */
+  expectedEarnings: number;
   totalReferrals: number;
-  successfulReferrals: number;
   pendingReferrals: number;
+  confirmedReferrals: number;
+  failedReferrals: number;
 }
 
 export interface ReferralPaymentSummary {

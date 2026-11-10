@@ -138,10 +138,12 @@ export function ReferralsDashboard() {
     <div className="min-w-0 space-y-6 px-4 py-6 lg:px-6">
       <ReferralStatsCards
         stats={{
-          totalEarned: toAmount(summary.data?.total_earned),
+          confirmedEarnings: toAmount(summary.data?.confirmed_earnings),
+          expectedEarnings: toAmount(summary.data?.expected_earnings),
           totalReferrals: summary.data?.total_referrals ?? 0,
-          successfulReferrals: summary.data?.successful_referrals ?? 0,
           pendingReferrals: summary.data?.pending_referrals ?? 0,
+          confirmedReferrals: summary.data?.confirmed_referrals ?? 0,
+          failedReferrals: summary.data?.failed_referrals ?? 0,
         }}
         currency={currency}
         isLoading={summary.isPending}

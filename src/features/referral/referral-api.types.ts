@@ -35,15 +35,14 @@ export type ReferralRewardTier = {
 
 export type ReferralCodeData = {
   code: string;
-  /** Only "active" is documented; `is_blocked` carries the blocked state. */
-  status: string;
+  status: "active" | "blocked";
   is_blocked: boolean;
   currency: string;
   qualified_referrals: number;
   next_reward: string;
   reward_tiers: ReferralRewardTier[];
   eligibility: {
-    months_into_program: number;
+    days_after_cohort_start: number;
     requires_full_payment: boolean;
   };
 };
@@ -60,11 +59,18 @@ export type ReferralWallet = {
 
 export type ReferralSummaryData = {
   currency: string;
-  total_earned: string;
+  /** Earned from confirmed referrals, including anything already withdrawn. */
+  confirmed_earnings: string;
+  /** Projected from referrals still awaiting confirmation. Not withdrawable. */
+  expected_earnings: string;
+  /** pending + confirmed + failed. */
   total_referrals: number;
-  successful_referrals: number;
+  /** Awaiting confirmation: in_progress and completed. */
   pending_referrals: number;
-  refunded_referrals: number;
+  /** Verified and approved: earned. */
+  confirmed_referrals: number;
+  /** Not confirmed because the referred user was refunded. */
+  failed_referrals: number;
   wallet: ReferralWallet;
   /** When false the Withdraw Earnings button is disabled. */
   can_withdraw: boolean;
@@ -83,10 +89,14 @@ export type ReferralPaymentSummaryData = {
 
 /* ---------------------------------------------------------------- 3.4 */
 
-/** Row status. Distinct from the payment plan's own status. */
-export type ReferralTrackingStatus = "pending" | "earned" | "refunded";
+/**
+ * Row status, distinct from the payment plan's own. The flow is
+ * in_progress -> completed -> earned, and a row can become refunded at any
+ * point: `completed` means paid in full but still inside the 30-day wait.
+ */
+export type ReferralTrackingStatus = "in_progress" | "completed" | "earned" | "refunded";
 
-export type ReferralPaymentPlanStatus = "paid" | "pending" | "refunded";
+export type ReferralPaymentPlanStatus = "in_progress" | "completed" | "refunded";
 
 export type ReferralTrackingItem = {
   id: number;

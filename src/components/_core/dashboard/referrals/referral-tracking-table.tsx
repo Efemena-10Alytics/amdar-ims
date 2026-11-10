@@ -83,7 +83,7 @@ export function ReferralTrackingTable({
           <div className="overflow-x-auto">
             <table className="w-full min-w-180 border-collapse">
               <thead>
-                <tr className="h-13 bg-[#E8EFF1] font-sora text-sm text-[#5C6777]">
+                <tr className="h-13 bg-[#E8EFF1] font-sora text-xs tracking-wide text-[#5C6777] uppercase">
                   <th className="rounded-l-lg px-4 text-left">#</th>
                   <th className="px-4 text-left">Referee Name</th>
                   <th className="px-4 text-left">Email</th>

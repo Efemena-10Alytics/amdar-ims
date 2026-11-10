@@ -27,15 +27,19 @@ export function InviteEarnBanner({
     }
   };
 
-  const shareText = encodeURIComponent(
-    `Join me on Amdari and kickstart your career! ${referralLink ?? ""}`,
-  );
+  // Share URLs and copy follow the handover guide (section 8.1).
   const shareUrl = encodeURIComponent(referralLink ?? "");
+  const whatsappText = encodeURIComponent(
+    `Join me on Amdari and level up your career! Use my link: ${referralLink ?? ""}`,
+  );
+  const tweetText = encodeURIComponent(
+    "Level up your tech career with Amdari! Sign up with my link:",
+  );
 
   const shareTargets = [
     {
       key: "whatsapp",
-      href: `https://wa.me/?text=${shareText}`,
+      href: `https://api.whatsapp.com/send?text=${whatsappText}`,
       label: "Share via WhatsApp",
       icon: <WhatsappShareIcon />,
     },
@@ -47,7 +51,7 @@ export function InviteEarnBanner({
     },
     {
       key: "twitter",
-      href: `https://twitter.com/intent/tweet?text=${shareText}`,
+      href: `https://twitter.com/intent/tweet?text=${tweetText}&url=${shareUrl}`,
       label: "Share via Twitter",
       icon: <TwitterShareIcon />,
     },

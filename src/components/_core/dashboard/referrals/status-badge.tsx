@@ -12,22 +12,22 @@ const STATUS_CONFIG: Record<
   ReferralPaymentStatus,
   { label: string; bg: string; text: string; icon: React.ReactNode }
 > = {
-  paid: {
-    label: "Paid",
-    bg: "#C7F5D8",
-    text: "#359E5B",
+  completed: {
+    label: "Completed",
+    bg: "#ECFDF3",
+    text: "#027A48",
     icon: <ReferralPaidIcon />,
   },
-  pending: {
-    label: "Pending",
-    bg: "#F3E1C4",
-    text: "#564103",
+  in_progress: {
+    label: "Inprogress",
+    bg: "#FFFAEB",
+    text: "#B54708",
     icon: <ReferralPendingIcon />,
   },
   refunded: {
     label: "Refunded",
-    bg: "#FDECEC",
-    text: "#AA3030",
+    bg: "#FEF3F2",
+    text: "#B42318",
     icon: <ReferralRefundedIcon />,
   },
 };
