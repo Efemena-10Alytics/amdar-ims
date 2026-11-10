@@ -4,13 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { Building2, Clock3, Download, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { CompanyLogo } from "./company-logo";
+import { CompanyLogo } from "../company-logo";
 import {
   SHOWCASE_TABS,
   type ShowcaseProject,
   type ShowcaseSection,
   type ShowcaseTab,
-} from "./data";
+} from "../data";
 
 function BriefSection({ section }: { section: ShowcaseSection }) {
   return (
