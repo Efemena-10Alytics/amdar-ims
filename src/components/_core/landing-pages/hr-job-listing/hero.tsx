@@ -4,12 +4,12 @@ import { GoogleMark, HeroArrowDown, ReviewsPill } from "./svg";
 
 /**
  * The Figma hero sits on an illustrated background that has not been supplied
- * yet, so the section stays plain white until it arrives.
+ * yet, so the section uses a flat cream until it arrives.
  */
 const HrJobListingHero = () => {
   return (
-    <section className="relative overflow-hidden bg-white">
-      <div className="app-width grid items-center gap-10 py-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-6 lg:py-16">
+    <section className="relative overflow-hidden bg-[#FDF6E9]">
+      <div className="app-width grid items-center gap-10 py-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,3fr)] lg:gap-6 lg:py-16">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <ReviewsPill />
@@ -56,14 +56,14 @@ const HrJobListingHero = () => {
           </div>
         </div>
 
-        <div className="min-w-0">
+        <div className="min-w-0 lg:-mr-6 xl:-mr-16">
           <Image
             src="/hr-job-img1.png"
             alt="An Amdari team member holding a laptop"
-            width={720}
-            height={640}
+            width={1100}
+            height={980}
             priority
-            className="h-auto w-full object-contain"
+            className="ml-auto h-auto w-full max-w-none object-contain lg:w-[125%]"
           />
         </div>
       </div>
