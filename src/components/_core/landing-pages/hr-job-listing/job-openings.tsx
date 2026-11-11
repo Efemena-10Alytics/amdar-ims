@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { Check, Search } from "lucide-react";
 import { ALL_DEPARTMENTS, DEPARTMENTS, JOB_OPENINGS, type JobOpening } from "./data";
 import { JobCompanyMark } from "./svg";
@@ -68,12 +69,12 @@ function JobCard({ job }: { job: JobOpening }) {
       </div>
 
       <div className="px-6 pb-6">
-        <button
-          type="button"
-          className="h-13 w-full rounded-xl bg-[#156374] font-sora text-base font-semibold text-white transition-colors hover:bg-[#0f4d5a]"
+        <Link
+          href={`/hr-job-listing/${job.id}`}
+          className="flex h-13 w-full items-center justify-center rounded-xl bg-[#156374] font-sora text-base font-semibold text-white transition-colors hover:bg-[#0f4d5a]"
         >
           Apply Now
-        </button>
+        </Link>
       </div>
     </article>
   );
