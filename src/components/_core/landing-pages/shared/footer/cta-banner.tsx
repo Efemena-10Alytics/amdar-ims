@@ -1,16 +1,43 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Aos from "aos";
 import { ArrowRight } from "lucide-react";
 import { useAuthStore } from "@/store/auth-store";
 
+/** The careers page asks for the internship, not for an account. */
+const CAREERS_COPY = {
+  heading: "Ready to Build Experience That Employers Value?",
+  tagline:
+    "Join Amdari and start working on projects that help you grow your skills, strengthen your portfolio, and prepare for your next career opportunity.",
+  ctaHref: "/internship",
+  ctaLabel: "Apply for an Internship",
+};
+
 const CTAbanner = () => {
   const user = useAuthStore((s) => s.user);
-  const ctaHref = user != null ? "/dashboard" : "/auth/sign-up";
-  const ctaLabel = user != null ? "Go to dashboard" : "Create an account";
+  const pathname = usePathname();
+  const isCareers = pathname === "/hr-job-listing";
+
+  const heading = isCareers
+    ? CAREERS_COPY.heading
+    : "Ready To Get the job you always wanted?";
+  const tagline = isCareers
+    ? CAREERS_COPY.tagline
+    : "Start here - with a career experience Internship";
+  const ctaHref = isCareers
+    ? CAREERS_COPY.ctaHref
+    : user != null
+      ? "/dashboard"
+      : "/auth/sign-up";
+  const ctaLabel = isCareers
+    ? CAREERS_COPY.ctaLabel
+    : user != null
+      ? "Go to dashboard"
+      : "Create an account";
 
   React.useEffect(() => {
     Aos.init({ duration: 600 });
@@ -22,11 +49,9 @@ const CTAbanner = () => {
           {/* Left Section - Headline & Tagline */}
           <div className="flex-1">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold mb-4 leading-tight">
-              Ready To Get the job you always wanted?
+              {heading}
             </h2>
-            <p className="text-lg sm:text-xl text-white/90">
-              Start here - with a career experience Internship
-            </p>
+            <p className="text-lg sm:text-xl text-white/90">{tagline}</p>
           </div>
 
           {/* Right Section - CTA Text & Button */}
