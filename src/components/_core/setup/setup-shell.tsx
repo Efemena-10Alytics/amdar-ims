@@ -2,6 +2,7 @@
 
 import { Suspense } from "react";
 import { JourneyLayoutHeader } from "@/components/_core/onboarding/journey-layout-header";
+import { PresencePing } from "@/components/_core/presence/presence-ping";
 import Aside from "@/components/_core/setup/aside";
 import { useRequireUserId } from "@/hooks/use-require-user-id";
 
@@ -23,17 +24,20 @@ export default function SetupShell({
   if (!isAuthReady) return null;
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-white p-3 2xl:p-5">
-      <Suspense fallback={<div className="hidden lg:flex lg:w-[45%] xl:w-[42%]" />}>
-        <Aside />
-      </Suspense>
-      <div
-        className="relative h-full min-h-0 w-full overflow-y-auto sm:pl-10"
-        style={RIGHT_PANEL_STYLE}
-      >
-        <JourneyLayoutHeader activeStep={3} />
-        <div className="pb-8">{children}</div>
+    <>
+      <PresencePing />
+      <div className="flex h-screen w-full overflow-hidden bg-white p-3 2xl:p-5">
+        <Suspense fallback={<div className="hidden lg:flex lg:w-[45%] xl:w-[42%]" />}>
+          <Aside />
+        </Suspense>
+        <div
+          className="relative h-full min-h-0 w-full overflow-y-auto sm:pl-10"
+          style={RIGHT_PANEL_STYLE}
+        >
+          <JourneyLayoutHeader activeStep={3} />
+          <div className="pb-8">{children}</div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { PresencePing } from "@/components/_core/presence/presence-ping";
 import { useGetUserEnrollment } from "@/features/internship/use-get-user-enrollment";
 import { useSyncEnrollmentSelection } from "@/features/internship/use-sync-enrollment-selection";
 import { resolveEnrollmentJourneyRedirect } from "@/features/internship/resolve-enrollment-journey";
@@ -44,22 +45,28 @@ function DashboardEnrollmentGuard({
     router.replace(redirectHref);
   }, [isPending, isError, redirectHref, isPortfolioRoute, router]);
 
+  let content: React.ReactNode;
   if (!isAuthReady || isPending) {
-    return (
+    content = (
       <div className="flex flex-1 items-center justify-center p-8">
         <p className="text-sm text-[#64748B]">Loading your enrollment...</p>
       </div>
     );
-  }
-
-  if (isError || !redirectHref || isPortfolioRoute) {
-    return children;
+  } else if (isError || !redirectHref || isPortfolioRoute) {
+    content = children;
+  } else {
+    content = (
+      <div className="flex flex-1 items-center justify-center p-8">
+        <p className="text-sm text-[#64748B]">Redirecting to continue your journey...</p>
+      </div>
+    );
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center p-8">
-      <p className="text-sm text-[#64748B]">Redirecting to continue your journey...</p>
-    </div>
+    <>
+      <PresencePing />
+      {content}
+    </>
   );
 }
 
