@@ -18,6 +18,7 @@ import {
 import { useSkipEntrySetup } from "@/features/internship/use-skip-entry-setup";
 import { useGetPreDiagnostic } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 import { useRequireUserId } from "@/hooks/use-require-user-id";
+import { PresencePing } from "@/components/_core/presence/presence-ping";
 
 const IMS_WORKS_FALLBACK_VIDEO = "https://vimeo.com/1123856639";
 
@@ -253,8 +254,8 @@ function OnboardingShellContent({
     );
   };
 
-  if (!data) {
-    return layout(rightPanel(), {
+  const shell = !data ? (
+    layout(rightPanel(), {
       aside:
         showSettingUpExperience || showOnboardingLoadingExperience
           ? "auth"
@@ -262,10 +263,8 @@ function OnboardingShellContent({
       showStepper: !(
         showSettingUpExperience || showOnboardingLoadingExperience
       ),
-    });
-  }
-
-  return (
+    })
+  ) : (
     <OnboardingProvider
       value={{
         data,
@@ -280,6 +279,13 @@ function OnboardingShellContent({
     >
       {layout(rightPanel())}
     </OnboardingProvider>
+  );
+
+  return (
+    <>
+      <PresencePing />
+      {shell}
+    </>
   );
 }
 

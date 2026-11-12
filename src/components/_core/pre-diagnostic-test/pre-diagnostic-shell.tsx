@@ -14,6 +14,7 @@ import {
 import { useSkipEntrySetup } from "@/features/internship/use-skip-entry-setup";
 import { useGetPreDiagnostic } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 import { useRequireUserId } from "@/hooks/use-require-user-id";
+import { PresencePing } from "@/components/_core/presence/presence-ping";
 
 function PreDiagnosticShellContent({
   children,
@@ -171,11 +172,9 @@ function PreDiagnosticShellContent({
     </div>
   );
 
-  if (!data) {
-    return layout(rightPanel());
-  }
-
-  return (
+  const shell = !data ? (
+    layout(rightPanel())
+  ) : (
     <PreDiagnosticProvider
       value={{
         data,
@@ -190,6 +189,13 @@ function PreDiagnosticShellContent({
     >
       {layout(rightPanel())}
     </PreDiagnosticProvider>
+  );
+
+  return (
+    <>
+      <PresencePing />
+      {shell}
+    </>
   );
 }
 
