@@ -20,7 +20,7 @@ const CAREERS_COPY = {
 const CTAbanner = () => {
   const user = useAuthStore((s) => s.user);
   const pathname = usePathname();
-  const isCareers = pathname === "/hr-job-listing";
+  const isCareers = pathname.startsWith("/hr-job-listing");
 
   const heading = isCareers
     ? CAREERS_COPY.heading

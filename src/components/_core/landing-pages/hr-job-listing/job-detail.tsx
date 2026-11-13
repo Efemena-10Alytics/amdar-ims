@@ -52,7 +52,7 @@ const JobDetail = ({ job }: { job: JobOpening }) => {
         </div>
 
         <Link
-          href="#apply"
+          href={`/hr-job-listing/${job.id}/apply`}
           className="mt-6 inline-flex h-13 items-center justify-center rounded-xl bg-[#156374] px-10 font-sora text-base font-semibold text-white transition-colors hover:bg-[#0f4d5a]"
         >
           Apply Now
@@ -83,10 +83,7 @@ const JobDetail = ({ job }: { job: JobOpening }) => {
           </section>
         ))}
 
-        <div
-          id="apply"
-          className="mt-14 scroll-mt-24 rounded-2xl bg-[#A89350] px-6 py-16 text-center"
-        >
+        <div className="mt-14 rounded-2xl bg-[#A89350] px-6 py-16 text-center">
           <h2 className="font-clash-display text-4xl font-semibold text-white/90 sm:text-5xl">
             Ready to Apply?
           </h2>
@@ -94,7 +91,7 @@ const JobDetail = ({ job }: { job: JobOpening }) => {
             Join our team and be part of something amazing
           </p>
           <Link
-            href="/internship"
+            href={`/hr-job-listing/${job.id}/apply`}
             className="mt-7 inline-flex h-13 items-center gap-3 rounded-full bg-[#156374] py-1.5 pr-1.5 pl-7 font-sora text-base font-medium text-white transition-colors hover:bg-[#0f4d5a]"
           >
             Submit Application
