@@ -26,8 +26,11 @@ const WelcomeStarted = ({ displayName, countdown }: WelcomeStartedProps) => {
             </p>
           </div>
 
-          <div className="inline-flex w-fit items-center rounded-xl bg-[#F5C84C] px-3 py-3 sm:px-4">
+          <div className="inline-flex w-fit flex-col items-center rounded-xl bg-[#F5C84C] px-3 py-3 sm:px-4">
             <WelcomeCountdownRow countdown={countdown} variant="active" />
+            <p className="mt-2 font-bold text-sm lg:text-base font-medium text-[#0B2B33]">
+              To end of your program
+            </p>
           </div>
         </div>
 
