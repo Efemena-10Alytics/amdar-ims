@@ -7,9 +7,9 @@ export function EmptyReferralState() {
         <ReferralEmptyIllustration />
       </div>
       <h3 className="font-sora text-xl font-semibold text-[#092A31]">No referees yet</h3>
-      <p className="max-w-100 font-sora text-base leading-[1.4] text-[#64748B]">
-        You&apos;re yet to tell your families and friends about Amdari,{" "}
-        <span className="font-semibold text-[#092A31]">WHY?</span>
+      <p className="max-w-120 font-sora text-base leading-[1.4] text-[#64748B]">
+        Every friend or family member who joins through your link earns you reward. Your
+        first referral is one share away.
       </p>
     </div>
   );
