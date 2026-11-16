@@ -67,7 +67,14 @@ function todayUtcMs(): number {
 }
 
 /**
- * Journey redirects open the calendar day before the cohort starts.
+ * Pre-entry journey (onboarding / WhatsApp / pre-diagnostic) only applies to
+ * cohorts starting after this date. July 31, 2026 and earlier are left alone.
+ */
+export const PRE_ENTRY_JOURNEY_START_DATE_CUTOFF = "2026-07-31";
+
+/**
+ * Journey redirects open the calendar day before the cohort starts, and only
+ * for cohorts after {@link PRE_ENTRY_JOURNEY_START_DATE_CUTOFF}.
  * The date comes from `cohort.start_date` on GET /v3/user/enrollment.
  */
 export function isEnrollmentJourneyCohortEligible(
@@ -76,6 +83,10 @@ export function isEnrollmentJourneyCohortEligible(
   const startDate = enrollment.cohort?.start_date;
   const startMs = toDateOnlyUtcMs(startDate);
   if (startMs == null) return false;
+
+  const cutoffMs = toDateOnlyUtcMs(PRE_ENTRY_JOURNEY_START_DATE_CUTOFF);
+  if (cutoffMs == null || startMs <= cutoffMs) return false;
+
   return todayUtcMs() >= startMs - ONE_DAY_MS;
 }
 
