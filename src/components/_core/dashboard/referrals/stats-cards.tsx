@@ -19,7 +19,14 @@ const EXPECTED_EARNINGS_HINT =
 function InfoHint({ hint, onDark = false }: { hint: string; onDark?: boolean }) {
   return (
     <span title={hint} className="shrink-0 cursor-help">
-      <Info className={onDark ? "size-4 text-white/70" : "size-4 text-[#94A3B8]"} aria-hidden />
+      <Info
+        className={
+          onDark
+            ? "size-4 text-white/70"
+            : "size-4 text-[#94A3B8] transition-colors group-hover:text-white/70"
+        }
+        aria-hidden
+      />
       <span className="sr-only">{hint}</span>
     </span>
   );
@@ -38,11 +45,14 @@ function StatCard({
   icon: React.ReactNode;
 }) {
   return (
-    <div className="flex min-w-0 flex-col justify-between gap-4 rounded-lg bg-[#E8EFF1] px-4 py-4 text-[#092A31]">
+    // Hovering lifts the card into the Rewards card's treatment.
+    <div className="group flex min-w-0 cursor-default flex-col justify-between gap-4 rounded-lg bg-[#E8EFF1] px-4 py-4 text-[#092A31] transition-colors hover:bg-[#156374] hover:text-white">
       <div className="flex items-start justify-between gap-2">
         <span className="flex min-w-0 items-start gap-2">
           <span className="shrink-0">{icon}</span>
-          <span className="font-sora text-xs leading-tight text-[#0C3640]">{label}</span>
+          <span className="font-sora text-xs leading-tight text-[#0C3640] transition-colors group-hover:text-white">
+            {label}
+          </span>
         </span>
         <InfoHint hint={hint} />
       </div>

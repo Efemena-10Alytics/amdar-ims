@@ -22,7 +22,7 @@ import {
   LearnIcon,
   PortfolioIcon,
 } from "../svg";
-// import { ReferralsSidebarIcon } from "../referrals/icons";
+import { ReferralsSidebarIcon } from "../referrals/icons";
 import { cn } from "@/lib/utils";
 import { NavMain } from "./nav-main";
 import { SidebarCollapseToggle } from "./sidebar-collapse-toggle";
@@ -39,7 +39,7 @@ const navMain = [
   { title: "Learn", url: "/learn", icon: LearnIcon },
   { title: "Blog", url: "/dashboard/blog", icon: BlogIcon },
   { title: "Billings", url: "/dashboard/billing", icon: BillingIcon },
-  // { title: "Referrals", url: "/dashboard/referrals", icon: ReferralsSidebarIcon },
+  { title: "Referrals", url: "/dashboard/referrals", icon: ReferralsSidebarIcon },
 ];
 
 export function AppSidebar({
