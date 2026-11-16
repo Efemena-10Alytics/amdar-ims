@@ -81,13 +81,13 @@ export function SelectOneDropdown({
                 </span>
                 <span
                   aria-hidden
-                  className={`flex size-5 shrink-0 items-center justify-center rounded transition-colors ${
+                  className={`flex size-4 shrink-0 items-center justify-center rounded-sm transition-colors ${
                     isSelected
                       ? "bg-[#C7F5D8] text-[#1F7A4A]"
                       : "border border-[#DCE5E9] bg-white"
                   }`}
                 >
-                  {isSelected && <Check className="size-3" strokeWidth={3} />}
+                  {isSelected && <Check className="size-2.5" strokeWidth={3.5} />}
                 </span>
               </button>
             );
