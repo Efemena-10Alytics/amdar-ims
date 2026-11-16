@@ -40,3 +40,45 @@ export async function pingPresence(
 
   return data;
 }
+
+export type ClassroomPingData = {
+  sessionId: number;
+  startedAt: string;
+  lastPingAt: string;
+  activeSeconds: number;
+  spentSeconds: number;
+  onlineUntil: string;
+};
+
+export type ClassroomPingResponse = {
+  success: boolean;
+  message: string;
+  data: ClassroomPingData;
+};
+
+/**
+ * POST /api/v3/classroom/ping
+ * Empty body — auth is enough. Classroom-page dwell heartbeat
+ * (separate from platform presence).
+ */
+export async function pingClassroom(): Promise<ClassroomPingResponse> {
+  const { data } = await axiosInstance.post<ClassroomPingResponse>(
+    "v3/classroom/ping",
+    {},
+  );
+
+  return data;
+}
+
+/**
+ * POST /api/v3/classroom/video/ping
+ * Empty body — auth is enough. Video-watch heartbeat while playing.
+ */
+export async function pingClassroomVideo(): Promise<ClassroomPingResponse> {
+  const { data } = await axiosInstance.post<ClassroomPingResponse>(
+    "v3/classroom/video/ping",
+    {},
+  );
+
+  return data;
+}

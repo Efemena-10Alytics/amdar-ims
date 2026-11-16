@@ -21,6 +21,7 @@ import ReactPlayer from "react-player";
 import { RichTextContent } from "@/components/_core/dashboard/internship-program/project-details/project-content";
 import SubmitTodoDrawer from "@/components/_core/dashboard/internship-program/project-details/classroom/submit-todo-drawer";
 import ClassroomHeader from "@/components/_core/dashboard/internship-program/project-details/classroom/classroom-header";
+import { usePingVideos } from "@/components/_core/dashboard/internship-program/project-details/classroom/use-ping-videos";
 import type {
   InternProjectTodo,
   InternProjectTodoContentType,
@@ -31,6 +32,7 @@ import { useGetMyTodoSubmission } from "@/features/interns-project/todo/use-get-
 import { useGetProjectBySlug } from "@/features/interns-project/use-get-project-by-slug";
 import { useGetTodoById } from "@/features/interns-project/todo/use-get-todo-by-id";
 import { useGetTodosByProjectId } from "@/features/interns-project/todo/use-get-todos-by-project-id";
+import { usePingClassroom } from "@/features/presence/use-ping-classroom";
 import { cn } from "@/lib/utils";
 
 type TaskStatus = "done" | "active" | "todo";
@@ -219,13 +221,17 @@ function TodoTypeMedia({
   const [hasVideoEnded, setHasVideoEnded] = useState(false);
   const [forcePlaying, setForcePlaying] = useState<boolean | null>(null);
   const [replayKey, setReplayKey] = useState(0);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const { canContinue, isCompleting, errorMessage, handleContinue } =
     useTypeContinue({ type, projectId, todoId, nextHref, fallbackHref });
+
+  usePingVideos(isVideoPlaying);
 
   useEffect(() => {
     setHasVideoEnded(false);
     setForcePlaying(null);
     setReplayKey(0);
+    setIsVideoPlaying(false);
   }, [type.id, type.videoUrl]);
 
   if (type.contentType === "video" && type.videoUrl) {
@@ -243,7 +249,10 @@ function TodoTypeMedia({
           width="100%"
           height="100%"
           style={{ position: "absolute", inset: 0 }}
+          onPlay={() => setIsVideoPlaying(true)}
+          onPause={() => setIsVideoPlaying(false)}
           onEnded={() => {
+            setIsVideoPlaying(false);
             setForcePlaying(false);
             setHasVideoEnded(true);
           }}
@@ -824,6 +833,8 @@ export default function ClassroomPageContent() {
   const todosQuery = useGetTodosByProjectId(project?.id);
   const todoQuery = useGetTodoById(project?.id, todoId);
   const [activeTypeId, setActiveTypeId] = useState<number | null>(null);
+
+  usePingClassroom();
 
   const sortedActiveTypes = useMemo(
     () => getSortedTodoTypes(todoQuery.data),
