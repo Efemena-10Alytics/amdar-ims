@@ -67,7 +67,7 @@ function ScoreRing({ percentage }: { percentage: number }) {
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
         <span className="text-2xl font-semibold text-[#173740]">
-          {Math.round(progress)}
+          {Math.round(progress)}%
         </span>
       </div>
     </div>
