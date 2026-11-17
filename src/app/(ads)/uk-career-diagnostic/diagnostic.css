@@ -1,0 +1,211 @@
+.uk-diag-page {
+  --diag-bg: #092a31;
+  --diag-surface: #0c3640;
+  --diag-surface-2: #0f4652;
+  --diag-line: rgba(21, 99, 116, 0.55);
+  --diag-line-soft: rgba(255, 255, 255, 0.12);
+  --diag-line-gold: rgba(255, 224, 130, 0.42);
+  --diag-yellow: #ffe082;
+  --diag-yellow-hi: #fff0b3;
+  --diag-text: #f2f7f7;
+  --diag-muted: #c7d5d6;
+  --diag-subtle: #8eb7be;
+  --diag-red: #ff8f78;
+  --diag-green: #72d9b4;
+
+  position: relative;
+  min-height: 100vh;
+  background-color: var(--diag-bg);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.032) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.032) 1px, transparent 1px);
+  background-size: 56px 56px;
+  color: var(--diag-text);
+  line-height: 1.55;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.uk-diag-page::before {
+  content: "";
+  position: fixed;
+  top: -18vh;
+  left: 50%;
+  width: 100vw;
+  max-width: 1100px;
+  height: 60vh;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    closest-side,
+    rgba(255, 224, 130, 0.13),
+    transparent
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.uk-diag-page.has-sticky {
+  padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+}
+
+.uk-diag-page :is(a, button, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--diag-yellow);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+.uk-diag-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border: 0;
+  cursor: pointer;
+  text-decoration: none;
+  background: linear-gradient(180deg, var(--diag-yellow-hi), var(--diag-yellow));
+  color: #092a31;
+  font-weight: 700;
+  font-size: 1.05rem;
+  border-radius: 999px;
+  padding: 0.9rem 1.5rem;
+  min-height: 56px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+    0 12px 30px -8px rgba(255, 224, 130, 0.52);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.uk-diag-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.45),
+    0 18px 38px -8px rgba(255, 224, 130, 0.72);
+}
+
+.uk-diag-btn:active {
+  transform: none;
+}
+
+.uk-diag-btn .arr {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #092a31;
+  color: var(--diag-yellow);
+  display: grid;
+  place-items: center;
+  font-size: 1.05rem;
+  flex: none;
+  transition: transform 0.18s ease;
+}
+
+.uk-diag-btn:hover .arr {
+  transform: translateX(3px);
+}
+
+.uk-diag-cta-pulse {
+  font-size: 1.125rem;
+  min-height: 64px;
+  animation: uk-diag-ring 2.4s ease-out infinite;
+}
+
+@keyframes uk-diag-ring {
+  0% {
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+      0 12px 30px -8px rgba(255, 224, 130, 0.55),
+      0 0 0 0 rgba(255, 224, 130, 0.48);
+  }
+  70%,
+  100% {
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+      0 12px 30px -8px rgba(255, 224, 130, 0.55),
+      0 0 0 16px rgba(255, 224, 130, 0);
+  }
+}
+
+.uk-diag-meter-fill {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--diag-yellow-hi), var(--diag-yellow));
+  animation: uk-diag-fill 2.6s ease-out forwards;
+}
+
+@keyframes uk-diag-fill {
+  to {
+    width: 100%;
+  }
+}
+
+.uk-diag-arc {
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.uk-diag-bar-fill {
+  transition: width 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+details.uk-diag-gap summary {
+  list-style: none;
+}
+
+details.uk-diag-gap summary::-webkit-details-marker {
+  display: none;
+}
+
+details.uk-diag-gap summary::after {
+  content: "";
+  margin-left: auto;
+  width: 9px;
+  height: 9px;
+  border-right: 2px solid var(--diag-yellow);
+  border-bottom: 2px solid var(--diag-yellow);
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+  flex: none;
+}
+
+details.uk-diag-gap[open] summary::after {
+  transform: rotate(-135deg);
+}
+
+details.uk-diag-fold > summary {
+  list-style: none;
+}
+
+details.uk-diag-fold > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.uk-diag-fold > summary::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid var(--diag-yellow);
+  border-bottom: 2px solid var(--diag-yellow);
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+  flex: none;
+}
+
+details.uk-diag-fold[open] > summary::after {
+  transform: rotate(-135deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uk-diag-cta-pulse {
+    animation: none;
+  }
+  .uk-diag-meter-fill {
+    animation: none;
+    width: 100%;
+  }
+  .uk-diag-page * {
+    transition: none !important;
+  }
+}
