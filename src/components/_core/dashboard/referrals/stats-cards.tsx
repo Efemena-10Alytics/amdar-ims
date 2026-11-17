@@ -1,4 +1,7 @@
-import { Info } from "lucide-react";
+"use client";
+
+import { useRef, useState } from "react";
+import { Info, X } from "lucide-react";
 import { formatReferralAmount, type ReferralCurrency } from "@/features/referral/locale";
 import type { ReferralStats } from "@/features/referral/types";
 import {
@@ -11,23 +14,104 @@ import {
 
 const CARD_GRID = "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5";
 
-// Tooltip copy is specified verbatim in the handover guide (section 8.3).
-const CONFIRMED_EARNINGS_HINT = "The total amount earned from confirmed referrals.";
-const EXPECTED_EARNINGS_HINT =
-  "The amount you stand to earn once your pending referrals are confirmed.";
+/** Leading bold run, then the rest of the sentence. */
+type HintLine = { label: string; text: string };
 
-function InfoHint({ hint, onDark = false }: { hint: string; onDark?: boolean }) {
+// Copy is specified verbatim in the handover guide (section 8.3).
+const REWARDS_HINT: HintLine[] = [
+  { label: "Confirmed Earnings:", text: "The total amount earned from confirmed referrals." },
+  {
+    label: "Expected Earnings:",
+    text: "The amount you stand to earn once your pending referrals are confirmed.",
+  },
+];
+const TOTAL_HINT: HintLine[] = [
+  { label: "Total referrals", text: "combine all pending and confirmed referrals." },
+];
+const PENDING_HINT: HintLine[] = [
+  { label: "Pending Referrals:", text: "Referrals awaiting confirmation." },
+];
+const CONFIRMED_HINT: HintLine[] = [
+  {
+    label: "Confirmed Referrals:",
+    text: "Referrals that have been successfully verified and approved.",
+  },
+];
+const FAILED_HINT: HintLine[] = [
+  {
+    label: "Failed Referrals:",
+    text: "Referrals that were not confirmed due to a refund request from the referred user.",
+  },
+];
+
+/** Grace period so the pointer can travel from the icon onto the panel. */
+const CLOSE_DELAY_MS = 120;
+
+function InfoHint({ lines, onDark = false }: { lines: HintLine[]; onDark?: boolean }) {
+  const [open, setOpen] = useState(false);
+  const closeTimer = useRef<number | null>(null);
+
+  const show = () => {
+    if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    setOpen(true);
+  };
+
+  const hide = () => {
+    if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    closeTimer.current = window.setTimeout(() => setOpen(false), CLOSE_DELAY_MS);
+  };
+
   return (
-    <span title={hint} className="shrink-0 cursor-help">
-      <Info
-        className={
-          onDark
-            ? "size-4 text-white/70"
-            : "size-4 text-[#94A3B8] transition-colors group-hover:text-white/70"
-        }
-        aria-hidden
-      />
-      <span className="sr-only">{hint}</span>
+    <span className="relative shrink-0" onMouseEnter={show} onMouseLeave={hide}>
+      <button
+        type="button"
+        aria-label={`${lines[0].label} ${lines[0].text}`}
+        aria-expanded={open}
+        onFocus={show}
+        onBlur={hide}
+        onClick={() => setOpen((current) => !current)}
+        className="flex cursor-help items-center"
+      >
+        <Info
+          className={
+            onDark
+              ? "size-4 text-white/70"
+              : "size-4 text-[#94A3B8] transition-colors group-hover:text-white"
+          }
+          aria-hidden
+        />
+      </button>
+
+      {open && (
+        <span
+          role="tooltip"
+          onMouseEnter={show}
+          onMouseLeave={hide}
+          className="absolute top-full right-0 z-30 mt-2 flex w-80 max-w-[70vw] gap-2.5 rounded-xl bg-[#BFDBFE] p-4 text-left shadow-lg"
+        >
+          <Info className="mt-0.5 size-4 shrink-0 text-[#1D4ED8]" aria-hidden />
+
+          <span className="flex min-w-0 flex-1 flex-col gap-3">
+            {lines.map((line) => (
+              <span
+                key={line.label}
+                className="block font-sora text-sm leading-relaxed text-[#27568F]"
+              >
+                <span className="font-semibold text-[#0B2E6F]">{line.label}</span> {line.text}
+              </span>
+            ))}
+          </span>
+
+          <button
+            type="button"
+            aria-label="Dismiss"
+            onClick={() => setOpen(false)}
+            className="-mt-0.5 shrink-0 text-[#2A5DA8] transition-opacity hover:opacity-70"
+          >
+            <X className="size-4" aria-hidden />
+          </button>
+        </span>
+      )}
     </span>
   );
 }
@@ -41,7 +125,7 @@ function StatCard({
 }: {
   label: string;
   value: string;
-  hint: string;
+  hint: HintLine[];
   icon: React.ReactNode;
 }) {
   return (
@@ -54,7 +138,7 @@ function StatCard({
             {label}
           </span>
         </span>
-        <InfoHint hint={hint} />
+        <InfoHint lines={hint} />
       </div>
       <span className="font-clash-display text-2xl font-semibold">{value}</span>
     </div>
@@ -80,15 +164,12 @@ function RewardsCard({
           </span>
           <span className="font-sora text-sm font-medium">Rewards</span>
         </span>
-        <InfoHint onDark hint={`${CONFIRMED_EARNINGS_HINT} ${EXPECTED_EARNINGS_HINT}`} />
+        <InfoHint onDark lines={REWARDS_HINT} />
       </div>
 
       <div className="flex items-stretch gap-3">
         <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <span
-            title={CONFIRMED_EARNINGS_HINT}
-            className="truncate font-sora text-[10px] text-[#B6CFD4]"
-          >
+          <span className="truncate font-sora text-[10px] text-[#B6CFD4]">
             Confirmed Earnings
           </span>
           <span className="font-clash-display text-2xl font-semibold">
@@ -99,12 +180,7 @@ function RewardsCard({
         <span className="w-px shrink-0 bg-white/25" aria-hidden />
 
         <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <span
-            title={EXPECTED_EARNINGS_HINT}
-            className="truncate font-sora text-[10px] text-[#B6CFD4]"
-          >
-            Expected Earnings
-          </span>
+          <span className="truncate font-sora text-[10px] text-[#B6CFD4]">Expected Earnings</span>
           <span className="font-clash-display text-2xl font-semibold">
             {formatReferralAmount(expected, currency)}
           </span>
@@ -157,25 +233,25 @@ export function ReferralStatsCards({
       <StatCard
         label="Total Referrals"
         value={String(stats.totalReferrals)}
-        hint="Total referrals combine all pending and confirmed referrals."
+        hint={TOTAL_HINT}
         icon={<TotalReferralsStatIcon />}
       />
       <StatCard
         label="Pending Referrals"
         value={String(stats.pendingReferrals)}
-        hint="Referrals awaiting confirmation."
+        hint={PENDING_HINT}
         icon={<PendingReferralsStatIcon />}
       />
       <StatCard
         label="Confirmed Referrals"
         value={String(stats.confirmedReferrals)}
-        hint="Referrals that have been successfully verified and approved."
+        hint={CONFIRMED_HINT}
         icon={<SuccessfulReferralsStatIcon />}
       />
       <StatCard
         label="Failed Referrals"
         value={String(stats.failedReferrals)}
-        hint="Referrals that were not confirmed due to a refund request from the referred user."
+        hint={FAILED_HINT}
         icon={<FailedReferralsStatIcon />}
       />
     </div>
