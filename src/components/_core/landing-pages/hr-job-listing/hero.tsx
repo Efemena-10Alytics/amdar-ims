@@ -3,12 +3,15 @@ import Link from "next/link";
 import { GoogleMark, HeroArrowDown, ReviewsPill } from "./svg";
 
 /**
- * The Figma hero sits on an illustrated background that has not been supplied
- * yet, so the section uses a flat cream until it arrives.
+ * The cream stays as the backdrop colour: it shows while the illustrated
+ * background loads, and if that image is ever missing.
  */
 const HrJobListingHero = () => {
   return (
-    <section className="relative overflow-hidden bg-[#FDF6E9]">
+    <section
+      className="relative overflow-hidden bg-[#FDF6E9] bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/hr-job-listing-bg.png')" }}
+    >
       <div className="app-width grid items-center gap-10 py-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,3fr)] lg:gap-6 lg:py-16">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
