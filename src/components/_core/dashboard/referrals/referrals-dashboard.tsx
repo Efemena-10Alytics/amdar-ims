@@ -27,6 +27,7 @@ import { TopReferrersCard } from "./top-referrers-card";
 import { WithdrawalHistoryTable } from "./withdrawal-history-table";
 import { ApiWithdrawalDrawer } from "./withdrawal-request-drawer-api";
 import { WithdrawalSuccessModal } from "./withdrawal-success-modal";
+import { HowItWorksModal } from "./how-it-works-modal";
 
 /** Matches the sheet's closed-state animation duration. */
 const SHEET_CLOSE_MS = 320;
@@ -51,6 +52,7 @@ export function ReferralsDashboard() {
     () => searchParams.get("ln") !== null,
   );
   const [withdrawSuccessOpen, setWithdrawSuccessOpen] = useState(false);
+  const [howItWorksOpen, setHowItWorksOpen] = useState(false);
   const [trackingPage, setTrackingPage] = useState(1);
   const [historyPage, setHistoryPage] = useState(1);
 
@@ -154,6 +156,7 @@ export function ReferralsDashboard() {
         referralLink={referralCode.referralLink}
         isLoading={referralCode.isPending}
         errorMessage={referralCode.errorMessage}
+        onHowItWorks={() => setHowItWorksOpen(true)}
       />
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
@@ -207,6 +210,8 @@ export function ReferralsDashboard() {
       />
 
       <WithdrawalSuccessModal open={withdrawSuccessOpen} onOpenChange={setWithdrawSuccessOpen} />
+
+      <HowItWorksModal open={howItWorksOpen} onOpenChange={setHowItWorksOpen} />
     </div>
   );
 }

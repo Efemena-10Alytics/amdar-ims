@@ -8,11 +8,13 @@ export function InviteEarnBanner({
   referralLink,
   isLoading = false,
   errorMessage = null,
+  onHowItWorks,
 }: {
   /** `null` until the referral code has been fetched. */
   referralLink: string | null;
   isLoading?: boolean;
   errorMessage?: string | null;
+  onHowItWorks: () => void;
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -66,6 +68,13 @@ export function InviteEarnBanner({
           <p className="font-clash-display text-base text-[#092A31] sm:text-lg">
             Earn rewards by referring great minds
           </p>
+          <button
+            type="button"
+            onClick={onHowItWorks}
+            className="mt-1 font-sora text-sm font-semibold text-[#156374] underline-offset-2 hover:underline"
+          >
+            How it works
+          </button>
         </div>
       </div>
 
