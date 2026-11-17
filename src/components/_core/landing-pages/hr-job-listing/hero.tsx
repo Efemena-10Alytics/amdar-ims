@@ -59,14 +59,14 @@ const HrJobListingHero = () => {
           </div>
         </div>
 
-        <div className="min-w-0 lg:-mr-6 xl:-mr-16">
+        <div className="flex min-w-0 items-center justify-center">
           <Image
             src="/hr-job-img1.png"
             alt="An Amdari team member holding a laptop"
-            width={1100}
-            height={980}
+            width={1071}
+            height={791}
             priority
-            className="ml-auto h-auto w-full max-w-none object-contain lg:w-[125%]"
+            className="h-auto w-full max-w-sm object-contain sm:max-w-md lg:max-w-full"
           />
         </div>
       </div>
