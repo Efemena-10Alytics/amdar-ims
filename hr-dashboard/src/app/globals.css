@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Clash Display";
+  src: url("/fonts/clash-display/ClashDisplay-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Clash Display";
+  src: url("/fonts/clash-display/ClashDisplay-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Clash Display";
+  src: url("/fonts/clash-display/ClashDisplay-Semibold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Clash Display";
+  src: url("/fonts/clash-display/ClashDisplay-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme inline {
+  --font-sora: "Sora Variable", sans-serif;
+  --font-clash-display: "Clash Display", sans-serif;
+
+  /* Shared with amdar-ims so the two products stay visually identical. */
+  --color-brand: #156374;
+  --color-brand-dark: #0f4d5a;
+  --color-ink: #092A31;
+  --color-muted: #64748B;
+  --color-faint: #94A3B8;
+  --color-surface: #F6F9F9;
+  --color-line: #EEF2F6;
+  --color-tint: #E8EFF1;
+  --color-accent: #FFE082;
+}
+
+@layer base {
+  * {
+    font-family: "Sora Variable", sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .font-clash-display {
+    font-family: "Clash Display", sans-serif;
+  }
+
+  body {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@utility app-card {
+  @apply rounded-2xl border border-[#EEF2F6] bg-white;
+}
