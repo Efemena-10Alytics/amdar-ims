@@ -464,3 +464,90 @@ export function sendDiagnosticWebhook(payload: DiagnosticWebhookPayload): void {
     // Non-blocking analytics/webhook call
   }
 }
+
+export interface StoredDiagnosticState {
+  targetRole: string;
+  answers: (number | null)[];
+  lead: LeadInfo;
+}
+
+const DIAGNOSTIC_STORAGE_KEY = "amdari_uk_career_diagnostic_result";
+const DIAGNOSTIC_STORAGE_EVENT = "amdari-uk-diagnostic-storage";
+
+let cachedRawState: string | null | undefined = undefined;
+let cachedParsedState: StoredDiagnosticState | null = null;
+
+function isValidStoredState(data: unknown): data is StoredDiagnosticState {
+  if (!data || typeof data !== "object") return false;
+  const candidate = data as Partial<StoredDiagnosticState>;
+  if (typeof candidate.targetRole !== "string" || !candidate.targetRole.trim()) {
+    return false;
+  }
+  if (!Array.isArray(candidate.answers) || candidate.answers.length !== 6) {
+    return false;
+  }
+  if (
+    !candidate.lead ||
+    typeof candidate.lead.name !== "string" ||
+    typeof candidate.lead.email !== "string" ||
+    typeof candidate.lead.phone !== "string"
+  ) {
+    return false;
+  }
+  return true;
+}
+
+export function saveDiagnosticState(state: StoredDiagnosticState): void {
+  if (typeof window === "undefined") return;
+  try {
+    const raw = JSON.stringify(state);
+    window.sessionStorage.setItem(DIAGNOSTIC_STORAGE_KEY, raw);
+    cachedRawState = raw;
+    cachedParsedState = state;
+    window.dispatchEvent(new Event(DIAGNOSTIC_STORAGE_EVENT));
+  } catch {
+    // Ignore storage quota / privacy mode errors
+  }
+}
+
+export function clearDiagnosticState(): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.removeItem(DIAGNOSTIC_STORAGE_KEY);
+    cachedRawState = null;
+    cachedParsedState = null;
+    window.dispatchEvent(new Event(DIAGNOSTIC_STORAGE_EVENT));
+  } catch {
+    // Ignore storage errors
+  }
+}
+
+export function subscribeDiagnosticState(onChange: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener(DIAGNOSTIC_STORAGE_EVENT, onChange);
+  window.addEventListener("storage", onChange);
+  return () => {
+    window.removeEventListener(DIAGNOSTIC_STORAGE_EVENT, onChange);
+    window.removeEventListener("storage", onChange);
+  };
+}
+
+export function getDiagnosticStateSnapshot(): StoredDiagnosticState | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.sessionStorage.getItem(DIAGNOSTIC_STORAGE_KEY);
+    if (raw === cachedRawState) return cachedParsedState;
+    cachedRawState = raw;
+    if (!raw) {
+      cachedParsedState = null;
+      return null;
+    }
+    const parsed: unknown = JSON.parse(raw);
+    cachedParsedState = isValidStoredState(parsed) ? parsed : null;
+    return cachedParsedState;
+  } catch {
+    cachedRawState = null;
+    cachedParsedState = null;
+    return null;
+  }
+}

@@ -1,20 +1,19 @@
 "use client";
 
 import React, { useState } from "react";
-import { DiagnosticView, LeadInfo } from "./data";
+import { useRouter } from "next/navigation";
+import { DiagnosticView, LeadInfo, saveDiagnosticState } from "./data";
 import { GateView } from "./_components/gate-view";
 import { QuizView } from "./_components/quiz-view";
-import { ResultsView } from "./_components/results-view";
-import "./diagnostic.css";
 
 const INITIAL_ANSWERS: (number | null)[] = [null, null, null, null, null, null];
 
 export default function UkCareerDiagnosticPage() {
-  const [view, setView] = useState<DiagnosticView>("quiz");
+  const router = useRouter();
+  const [view, setView] = useState<Exclude<DiagnosticView, "result">>("quiz");
   const [qi, setQi] = useState(0);
   const [targetRole, setTargetRole] = useState("");
   const [answers, setAnswers] = useState<(number | null)[]>(INITIAL_ANSWERS);
-  const [lead, setLead] = useState<LeadInfo | null>(null);
 
   const scrollTop = () => {
     if (typeof window !== "undefined") {
@@ -57,26 +56,16 @@ export default function UkCareerDiagnosticPage() {
   };
 
   const handleGateComplete = (submittedLead: LeadInfo) => {
-    setLead(submittedLead);
-    setView("result");
-    scrollTop();
-  };
-
-  const handleRetake = () => {
-    setQi(0);
-    setTargetRole("");
-    setAnswers(INITIAL_ANSWERS);
-    setLead(null);
-    setView("quiz");
-    scrollTop();
+    saveDiagnosticState({
+      targetRole,
+      answers,
+      lead: submittedLead,
+    });
+    router.push("/uk-career-diagnostic/thank-you");
   };
 
   return (
-    <main
-      className={`uk-diag-page text-[16px] sm:text-[17px] antialiased selection:bg-[#FFE082] selection:text-[#092A31] ${
-        view === "result" ? "has-sticky" : ""
-      }`}
-    >
+    <main className="uk-diag-page text-[16px] sm:text-[17px] antialiased selection:bg-[#FFE082] selection:text-[#092A31]">
       {view === "quiz" ? (
         <QuizView
           qi={qi}
@@ -95,15 +84,6 @@ export default function UkCareerDiagnosticPage() {
           answers={answers}
           onBackToQuestions={handleBackFromGate}
           onComplete={handleGateComplete}
-        />
-      ) : null}
-
-      {view === "result" && lead ? (
-        <ResultsView
-          targetRole={targetRole}
-          answers={answers}
-          lead={lead}
-          onRetake={handleRetake}
         />
       ) : null}
     </main>
