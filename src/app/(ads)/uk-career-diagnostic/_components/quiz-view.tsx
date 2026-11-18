@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as fpixel from "@/lib/fpixel";
 import { QUESTIONS } from "../data";
-import { DiagnosticHeader } from "./diagnostic-header";
+import { DiagnosticHeader } from "../../_diagnostic-shared/diagnostic-header";
 
 interface QuizViewProps {
   qi: number;

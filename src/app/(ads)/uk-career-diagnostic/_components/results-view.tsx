@@ -14,7 +14,11 @@ import {
   getRiskBand,
   sendDiagnosticWebhook,
 } from "../data";
-import { DiagnosticHeader } from "./diagnostic-header";
+import { DiagnosticHeader } from "../../_diagnostic-shared/diagnostic-header";
+import {
+  StickyCtaBar,
+  useStickyCtaVisibility,
+} from "../../_diagnostic-shared/sticky-cta";
 
 interface ResultsViewProps {
   targetRole: string;
@@ -39,14 +43,11 @@ export function ResultsView({
   onRetake,
 }: ResultsViewProps) {
   const [animated, setAnimated] = useState(false);
-  const [showSticky, setShowSticky] = useState(
-    () =>
-      typeof window !== "undefined" && !("IntersectionObserver" in window),
-  );
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
 
   const topCtaRef = useRef<HTMLElement>(null);
   const endCtaRef = useRef<HTMLElement>(null);
+  const showSticky = useStickyCtaVisibility(topCtaRef, endCtaRef);
 
   const result = useMemo(() => computeDiagnosticScore(answers), [answers]);
   const summary = useMemo(() => buildDiagnosticSummary(answers), [answers]);
@@ -67,29 +68,6 @@ export function ResultsView({
       cancelAnimationFrame(raf1);
       if (raf2) cancelAnimationFrame(raf2);
     };
-  }, []);
-
-  // Sticky bottom CTA visibility based on top & bottom CTA cards
-  useEffect(() => {
-    const topEl = topCtaRef.current;
-    const endEl = endCtaRef.current;
-    if (!topEl || !endEl || !("IntersectionObserver" in window)) return;
-
-    const vis = { top: true, end: false };
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.target === topEl) vis.top = entry.isIntersecting;
-          if (entry.target === endEl) vis.end = entry.isIntersecting;
-        }
-        setShowSticky(!vis.top && !vis.end);
-      },
-      { threshold: 0.15 },
-    );
-
-    observer.observe(topEl);
-    observer.observe(endEl);
-    return () => observer.disconnect();
   }, []);
 
   const handleBookingClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -587,19 +565,7 @@ export function ResultsView({
 
       {/* Sticky Bottom CTA */}
       {!bookingConfirmed ? (
-        <div
-          className={`fixed bottom-0 left-0 right-0 z-50 px-4 pb-[calc(0.8rem+env(safe-area-inset-bottom,0px))] pt-5 transition-transform duration-300 ${
-            showSticky
-              ? "pointer-events-auto translate-y-0"
-              : "pointer-events-none translate-y-[130%]"
-          }`}
-          style={{
-            background:
-              "linear-gradient(180deg, transparent, rgba(9, 42, 49, 0.96) 40%)",
-          }}
-        >
-          <div className="mx-auto max-w-[728px]">{renderCtaButton()}</div>
-        </div>
+        <StickyCtaBar visible={showSticky}>{renderCtaButton()}</StickyCtaBar>
       ) : null}
     </>
   );

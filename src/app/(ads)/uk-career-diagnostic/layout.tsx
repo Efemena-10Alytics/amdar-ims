@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import "./diagnostic.css";
+import "../_diagnostic-shared/diagnostic.css";
 
 export const viewport: Viewport = {
   themeColor: "#092A31",
