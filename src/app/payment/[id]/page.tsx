@@ -82,7 +82,7 @@ export default function PaymentPage() {
           )}
         >
           <h1 className="font-clash-display text-3xl font-bold text-[#092A31] sm:text-4xl">
-            Your Internship Enrollment
+            Your Program Enrollment
           </h1>
           <p className="mt-1 text-base text-[#4a5568]">
             Please review and fill appropriate details.
