@@ -10,7 +10,9 @@ const FAQ_WHATSAPP_URL = "https://wa.me/447446442409";
 const Faq = () => {
   const [openItems, setOpenItems] = useState<number[]>([]);
   React.useEffect(() => {
-    Aos.init();
+    Aos.init({ once: true, duration: 600 });
+    const timer = window.setTimeout(() => Aos.refresh(), 100);
+    return () => window.clearTimeout(timer);
   }, []);
 
   const faqs = [

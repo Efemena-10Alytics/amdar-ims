@@ -40,8 +40,11 @@ const CTAbanner = () => {
       : "Create an account";
 
   React.useEffect(() => {
-    Aos.init({ duration: 600 });
-  }, []);
+    Aos.init({ once: true, duration: 600 });
+    const timer = window.setTimeout(() => Aos.refresh(), 100);
+    return () => window.clearTimeout(timer);
+  }, [pathname]);
+
   return (
     <div data-aos="zoom-in" className="app-width pt-12 lg:pt-16 pb-8">
       <div className="bg-[#156374] rounded-2xl p-8 lg:p-12 shadow-lg">
