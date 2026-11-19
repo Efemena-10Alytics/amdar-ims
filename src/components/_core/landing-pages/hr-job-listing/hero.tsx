@@ -10,7 +10,7 @@ const HrJobListingHero = () => {
   return (
     <section
       className="relative overflow-hidden bg-[#FDF6E9] bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/hr-job-listing-bg.png')" }}
+      style={{ backgroundImage: "url('/hr-job-listing-bg.svg')" }}
     >
       <div className="app-width grid items-center gap-10 py-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,3fr)] lg:gap-6 lg:py-16">
         <div className="min-w-0">
