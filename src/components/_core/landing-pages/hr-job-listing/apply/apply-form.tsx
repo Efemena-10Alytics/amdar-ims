@@ -2,11 +2,14 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useCountries } from "@/features/portfolio/use-countries";
 import type { JobOpening } from "../data";
 import {
+  FileChooseField,
   PhoneField,
+  ReadOnlyField,
   SelectField,
   TextField,
   TextareaField,
@@ -101,6 +104,11 @@ const ApplyForm = ({ job }: { job: JobOpening }) => {
   const [step, setStep] = useState(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { data: countries } = useCountries();
+  const searchParams = useSearchParams();
+
+  // Roles that ask for a cover letter add an upload between the CV and the
+  // video. Driven by the URL so the variant can be linked to and reviewed.
+  const wantsCoverLetter = searchParams.get("cv-require") === "true";
 
   const [form, setForm] = useState({
     firstName: "",
@@ -111,9 +119,15 @@ const ApplyForm = ({ job }: { job: JobOpening }) => {
     experience: "",
     nysc: "",
     linkedin: "",
+    relevantExperience: "",
+    relevantSkills: "",
+    industryExperience: "",
     familiarity: "",
     cvName: "",
+    coverLetterName: "",
     videoName: "",
+    portfolioLink: "",
+    portfolioFileName: "",
     remote: "",
     salary: "",
     startDate: "",
@@ -234,6 +248,9 @@ const ApplyForm = ({ job }: { job: JobOpening }) => {
                   value={form.phone}
                   onChange={set("phone")}
                 />
+                {/* Comes from the role they opened, so it cannot be mistyped. */}
+                <ReadOnlyField label="Roles Applied For" value={job.detailTitle} />
+
                 <SelectField
                   id="experience"
                   label="How many years of active experience do you have?"
@@ -241,6 +258,14 @@ const ApplyForm = ({ job }: { job: JobOpening }) => {
                   value={form.experience}
                   onChange={set("experience")}
                 />
+                <TextField
+                  id="linkedin"
+                  label="Enter LinkedIn Profile"
+                  placeholder="@username/linkedin.com"
+                  value={form.linkedin}
+                  onChange={set("linkedin")}
+                />
+
                 <SelectField
                   id="nysc"
                   label="What's your NYSC status?"
@@ -249,11 +274,26 @@ const ApplyForm = ({ job }: { job: JobOpening }) => {
                   onChange={set("nysc")}
                 />
                 <TextField
-                  id="linkedin"
-                  label="Enter LinkedIn Profile"
-                  placeholder="@username/linkedin.com"
-                  value={form.linkedin}
-                  onChange={set("linkedin")}
+                  id="relevant-experience"
+                  label="Relevant professional/technical experience"
+                  placeholder="Enter your answer"
+                  value={form.relevantExperience}
+                  onChange={set("relevantExperience")}
+                />
+
+                <TextField
+                  id="relevant-skills"
+                  label="Relevant skills and qualifications"
+                  placeholder="Enter your answer"
+                  value={form.relevantSkills}
+                  onChange={set("relevantSkills")}
+                />
+                <TextField
+                  id="industry-experience"
+                  label="Industry or role-specific experience"
+                  placeholder="Enter your answer"
+                  value={form.industryExperience}
+                  onChange={set("industryExperience")}
                 />
               </div>
 
@@ -278,13 +318,24 @@ const ApplyForm = ({ job }: { job: JobOpening }) => {
               <div className="mt-6 flex flex-col gap-5">
                 <UploadField
                   id="cv"
-                  label="Upload your CV"
+                  label="Upload your CV *"
                   cta="Click to upload CV"
                   hint="Jpeg, png (max 5mb)"
                   accept=".pdf,.doc,.docx,image/jpeg,image/png"
                   fileName={form.cvName}
                   onFile={set("cvName")}
                 />
+                {wantsCoverLetter && (
+                  <UploadField
+                    id="cover-letter"
+                    label="Upload your Cover Letter *"
+                    cta="Click to upload Cover Letter"
+                    hint="Jpeg, png (max 5mb)"
+                    accept=".pdf,.doc,.docx,image/jpeg,image/png"
+                    fileName={form.coverLetterName}
+                    onFile={set("coverLetterName")}
+                  />
+                )}
                 <UploadField
                   id="video"
                   label="Upload a Short Video Explaining Why You Are a Good Fit *"
@@ -297,6 +348,21 @@ const ApplyForm = ({ job }: { job: JobOpening }) => {
               </div>
 
               <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
+                <TextField
+                  id="portfolio-link"
+                  label="Portfolio Link"
+                  placeholder="Paste link"
+                  value={form.portfolioLink}
+                  onChange={set("portfolioLink")}
+                />
+                <FileChooseField
+                  id="portfolio-file"
+                  label="Portfolio File Upload"
+                  accept=".pdf,.doc,.docx,.zip,image/*"
+                  fileName={form.portfolioFileName}
+                  onFile={set("portfolioFileName")}
+                />
+
                 <SelectField
                   id="remote"
                   label="Are you available for a fully remote role?"

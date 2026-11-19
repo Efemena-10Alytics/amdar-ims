@@ -143,6 +143,66 @@ export function PhoneField({
   );
 }
 
+/** Prefilled from the role the candidate opened, so it cannot drift. */
+export function ReadOnlyField({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0">
+      <FieldLabel>{label}</FieldLabel>
+      <p className="flex h-12 items-center rounded-lg bg-[#F7F9FA] px-4 font-sora text-sm text-[#092A31]">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+/** The "Choose" control from the design: a button, then the chosen filename. */
+export function FileChooseField({
+  id,
+  label,
+  accept,
+  fileName,
+  onFile,
+}: {
+  id: string;
+  label: string;
+  accept: string;
+  fileName: string;
+  onFile: (name: string) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <div className="min-w-0">
+      <FieldLabel>{label}</FieldLabel>
+      <div className="flex h-12 items-center gap-3 overflow-hidden rounded-lg bg-[#F7F9FA] pr-4">
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          className="h-full shrink-0 bg-[#C9CDD0] px-5 font-sora text-sm text-[#44504F] transition-colors hover:bg-[#bcc1c4]"
+        >
+          Choose
+        </button>
+        <span
+          className={`truncate font-sora text-sm ${fileName ? "text-[#092A31]" : "text-[#94A3B8]"}`}
+        >
+          {fileName || "No file chosen"}
+        </span>
+      </div>
+      <input
+        ref={inputRef}
+        id={id}
+        type="file"
+        accept={accept}
+        className="hidden"
+        onChange={(event) => {
+          const picked = event.target.files?.[0];
+          if (picked) onFile(picked.name);
+        }}
+      />
+    </div>
+  );
+}
+
 export function UploadField({
   id,
   label,

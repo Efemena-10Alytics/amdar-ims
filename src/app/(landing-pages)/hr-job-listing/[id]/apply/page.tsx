@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { JOB_OPENINGS } from "@/components/_core/landing-pages/hr-job-listing/data";
@@ -29,7 +30,11 @@ const ApplyPage = async ({ params }: ApplyPageProps) => {
 
   if (!job) notFound();
 
-  return <ApplyForm job={job} />;
+  return (
+    <Suspense fallback={null}>
+      <ApplyForm job={job} />
+    </Suspense>
+  );
 };
 
 export default ApplyPage;

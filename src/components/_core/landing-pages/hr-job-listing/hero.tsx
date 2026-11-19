@@ -12,7 +12,7 @@ const HrJobListingHero = () => {
       className="relative overflow-hidden bg-[#FDF6E9] bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: "url('/hr-job-listing-bg.svg')" }}
     >
-      <div className="app-width grid items-center gap-10 py-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,3fr)] lg:gap-6 lg:py-16">
+      <div className="app-width py-12 lg:py-16 lg:pr-[36%]">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <ReviewsPill />
@@ -59,14 +59,14 @@ const HrJobListingHero = () => {
           </div>
         </div>
 
-        <div className="flex min-w-0 items-center justify-center">
+        <div className="relative mt-10 h-80 w-full lg:absolute lg:inset-y-0 lg:right-0 lg:mt-0 lg:h-auto lg:w-[34%]">
           <Image
             src="/hr-job-img1.png"
             alt="An Amdari team member holding a laptop"
-            width={1071}
-            height={791}
+            fill
             priority
-            className="h-auto w-full max-w-sm object-contain sm:max-w-md lg:max-w-full"
+            sizes="(min-width: 1024px) 34vw, 100vw"
+            className="object-cover object-center"
           />
         </div>
       </div>
