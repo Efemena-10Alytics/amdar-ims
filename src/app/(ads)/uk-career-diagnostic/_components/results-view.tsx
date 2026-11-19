@@ -451,7 +451,7 @@ export function ResultsView({
 
         {/* Where a Consultant Can Help */}
         <details
-          open={!isBlocked}
+          open={!isBlocked || result.gaps.length === 0}
           className="uk-diag-fold mb-4 rounded-[24px] border border-[#156374]/55 bg-[#0C3640]/90 p-5 sm:p-6"
         >
           <summary className="flex cursor-pointer items-center justify-between gap-4">
@@ -478,8 +478,10 @@ export function ResultsView({
               </div>
             ) : (
               <p className="text-[0.95rem] text-[#C7D5D6]">
-                Even with no major gaps, a consultant can pressure-test your
-                profile before you apply.
+                Self-reported answers show strong fundamentals, yet UK
+                sponsorship readiness is capped at 49% until a consultant audits
+                your CV against live UK ATS parsers and licensed sponsor
+                allocations.
               </p>
             )}
           </div>

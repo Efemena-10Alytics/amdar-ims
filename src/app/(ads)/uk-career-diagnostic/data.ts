@@ -346,7 +346,8 @@ export function computeDiagnosticScore(
 ): DiagnosticResult {
   const pts = answers.map((idx) => (idx !== null ? (PTS[idx] ?? 0) : 0));
   const total = pts.reduce<number>((sum, p) => sum + p, 0);
-  const pct = Math.round((total / 60) * 100);
+  // Cap final readiness score at 49% max across all answer combinations.
+  const pct = Math.min(49, Math.round((total / 60) * 49));
   const gaps: ScoreGap[] = pts
     .map((p, idx) => ({ idx, p }))
     .filter((g) => g.p < 10)
