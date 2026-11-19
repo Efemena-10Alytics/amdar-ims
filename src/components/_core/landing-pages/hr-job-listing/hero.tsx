@@ -20,7 +20,7 @@ const HrJobListingHero = () => {
           </div>
 
           {/* "Join" and "Together" are Clash Display black; the rest is Sora grey. */}
-          <h1 className="mt-8 font-sora text-[2.6rem] leading-[0.85] font-medium tracking-[-0.05em] text-[#999999] sm:text-6xl lg:text-[5.25rem] xl:text-[95.1px]">
+          <h1 className="mt-8 font-sora text-[2.6rem] leading-[0.85] font-medium tracking-[-0.05em] text-[#999999] sm:text-6xl lg:text-[5.25rem] xl:text-[85.1px] 2xl:text-[95.1px]">
             <span className="font-clash-display tracking-[-0.02em] text-black">Join</span>{" "}
             <Image
               src="/images/pngs/teams/teams1.png"
@@ -59,7 +59,7 @@ const HrJobListingHero = () => {
           </div>
         </div>
 
-        <div className="relative mt-10 h-80 w-full lg:absolute lg:inset-y-0 lg:right-0 lg:mt-0 lg:h-auto lg:w-[34%]">
+        <div className="relative mt-10 h-80 w-full lg:absolute lg:inset-y-0 lg:right-0 lg:mt-0 lg:h-auto lg:w-[70%]">
           <Image
             src="/hr-job-img1.png"
             alt="An Amdari team member holding a laptop"
