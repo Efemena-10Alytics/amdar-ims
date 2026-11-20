@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProjectShowcaseDetail from "@/components/_core/landing-pages/project-showcase/project-details";
 import {
+  careerTrackToSlug,
   getShowcaseProject,
   SHOWCASE_PROJECTS,
 } from "@/components/_core/landing-pages/project-showcase/data";
@@ -11,7 +12,11 @@ type ProjectShowcaseDetailPageProps = {
 };
 
 export function generateStaticParams() {
-  return SHOWCASE_PROJECTS.map((project) => ({ slug: project.id }));
+  return [
+    ...new Set(
+      SHOWCASE_PROJECTS.map((project) => careerTrackToSlug(project.careerTrack)),
+    ),
+  ].map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({

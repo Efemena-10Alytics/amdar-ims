@@ -13,7 +13,7 @@ export type ShowcaseTab =
 export type ShowcaseSection = {
   heading: string;
   body: string;
-  /** When set, shows a "Read more >>>" link to `/internship`. */
+  /** When set, shows a "Read more >>>" link to `/internship?careerTrack=...`. */
   more?: string | boolean;
 };
 
@@ -567,6 +567,18 @@ export const SHOWCASE_PROJECTS: ShowcaseProject[] = [
   },
 ];
 
+export function careerTrackToSlug(careerTrack: string) {
+  return careerTrack
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export function getShowcaseProject(slug: string) {
-  return SHOWCASE_PROJECTS.find((project) => project.id === slug);
+  const normalized = slug.trim().toLowerCase();
+  return SHOWCASE_PROJECTS.find(
+    (project) => careerTrackToSlug(project.careerTrack) === normalized,
+  );
 }

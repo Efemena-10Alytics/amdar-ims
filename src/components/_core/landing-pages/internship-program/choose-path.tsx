@@ -23,7 +23,7 @@ const ChoosePath = ({ internshipPrograms }: ChoosePathProps) => {
   const { promoCode, querySuffix } = useCarriedCheckoutQuery();
 
   return (
-    <div className="bg-white py-12">
+    <div id="choose-career-path" className="scroll-mt-24 bg-white py-12">
       <div className="app-width">
         {/* Header Section */}
         <div className="mb-12">
