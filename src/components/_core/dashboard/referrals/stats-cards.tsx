@@ -47,7 +47,16 @@ const FAILED_HINT: HintLine[] = [
 /** Grace period so the pointer can travel from the icon onto the panel. */
 const CLOSE_DELAY_MS = 120;
 
-function InfoHint({ lines, onDark = false }: { lines: HintLine[]; onDark?: boolean }) {
+function InfoHint({
+  lines,
+  onDark = false,
+  align = "end",
+}: {
+  lines: HintLine[];
+  onDark?: boolean;
+  /** "start" keeps the leftmost card's panel inside the page. */
+  align?: "start" | "end";
+}) {
   const [open, setOpen] = useState(false);
   const closeTimer = useRef<number | null>(null);
 
@@ -87,7 +96,9 @@ function InfoHint({ lines, onDark = false }: { lines: HintLine[]; onDark?: boole
           role="tooltip"
           onMouseEnter={show}
           onMouseLeave={hide}
-          className="absolute top-full right-0 z-30 mt-2 flex w-80 max-w-[70vw] gap-2.5 rounded-xl bg-[#BFDBFE] p-4 text-left shadow-lg"
+          className={`absolute bottom-full z-30 mb-2 flex w-80 max-w-[70vw] gap-2.5 rounded-xl bg-[#BFDBFE] p-4 text-left shadow-lg ${
+            align === "start" ? "left-0" : "right-0"
+          }`}
         >
           <Info className="mt-0.5 size-4 shrink-0 text-[#1D4ED8]" aria-hidden />
 
@@ -164,7 +175,7 @@ function RewardsCard({
           </span>
           <span className="font-sora text-sm font-medium">Rewards</span>
         </span>
-        <InfoHint onDark lines={REWARDS_HINT} />
+        <InfoHint onDark align="start" lines={REWARDS_HINT} />
       </div>
 
       <div className="flex items-stretch gap-3">

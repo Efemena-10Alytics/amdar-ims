@@ -129,6 +129,8 @@ export function ApiWithdrawalDrawer({
   const [saveDetails, setSaveDetails] = useState<boolean | null>(null);
   const [quote, setQuote] = useState<WithdrawalQuoteData | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  /** Keyed by field key, plus "amount". Set on a blocked submit. */
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [notice, setNotice] = useState<string | null>(null);
 
   const data = options.data ?? null;
@@ -178,15 +180,26 @@ export function ApiWithdrawalDrawer({
     setNotice(null);
   };
 
+  /** A field stops being flagged as soon as it is touched. */
+  const clearFieldError = (key: string) =>
+    setFieldErrors((current) => {
+      if (!(key in current)) return current;
+      const next = { ...current };
+      delete next[key];
+      return next;
+    });
+
   const handleOpenChange = (next: boolean) => {
     if (!next) {
       resetFlow();
       setPreset(null);
+      setFieldErrors({});
     }
     onOpenChange(next);
   };
 
   const handleCountryChange = (code: string) => {
+    setFieldErrors({});
     setCountryCode(code);
     // A new country brings a different field set, so clear what was typed.
     setCurrencyCode("");
@@ -195,6 +208,7 @@ export function ApiWithdrawalDrawer({
   };
 
   const handleCurrencyChange = (code: string) => {
+    setFieldErrors({});
     setCurrencyCode(code);
     setValues({});
     resetFlow();
@@ -208,35 +222,58 @@ export function ApiWithdrawalDrawer({
 
   const setFieldValue = (key: string, value: string) => {
     setValues((current) => ({ ...current, [key]: value }));
+    clearFieldError(key);
     resetFlow();
   };
 
-  const validate = (): string | null => {
-    if (!activeCountry || !activeCurrency) return "Choose a country and payout currency.";
+  /** Every problem at once, so each offending field can be flagged. */
+  const collectErrors = (): Record<string, string> => {
+    const errors: Record<string, string> = {};
 
     const requested = toAmount(amount);
-    if (!requested) return "Enter an amount to withdraw.";
-    if (requested < minWithdrawal) {
-      return `The minimum withdrawal is ${formatReferralAmount(minWithdrawal, walletCurrency)}.`;
-    }
-    if (requested > maxWithdrawable) {
-      return `You can withdraw up to ${formatReferralAmount(maxWithdrawable, walletCurrency)}.`;
+    if (!requested) {
+      errors.amount = "Enter an amount to withdraw.";
+    } else if (requested < minWithdrawal) {
+      errors.amount = `The minimum withdrawal is ${formatReferralAmount(
+        minWithdrawal,
+        walletCurrency,
+      )}.`;
+    } else if (requested > maxWithdrawable) {
+      errors.amount = `You can withdraw up to ${formatReferralAmount(
+        maxWithdrawable,
+        walletCurrency,
+      )}.`;
     }
 
-    const missing = fields.find(
-      (field) => isFieldRequired(field, fieldValues) && !fieldValues[field.key]?.trim(),
-    );
-    return missing ? `${missing.label} is required.` : null;
+    fields
+      .filter((field) => isFieldRequired(field, fieldValues) && !fieldValues[field.key]?.trim())
+      .forEach((field) => {
+        errors[field.key] = `${field.label} is required.`;
+      });
+
+    return errors;
   };
 
   /** Step 1: take an official quote so the payout amount can be confirmed. */
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    const problem = validate();
-    if (problem) {
-      setFormError(problem);
+
+    if (!activeCountry || !activeCurrency) {
+      setFormError("Choose a country and payout currency.");
       return;
     }
+
+    const errors = collectErrors();
+    setFieldErrors(errors);
+
+    const count = Object.keys(errors).length;
+    if (count > 0) {
+      setFormError(
+        count === 1 ? "One field needs your attention." : `${count} fields need your attention.`,
+      );
+      return;
+    }
+
     setFormError(null);
     setNotice(null);
 
@@ -381,13 +418,21 @@ export function ApiWithdrawalDrawer({
                     value={amount ? `${symbol}${amount}` : ""}
                     onChange={(event) => {
                       setPreset(null);
+                      clearFieldError("amount");
                       resetFlow();
                       setAmount(event.target.value.replace(/[^0-9.]/g, ""));
                     }}
                     placeholder={`${symbol}0.00`}
-                    className="h-10 min-w-0 flex-1 rounded-lg border-transparent bg-white text-right font-sora text-sm text-[#092A31] shadow-none focus-visible:border-[#156374] focus-visible:ring-0"
+                    aria-invalid={Boolean(fieldErrors.amount)}
+                    className={`h-10 min-w-0 flex-1 rounded-lg bg-white text-right font-sora text-sm text-[#092A31] shadow-none focus-visible:border-[#156374] focus-visible:ring-0 ${
+                      fieldErrors.amount ? "border-[#D92D20]" : "border-transparent"
+                    }`}
                   />
                 </div>
+
+                {fieldErrors.amount && (
+                  <p className="mt-1.5 font-sora text-xs text-[#D92D20]">{fieldErrors.amount}</p>
+                )}
 
                 <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
                   <p className="font-sora text-xs text-[#94A3B8]">
@@ -468,39 +513,51 @@ export function ApiWithdrawalDrawer({
 
               {activeCurrency?.note && <FeeWarning text={activeCurrency.note} />}
 
-              {fields.filter((field) => isFieldVisible(field, fieldValues)).map((field) => (
-                <div key={field.key} className="mt-4 min-w-0">
-                  {field.type === "select" ? (
-                    <>
-                      <span className={FIELD_LABEL_CLASS}>{field.label}</span>
-                      <SelectOneDropdown
-                        title={field.label}
-                        placeholder="Select one"
-                        value={fieldValues[field.key] ?? ""}
-                        onChange={(value) => setFieldValue(field.key, value)}
-                        options={Object.entries(field.options ?? {}).map(([value, label]) => ({
-                          value,
-                          label,
-                        }))}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <label htmlFor={`field-${field.key}`} className={FIELD_LABEL_CLASS}>
-                        {field.label}
-                      </label>
-                      <Input
-                        id={`field-${field.key}`}
-                        type={field.type === "email" ? "email" : "text"}
-                        inputMode={field.type === "number" ? "numeric" : undefined}
-                        value={fieldValues[field.key] ?? ""}
-                        onChange={(event) => setFieldValue(field.key, event.target.value)}
-                        className={FIELD_INPUT_CLASS}
-                      />
-                    </>
-                  )}
-                </div>
-              ))}
+              {fields
+                .filter((field) => isFieldVisible(field, fieldValues))
+                .map((field) => {
+                  const error = fieldErrors[field.key];
+                  return (
+                    <div key={field.key} className="mt-4 min-w-0">
+                      {field.type === "select" ? (
+                        <>
+                          <span className={FIELD_LABEL_CLASS}>{field.label}</span>
+                          <SelectOneDropdown
+                            title={field.label}
+                            placeholder="Select one"
+                            value={fieldValues[field.key] ?? ""}
+                            onChange={(value) => setFieldValue(field.key, value)}
+                            triggerClassName={error ? "border border-[#D92D20]" : ""}
+                            options={Object.entries(field.options ?? {}).map(
+                              ([value, label]) => ({ value, label }),
+                            )}
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <label htmlFor={`field-${field.key}`} className={FIELD_LABEL_CLASS}>
+                            {field.label}
+                          </label>
+                          <Input
+                            id={`field-${field.key}`}
+                            type={field.type === "email" ? "email" : "text"}
+                            inputMode={field.type === "number" ? "numeric" : undefined}
+                            value={fieldValues[field.key] ?? ""}
+                            onChange={(event) => setFieldValue(field.key, event.target.value)}
+                            aria-invalid={Boolean(error)}
+                            className={`${FIELD_INPUT_CLASS} ${
+                              error ? "border-[#D92D20]" : ""
+                            }`}
+                          />
+                        </>
+                      )}
+
+                      {error && (
+                        <p className="mt-1.5 font-sora text-xs text-[#D92D20]">{error}</p>
+                      )}
+                    </div>
+                  );
+                })}
 
               <label className="mt-5 flex items-center gap-2 font-sora text-sm text-[#092A31]">
                 <Checkbox
