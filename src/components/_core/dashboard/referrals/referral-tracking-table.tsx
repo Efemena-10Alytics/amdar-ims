@@ -24,6 +24,7 @@ export function ReferralTrackingTable({
   pagination,
   onPageChange,
   onExport,
+  onHowItWorks,
   isLoading = false,
   errorMessage = null,
 }: {
@@ -32,6 +33,7 @@ export function ReferralTrackingTable({
   pagination: ReferralPagination | null;
   onPageChange: (page: number) => void;
   onExport: () => void | Promise<void>;
+  onHowItWorks: () => void;
   isLoading?: boolean;
   errorMessage?: string | null;
 }) {
@@ -59,15 +61,24 @@ export function ReferralTrackingTable({
         <h2 className="font-clash-display text-lg font-semibold text-[#092A31]">
           Referral Tracking
         </h2>
-        <button
-          type="button"
-          onClick={handleExport}
-          disabled={isExporting || referrals.length === 0}
-          className="flex h-8.5 items-center gap-1 rounded-lg bg-[#B6CFD4] px-2 font-sora text-sm text-[#0C3640] transition-colors hover:bg-[#B6CFD4]/80 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          <ExportIcon />
-          {isExporting ? "Exporting…" : "Export"}
-        </button>
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            onClick={handleExport}
+            disabled={isExporting || referrals.length === 0}
+            className="flex h-8.5 items-center gap-1 rounded-lg bg-[#B6CFD4] px-2 font-sora text-sm text-[#0C3640] transition-colors hover:bg-[#B6CFD4]/80 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <ExportIcon />
+            {isExporting ? "Exporting…" : "Export"}
+          </button>
+          <button
+            type="button"
+            onClick={onHowItWorks}
+            className="flex h-8.5 items-center rounded-lg bg-[#156374] px-3 font-sora text-sm font-medium text-white transition-colors hover:bg-[#0f4d5a]"
+          >
+            How it works
+          </button>
+        </div>
       </div>
 
       {exportError && (

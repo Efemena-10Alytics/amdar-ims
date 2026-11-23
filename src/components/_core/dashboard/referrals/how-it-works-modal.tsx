@@ -111,7 +111,7 @@ export function HowItWorksModal({
           </div>
 
           <Image
-            src="/how-it-works.png"
+            src="/referral-modal-img.png"
             alt=""
             width={520}
             height={380}

@@ -156,7 +156,6 @@ export function ReferralsDashboard() {
         referralLink={referralCode.referralLink}
         isLoading={referralCode.isPending}
         errorMessage={referralCode.errorMessage}
-        onHowItWorks={() => setHowItWorksOpen(true)}
       />
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
@@ -166,6 +165,7 @@ export function ReferralsDashboard() {
           pagination={tracking.pagination}
           onPageChange={setTrackingPage}
           onExport={() => exportReferralsCsv({})}
+          onHowItWorks={() => setHowItWorksOpen(true)}
           isLoading={tracking.isPending}
           errorMessage={tracking.errorMessage}
         />
