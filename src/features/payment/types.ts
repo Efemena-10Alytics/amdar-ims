@@ -174,3 +174,91 @@ export interface UpdateSecondInstallmentDatePayload {
   paymentPlanId: string | number;
   next_payment_date: string;
 }
+
+/* ------------------------------------------------------------------ */
+/* GET /api/payment/user/payment-status                               */
+/* ------------------------------------------------------------------ */
+
+export type PaymentStatusState =
+  | "active"
+  | "due_soon"
+  | "due_today"
+  | "grace_period"
+  | "extension_period"
+  | "locked";
+
+export type PaymentLockReason =
+  | "no_payment_plan"
+  | "cancelled"
+  | "refunded"
+  | "pending_first_payment"
+  | "bad_debt"
+  | "program_not_activated"
+  | "grace_period_expired"
+  | "extension_expired";
+
+export interface PaymentStatusPlan {
+  id: number;
+  status: string;
+  installments: number;
+  currency: string;
+  program_activated: boolean;
+  program: {
+    id: number;
+    title: string;
+  } | null;
+  cohort: {
+    id: number;
+    name: string;
+    start_date: string | null;
+  } | null;
+}
+
+export interface PaymentStatusInvoice {
+  id: number;
+  invoice_no: string;
+  installment_number: number;
+  part_number: number;
+  installment_label: string;
+  amount: number;
+  currency: string;
+  due_date: string;
+  original_due_date: string;
+  status: string;
+}
+
+export interface PaymentStatusGracePeriod {
+  id: number | null;
+  status: "approved" | null;
+  requested_date: string | null;
+  approved_date: string | null;
+  old_due_date: string | null;
+  has_pending_request: boolean;
+}
+
+export interface PaymentStatusData {
+  status: PaymentStatusState;
+  can_access_dashboard: boolean;
+  show_modal: boolean;
+  lock_reason: PaymentLockReason | null;
+  deadline_at: string | null;
+  seconds_remaining: number | null;
+  days_until_due: number | null;
+  days_overdue: number;
+  grace_period_days: number;
+  payment_plan: PaymentStatusPlan | null;
+  invoice: PaymentStatusInvoice | null;
+  grace_period: PaymentStatusGracePeriod;
+}
+
+export interface PaymentStatusResponse {
+  success: boolean;
+  message?: string;
+  data: PaymentStatusData;
+}
+
+export interface GetPaymentStatusParams {
+  cohort_id?: number | string;
+  program_id?: number | string;
+  payment_plan_id?: number | string;
+}

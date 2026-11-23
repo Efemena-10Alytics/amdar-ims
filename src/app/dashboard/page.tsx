@@ -4,6 +4,7 @@ import DashboardWelcome from "@/components/_core/dashboard/dashboard/welcome";
 import WelcomeVideo from "@/components/_core/dashboard/dashboard/welcome-video";
 import InternshipHasNotStarted from "@/components/_core/dashboard/dashboard/internship-has-not-started";
 import PageHeader from "@/components/_core/dashboard/dashboard/header";
+import { PaymentStatusBanner } from "@/components/_core/dashboard/payment-status/payment-status-banner";
 
 const DashboardPage = () => {
   // const { data: enrollment } = useGetUserEnrollment();
@@ -14,6 +15,8 @@ const DashboardPage = () => {
   return (
     <div className="space-y-6 px-4 py-6 lg:px-6">
       <PageHeader />
+
+      <PaymentStatusBanner />
 
       <div className="flex min-h-52 flex-col gap-4 xl:min-h-0 xl:flex-row xl:items-stretch">
         <div className="flex min-w-0 flex-1">

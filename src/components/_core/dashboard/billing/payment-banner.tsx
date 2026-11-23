@@ -27,7 +27,15 @@ export function PaymentBanner({
   const handlePayNow = () => {
     if (!nextInvoiceId || isPayingNow) return;
     setPayNowError("");
-    payNow(nextInvoiceId, {
+    payNow(
+      {
+        invoiceId: nextInvoiceId,
+        cancelUrl:
+          typeof window !== "undefined"
+            ? `${window.location.origin}/dashboard/billing`
+            : undefined,
+      },
+      {
       onSuccess: (response) => {
         const url = response?.data?.checkout_session?.url;
         if (url) {

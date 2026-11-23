@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { axiosInstance } from "@/lib/axios-instance";
 import { PAYMENT_STATS_QUERY_KEY } from "./use-get-payment-stats";
+import { PAYMENT_STATUS_QUERY_KEY } from "./use-get-payment-status";
 import { USER_INVOICES_QUERY_KEY } from "./use-get-user-invoices";
 import type { SubmitGracePeriodPayload } from "./types";
 
@@ -51,6 +52,7 @@ export function useSubmitGracePeriod() {
     mutationFn: (payload: SubmitGracePeriodPayload) => submitGracePeriod(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: PAYMENT_STATS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: PAYMENT_STATUS_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: USER_INVOICES_QUERY_KEY });
     },
   });
