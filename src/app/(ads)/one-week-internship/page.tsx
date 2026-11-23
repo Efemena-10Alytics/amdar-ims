@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCountries } from "@/features/portfolio/use-countries";
 import { submitToZoho, ZOHO_RETURN_PATH } from "@/lib/submit-to-zoho";
+import { ONE_WEEK_INTERNSHIP_WHATSAPP_LINK } from "./constants";
 import {
   TESTIMONIALS,
   TestimonialVideoModal,
@@ -153,6 +154,11 @@ const OneWeekInternshipPage = () => {
           : nationalNumber.replace(/^\+\d{1,4}/, "");
       }
 
+      // Open synchronously within the click gesture so browsers don't block it as a popup.
+      // Note: passing "noopener" here would make window.open() return null, so we omit it
+      // and instead null out the opener manually once the window is navigated below.
+      const whatsappWindow = window.open("", "_blank");
+
       setIsSubmitting(true);
       try {
         await submitToZoho(ZOHO_FORM_URL, {
@@ -171,6 +177,7 @@ const OneWeekInternshipPage = () => {
           Dropdown1: heardValue,
         });
       } catch {
+        whatsappWindow?.close();
         // Reaching here means Zoho refused the record, not that the user typed
         // something wrong — don't send them hunting through valid details.
         setFormError(
@@ -179,6 +186,11 @@ const OneWeekInternshipPage = () => {
         return;
       } finally {
         setIsSubmitting(false);
+      }
+
+      if (whatsappWindow) {
+        whatsappWindow.opener = null;
+        whatsappWindow.location.href = ONE_WEEK_INTERNSHIP_WHATSAPP_LINK;
       }
 
       setFirstName("");

@@ -3,8 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import WhatsAppRedirect from "@/components/_core/shared/whatsapp-redirect";
+import { ONE_WEEK_INTERNSHIP_WHATSAPP_LINK } from "../constants";
 
-const WHATSAPP_LINK = "https://chat.whatsapp.com/GgfbOWL8b9TCbcFftMwa8b";
+const WHATSAPP_LINK = ONE_WEEK_INTERNSHIP_WHATSAPP_LINK;
 
 export default function ThankYouPage() {
   return (
