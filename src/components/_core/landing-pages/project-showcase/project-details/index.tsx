@@ -12,14 +12,23 @@ import {
   type ShowcaseTab,
 } from "../data";
 
-function BriefSection({ section }: { section: ShowcaseSection }) {
+function BriefSection({
+  section,
+  careerTrack,
+}: {
+  section: ShowcaseSection;
+  careerTrack: string;
+}) {
   return (
     <section>
       <h2 className="text-base font-semibold text-[#0F172A]">{section.heading}</h2>
       <p className="mt-2 text-sm leading-relaxed text-[#64748B] sm:text-[15px]">
         {section.body}{" "}
         {section.more ? (
-          <Link href="/internship" className="font-medium text-[#156374] hover:underline">
+          <Link
+            href={`/internship?careerTrack=${encodeURIComponent(careerTrack)}`}
+            className="font-medium text-[#156374] hover:underline"
+          >
             Read more &gt;&gt;&gt;
           </Link>
         ) : null}
@@ -176,7 +185,11 @@ export default function ProjectShowcaseDetail({
                 <TechStackCard key={section.heading} section={section} />
               ))
             : sections.map((section) => (
-                <BriefSection key={section.heading} section={section} />
+                <BriefSection
+                  key={section.heading}
+                  section={section}
+                  careerTrack={project.careerTrack}
+                />
               ))}
         </div>
       </div>

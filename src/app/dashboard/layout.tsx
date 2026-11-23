@@ -4,7 +4,6 @@ import { SiteHeader } from "@/components/_core/dashboard/layout/site-header";
 import DashboardEnrollmentGuard from "@/components/_core/dashboard/layout/dashboard-enrollment-guard";
 import { DashboardSidebarProvider } from "@/components/_core/dashboard/layout/dashboard-sidebar-provider";
 import { SidebarInset } from "@/components/ui/sidebar";
-import { ReferralBanner } from "@/components/_core/dashboard/layout/referral-banner";
 import React from "react";
 
 const DashboardLayout = ({
@@ -30,7 +29,6 @@ const DashboardLayout = ({
         <AppSidebar variant="inset" />
         <SidebarInset>
           <SiteHeader />
-          <ReferralBanner />
           <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden rounded-2xl shadow">
             <DashboardEnrollmentGuard>{children}</DashboardEnrollmentGuard>
           </div>

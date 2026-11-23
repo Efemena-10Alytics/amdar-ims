@@ -9,7 +9,13 @@ import { PencilIcon } from "../svg";
 import { useGetAnnouncements } from "@/features/announcement/use-get-announcement";
 import { useGetCurrentProject } from "@/features/interns-project/use-get-current-project";
 import { useIsSpecialistPreview } from "@/features/internship/use-is-specialist-preview";
+import {
+  ensureAnnouncementSoundUnlock,
+  playAnnouncementSound,
+} from "@/lib/play-notification-sound";
 import PageHeader from "../dashboard/header";
+
+const ANNOUNCEMENT_POLL_MS = 45_000;
 
 /**
  * These three cards count one intern's completion. A specialist servicing the
@@ -86,12 +92,15 @@ const InternshipProgramOverview = () => {
   const isLoading = currentProjectQuery.isLoading;
   const { isPreview } = useIsSpecialistPreview();
   const { count, newer, isLoading: isAnnouncementsLoading } =
-    useGetAnnouncements();
+    useGetAnnouncements(undefined, { refetchInterval: ANNOUNCEMENT_POLL_MS });
   const newerCount = newer.length;
   const [announcementToast, setAnnouncementToast] = useState<string | null>(
     null,
   );
   const hasShownAnnouncementToast = useRef(false);
+  const seenUnreadIdsRef = useRef<Set<number> | null>(null);
+
+  useEffect(() => ensureAnnouncementSoundUnlock(), []);
 
   useEffect(() => {
     if (hasShownAnnouncementToast.current || isAnnouncementsLoading) return;
@@ -103,7 +112,33 @@ const InternshipProgramOverview = () => {
   }, [count, isAnnouncementsLoading]);
 
   useEffect(() => {
+    if (isAnnouncementsLoading) return;
+
+    const unreadIds = newer.map((announcement) => announcement.id);
+
+    if (seenUnreadIdsRef.current === null) {
+      seenUnreadIdsRef.current = new Set(unreadIds);
+      return;
+    }
+
+    const previousIds = seenUnreadIdsRef.current;
+    const arrivedIds = unreadIds.filter((id) => !previousIds.has(id));
+
+    for (const id of unreadIds) {
+      previousIds.add(id);
+    }
+
+    if (arrivedIds.length === 0) return;
+
+    const label =
+      arrivedIds.length === 1 ? "a new announcement" : "new announcements";
+    setAnnouncementToast(`You have ${label}.`);
+  }, [newer, isAnnouncementsLoading]);
+
+  useEffect(() => {
     if (!announcementToast) return;
+
+    playAnnouncementSound();
 
     const timeoutId = window.setTimeout(() => {
       setAnnouncementToast(null);

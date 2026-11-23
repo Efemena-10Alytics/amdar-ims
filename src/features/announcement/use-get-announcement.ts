@@ -88,6 +88,8 @@ export const announcementsListQueryKey = (query: GetAnnouncementsQuery) =>
 type UseGetAnnouncementsOptions = {
   /** When false, skips the fetch (default: true). */
   enabled?: boolean;
+  /** Optional React Query poll interval in ms (e.g. 45_000). */
+  refetchInterval?: number | false;
 };
 
 export function useGetAnnouncements(
@@ -96,6 +98,7 @@ export function useGetAnnouncements(
 ) {
   const { cohortId, programId } = useSelectedEnrollmentIds();
   const enabled = options?.enabled !== false;
+  const refetchInterval = options?.refetchInterval;
 
   const resolvedProgramId = query?.program_id ?? programId ?? null;
   const resolvedCohortId = query?.cohort_id ?? cohortId ?? null;
@@ -116,6 +119,7 @@ export function useGetAnnouncements(
       : [...announcementsQueryKey, "disabled"],
     queryFn: () => fetchAnnouncements(resolvedQuery!),
     enabled: canFetch,
+    refetchInterval: canFetch ? refetchInterval : false,
   });
 
   const errorMessage = queryResult.error
