@@ -85,5 +85,7 @@ export function useLogin() {
     [setIsLoggingIn],
   );
 
-  return { login: userLogin, isLoggingIn, errorMessage };
+  const clearError = useCallback(() => setErrorMessage(""), []);
+
+  return { login: userLogin, isLoggingIn, errorMessage, clearError };
 }

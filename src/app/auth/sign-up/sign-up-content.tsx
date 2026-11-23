@@ -82,11 +82,11 @@ export default function SignUpContent() {
       </div>
 
       <div className="w-full max-w-152 flex-1 mx-auto md:mx-[unset] mt-5">
-        <div className="flex items-center gap-10 mb-2 px-6">
+        <div className="flex items-center gap-10 mb-2 px-4 sm:px-6">
           <h1 className="text-2xl font-semibold text-[#092A31]">Sign Up</h1>
           {errorMessage ? <ErrorAlert error={errorMessage} /> : null}
         </div>
-        <div className="flex-1 flex items-start px-6 pb-6">
+        <div className="flex-1 flex items-start px-4 sm:px-6 pb-6">
           {step === "personal" ? (
             <PersonalInfo
               formData={formData}

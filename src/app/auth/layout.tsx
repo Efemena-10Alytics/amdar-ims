@@ -5,7 +5,7 @@ const AuthPagesLayout = ({
   children,
 }: Readonly<{ children: React.ReactNode }>) => {
   return (
-    <div className="w-full h-screen overflow-hidden flex bg-white p-3 2xl:p-5">
+    <div className="w-full h-screen overflow-hidden flex bg-white sm:p-3 2xl:p-5">
       {/* left side */}
       <Aside />
       {/* right side - two backgrounds: solid color + pattern */}
