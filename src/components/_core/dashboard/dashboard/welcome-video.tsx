@@ -6,7 +6,7 @@ import { Play } from "lucide-react";
 import { VideoPlayerModal } from "@/components/_core/landing-pages/shared/video-player-modal";
 import { useGetPreDiagnostic } from "@/features/pre-diagnostic/use-get-pre-diagnostic";
 
-const DEFAULT_VIDEO_THUMBNAIL = "/images/pngs/video-thumbnail.jpeg";
+const DEFAULT_VIDEO_THUMBNAIL = "/images/svgs/thumbnail.svg";
 const IMS_WORKS_FALLBACK_VIDEO = "https://vimeo.com/1123856639";
 
 const WelcomeVideo = () => {
