@@ -71,7 +71,7 @@ function InfoHint({
   };
 
   return (
-    <span className="relative shrink-0" onMouseEnter={show} onMouseLeave={hide}>
+    <span className="shrink-0" onMouseEnter={show} onMouseLeave={hide}>
       <button
         type="button"
         aria-label={`${lines[0].label} ${lines[0].text}`}
@@ -79,7 +79,7 @@ function InfoHint({
         onFocus={show}
         onBlur={hide}
         onClick={() => setOpen((current) => !current)}
-        className="flex cursor-help items-center"
+        className="flex items-center"
       >
         <Info
           className={
@@ -96,7 +96,7 @@ function InfoHint({
           role="tooltip"
           onMouseEnter={show}
           onMouseLeave={hide}
-          className={`absolute bottom-full z-30 mb-2 flex w-80 max-w-[70vw] gap-2.5 rounded-xl bg-[#BFDBFE] p-4 text-left shadow-lg ${
+          className={`absolute top-full z-40 mt-2 flex w-80 max-w-[70vw] gap-2.5 rounded-xl bg-[#BFDBFE] p-4 text-left shadow-lg ${
             align === "start" ? "left-0" : "right-0"
           }`}
         >
@@ -141,7 +141,7 @@ function StatCard({
 }) {
   return (
     // Hovering lifts the card into the Rewards card's treatment.
-    <div className="group flex min-w-0 cursor-default flex-col justify-between gap-4 rounded-lg bg-[#E8EFF1] px-4 py-4 text-[#092A31] transition-colors hover:bg-[#156374] hover:text-white">
+    <div className="group relative flex min-w-0 cursor-default flex-col justify-between gap-4 rounded-lg bg-[#E8EFF1] px-4 py-4 text-[#092A31] transition-colors hover:bg-[#156374] hover:text-white">
       <div className="flex items-start justify-between gap-2">
         <span className="flex min-w-0 items-start gap-2">
           <span className="shrink-0">{icon}</span>
@@ -167,7 +167,7 @@ function RewardsCard({
   currency: ReferralCurrency;
 }) {
   return (
-    <div className="flex min-w-0 flex-col justify-between gap-4 rounded-lg bg-[#156374] px-4 py-4 text-white">
+    <div className="relative flex min-w-0 flex-col justify-between gap-4 rounded-lg bg-[#156374] px-4 py-4 text-white">
       <div className="flex items-start justify-between gap-2">
         <span className="flex min-w-0 items-center gap-2">
           <span className="shrink-0">
