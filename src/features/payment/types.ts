@@ -193,7 +193,6 @@ export type PaymentLockReason =
   | "refunded"
   | "pending_first_payment"
   | "bad_debt"
-  | "program_not_activated"
   | "grace_period_expired"
   | "extension_expired";
 

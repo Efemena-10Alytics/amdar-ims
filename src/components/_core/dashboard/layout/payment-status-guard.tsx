@@ -36,7 +36,7 @@ export function PaymentStatusGuard({
   children,
 }: {
   header: React.ReactNode;
-  banner: React.ReactNode;
+  banner?: React.ReactNode;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();

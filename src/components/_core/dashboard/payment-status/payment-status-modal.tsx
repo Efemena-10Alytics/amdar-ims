@@ -73,12 +73,6 @@ function getModalCopy(data: PaymentStatusData): {
         ? `Your payment plan is past due. Pay ${formattedAmount} to restore access to your dashboard and resources.`
         : "Your payment plan is past due. Complete your payment to restore access to your dashboard and resources.",
     },
-    program_not_activated: {
-      title: "Program access not activated",
-      subtitle: formattedAmount
-        ? `Your program access is currently inactive. Pay ${formattedAmount} to activate your dashboard and resources.`
-        : "Your program access has not been activated yet. Complete enrollment or contact support to continue.",
-    },
     pending_first_payment: {
       title: "Complete your enrollment payment",
       subtitle:
