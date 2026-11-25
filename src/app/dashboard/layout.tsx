@@ -5,7 +5,6 @@ import DashboardEnrollmentGuard from "@/components/_core/dashboard/layout/dashbo
 import { PaymentStatusGuard } from "@/components/_core/dashboard/layout/payment-status-guard";
 import { DashboardSidebarProvider } from "@/components/_core/dashboard/layout/dashboard-sidebar-provider";
 import { SidebarInset } from "@/components/ui/sidebar";
-import { ReferralBanner } from "@/components/_core/dashboard/layout/referral-banner";
 import React from "react";
 
 const DashboardLayout = ({
@@ -30,10 +29,7 @@ const DashboardLayout = ({
       >
         <AppSidebar variant="inset" />
         <SidebarInset>
-          <PaymentStatusGuard
-            header={<SiteHeader />}
-            banner={<ReferralBanner />}
-          >
+          <PaymentStatusGuard header={<SiteHeader />}>
             <DashboardEnrollmentGuard>{children}</DashboardEnrollmentGuard>
           </PaymentStatusGuard>
         </SidebarInset>

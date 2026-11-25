@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { CompanyLogo } from "./company-logo";
-import { SHOWCASE_PROJECTS } from "./data";
+import { careerTrackToSlug, SHOWCASE_PROJECTS } from "./data";
 
 const PROJECTS = SHOWCASE_PROJECTS;
 
@@ -165,7 +165,7 @@ export default function FeaturedProjects() {
                                 </div>
 
                                 <Link
-                                    href={`/project-showcase/${project.id}`}
+                                    href={`/project-showcase/${careerTrackToSlug(project.careerTrack)}`}
                                     className="mt-4 inline-flex h-11 items-center justify-center rounded-lg border border-[#156374] bg-[#E8EFF1] text-sm font-medium text-[#156374] transition hover:bg-[#dce7ea]"
                                 >
                                     View project
