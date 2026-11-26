@@ -293,7 +293,7 @@ export function PaymentStatusModal({
                 className="flex h-11 w-full items-center justify-center rounded-xl bg-[#156374] px-5 font-sora text-sm font-medium text-white transition-colors hover:bg-[#125260]"
               >
                 {plan?.program?.id
-                  ? "Proceed to program checkout"
+                  ? "Browse internship programs"
                   : "Browse internship programs"}
               </Link>
             )}
