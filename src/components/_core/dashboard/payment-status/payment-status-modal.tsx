@@ -14,6 +14,7 @@ import type {
   PaymentLockReason,
   PaymentStatusData,
 } from "@/features/payment/types";
+import { PayNowIcon } from "../billing/icons";
 
 const DISMISS_STORAGE_PREFIX = "amdari_overdue_modal_dismissed";
 
@@ -27,8 +28,12 @@ function getModalCopy(data: PaymentStatusData): {
   title: string;
   subtitle: string;
 } {
-  const { status, lock_reason: lockReason, invoice, grace_period_days: graceDays } =
-    data;
+  const {
+    status,
+    lock_reason: lockReason,
+    invoice,
+    grace_period_days: graceDays,
+  } = data;
   const formattedAmount = invoice
     ? formatPaymentAmount(invoice.amount, invoice.currency)
     : null;
@@ -110,37 +115,7 @@ function getModalCopy(data: PaymentStatusData): {
 function ModalPaymentIcon() {
   return (
     <div className="mx-auto flex size-11 items-center justify-center rounded-xl bg-[#FFF3C4]">
-      <svg
-        width="22"
-        height="18"
-        viewBox="0 0 22 18"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden
-      >
-        <rect
-          x="1"
-          y="2"
-          width="20"
-          height="14"
-          rx="2.5"
-          stroke="#156374"
-          strokeWidth="1.75"
-        />
-        <circle
-          cx="11"
-          cy="9"
-          r="2.75"
-          stroke="#156374"
-          strokeWidth="1.75"
-        />
-        <path
-          d="M4.5 6V12M17.5 6V12"
-          stroke="#156374"
-          strokeWidth="1.75"
-          strokeLinecap="round"
-        />
-      </svg>
+      <PayNowIcon width={22} height={15} fill="#0C3640" />
     </div>
   );
 }
@@ -216,12 +191,7 @@ export function PaymentStatusModal({
     );
   };
 
-  const checkoutHref = plan?.program?.id
-    ? `/payment/${plan.program.id}`
-    : "/internship";
-
-  const dateLabel =
-    paymentStatus.days_overdue > 0 ? "Overdue on" : "Due on";
+  const dateLabel = paymentStatus.days_overdue > 0 ? "Overdue on" : "Due on";
 
   return (
     <div
@@ -243,7 +213,7 @@ export function PaymentStatusModal({
           }
         }}
       >
-        <div className="relative w-full max-w-[440px] rounded-2xl bg-white p-6 shadow-2xl sm:p-7">
+        <div className="relative w-full max-w-[581px] rounded-2xl bg-white p-6 shadow-2xl sm:p-7">
           {isDismissible ? (
             <button
               type="button"
@@ -259,12 +229,12 @@ export function PaymentStatusModal({
 
           <h2
             id="payment-status-modal-title"
-            className="mt-4 text-center font-sora text-xl font-bold text-[#0F2A33]"
+            className="mt-4 text-center font-sora text-xl font-bold text-[#0C3640]"
           >
             {title}
           </h2>
 
-          <p className="mt-2 text-center font-sora text-sm leading-relaxed text-[#475569]">
+          <p className="mt-2 text-center font-sora text-sm leading-relaxed text-[#5C6777]">
             {subtitle}
           </p>
 
@@ -313,14 +283,14 @@ export function PaymentStatusModal({
                 type="button"
                 onClick={handlePayNow}
                 disabled={isPayingNow}
-                className="flex h-11 w-full cursor-pointer items-center justify-center rounded-full bg-[#156374] px-5 font-sora text-sm font-medium text-white transition-colors hover:bg-[#125260] disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex h-11 w-full cursor-pointer items-center justify-center rounded-xl bg-[#156374] px-5 font-sora text-sm font-medium text-white transition-colors hover:bg-[#125260] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isPayingNow ? "Processing…" : "Proceed to make payment"}
               </button>
             ) : (
               <Link
-                href={checkoutHref}
-                className="flex h-11 w-full items-center justify-center rounded-full bg-[#156374] px-5 font-sora text-sm font-medium text-white transition-colors hover:bg-[#125260]"
+                href={"/internship"}
+                className="flex h-11 w-full items-center justify-center rounded-xl bg-[#156374] px-5 font-sora text-sm font-medium text-white transition-colors hover:bg-[#125260]"
               >
                 {plan?.program?.id
                   ? "Proceed to program checkout"
