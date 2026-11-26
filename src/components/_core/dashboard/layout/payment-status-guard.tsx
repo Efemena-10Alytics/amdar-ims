@@ -4,6 +4,7 @@ import type React from "react";
 import { usePathname } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useIsInternshipSpecialist } from "@/features/auth/staff-roles";
+import { ENABLE_PAYMENT_STATUS_PROMPT } from "@/features/payment/payment-status-config";
 import { useGetPaymentStatus } from "@/features/payment/use-get-payment-status";
 import { PaymentStatusModal } from "../payment-status/payment-status-modal";
 
@@ -43,7 +44,8 @@ export function PaymentStatusGuard({
   const isBillingRoute = pathname.startsWith("/dashboard/billing");
   const { isInternshipSpecialist, isRoleReady } = useIsInternshipSpecialist();
 
-  const shouldCheckStatus = isRoleReady && !isInternshipSpecialist;
+  const shouldCheckStatus =
+    ENABLE_PAYMENT_STATUS_PROMPT && isRoleReady && !isInternshipSpecialist;
   const {
     data: paymentStatus,
     isPending: isStatusPending,
@@ -68,7 +70,10 @@ export function PaymentStatusGuard({
     (paymentStatus.show_modal || isLocked);
 
   let content: React.ReactNode;
-  if (!isRoleReady || (isGatedRoute && isStatusPending)) {
+  if (
+    ENABLE_PAYMENT_STATUS_PROMPT &&
+    (!isRoleReady || (isGatedRoute && isStatusPending))
+  ) {
     content = (
       <div className="flex flex-1 items-center justify-center p-8">
         <p className="text-sm text-[#64748B]">Loading your dashboard...</p>

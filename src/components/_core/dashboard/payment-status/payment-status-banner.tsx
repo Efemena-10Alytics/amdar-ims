@@ -8,6 +8,7 @@ import {
   formatBannerDueDate,
   formatPaymentAmount,
 } from "@/features/payment/format-payment";
+import { ENABLE_PAYMENT_STATUS_PROMPT } from "@/features/payment/payment-status-config";
 import { useGetPaymentStatus } from "@/features/payment/use-get-payment-status";
 import { usePayInvoiceNow } from "@/features/payment/use-pay-invoice-now";
 import type { PaymentStatusData } from "@/features/payment/types";
@@ -118,7 +119,11 @@ export function PaymentStatusBanner() {
   const { isInternshipSpecialist, isRoleReady } = useIsInternshipSpecialist();
   const { data: enrollment } = useGetUserEnrollment();
   const isSpecialistPreview = isSpecialistPreviewEnrollment(enrollment);
-  const shouldFetch = isRoleReady && !isInternshipSpecialist && !isSpecialistPreview;
+  const shouldFetch =
+    ENABLE_PAYMENT_STATUS_PROMPT &&
+    isRoleReady &&
+    !isInternshipSpecialist &&
+    !isSpecialistPreview;
 
   const { data: paymentStatus, refetch } = useGetPaymentStatus({
     enabled: shouldFetch,
