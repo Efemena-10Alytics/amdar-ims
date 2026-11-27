@@ -40,7 +40,7 @@ const YourTask = ({
   const isLoading = isProjectLoading || isProgressLoading;
 
   const projectSlug =
-    currentTask?.projectSlug?.trim() || project?.slug?.trim() || null;
+    project?.slug?.trim() || project?.slug?.trim() || null;
   const projectHref = buildProjectHref(projectSlug);
   const taskHref =
     currentTask && projectSlug
