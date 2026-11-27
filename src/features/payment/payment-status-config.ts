@@ -4,4 +4,4 @@
  *
  * Set to `false` to disable all payment status prompts and gating.
  */
-export const ENABLE_PAYMENT_STATUS_PROMPT: boolean = false;
+export const ENABLE_PAYMENT_STATUS_PROMPT: boolean = true;
